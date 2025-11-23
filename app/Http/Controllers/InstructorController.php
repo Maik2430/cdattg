@@ -1791,16 +1791,38 @@ class InstructorController extends Controller
      */
     public function cambiarEstado(Request $request, Instructor $instructor)
     {
-        $this->authorize('cambiarEstado', $instructor);
+        try {
+            $this->authorize('cambiarEstado', $instructor);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            Log::warning('Intento de cambiar estado de instructor sin autorización', [
+                'user_id' => Auth::id(),
+                'instructor_id' => $instructor->id,
+                'user_roles' => Auth::user()->roles->pluck('name')->toArray(),
+                'user_permissions' => Auth::user()->getAllPermissions()->pluck('name')->toArray()
+            ]);
+            return redirect()
+                ->back()
+                ->with('error', 'No tiene autorización para cambiar el estado del instructor. Se requiere el permiso "CAMBIAR ESTADO INSTRUCTOR" y el rol de Administrador o Super Administrador.');
+        }
 
         $request->validate([
             'estado' => 'required|in:activo,inactivo'
         ]);
 
         try {
-            $instructor->update(['estado' => $request->estado]);
+            // Convertir 'activo'/'inactivo' a boolean true/false
+            $status = $request->estado === 'activo' ? true : false;
+            
+            $instructor->update(['status' => $status]);
 
-            $mensaje = $request->estado === 'activo'
+            Log::info('Estado de instructor cambiado exitosamente', [
+                'instructor_id' => $instructor->id,
+                'status_anterior' => !$status,
+                'status_nuevo' => $status,
+                'user_id' => Auth::id()
+            ]);
+
+            $mensaje = $status
                 ? 'Instructor activado exitosamente'
                 : 'Instructor desactivado exitosamente';
 
@@ -1808,10 +1830,14 @@ class InstructorController extends Controller
                 ->back()
                 ->with('success', $mensaje);
         } catch (Exception $e) {
-            Log::error('Error al cambiar estado del instructor: ' . $e->getMessage());
+            Log::error('Error al cambiar estado del instructor', [
+                'instructor_id' => $instructor->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()
                 ->back()
-                ->with('error', 'Error al cambiar el estado del instructor');
+                ->with('error', 'Error al cambiar el estado del instructor: ' . $e->getMessage());
         }
     }
 

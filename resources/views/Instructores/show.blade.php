@@ -1024,6 +1024,19 @@
                                 </form>
                             @endcan
 
+                            @can('CAMBIAR ESTADO INSTRUCTOR')
+                                <form action="{{ route('instructor.cambiarEstado', $instructor->id) }}" 
+                                      method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="estado" value="{{ $instructor->status ? 'inactivo' : 'activo' }}">
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm cambiar-estado-instructor">
+                                        <i class="fas fa-toggle-{{ $instructor->status ? 'on' : 'off' }} mr-1"></i>
+                                        {{ $instructor->status ? 'Desactivar' : 'Activar' }} Instructor
+                                    </button>
+                                </form>
+                            @endcan
+
                             @can('ELIMINAR INSTRUCTOR')
                                 <form action="{{ route('instructor.destroy', $instructor->id) }}" 
                                           method="POST" class="d-inline formulario-eliminar">
