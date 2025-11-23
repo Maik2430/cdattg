@@ -170,12 +170,25 @@ class FichaCaracterizacion extends Model
 
     /**
      * Relación One-to-Many con Aprendiz.
-     * Obtiene directamente los aprendices asignados a esta ficha.
+     * Obtiene solo los aprendices activos asignados a esta ficha.
      * Laravel automáticamente excluye aprendices eliminados (soft deleted).
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function aprendices(): HasMany
+    {
+        return $this->hasMany(Aprendiz::class, 'ficha_caracterizacion_id', 'id')
+            ->where('aprendices.estado', 1);
+    }
+
+    /**
+     * Relación One-to-Many con Aprendiz (todos, activos e inactivos).
+     * Se usa para validaciones y conteos totales.
+     * Laravel automáticamente excluye aprendices eliminados (soft deleted).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function aprendicesTodos(): HasMany
     {
         return $this->hasMany(Aprendiz::class, 'ficha_caracterizacion_id', 'id');
     }
@@ -188,22 +201,24 @@ class FichaCaracterizacion extends Model
 
     /**
      * Obtiene solo los aprendices activos de esta ficha.
+     * Nota: La relación aprendices() ya filtra por estado activo, este método es redundante pero se mantiene por compatibilidad.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function aprendicesActivos(): HasMany
     {
-        return $this->aprendices()->where('aprendices.estado', 1);
+        return $this->aprendices();
     }
 
     /**
-     * Obtiene el conteo total de aprendices en esta ficha.
+     * Obtiene el conteo total de aprendices en esta ficha (activos e inactivos).
+     * Se usa para validaciones.
      *
      * @return int
      */
     public function contarAprendices(): int
     {
-        return $this->aprendices()->count();
+        return $this->aprendicesTodos()->count();
     }
 
     /**
@@ -217,24 +232,25 @@ class FichaCaracterizacion extends Model
     }
 
     /**
-     * Verifica si la ficha tiene aprendices asignados.
+     * Verifica si la ficha tiene aprendices asignados (activos e inactivos).
+     * Se usa para validaciones.
      *
      * @return bool
      */
     public function tieneAprendices(): bool
     {
-        return $this->aprendices()->exists();
+        return $this->aprendicesTodos()->exists();
     }
 
     /**
-     * Verifica si un aprendiz específico pertenece a esta ficha.
+     * Verifica si un aprendiz específico pertenece a esta ficha (activo o inactivo).
      *
      * @param int $aprendizId
      * @return bool
      */
     public function tieneAprendiz(int $aprendizId): bool
     {
-        return $this->aprendices()->where('aprendices.id', $aprendizId)->exists();
+        return $this->aprendicesTodos()->where('aprendices.id', $aprendizId)->exists();
     }
 
     // ==================== SCOPES ====================

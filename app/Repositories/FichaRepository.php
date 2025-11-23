@@ -50,7 +50,8 @@ class FichaRepository
             'sede'
         ])->withCount([
             'aprendices' => function ($query) {
-                $query->whereNull('aprendices.deleted_at');
+                $query->whereNull('aprendices.deleted_at')
+                      ->where('aprendices.estado', 1);
             }
         ]);
 
