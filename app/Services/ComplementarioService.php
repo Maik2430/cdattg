@@ -139,7 +139,19 @@ class ComplementarioService
             ->orderBy('title')
             ->get();
 
-        return compact('modalidades', 'jornadas', 'ambientes');
+        // Obtener competencias activas
+        $competencias = \App\Models\Competencia::query()
+            ->activos()
+            ->ordenadoPorCodigo()
+            ->get(['id', 'codigo', 'nombre']);
+
+        // Obtener guías de aprendizaje activas
+        $guias = \App\Models\GuiasAprendizaje::query()
+            ->activas()
+            ->porNombreAsc()
+            ->get(['id', 'codigo', 'nombre']);
+
+        return compact('modalidades', 'jornadas', 'ambientes', 'competencias', 'guias');
     }
 
     /**

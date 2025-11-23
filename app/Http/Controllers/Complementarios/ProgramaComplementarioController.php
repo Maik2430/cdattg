@@ -144,7 +144,11 @@ class ProgramaComplementarioController extends Controller
         DB::transaction(function () use ($payload) {
             $programa = ComplementarioOfertado::create($this->extractProgramaAtributos($payload));
 
+            // Sincronizar días de formación
             $this->complementarioService->sincronizarDiasFormacion($programa, $payload['dias'] ?? null);
+            
+            // Sincronizar estructura académica
+            $this->sincronizarEstructuraAcademica($programa, $payload);
         });
 
         return redirect()
@@ -194,7 +198,8 @@ class ProgramaComplementarioController extends Controller
         return collect($payload)->only([
             'codigo',
             'nombre',
-            'descripcion',
+            'justificacion',
+            'requisitos_ingreso',
             'duracion',
             'cupos',
             'estado',
@@ -202,5 +207,26 @@ class ProgramaComplementarioController extends Controller
             'jornada_id',
             'ambiente_id',
         ])->toArray();
+    }
+
+    /**
+     * Sincroniza la estructura académica del programa complementario.
+     */
+    private function sincronizarEstructuraAcademica(ComplementarioOfertado $programa, array $payload): void
+    {
+        // Sincronizar competencias
+        if (isset($payload['competencias'])) {
+            $programa->competencias()->sync($payload['competencias']);
+        }
+        
+        // Sincronizar resultados de aprendizaje (RAPs)
+        if (isset($payload['raps'])) {
+            $programa->raps()->sync($payload['raps']);
+        }
+        
+        // Sincronizar guías de aprendizaje
+        if (isset($payload['guias'])) {
+            $programa->guiasAprendizaje()->sync($payload['guias']);
+        }
     }
 }
