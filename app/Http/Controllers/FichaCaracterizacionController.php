@@ -2083,6 +2083,49 @@ class FichaCaracterizacionController extends Controller
                 ->with(['competencia', 'resultadosAprendizaje'])
                 ->with(['instructor.persona', 'instructorFichaDias.dia'])
                 ->get();
+            
+            // Recalcular horas para cada instructor asignado que tenga días
+            $diasService = app(\App\Services\InstructorFichaDiasService::class);
+            foreach ($instructoresAsignados as $asignacion) {
+                if ($asignacion->instructorFichaDias && $asignacion->instructorFichaDias->count() > 0) {
+                    // Preparar datos de días para el cálculo
+                    $diasData = $asignacion->instructorFichaDias->map(function($dia) {
+                        return [
+                            'dia_id' => $dia->dia_id,
+                            'hora_inicio' => $dia->hora_inicio,
+                            'hora_fin' => $dia->hora_fin
+                        ];
+                    })->toArray();
+                    
+                    // Generar fechas efectivas y calcular horas usando el método del servicio
+                    $fechasEfectivas = $diasService->generarFechasEfectivas($asignacion, $diasData);
+                    $horasTotales = 0;
+                    foreach ($fechasEfectivas as $fecha) {
+                        if (isset($fecha['hora_inicio']) && isset($fecha['hora_fin'])) {
+                            $inicio = \Carbon\Carbon::parse($fecha['hora_inicio']);
+                            $fin = \Carbon\Carbon::parse($fecha['hora_fin']);
+                            if ($fin->lt($inicio)) {
+                                $fin->addDay();
+                            }
+                            $diferencia = $inicio->diffInMinutes($fin);
+                            $horasTotales += $diferencia / 60;
+                        }
+                    }
+                    
+                    $horasTotales = round($horasTotales, 2);
+                    
+                    // Actualizar en memoria para la vista
+                    $asignacion->total_horas_instructor = $horasTotales;
+                    
+                    // Actualizar en BD si el valor es diferente (para corregir registros con 12h)
+                    $horasOriginales = $asignacion->getOriginal('total_horas_instructor') ?? $asignacion->total_horas_instructor;
+                    if (abs($horasOriginales - $horasTotales) > 0.01) {
+                        \DB::table('instructor_fichas_caracterizacion')
+                            ->where('id', $asignacion->id)
+                            ->update(['total_horas_instructor' => $horasTotales]);
+                    }
+                }
+            }
 
             // Obtener días de formación asignados a la ficha (con horarios)
             $diasFormacionFicha = $ficha->diasFormacion()
@@ -3847,7 +3890,6 @@ class FichaCaracterizacionController extends Controller
             $instructorFicha->fecha_inicio = $instructorData['fecha_inicio'];
             $instructorFicha->fecha_fin = $instructorData['fecha_fin'];
             $instructorFicha->competencia_id = $instructorData['competencia_id'] ?? null;
-            $instructorFicha->total_horas_instructor = 12; // Fijado en 12h
             $instructorFicha->save();
 
             // Actualizar resultados de aprendizaje
@@ -3857,7 +3899,7 @@ class FichaCaracterizacionController extends Controller
                 $instructorFicha->resultadosAprendizaje()->detach();
             }
 
-            // Actualizar días usando el servicio (que incluye validaciones)
+            // Actualizar días usando el servicio (que incluye validaciones y cálculo de horas)
             $diasService = app(\App\Services\InstructorFichaDiasService::class);
             $diasParaServicio = [];
             foreach ($instructorData['dias'] as $diaId => $diaInfo) {
@@ -3878,6 +3920,9 @@ class FichaCaracterizacionController extends Controller
                     'conflictos' => $resultadoDias['conflictos'] ?? []
                 ], 422);
             }
+
+            // Recargar el instructorFicha para obtener las horas actualizadas
+            $instructorFicha->refresh();
 
             DB::commit();
 

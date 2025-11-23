@@ -88,8 +88,9 @@ class InstructorFichaDiasService
             // Generar fechas efectivas de formación
             $fechasEfectivas = $this->generarFechasEfectivas($instructorFicha, $diasData);
 
-            // Actualizar horas totales del instructor (usar 12h para pruebas)
-            $instructorFicha->total_horas_instructor = 12;
+            // Calcular horas totales basadas en fechas efectivas y horarios
+            $horasTotales = $this->calcularHorasTotalesDesdeFechasEfectivas($fechasEfectivas);
+            $instructorFicha->total_horas_instructor = $horasTotales;
             $instructorFicha->save();
 
             DB::commit();
@@ -476,6 +477,26 @@ class InstructorFichaDiasService
         } catch (\Exception $e) {
             return 0;
         }
+    }
+
+    /**
+     * Calcula las horas totales basándose en las fechas efectivas y sus horarios.
+     *
+     * @param array $fechasEfectivas
+     * @return float
+     */
+    private function calcularHorasTotalesDesdeFechasEfectivas(array $fechasEfectivas): float
+    {
+        $horasTotales = 0;
+
+        foreach ($fechasEfectivas as $fecha) {
+            if (isset($fecha['hora_inicio']) && isset($fecha['hora_fin'])) {
+                $horas = $this->convertirTiempoAHoras($fecha['hora_inicio'], $fecha['hora_fin']);
+                $horasTotales += $horas;
+            }
+        }
+
+        return round($horasTotales, 2);
     }
 }
 

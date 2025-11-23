@@ -47,6 +47,40 @@
             font-size: 0.75rem;
         }
         
+        /* Estilos para tarjetas de instructores asignados */
+        .bg-success-light {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+        }
+        
+        .bg-primary-light {
+            background-color: #cfe2ff !important;
+            color: #084298 !important;
+        }
+        
+        .resultados-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .dias-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .card.shadow-sm {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card.shadow-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        
         /* Estilos para alertas expandibles */
         .alert {
             border-radius: 0.375rem;
@@ -364,56 +398,163 @@
                             @if($instructoresAsignados->count() > 0)
                                 <div class="row g-3">
                                     @foreach($instructoresAsignados as $asignacion)
-                                        <div class="col-md-6">
-                                            <div class="bg-light border rounded p-3">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <h6 class="mb-1 text-dark">
+                                        <div class="col-md-6 col-lg-6">
+                                            <div class="card border shadow-sm h-100">
+                                                <div class="card-header bg-white border-bottom">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-0 text-dark font-weight-bold">
+                                                                <i class="fas fa-user-tie text-primary me-2"></i>
                                                             {{ $asignacion->instructor->persona->primer_nombre }} 
                                                             {{ $asignacion->instructor->persona->primer_apellido }}
+                                                            </h6>
+                                                        </div>
+                                                        <div>
                                                             @if($ficha->instructor_id == $asignacion->instructor_id)
-                                                                <span class="badge bg-primary ms-2">Principal</span>
+                                                                <span class="badge bg-primary">Principal</span>
                                                             @else
-                                                                <span class="badge bg-secondary ms-2">Auxiliar</span>
+                                                                <span class="badge bg-secondary">Auxiliar</span>
                                                             @endif
-                                                            @if($asignacion->instructorFichaDias && $asignacion->instructorFichaDias->count() > 0)
-                                                                <span class="badge bg-success ms-2" title="Tiene días asignados">
-                                                                    <i class="fas fa-check-circle"></i> Días configurados
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <!-- Información de fechas y horas -->
+                                                    <div class="mb-3 pb-3 border-bottom">
+                                                        <div class="row g-2">
+                                                            <div class="col-6">
+                                                                <small class="text-muted d-block">
+                                                                    <i class="fas fa-calendar-alt text-info me-1"></i>Fecha Inicio
+                                                                </small>
+                                                                <strong class="text-dark">{{ $asignacion->fecha_inicio->format('d/m/Y') }}</strong>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <small class="text-muted d-block">
+                                                                    <i class="fas fa-calendar-check text-info me-1"></i>Fecha Fin
+                                                                </small>
+                                                                <strong class="text-dark">{{ $asignacion->fecha_fin->format('d/m/Y') }}</strong>
+                                                            </div>
+                                                            <div class="col-12 mt-2">
+                                                                <small class="text-muted d-block">
+                                                                    <i class="fas fa-clock text-success me-1"></i>Total Horas
+                                                                </small>
+                                                                <strong class="text-success">{{ $asignacion->total_horas_instructor }} horas</strong>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Competencia asignada -->
+                                                    @if($asignacion->competencia)
+                                                        <div class="mb-3 pb-3 border-bottom">
+                                                            <small class="text-muted d-block mb-1">
+                                                                <i class="fas fa-tasks text-success me-1"></i>Competencia
+                                                            </small>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="badge bg-success-light text-success me-2">
+                                                                    {{ $asignacion->competencia->codigo }}
                                                                 </span>
+                                                                <strong class="text-dark small">{{ $asignacion->competencia->nombre }}</strong>
+                                                            </div>
+                                                        </div>
                                                             @else
-                                                                <span class="badge bg-warning text-dark ms-2" title="Sin días asignados">
-                                                                    <i class="fas fa-exclamation-triangle"></i> Sin días
+                                                        <div class="mb-3 pb-3 border-bottom">
+                                                            <small class="text-muted d-block mb-1">
+                                                                <i class="fas fa-tasks text-muted me-1"></i>Competencia
+                                                            </small>
+                                                            <span class="text-muted small">
+                                                                <i class="fas fa-exclamation-circle me-1"></i>Sin competencia asignada
                                                                 </span>
+                                                        </div>
                                                             @endif
-                                                        </h6>
-                                                        <p class="text-muted mb-1 small">
-                                                            <i class="fas fa-calendar me-1"></i>
-                                                            {{ $asignacion->fecha_inicio->format('d/m/Y') }} - 
-                                                            {{ $asignacion->fecha_fin->format('d/m/Y') }}
-                                                        </p>
-                                                        <p class="text-muted mb-0 small">
-                                                            <i class="fas fa-clock me-1"></i>
-                                                            {{ $asignacion->total_horas_instructor }} horas
-                                                        </p>
+
+                                                    <!-- Resultados de aprendizaje -->
+                                                    @if($asignacion->resultadosAprendizaje && $asignacion->resultadosAprendizaje->count() > 0)
+                                                        <div class="mb-3 pb-3 border-bottom">
+                                                            <small class="text-muted d-block mb-2">
+                                                                <i class="fas fa-graduation-cap text-primary me-1"></i>
+                                                                Resultados de Aprendizaje ({{ $asignacion->resultadosAprendizaje->count() }})
+                                                            </small>
+                                                            <div class="resultados-list">
+                                                                @foreach($asignacion->resultadosAprendizaje->take(3) as $resultado)
+                                                                    <div class="d-flex align-items-center mb-1">
+                                                                        <span class="badge bg-primary-light text-primary me-2 small">
+                                                                            {{ $resultado->codigo }}
+                                                                        </span>
+                                                                        <span class="text-dark small">{{ Str::limit($resultado->nombre, 40) }}</span>
+                                                                        @if($resultado->duracion)
+                                                                            <span class="badge bg-info text-white ms-auto small">
+                                                                                {{ $resultado->duracion }}h
+                                                                            </span>
+                                                                        @endif
+                                                                    </div>
+                                                                @endforeach
+                                                                @if($asignacion->resultadosAprendizaje->count() > 3)
+                                                                    <small class="text-muted">
+                                                                        <i class="fas fa-ellipsis-h me-1"></i>
+                                                                        Y {{ $asignacion->resultadosAprendizaje->count() - 3 }} más...
+                                                                    </small>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <div class="mb-3 pb-3 border-bottom">
+                                                            <small class="text-muted d-block mb-1">
+                                                                <i class="fas fa-graduation-cap text-muted me-1"></i>Resultados de Aprendizaje
+                                                            </small>
+                                                            <span class="text-muted small">
+                                                                <i class="fas fa-exclamation-circle me-1"></i>Sin resultados asignados
+                                                            </span>
+                                                        </div>
+                                                    @endif
+
+                                                    <!-- Días de formación -->
                                                         @if($asignacion->instructorFichaDias && $asignacion->instructorFichaDias->count() > 0)
-                                                            @php
-                                                                $diasAsignados = $asignacion->instructorFichaDias
-                                                                    ->filter(function($dia) { return $dia->dia && $dia->dia->name; })
-                                                                    ->map(function($dia) { return $dia->dia->name; })
-                                                                    ->implode(', ');
-                                                            @endphp
-                                                            @if($diasAsignados)
-                                                                <p class="text-muted mb-0 small mt-1">
-                                                                    <i class="fas fa-calendar-week me-1"></i>
-                                                                    <strong>Días:</strong> {{ $diasAsignados }}
-                                                                </p>
+                                                        <div class="mb-3">
+                                                            <small class="text-muted d-block mb-2">
+                                                                <i class="fas fa-calendar-week text-warning me-1"></i>
+                                                                Días de Formación ({{ $asignacion->instructorFichaDias->count() }})
+                                                            </small>
+                                                            <div class="dias-list">
+                                                                @foreach($asignacion->instructorFichaDias->filter(function($dia) { return $dia->dia && $dia->dia->name; })->take(4) as $diaAsignado)
+                                                                    <div class="d-flex align-items-center justify-content-between mb-1 p-2 bg-light rounded">
+                                                                        <div>
+                                                                            <i class="far fa-calendar text-warning me-2"></i>
+                                                                            <strong class="text-dark small">{{ $diaAsignado->dia->name }}</strong>
+                                                                        </div>
+                                                                        @if($diaAsignado->hora_inicio && $diaAsignado->hora_fin)
+                                                                            <span class="badge bg-warning text-dark small">
+                                                                                {{ \Carbon\Carbon::parse($diaAsignado->hora_inicio)->format('H:i') }} - 
+                                                                                {{ \Carbon\Carbon::parse($diaAsignado->hora_fin)->format('H:i') }}
+                                                                            </span>
+                                                                        @else
+                                                                            <span class="badge bg-secondary small">Sin horario</span>
                                                             @endif
+                                                                    </div>
+                                                                @endforeach
+                                                                @if($asignacion->instructorFichaDias->count() > 4)
+                                                                    <small class="text-muted">
+                                                                        <i class="fas fa-ellipsis-h me-1"></i>
+                                                                        Y {{ $asignacion->instructorFichaDias->count() - 4 }} días más...
+                                                                    </small>
                                                         @endif
                                                     </div>
-                                                    <div class="btn-group-vertical btn-group-sm" role="group">
+                                                        </div>
+                                                    @else
+                                                        <div class="mb-3">
+                                                            <small class="text-muted d-block mb-1">
+                                                                <i class="fas fa-calendar-week text-muted me-1"></i>Días de Formación
+                                                            </small>
+                                                            <span class="badge bg-warning text-dark">
+                                                                <i class="fas fa-exclamation-triangle me-1"></i>Sin días asignados
+                                                            </span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="card-footer bg-white border-top">
+                                                    <div class="d-flex justify-content-end gap-2">
                                                         <!-- Botón para editar asignación completa -->
                                                         <button type="button"
-                                                           class="btn btn-sm btn-primary mb-1 btn-editar-instructor" 
+                                                           class="btn btn-sm btn-primary btn-editar-instructor" 
                                                            data-instructor-ficha-id="{{ $asignacion->id }}"
                                                            data-instructor-nombre="{{ $asignacion->instructor->persona->primer_nombre }} {{ $asignacion->instructor->persona->primer_apellido }}"
                                                            data-fecha-inicio="{{ $asignacion->fecha_inicio ? $asignacion->fecha_inicio->format('Y-m-d') : '' }}"
@@ -422,8 +563,8 @@
                                                            data-resultados-ids="{{ $asignacion->resultadosAprendizaje->pluck('id')->implode(',') }}"
                                                            data-toggle="tooltip" 
                                                            data-placement="top"
-                                                           title="Editar asignación completa (fechas, días, competencias y resultados)">
-                                                            <i class="fas fa-edit"></i>
+                                                           title="Editar asignación completa">
+                                                            <i class="fas fa-edit me-1"></i>Editar
                                                         </button>
                                                         
                                                         <!-- Botón para desasignar instructor -->
@@ -437,7 +578,7 @@
                                                                     data-placement="top"
                                                                     data-instructor-nombre="{{ $asignacion->instructor->persona->primer_nombre }} {{ $asignacion->instructor->persona->primer_apellido }}"
                                                                     title="Desasignar instructor">
-                                                                <i class="fas fa-times"></i>
+                                                                <i class="fas fa-times me-1"></i>Desasignar
                                                             </button>
                                                         </form>
                                                     </div>
@@ -553,57 +694,57 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th width="10%" class="text-center">
-                                                    <input type="checkbox" id="select-all-modal" title="Seleccionar todos">
-                                                </th>
-                                                <th width="25%">Día de la Semana</th>
-                                                <th width="30%">Hora Inicio</th>
-                                                <th width="30%">Hora Fin</th>
-                                                <th width="5%" class="text-center"><i class="fas fa-info-circle"></i></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="dias-tbody">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th width="10%" class="text-center">
+                                            <input type="checkbox" id="select-all-modal" title="Seleccionar todos">
+                                        </th>
+                                        <th width="25%">Día de la Semana</th>
+                                        <th width="30%">Hora Inicio</th>
+                                        <th width="30%">Hora Fin</th>
+                                        <th width="5%" class="text-center"><i class="fas fa-info-circle"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dias-tbody">
                                             @if(isset($diasFormacionFicha) && $diasFormacionFicha->count() > 0)
                                                 @foreach($diasFormacionFicha as $diaFormacion)
                                                     @php
                                                         $dia = $diaFormacion->dia ?? null;
                                                     @endphp
                                                     @if($dia)
-                                                    <tr class="dia-row-modal" data-dia-id="{{ $dia->id }}">
-                                                        <td class="text-center align-middle">
-                                                            <input type="checkbox" class="dia-checkbox-modal" value="{{ $dia->id }}" name="dias_selected[]">
-                                                        </td>
-                                                        <td class="align-middle">
-                                                            <strong><i class="far fa-calendar mr-1"></i>{{ $dia->name }}</strong>
-                                                        </td>
-                                                        <td>
-                                                            <input type="time" class="form-control hora-inicio-modal" name="hora_inicio_{{ $dia->id }}" data-dia="{{ $dia->id }}" disabled>
-                                                        </td>
-                                                        <td>
-                                                            <input type="time" class="form-control hora-fin-modal" name="hora_fin_{{ $dia->id }}" data-dia="{{ $dia->id }}" disabled>
-                                                        </td>
-                                                        <td class="text-center align-middle">
-                                                            <i class="fas fa-check-circle text-success dia-status-modal" style="display:none;"></i>
-                                                        </td>
-                                                    </tr>
+                                        <tr class="dia-row-modal" data-dia-id="{{ $dia->id }}">
+                                            <td class="text-center align-middle">
+                                                <input type="checkbox" class="dia-checkbox-modal" value="{{ $dia->id }}" name="dias_selected[]">
+                                            </td>
+                                            <td class="align-middle">
+                                                <strong><i class="far fa-calendar mr-1"></i>{{ $dia->name }}</strong>
+                                            </td>
+                                            <td>
+                                                <input type="time" class="form-control hora-inicio-modal" name="hora_inicio_{{ $dia->id }}" data-dia="{{ $dia->id }}" disabled>
+                                            </td>
+                                            <td>
+                                                <input type="time" class="form-control hora-fin-modal" name="hora_fin_{{ $dia->id }}" data-dia="{{ $dia->id }}" disabled>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <i class="fas fa-check-circle text-success dia-status-modal" style="display:none;"></i>
+                                            </td>
+                                        </tr>
                                                     @endif
-                                                @endforeach
-                                            @else
-                                                <tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
                                                     <td colspan="5" class="text-center text-muted">
                                                         No hay días de formación configurados para esta ficha. 
                                                         <a href="{{ route('fichaCaracterizacion.gestionarDiasFormacion', $ficha->id) }}" class="alert-link">
                                                             Configurar días de formación
                                                         </a>
                                                     </td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                                 </div>
                             </div>
                         </div>
