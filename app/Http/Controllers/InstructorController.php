@@ -305,6 +305,9 @@ class InstructorController extends Controller
     public function show(Instructor $instructor)
     {
         try {
+            // Cargar relaciones necesarias
+            $instructor->load(['jornadas.parametro', 'modalidades.parametro', 'persona']);
+            
             $fichasCaracterizacion = FichaCaracterizacion::all();
             $instructor->persona->edad = Carbon::parse($instructor->persona->fecha_de_nacimiento)->age;
             $instructor->persona->fecha_de_nacimiento = Carbon::parse(
@@ -455,11 +458,24 @@ class InstructorController extends Controller
                 Log::warning('Error al obtener jornadas asignadas del instructor: ' . $e->getMessage());
                 $jornadasAsignadas = [];
             }
+            
+            // Obtener modalidades de formación (tema_id = 5) - para habilidades pedagógicas
+            $modalidadesFormacion = \App\Models\ParametroTema::whereHas('tema', function($q) {
+                $q->where('id', 5); // MODALIDADES DE FORMACION
+            })->whereHas('parametro', function($query) {
+                $query->where('status', true);
+            })->where('status', true)
+              ->with('parametro')
+              ->get()
+              ->sortBy(function($pt) {
+                  return $pt->parametro->name ?? '';
+              })
+              ->values();
 
             return view(
                 'Instructores.edit',
                 ['instructor' => $instructor],
-                compact('documentos', 'generos', 'regionales', 'especialidades', 'centrosFormacion', 'tiposVinculacion', 'nivelesAcademicos', 'jornadasTrabajo', 'jornadasAsignadas')
+                compact('documentos', 'generos', 'regionales', 'especialidades', 'centrosFormacion', 'tiposVinculacion', 'nivelesAcademicos', 'jornadasTrabajo', 'jornadasAsignadas', 'modalidadesFormacion')
             );
         } catch (Exception $e) {
             Log::error('Error al cargar formulario de edición de instructor', [
@@ -566,6 +582,33 @@ class InstructorController extends Controller
                 'cantidad' => count($jornadasIds)
             ]);
             
+            // Preparar modalidades (array de IDs) - guardar en tabla pivot
+            $modalidadesIds = [];
+            Log::info('Modalidades recibidas en request', [
+                'has_modalidades' => $request->has('modalidades'),
+                'modalidades_raw' => $request->input('modalidades'),
+                'es_array' => is_array($request->input('modalidades'))
+            ]);
+            
+            if ($request->has('modalidades') && is_array($request->input('modalidades'))) {
+                $modalidadesRequest = array_map('intval', array_filter($request->input('modalidades')));
+                Log::info('Modalidades procesadas del request', [
+                    'modalidades_request' => $modalidadesRequest,
+                    'count' => count($modalidadesRequest)
+                ]);
+                
+                if (!empty($modalidadesRequest)) {
+                    $parametrosTemas = \App\Models\ParametroTema::whereIn('id', $modalidadesRequest)->get();
+                    $modalidadesIds = $parametrosTemas->pluck('id')->toArray();
+                    Log::info('Parametros temas encontrados para modalidades', [
+                        'modalidades_ids' => $modalidadesIds,
+                        'count' => count($modalidadesIds)
+                    ]);
+                }
+            } else {
+                Log::warning('No se recibieron modalidades en el request o no es array');
+            }
+            
             // Preparar arrays JSON - campos dinámicos que vienen como arrays
             $camposJsonArray = [
                 'titulos_obtenidos',
@@ -573,7 +616,7 @@ class InstructorController extends Controller
                 'certificaciones_tecnicas',
                 'cursos_complementarios',
                 'idiomas',
-                'habilidades_pedagogicas',
+                // 'habilidades_pedagogicas' removido - ahora se usa 'modalidades' en tabla pivot
             ];
             
             foreach ($camposJsonArray as $campo) {
@@ -597,17 +640,6 @@ class InstructorController extends Controller
                             }
                         }
                         $datos[$campo] = !empty($idiomasFiltrados) ? $idiomasFiltrados : null;
-                    } elseif ($campo === 'habilidades_pedagogicas') {
-                        // Manejo especial para habilidades pedagógicas (array simple de strings)
-                        $valores = array_filter(
-                            array_map(function($item) {
-                                return is_string($item) ? trim($item) : (is_scalar($item) ? (string)$item : '');
-                            }, $datos[$campo]),
-                            function($item) {
-                                return $item !== null && $item !== '' && in_array($item, ['virtual', 'presencial', 'dual']);
-                            }
-                        );
-                        $datos[$campo] = !empty($valores) ? array_values($valores) : null;
                     } else {
                         // Manejo estándar para otros arrays (titulos, instituciones, certificaciones, cursos)
                         $valores = array_filter(
@@ -692,7 +724,7 @@ class InstructorController extends Controller
                     'certificaciones_tecnicas' => $datosActualizar['certificaciones_tecnicas'] ?? null,
                     'cursos_complementarios' => $datosActualizar['cursos_complementarios'] ?? null,
                     'idiomas' => $datosActualizar['idiomas'] ?? null,
-                    'habilidades_pedagogicas' => $datosActualizar['habilidades_pedagogicas'] ?? null,
+                    // 'habilidades_pedagogicas' removido - ahora se usa 'modalidades' en tabla pivot
                 ]
             ]);
             
@@ -708,7 +740,7 @@ class InstructorController extends Controller
                 'certificaciones_tecnicas' => $instructor->certificaciones_tecnicas,
                 'cursos_complementarios' => $instructor->cursos_complementarios,
                 'idiomas' => $instructor->idiomas,
-                'habilidades_pedagogicas' => $instructor->habilidades_pedagogicas,
+                // 'habilidades_pedagogicas' removido - ahora se usa 'modalidades' en tabla pivot
             ]);
             
             // Sincronizar jornadas (many-to-many)
@@ -754,6 +786,64 @@ class InstructorController extends Controller
                     'error_code' => $e->getCode(),
                     'trace' => $e->getTraceAsString(),
                     'jornadas_ids' => $jornadasIds
+                ]);
+                // No lanzar la excepción para que la actualización continúe
+            }
+            
+            // Sincronizar modalidades (many-to-many) - habilidades pedagógicas
+            try {
+                if (!empty($modalidadesIds)) {
+                    $pivotData = [];
+                    foreach ($modalidadesIds as $modalidadId) {
+                        $pivotData[$modalidadId] = [
+                            'user_edit_id' => Auth::id(),
+                            'updated_at' => now()
+                        ];
+                    }
+                    Log::info('Sincronizando modalidades con pivot data', [
+                        'instructor_id' => $instructor->id,
+                        'pivot_data' => $pivotData
+                    ]);
+                    
+                    $instructor->modalidades()->sync($pivotData);
+                    
+                    Log::info('Modalidades sincronizadas exitosamente', [
+                        'instructor_id' => $instructor->id,
+                        'modalidades_actuales' => $instructor->modalidades()->pluck('parametros_temas.id')->toArray()
+                    ]);
+                    
+                    // Actualizar también el campo JSON habilidades_pedagogicas con los IDs
+                    // Forzar la asignación para que Eloquent detecte el cambio
+                    $instructor->setAttribute('habilidades_pedagogicas', $modalidadesIds);
+                    $instructor->save();
+                    
+                    // Refrescar el modelo para asegurar que los cambios se reflejen
+                    $instructor->refresh();
+                    
+                    Log::info('Campo JSON habilidades_pedagogicas actualizado', [
+                        'instructor_id' => $instructor->id,
+                        'habilidades_pedagogicas' => $instructor->habilidades_pedagogicas,
+                        'habilidades_pedagogicas_raw' => $instructor->getRawOriginal('habilidades_pedagogicas')
+                    ]);
+                } else {
+                    // Si no hay modalidades seleccionadas, eliminar todas
+                    Log::info('No hay modalidades seleccionadas, eliminando todas', [
+                        'instructor_id' => $instructor->id
+                    ]);
+                    $instructor->modalidades()->detach();
+                    
+                    // También limpiar el campo JSON
+                    $instructor->setAttribute('habilidades_pedagogicas', null);
+                    $instructor->save();
+                    $instructor->refresh();
+                }
+            } catch (\Exception $e) {
+                Log::error('Error al sincronizar modalidades del instructor', [
+                    'instructor_id' => $instructor->id,
+                    'error' => $e->getMessage(),
+                    'error_code' => $e->getCode(),
+                    'trace' => $e->getTraceAsString(),
+                    'modalidades_ids' => $modalidadesIds
                 ]);
                 // No lanzar la excepción para que la actualización continúe
             }

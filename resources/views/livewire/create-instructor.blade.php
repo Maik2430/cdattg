@@ -422,20 +422,31 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Habilidades Pedagógicas</label>
-                                    <div class="form-check">
-                                        <input type="checkbox" wire:model="habilidades_pedagogicas" value="virtual" id="hab_virtual" class="form-check-input">
-                                        <label class="form-check-label" for="hab_virtual">Virtual</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" wire:model="habilidades_pedagogicas" value="presencial" id="hab_presencial" class="form-check-input">
-                                        <label class="form-check-label" for="hab_presencial">Presencial</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" wire:model="habilidades_pedagogicas" value="dual" id="hab_dual" class="form-check-input">
-                                        <label class="form-check-label" for="hab_dual">Dual</label>
-                                    </div>
-                                    @error('habilidades_pedagogicas')
+                                    <label class="form-label">Habilidades Pedagógicas (Modalidades)</label>
+                                    @if(isset($modalidadesFormacion) && $modalidadesFormacion->count() > 0)
+                                        @foreach($modalidadesFormacion as $modalidad)
+                                            <div class="form-check">
+                                                <input 
+                                                    type="checkbox" 
+                                                    wire:model="modalidades" 
+                                                    value="{{ (int)$modalidad->id }}" 
+                                                    id="modalidad_{{ $modalidad->id }}" 
+                                                    class="form-check-input">
+                                                <label class="form-check-label" for="modalidad_{{ $modalidad->id }}">
+                                                    {{ $modalidad->parametro->name ?? 'Modalidad ID: ' . $modalidad->id }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                        @if($errors->has('modalidades'))
+                                            <div class="text-danger small mt-1">{{ $errors->first('modalidades') }}</div>
+                                        @endif
+                                        <div class="small text-muted mt-2">
+                                            Seleccionadas: {{ count($modalidades ?? []) }}
+                                        </div>
+                                    @else
+                                        <p class="text-muted">No hay modalidades disponibles</p>
+                                    @endif
+                                    @error('modalidades')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>

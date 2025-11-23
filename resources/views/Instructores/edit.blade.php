@@ -595,23 +595,36 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label class="form-label">Habilidades Pedagógicas</label>
+                                                    <label class="form-label">Habilidades Pedagógicas (Modalidades)</label>
                                                     @php
-                                                        $habilidades = old('habilidades_pedagogicas', $instructor->habilidades_pedagogicas ?? []);
+                                                        // Obtener modalidades asignadas al instructor
+                                                        $modalidadesAsignadas = [];
+                                                        try {
+                                                            // Primero intentar obtener desde el campo JSON habilidades_pedagogicas
+                                                            if ($instructor->habilidades_pedagogicas && is_array($instructor->habilidades_pedagogicas)) {
+                                                                $modalidadesAsignadas = array_map('intval', $instructor->habilidades_pedagogicas);
+                                                            }
+                                                            // Si no hay en JSON, intentar desde la relación many-to-many
+                                                            if (empty($modalidadesAsignadas) && $instructor->modalidades()->exists()) {
+                                                                $modalidadesAsignadas = $instructor->modalidades()->pluck('id')->toArray();
+                                                            }
+                                                        } catch (\Exception $e) {
+                                                            $modalidadesAsignadas = [];
+                                                        }
+                                                        $modalidadesSeleccionadas = old('modalidades', $modalidadesAsignadas);
+                                                        if (!is_array($modalidadesSeleccionadas)) {
+                                                            $modalidadesSeleccionadas = [];
+                                                        }
                                                     @endphp
+                                                    @foreach($modalidadesFormacion ?? [] as $modalidad)
                                                     <div class="form-check">
-                                                        <input type="checkbox" name="habilidades_pedagogicas[]" value="virtual" id="hab_virtual" class="form-check-input" {{ in_array('virtual', $habilidades) ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="hab_virtual">Virtual</label>
+                                                            <input type="checkbox" name="modalidades[]" value="{{ $modalidad->id }}" id="modalidad_{{ $modalidad->id }}" class="form-check-input" {{ in_array($modalidad->id, $modalidadesSeleccionadas) ? 'checked' : '' }}>
+                                                            <label class="form-check-label" for="modalidad_{{ $modalidad->id }}">
+                                                                {{ $modalidad->parametro->name ?? 'Modalidad ID: ' . $modalidad->id }}
+                                                            </label>
                                                     </div>
-                                                    <div class="form-check">
-                                                        <input type="checkbox" name="habilidades_pedagogicas[]" value="presencial" id="hab_presencial" class="form-check-input" {{ in_array('presencial', $habilidades) ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="hab_presencial">Presencial</label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input type="checkbox" name="habilidades_pedagogicas[]" value="dual" id="hab_dual" class="form-check-input" {{ in_array('dual', $habilidades) ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="hab_dual">Dual</label>
-                                                    </div>
-                                                    @error('habilidades_pedagogicas')
+                                                    @endforeach
+                                                    @error('modalidades')
                                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                                     @enderror
                                                 </div>

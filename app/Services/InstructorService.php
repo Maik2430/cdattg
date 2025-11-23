@@ -94,9 +94,9 @@ class InstructorService
      * @return Instructor
      * @throws \Exception
      */
-    public function crear(array $datos, array $jornadasIds = []): Instructor
+    public function crear(array $datos, array $jornadasIds = [], array $modalidadesIds = []): Instructor
     {
-        return DB::transaction(function () use ($datos, $jornadasIds) {
+        return DB::transaction(function () use ($datos, $jornadasIds, $modalidadesIds) {
             // Validar que la persona existe y no sea ya instructor
             $persona = Persona::with(['instructor', 'user'])->findOrFail($datos['persona_id']);
 
@@ -172,6 +172,57 @@ class InstructorService
                 
                 // Actualizar también el campo JSON jornadas
                 $instructor->jornadas = $jornadasIds;
+                $instructor->save();
+            }
+            
+            // Sincronizar modalidades (many-to-many) - habilidades pedagógicas
+            Log::info('Sincronizando modalidades en InstructorService', [
+                'instructor_id' => $instructor->id,
+                'modalidades_ids' => $modalidadesIds,
+                'count' => count($modalidadesIds ?? [])
+            ]);
+            
+            if (!empty($modalidadesIds) && is_array($modalidadesIds)) {
+                $pivotData = [];
+                foreach ($modalidadesIds as $modalidadId) {
+                    $pivotData[$modalidadId] = [
+                        'user_create_id' => auth()->id(),
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }
+                
+                Log::info('Sincronizando modalidades con pivot data', [
+                    'instructor_id' => $instructor->id,
+                    'pivot_data' => $pivotData
+                ]);
+                
+                $resultadoSync = $instructor->modalidades()->sync($pivotData);
+                
+                Log::info('Resultado de sync de modalidades', [
+                    'instructor_id' => $instructor->id,
+                    'resultado' => $resultadoSync
+                ]);
+                
+                // Actualizar también el campo JSON habilidades_pedagogicas con los IDs
+                // Forzar la asignación para que Eloquent detecte el cambio
+                $instructor->setAttribute('habilidades_pedagogicas', $modalidadesIds);
+                $instructor->save();
+                
+                // Refrescar el modelo para asegurar que los cambios se reflejen
+                $instructor->refresh();
+                
+                Log::info('Modalidades guardadas en JSON', [
+                    'instructor_id' => $instructor->id,
+                    'habilidades_pedagogicas' => $instructor->habilidades_pedagogicas,
+                    'habilidades_pedagogicas_raw' => $instructor->getRawOriginal('habilidades_pedagogicas')
+                ]);
+            } else {
+                // Si no hay modalidades, limpiar el campo JSON
+                Log::info('No hay modalidades, limpiando campo JSON', [
+                    'instructor_id' => $instructor->id
+                ]);
+                $instructor->habilidades_pedagogicas = null;
                 $instructor->save();
             }
 

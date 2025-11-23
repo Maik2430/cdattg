@@ -370,11 +370,47 @@
                                         <tr>
                                             <th class="py-3">Jornada(s) de Trabajo</th>
                                             <td class="py-3">
-                                                @if($instructor->jornadas->count() > 0)
-                                                    @foreach($instructor->jornadas as $jornada)
+                                                @php
+                                                    // Obtener jornadas: primero desde la relación many-to-many, luego desde el campo JSON
+                                                    $jornadasMostrar = collect();
+                                                    
+                                                    try {
+                                                        // Intentar obtener desde la relación many-to-many
+                                                        if ($instructor->relationLoaded('jornadas')) {
+                                                            $jornadasRelacion = $instructor->getRelation('jornadas');
+                                                            if ($jornadasRelacion && $jornadasRelacion->isNotEmpty()) {
+                                                                $jornadasMostrar = $jornadasRelacion;
+                                                            }
+                                                        }
+                                                        
+                                                        // Si no hay en la relación cargada, intentar cargar la relación
+                                                        if ($jornadasMostrar->isEmpty()) {
+                                                            $jornadasRelacion = $instructor->jornadas()->with('parametro')->get();
+                                                            if ($jornadasRelacion->isNotEmpty()) {
+                                                                $jornadasMostrar = $jornadasRelacion;
+                                                            }
+                                                        }
+                                                        
+                                                        // Si no hay en la relación, intentar desde el campo JSON
+                                                        if ($jornadasMostrar->isEmpty()) {
+                                                            $jornadasJson = $instructor->getAttribute('jornadas');
+                                                            if ($jornadasJson && is_array($jornadasJson) && !empty($jornadasJson)) {
+                                                                $jornadasMostrar = \App\Models\ParametroTema::whereIn('id', $jornadasJson)
+                                                                    ->with('parametro')
+                                                                    ->get();
+                                                            }
+                                                        }
+                                                    } catch (\Exception $e) {
+                                                        // Si hay algún error, simplemente mostrar que no hay jornadas
+                                                        $jornadasMostrar = collect();
+                                                    }
+                                                @endphp
+                                                
+                                                @if($jornadasMostrar->isNotEmpty())
+                                                    @foreach($jornadasMostrar as $jornada)
                                                         <span class="badge badge-info mr-1">
                                                             <i class="fas fa-clock mr-1"></i>
-                                                            {{ $jornada->jornada }}
+                                                            {{ $jornada->parametro->name ?? 'Jornada ID: ' . $jornada->id }}
                                                         </span>
                                                     @endforeach
                                                 @else
@@ -656,16 +692,52 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="py-3">Habilidades Pedagógicas</th>
+                                            <th class="py-3">Habilidades Pedagógicas (Modalidades)</th>
                                             <td class="py-3">
                                                 @php
-                                                    $habilidades = $instructor->habilidades_pedagogicas ?? [];
+                                                    // Obtener modalidades: primero desde la relación many-to-many, luego desde el campo JSON
+                                                    $modalidadesMostrar = collect();
+                                                    
+                                                    try {
+                                                        // Intentar obtener desde la relación many-to-many
+                                                        if ($instructor->relationLoaded('modalidades') && $instructor->modalidades) {
+                                                            $modalidadesRelacion = $instructor->getRelation('modalidades');
+                                                            if ($modalidadesRelacion && $modalidadesRelacion->isNotEmpty()) {
+                                                                $modalidadesMostrar = $modalidadesRelacion;
+                                                            }
+                                                        }
+                                                        
+                                                        // Si no hay en la relación cargada, intentar cargar la relación
+                                                        if ($modalidadesMostrar->isEmpty()) {
+                                                            $modalidadesRelacion = $instructor->modalidades()->with('parametro')->get();
+                                                            if ($modalidadesRelacion->isNotEmpty()) {
+                                                                $modalidadesMostrar = $modalidadesRelacion;
+                                                            }
+                                                        }
+                                                        
+                                                        // Si no hay en la relación, intentar desde el campo JSON
+                                                        if ($modalidadesMostrar->isEmpty()) {
+                                                            $modalidadesJson = $instructor->getAttribute('habilidades_pedagogicas');
+                                                            if ($modalidadesJson && is_array($modalidadesJson) && !empty($modalidadesJson)) {
+                                                                $modalidadesIds = array_map('intval', array_filter($modalidadesJson));
+                                                                if (!empty($modalidadesIds)) {
+                                                                    $modalidadesMostrar = \App\Models\ParametroTema::whereIn('id', $modalidadesIds)
+                                                                        ->with('parametro')
+                                                                        ->get();
+                                                                }
+                                                            }
+                                                        }
+                                                    } catch (\Exception $e) {
+                                                        // Si hay algún error, simplemente mostrar que no hay modalidades
+                                                        $modalidadesMostrar = collect();
+                                                    }
                                                 @endphp
-                                                @if(is_array($habilidades) && count($habilidades) > 0)
-                                                    @foreach($habilidades as $habilidad)
+                                                
+                                                @if($modalidadesMostrar->isNotEmpty())
+                                                    @foreach($modalidadesMostrar as $modalidad)
                                                         <span class="badge badge-primary mr-1">
-                                                            <i class="fas fa-chalkboard-teacher mr-1"></i>
-                                                            {{ ucfirst($habilidad) }}
+                                                            <i class="fas fa-graduation-cap mr-1"></i>
+                                                            {{ $modalidad->parametro->name ?? 'Modalidad ID: ' . $modalidad->id }}
                                                         </span>
                                                     @endforeach
                                                 @else

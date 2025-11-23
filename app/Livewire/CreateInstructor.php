@@ -40,7 +40,7 @@ class CreateInstructor extends Component
     public $areas_experticia = [''];
     public $competencias_tic = [''];
     public $idiomas = [['idioma' => '', 'nivel' => '']];
-    public $habilidades_pedagogicas = [];
+    public $modalidades = []; // Habilidades pedagógicas ahora se manejan como modalidades
     public $especialidades = [];
     
     // Información administrativa
@@ -195,7 +195,22 @@ class CreateInstructor extends Component
     public function store(): void
     {
         try {
+            // Log antes de validar
+            Log::info('Datos antes de validar en CreateInstructor', [
+                'modalidades' => $this->modalidades,
+                'modalidades_tipo' => gettype($this->modalidades),
+                'modalidades_count' => is_array($this->modalidades) ? count($this->modalidades) : 0,
+                'jornadas' => $this->jornadas,
+                'especialidades' => $this->especialidades
+            ]);
+            
             $datos = $this->validate();
+            
+            // Log después de validar
+            Log::info('Datos después de validar en CreateInstructor', [
+                'modalidades_en_datos' => $datos['modalidades'] ?? 'no existe',
+                'modalidades_propiedad' => $this->modalidades
+            ]);
             
             // Preparar especialidades
             if (!empty($this->especialidades)) {
@@ -230,7 +245,7 @@ class CreateInstructor extends Component
                 'areas_experticia',
                 'competencias_tic',
                 'idiomas',
-                'habilidades_pedagogicas',
+                // 'habilidades_pedagogicas' removido - ahora se usa 'modalidades'
             ];
             
             foreach ($camposJsonArray as $campo) {
@@ -247,21 +262,6 @@ class CreateInstructor extends Component
                             }
                         }
                         $datos[$campo] = !empty($idiomasFiltrados) ? $idiomasFiltrados : null;
-                    } else {
-                        $datos[$campo] = null;
-                    }
-                } elseif ($campo === 'habilidades_pedagogicas') {
-                    // Manejo especial para habilidades pedagógicas
-                    if (isset($datos[$campo]) && is_array($datos[$campo])) {
-                        $valores = array_filter(
-                            array_map(function($item) {
-                                return is_string($item) ? trim($item) : (is_scalar($item) ? (string)$item : '');
-                            }, $datos[$campo]),
-                            function($item) {
-                                return $item !== null && $item !== '' && in_array($item, ['virtual', 'presencial', 'dual']);
-                            }
-                        );
-                        $datos[$campo] = !empty($valores) ? array_values($valores) : null;
                     } else {
                         $datos[$campo] = null;
                     }
@@ -325,7 +325,40 @@ class CreateInstructor extends Component
             // Agregar usuario creador
             $datos['user_create_id'] = Auth::id();
             
-            $instructor = $this->instructorService->crear($datos, $jornadasIds);
+            // Preparar modalidades (array de IDs) - guardar en tabla pivot
+            $modalidadesIds = [];
+            Log::info('Modalidades recibidas en CreateInstructor', [
+                'modalidades_raw' => $this->modalidades,
+                'es_array' => is_array($this->modalidades),
+                'count' => is_array($this->modalidades) ? count($this->modalidades) : 0,
+                'tipo' => gettype($this->modalidades)
+            ]);
+            
+            // Asegurar que modalidades sea un array
+            if (!is_array($this->modalidades)) {
+                $this->modalidades = [];
+            }
+            
+            if (!empty($this->modalidades)) {
+                // Filtrar valores vacíos, null, false y convertir a enteros
+                $modalidadesIds = array_filter($this->modalidades, function($value) {
+                    return $value !== null && $value !== '' && $value !== false;
+                });
+                $modalidadesIds = array_map('intval', $modalidadesIds);
+                $modalidadesIds = array_values(array_unique($modalidadesIds)); // Reindexar y eliminar duplicados
+                
+                Log::info('Modalidades procesadas', [
+                    'modalidades_ids' => $modalidadesIds,
+                    'count' => count($modalidadesIds)
+                ]);
+            } else {
+                Log::warning('Modalidades vacías', [
+                    'modalidades' => $this->modalidades,
+                    'tipo' => gettype($this->modalidades)
+                ]);
+            }
+            
+            $instructor = $this->instructorService->crear($datos, $jornadasIds, $modalidadesIds);
             
             session()->flash('success', '¡Instructor asignado exitosamente!');
             
@@ -373,8 +406,8 @@ class CreateInstructor extends Component
             'idiomas' => 'nullable|array',
             'idiomas.*.idioma' => 'nullable|string|max:100',
             'idiomas.*.nivel' => 'nullable|string|in:básico,intermedio,avanzado,nativo',
-            'habilidades_pedagogicas' => 'nullable|array',
-            'habilidades_pedagogicas.*' => 'in:virtual,presencial,dual',
+            'modalidades' => 'nullable|array',
+            'modalidades.*' => 'nullable|exists:parametros_temas,id',
             'especialidades' => 'required|array|min:1',
             'especialidades.*' => 'required|exists:red_conocimientos,id',
             'numero_contrato' => 'nullable|string|max:100',
@@ -468,13 +501,27 @@ class CreateInstructor extends Component
             'niveles' => $nivelesAcademicos->pluck('parametro.name', 'id')->toArray()
         ]);
         
+        // Modalidades de formación (tema_id = 5) - para habilidades pedagógicas
+        $modalidadesFormacion = ParametroTema::whereHas('tema', function($q) {
+            $q->where('id', 5); // MODALIDADES DE FORMACION
+        })->whereHas('parametro', function($query) {
+            $query->where('status', true);
+        })->where('status', true)
+          ->with('parametro')
+          ->get()
+          ->sortBy(function($pt) {
+              return $pt->parametro->name;
+          })
+          ->values();
+        
         return view('livewire.create-instructor', [
             'personasDisponibles' => $personasDisponibles,
             'regionales' => $regionales,
             'especialidadesList' => $especialidades,
             'jornadasTrabajo' => $jornadasTrabajo,
             'tiposVinculacion' => $tiposVinculacion,
-            'nivelesAcademicos' => $nivelesAcademicos
+            'nivelesAcademicos' => $nivelesAcademicos,
+            'modalidadesFormacion' => $modalidadesFormacion
         ]);
     }
 }

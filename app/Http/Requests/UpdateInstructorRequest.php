@@ -60,8 +60,8 @@ class UpdateInstructorRequest extends FormRequest
             'idiomas' => 'nullable|array',
             'idiomas.*.idioma' => 'nullable|string|max:100',
             'idiomas.*.nivel' => 'nullable|string|in:básico,intermedio,avanzado,nativo',
-            'habilidades_pedagogicas' => 'nullable|array',
-            'habilidades_pedagogicas.*' => 'in:virtual,presencial,dual',
+            'modalidades' => 'nullable|array',
+            'modalidades.*' => 'required|exists:parametros_temas,id',
             
             // Especialidades
             'especialidades' => 'required|array|min:1',
@@ -100,7 +100,7 @@ class UpdateInstructorRequest extends FormRequest
             'experiencia_instructor_meses.min' => 'La experiencia como instructor no puede ser negativa.',
             'nivel_academico_id.exists' => 'El nivel académico seleccionado no es válido.',
             'idiomas.*.nivel.in' => 'El nivel de idioma debe ser: básico, intermedio, avanzado o nativo.',
-            'habilidades_pedagogicas.*.in' => 'Las habilidades pedagógicas deben ser: virtual, presencial o dual.',
+            'modalidades.*.exists' => 'Una o más modalidades seleccionadas no son válidas.',
             'especialidades.required' => 'Debe seleccionar al menos una especialidad (red de conocimiento).',
             'especialidades.array' => 'Las especialidades deben ser una lista.',
             'especialidades.min' => 'Debe seleccionar al menos una especialidad (red de conocimiento).',
@@ -135,7 +135,7 @@ class UpdateInstructorRequest extends FormRequest
             'areas_experticia' => 'áreas de experticia',
             'competencias_tic' => 'competencias TIC',
             'idiomas' => 'idiomas',
-            'habilidades_pedagogicas' => 'habilidades pedagógicas',
+            'modalidades' => 'modalidades',
             'especialidades' => 'especialidades',
             'numero_contrato' => 'número de contrato',
             'fecha_inicio_contrato' => 'fecha de inicio de contrato',

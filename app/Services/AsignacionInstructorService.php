@@ -809,14 +809,46 @@ class AsignacionInstructorService
                     }
                 }
                 
-                // Verificar modalidad
+                // Verificar modalidad usando IDs de parametros_temas
                 $tieneModalidad = true;
                 $razonModalidad = null;
                 if ($fichaModalidadId && $instructor->id != $instructorLiderId) {
-                    $tieneModalidad = $instructor->modalidades()->where('parametros_temas.parametro_id', $fichaModalidadId)->exists();
-                    if (!$tieneModalidad) {
-                        $modalidadNombre = $ficha->modalidadFormacion->name ?? "Modalidad ID: {$fichaModalidadId}";
-                        $razonModalidad = "No tiene la modalidad requerida: {$modalidadNombre}";
+                    // Obtener el parametro_tema_id correspondiente a la modalidad de la ficha
+                    // La ficha tiene modalidad_formacion_id que es un parametro_id
+                    // Necesitamos encontrar el parametro_tema_id donde parametro_id = modalidad_formacion_id y tema_id = 5
+                    $modalidadParametroTema = \App\Models\ParametroTema::where('parametro_id', $fichaModalidadId)
+                        ->whereHas('tema', function($q) {
+                            $q->where('id', 5); // MODALIDADES DE FORMACION
+                        })
+                        ->first();
+                    
+                    if ($modalidadParametroTema) {
+                        $modalidadParametroTemaId = $modalidadParametroTema->id;
+                        
+                        // Verificar en la relación many-to-many
+                        $tieneModalidadRelacion = $instructor->modalidades()->where('parametros_temas.id', $modalidadParametroTemaId)->exists();
+                        
+                        // Verificar en el campo JSON habilidades_pedagogicas
+                        $tieneModalidadJSON = false;
+                        $habilidadesPedagogicas = $instructor->habilidades_pedagogicas ?? [];
+                        if (is_array($habilidadesPedagogicas) && !empty($habilidadesPedagogicas)) {
+                            $tieneModalidadJSON = in_array($modalidadParametroTemaId, array_map('intval', $habilidadesPedagogicas));
+                        }
+                        
+                        $tieneModalidad = $tieneModalidadRelacion || $tieneModalidadJSON;
+                        
+                        if (!$tieneModalidad) {
+                            $modalidadNombre = $ficha->modalidadFormacion->name ?? "Modalidad ID: {$fichaModalidadId}";
+                            $razonModalidad = "No tiene la modalidad requerida: {$modalidadNombre}";
+                        }
+                    } else {
+                        // Si no se encuentra el parametro_tema, registrar un warning pero no bloquear
+                        Log::warning('No se encontró parametro_tema para la modalidad de la ficha', [
+                            'ficha_id' => $fichaId,
+                            'modalidad_formacion_id' => $fichaModalidadId,
+                            'instructor_id' => $instructor->id
+                        ]);
+                        $tieneModalidad = true; // Permitir si no se puede validar
                     }
                 }
                 
