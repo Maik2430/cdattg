@@ -352,13 +352,14 @@
         font-size: 0.875rem;
     }
 
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.9; }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        20%, 40%, 60%, 80% { transform: translateX(10px); }
     }
     
     .sena-loading-logo {
-        animation: pulse 2s ease-in-out infinite;
+        animation: shake 0.5s ease-in-out infinite;
         max-width: 120px;
         height: auto;
     }
