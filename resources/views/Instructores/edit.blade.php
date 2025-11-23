@@ -181,7 +181,7 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label class="form-label">Jornada(s) de Trabajo</label>
+                                                    <label class="form-label required-field">Jornada(s) de Trabajo <span class="text-danger">*</span></label>
                                                     @if($jornadasTrabajo->count() > 0)
                                                         <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
                                                             @foreach($jornadasTrabajo as $jornada)
@@ -285,8 +285,8 @@
                                     <div class="form-section">
                                         <h6><i class="fas fa-graduation-cap"></i> Especialidades</h6>
                                         <div class="form-group">
-                                            <label for="especialidades" class="form-label">Seleccionar Especialidades</label>
-                                            <select name="especialidades[]" id="especialidades" class="form-control" multiple>
+                                            <label for="especialidades" class="form-label required-field">Seleccionar Especialidades <span class="text-danger">*</span></label>
+                                            <select name="especialidades[]" id="especialidades" class="form-control @error('especialidades') is-invalid @enderror" multiple required>
                                                 @php
                                                     $especialidadesActuales = $instructor->especialidades ?? [];
                                                     $idsEspecialidades = [];

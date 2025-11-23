@@ -429,3 +429,50 @@
     box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2) !important;
 }
 
+/* ================================================
+   SELECT2 VALIDATION STYLES
+   ================================================ */
+/* Estilos para Select2 con tema bootstrap-5 - Máxima especificidad */
+.select2-container.is-invalid .select2-selection,
+.select2-container.is-invalid .select2-selection--single,
+.select2-container.is-invalid .select2-selection--multiple,
+.select2-container--bootstrap-5.is-invalid .select2-selection,
+.select2-container--bootstrap-5.is-invalid .select2-selection--single,
+.select2-container--bootstrap-5.is-invalid .select2-selection--multiple,
+.select2-container.is-invalid.select2-container--bootstrap-5 .select2-selection,
+.select2-container.is-invalid.select2-container--bootstrap-5 .select2-selection--single,
+.select2-container.is-invalid.select2-container--bootstrap-5 .select2-selection--multiple,
+.select2-container .select2-selection[style*="border: 1px solid #dc3545"],
+.select2-container .select2-selection--multiple[style*="border: 1px solid #dc3545"] {
+    border: 1px solid #dc3545 !important;
+    border-color: #dc3545 !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+}
+
+/* Estados de focus */
+.select2-container.is-invalid .select2-selection:focus,
+.select2-container.is-invalid .select2-selection--single:focus,
+.select2-container.is-invalid .select2-selection--multiple:focus,
+.select2-container.is-invalid.select2-container--focus .select2-selection,
+.select2-container.is-invalid.select2-container--focus .select2-selection--single,
+.select2-container.is-invalid.select2-container--focus .select2-selection--multiple,
+.select2-container--bootstrap-5.is-invalid.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.is-invalid.select2-container--focus .select2-selection--single,
+.select2-container--bootstrap-5.is-invalid.select2-container--focus .select2-selection--multiple {
+    border-color: #dc3545 !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    outline: 0 !important;
+}
+
+/* Estilos para elementos internos */
+.select2-container.is-invalid .select2-selection__rendered {
+    border: none !important;
+}
+
+.select2-container.is-invalid .select2-selection__choice {
+    border-color: #dc3545 !important;
+}
+

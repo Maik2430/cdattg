@@ -299,7 +299,14 @@ class FichaCaracterizacionController extends Controller
                 'timestamp' => now()
             ]);
 
-            $ficha = FichaCaracterizacion::findOrFail($id);
+            $ficha = FichaCaracterizacion::with([
+                'programaFormacion',
+                'instructor.persona',
+                'jornadaFormacion.parametro',
+                'ambiente.piso.bloque',
+                'modalidadFormacion',
+                'sede'
+            ])->findOrFail($id);
             
             // Obtener todos los datos necesarios para los selectores
             $programas = ProgramaFormacion::orderBy('nombre', 'asc')->get();
@@ -756,7 +763,9 @@ class FichaCaracterizacionController extends Controller
                         'primer_apellido' => $instructorData['instructor']->persona->primer_apellido ?? '',
                         'numero_documento' => $instructorData['instructor']->persona->numero_documento ?? ''
                     ],
-                    'disponible' => $instructorData['disponible'],
+                    'disponible' => $instructorData['disponible'] ?? false,
+                    'habilitado' => $instructorData['habilitado'] ?? false, // Puede ser seleccionado solo si pasa todas las validaciones
+                    'mensaje_no_disponible' => $instructorData['mensaje_no_disponible'] ?? null, // Mensaje breve para mostrar
                     'razones_no_disponible' => $instructorData['razones_no_disponible'] ?? [],
                     'advertencias' => $instructorData['advertencias'] ?? []
                 ];
@@ -2099,7 +2108,8 @@ class FichaCaracterizacionController extends Controller
                 'instructorFicha.instructorFichaDias.dia',
                 'diasFormacion.dia',
                 'programaFormacion.redConocimiento',
-                'sede.regional'
+                'sede.regional',
+                'jornadaFormacion.parametro'
             ])->findOrFail($id);
 
             // Verificar que la ficha esté activa

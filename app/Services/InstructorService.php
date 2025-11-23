@@ -121,6 +121,7 @@ class InstructorService
             // Agregar campos nuevos si existen
             $camposNuevos = [
                 'tipo_vinculacion_id',
+                'jornadas',
                 'centro_formacion_id',
                 'experiencia_instructor_meses',
                 'fecha_ingreso_sena',
@@ -157,7 +158,7 @@ class InstructorService
                 $this->asignarEspecialidades($instructor, $datos['especialidades']);
             }
 
-            // Sincronizar jornadas (many-to-many)
+            // Sincronizar jornadas (many-to-many) - también se guardan en el campo JSON 'jornadas'
             if (!empty($jornadasIds)) {
                 $pivotData = [];
                 foreach ($jornadasIds as $jornadaId) {
@@ -168,6 +169,10 @@ class InstructorService
                     ];
                 }
                 $instructor->jornadas()->sync($pivotData);
+                
+                // Actualizar también el campo JSON jornadas
+                $instructor->jornadas = $jornadasIds;
+                $instructor->save();
             }
 
             // Sincronizar solo el rol de instructor (evita duplicados)

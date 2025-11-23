@@ -42,6 +42,18 @@
             right: 8px;
         }
         
+        /* Estilos para opciones deshabilitadas en Select2 */
+        .select2-results__option[aria-disabled="true"] {
+            color: #6c757d !important;
+            font-style: italic;
+            background-color: #f8f9fa !important;
+        }
+        
+        .select2-results__option[aria-disabled="true"]:hover {
+            background-color: #e9ecef !important;
+            cursor: not-allowed !important;
+        }
+        
         /* Estilos para badges de estado */
         .badge {
             font-size: 0.75rem;
@@ -248,25 +260,37 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="info-item">
                                         <strong>Programa:</strong><br>
                                         <span class="text-muted">{{ $ficha->programaFormacion->nombre ?? 'No asignado' }}</span>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
+                                    <div class="info-item">
+                                        <strong>Red de Conocimiento:</strong><br>
+                                        <span class="text-muted">{{ $ficha->programaFormacion->redConocimiento->nombre ?? 'No asignada' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="info-item">
+                                        <strong>Jornada:</strong><br>
+                                        <span class="text-muted">{{ $ficha->jornadaFormacion->parametro->name ?? 'No asignada' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
                                     <div class="info-item">
                                         <strong>Fecha Inicio:</strong><br>
                                         <span class="text-muted">{{ $ficha->fecha_inicio ? $ficha->fecha_inicio->format('d/m/Y') : 'No definida' }}</span>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="info-item">
                                         <strong>Fecha Fin:</strong><br>
                                         <span class="text-muted">{{ $ficha->fecha_fin ? $ficha->fecha_fin->format('d/m/Y') : 'No definida' }}</span>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="info-item">
                                         <strong>Total Horas:</strong><br>
                                         <span class="text-muted">{{ $ficha->total_horas ?? 'No definido' }}</span>
@@ -816,7 +840,7 @@
         window.diasFormacionFichaIds = @json($diasFormacionFichaIds);
         
         // Jornada de la ficha para validaciones
-        window.fichaJornadaNombre = @json($ficha->jornadaFormacion->jornada ?? null);
+        window.fichaJornadaNombre = @json($ficha->jornadaFormacion->parametro->name ?? null);
         window.fichaJornadaId = @json($ficha->jornada_id ?? null);
         
         // Crear array de días disponibles para el formulario de asignación
@@ -843,10 +867,10 @@
                     $dia = $diaFormacion->dia ?? null;
                     $horaInicio = $diaFormacion->hora_inicio 
                         ? \Carbon\Carbon::parse($diaFormacion->hora_inicio)->format('H:i') 
-                        : ($ficha->jornadaFormacion->hora_inicio ?? '08:00');
+                        : '08:00';
                     $horaFin = $diaFormacion->hora_fin 
                         ? \Carbon\Carbon::parse($diaFormacion->hora_fin)->format('H:i') 
-                        : ($ficha->jornadaFormacion->hora_fin ?? '12:00');
+                        : '12:00';
                 @endphp
                 @if($dia)
                 window.diasSemanaData[{{ $dia->id }}] = {

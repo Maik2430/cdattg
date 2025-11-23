@@ -16,8 +16,8 @@ class StoreResultadosAprendizajeRequest extends FormRequest
         return [
             'codigo' => 'required|string|max:50|unique:resultados_aprendizajes,codigo',
             'nombre' => 'required|string|max:500',
-            'competencia_id' => 'nullable|exists:competencias,id',
-            'status' => 'nullable|boolean',
+            'competencia_id' => 'required|exists:competencias,id',
+            'status' => 'required|boolean',
         ];
     }
 
@@ -31,7 +31,9 @@ class StoreResultadosAprendizajeRequest extends FormRequest
             'nombre.required' => 'El nombre es obligatorio.',
             'nombre.string' => 'El nombre debe ser una cadena de texto.',
             'nombre.max' => 'El nombre no puede tener más de 500 caracteres.',
+            'competencia_id.required' => 'La competencia asociada es obligatoria.',
             'competencia_id.exists' => 'La competencia seleccionada no existe en el sistema.',
+            'status.required' => 'El estado es obligatorio.',
             'status.boolean' => 'El estado debe ser verdadero o falso.',
         ];
     }

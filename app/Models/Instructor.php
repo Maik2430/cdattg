@@ -35,6 +35,7 @@ class Instructor extends Model
         'nombre_completo_cache',
         // Información laboral
         'tipo_vinculacion_id',
+        'jornadas',
         'centro_formacion_id',
         'experiencia_instructor_meses',
         'fecha_ingreso_sena',
@@ -63,6 +64,7 @@ class Instructor extends Model
 
     protected $casts = [
         'status' => 'boolean',
+        'jornadas' => 'array',
         'especialidades' => 'array',
         'competencias' => 'array',
         'anos_experiencia' => 'integer',
@@ -137,6 +139,19 @@ class Instructor extends Model
         return $this->belongsToMany(ParametroTema::class, 'instructor_parametro_tema', 'instructor_id', 'parametro_tema_id')
                     ->whereHas('tema', function($q) {
                         $q->where('name', 'LIKE', '%JORNADAS%');
+                    })
+                    ->withPivot('user_create_id', 'user_edit_id')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relación muchos a muchos con ParametroTema (modalidades) (belongsToMany)
+     */
+    public function modalidades(): BelongsToMany
+    {
+        return $this->belongsToMany(ParametroTema::class, 'instructor_parametro_tema', 'instructor_id', 'parametro_tema_id')
+                    ->whereHas('tema', function($q) {
+                        $q->where('id', 5); // ID del tema para MODALIDADES DE FORMACION
                     })
                     ->withPivot('user_create_id', 'user_edit_id')
                     ->withTimestamps();

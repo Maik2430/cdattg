@@ -72,36 +72,36 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                 'after:fecha_inicio'
             ],
 
-            // Validación de relaciones opcionales
+            // Validación de relaciones obligatorias
             'instructor_id' => [
-                'nullable',
+                'required',
                 'integer',
                 'exists:instructors,id'
             ],
             'ambiente_id' => [
-                'nullable',
+                'required',
                 'integer',
                 'exists:ambientes,id'
             ],
             'modalidad_formacion_id' => [
-                'nullable',
+                'required',
                 'integer',
                 'exists:parametros,id'
             ],
             'sede_id' => [
-                'nullable',
+                'required',
                 'integer',
                 'exists:sedes,id'
             ],
             'jornada_id' => [
-                'nullable',
+                'required',
                 'integer',
                 'exists:jornadas_formacion,id'
             ],
 
             // Validación de campos numéricos
             'total_horas' => [
-                'nullable',
+                'required',
                 'integer',
                 'min:1',
                 'max:9999'
@@ -109,7 +109,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
 
             // Validación del estado
             'status' => [
-                'nullable',
+                'required',
                 'boolean'
             ],
 
@@ -174,31 +174,38 @@ class StoreFichaCaracterizacionRequest extends FormRequest
             'fecha_fin.after' => 'La fecha de fin debe ser posterior a la fecha de inicio.',
 
             // Mensajes para instructor
+            'instructor_id.required' => 'El instructor principal es obligatorio.',
             'instructor_id.integer' => 'El instructor debe ser un número entero.',
             'instructor_id.exists' => 'El instructor seleccionado no existe.',
 
             // Mensajes para ambiente
+            'ambiente_id.required' => 'El ambiente es obligatorio.',
             'ambiente_id.integer' => 'El ambiente debe ser un número entero.',
             'ambiente_id.exists' => 'El ambiente seleccionado no existe.',
 
             // Mensajes para modalidad de formación
+            'modalidad_formacion_id.required' => 'La modalidad de formación es obligatoria.',
             'modalidad_formacion_id.integer' => 'La modalidad de formación debe ser un número entero.',
             'modalidad_formacion_id.exists' => 'La modalidad de formación seleccionada no existe.',
 
             // Mensajes para sede
+            'sede_id.required' => 'La sede es obligatoria.',
             'sede_id.integer' => 'La sede debe ser un número entero.',
             'sede_id.exists' => 'La sede seleccionada no existe.',
 
             // Mensajes para jornada
+            'jornada_id.required' => 'La jornada de formación es obligatoria.',
             'jornada_id.integer' => 'La jornada debe ser un número entero.',
             'jornada_id.exists' => 'La jornada seleccionada no existe.',
 
             // Mensajes para total de horas
+            'total_horas.required' => 'El total de horas es obligatorio.',
             'total_horas.integer' => 'El total de horas debe ser un número entero.',
             'total_horas.min' => 'El total de horas debe ser al menos 1.',
             'total_horas.max' => 'El total de horas no puede exceder 9999.',
 
             // Mensajes para estado
+            'status.required' => 'El estado es obligatorio.',
             'status.boolean' => 'El estado debe ser verdadero o falso.',
 
             // Mensajes para días de formación

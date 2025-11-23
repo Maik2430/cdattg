@@ -670,6 +670,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('=== FORMULARIO INTERCEPTADO ===');
             console.log('Formulario válido:', this.checkValidity());
             
+            // Habilitar ambiente_id si hay una sede seleccionada para que se valide correctamente
+            const sedeId = $('#sede_id').val();
+            const ambienteSelect = $('#ambiente_id');
+            if (sedeId && ambienteSelect.prop('disabled')) {
+                ambienteSelect.prop('disabled', false);
+            }
+            
             // Validar fechas
             validateDates();
             

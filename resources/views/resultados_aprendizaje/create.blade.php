@@ -32,10 +32,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="competencia_id" class="form-label fw-bold">Competencia Asociada</label>
+                        <label for="competencia_id" class="form-label fw-bold">Competencia Asociada <span class="text-danger">*</span></label>
                         <select name="competencia_id" id="competencia_id"
-                            class="form-control @error('competencia_id') is-invalid @enderror">
-                            <option value="">Seleccione una competencia (opcional)</option>
+                            class="form-control @error('competencia_id') is-invalid @enderror" required>
+                            <option value="">Seleccione una competencia</option>
                             @foreach($competencias as $competencia)
                                 <option value="{{ $competencia->id }}"
                                     {{ old('competencia_id') == $competencia->id ? 'selected' : '' }}>
@@ -50,8 +50,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="status" class="form-label fw-bold">Estado</label>
-                        <select name="status" id="status" class="form-control @error('status') is-invalid @enderror">
+                        <label for="status" class="form-label fw-bold">Estado <span class="text-danger">*</span></label>
+                        <select name="status" id="status" class="form-control @error('status') is-invalid @enderror" required>
                             <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Activo</option>
                             <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactivo</option>
                         </select>

@@ -16,6 +16,13 @@ return new class extends Migration
         
         // 1. Cambiar foreign key de fichas_caracterizacion.jornada_id a parametros_temas
         if (Schema::hasTable('fichas_caracterizacion') && Schema::hasColumn('fichas_caracterizacion', 'jornada_id')) {
+            // Primero hacer la columna nullable (si no lo es ya)
+            try {
+                DB::statement('ALTER TABLE fichas_caracterizacion MODIFY jornada_id BIGINT UNSIGNED NULL');
+            } catch (\Exception $e) {
+                // Continuar si ya es nullable o si hay otro error
+            }
+            
             // Eliminar foreign key antigua si existe
             try {
                 DB::statement('ALTER TABLE fichas_caracterizacion DROP FOREIGN KEY fichas_caracterizacion_jornada_id_foreign');
@@ -52,6 +59,10 @@ return new class extends Migration
         
         // 2. Cambiar foreign key de caracterizacion_programas.jornada_id a parametros_temas
         if (Schema::hasTable('caracterizacion_programas') && Schema::hasColumn('caracterizacion_programas', 'jornada_id')) {
+            // Primero hacer la columna nullable
+            DB::statement('ALTER TABLE caracterizacion_programas MODIFY jornada_id BIGINT UNSIGNED NULL');
+            
+            // Eliminar foreign key antigua
             try {
                 DB::statement('ALTER TABLE caracterizacion_programas DROP FOREIGN KEY caracterizacion_programas_jornada_id_foreign');
             } catch (\Exception $e) {
@@ -68,6 +79,7 @@ return new class extends Migration
                 }
             }
             
+            // Agregar nueva foreign key a parametros_temas
             try {
                 DB::statement('ALTER TABLE caracterizacion_programas 
                     ADD CONSTRAINT caracterizacion_programas_jornada_id_foreign 
@@ -80,6 +92,10 @@ return new class extends Migration
         
         // 3. Cambiar foreign key de complementarios_ofertados.jornada_id a parametros_temas
         if (Schema::hasTable('complementarios_ofertados') && Schema::hasColumn('complementarios_ofertados', 'jornada_id')) {
+            // Primero hacer la columna nullable
+            DB::statement('ALTER TABLE complementarios_ofertados MODIFY jornada_id BIGINT UNSIGNED NULL');
+            
+            // Eliminar foreign key antigua
             try {
                 DB::statement('ALTER TABLE complementarios_ofertados DROP FOREIGN KEY complementarios_ofertados_jornada_id_foreign');
             } catch (\Exception $e) {
@@ -96,6 +112,7 @@ return new class extends Migration
                 }
             }
             
+            // Agregar nueva foreign key a parametros_temas
             try {
                 DB::statement('ALTER TABLE complementarios_ofertados 
                     ADD CONSTRAINT complementarios_ofertados_jornada_id_foreign 
@@ -108,6 +125,10 @@ return new class extends Migration
         
         // 4. Cambiar foreign key de ambiente_instructor_ficha.jornada_id a parametros_temas
         if (Schema::hasTable('ambiente_instructor_ficha') && Schema::hasColumn('ambiente_instructor_ficha', 'jornada_id')) {
+            // Primero hacer la columna nullable
+            DB::statement('ALTER TABLE ambiente_instructor_ficha MODIFY jornada_id BIGINT UNSIGNED NULL');
+            
+            // Eliminar foreign key antigua
             try {
                 DB::statement('ALTER TABLE ambiente_instructor_ficha DROP FOREIGN KEY ambiente_instructor_ficha_jornada_id_foreign');
             } catch (\Exception $e) {
@@ -124,6 +145,7 @@ return new class extends Migration
                 }
             }
             
+            // Agregar nueva foreign key a parametros_temas
             try {
                 DB::statement('ALTER TABLE ambiente_instructor_ficha 
                     ADD CONSTRAINT ambiente_instructor_ficha_jornada_id_foreign 

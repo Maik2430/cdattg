@@ -66,7 +66,7 @@
                         <div class="col-md-3">
                                         <div class="info-item">
                                             <strong class="text-muted">Jornada:</strong><br>
-                                            <span class="text-dark font-weight-medium">{{ $ficha->jornadaFormacion->jornada ?? 'No asignada' }}</span>
+                                            <span class="text-dark font-weight-medium">{{ $ficha->jornadaFormacion->parametro->name ?? 'No asignada' }}</span>
                                         </div>
                         </div>
                         <div class="col-md-3">
@@ -126,7 +126,7 @@
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-info-circle mr-2"></i>
                                             <div>
-                            <strong>Jornada:</strong> {{ $ficha->jornadaFormacion->jornada }}<br>
+                            <strong>Jornada:</strong> {{ $ficha->jornadaFormacion->parametro->name ?? 'N/A' }}<br>
                                     <strong>Nota:</strong> Los horarios se configurarán automáticamente según la jornada seleccionada cuando marque los días de formación.
                                             </div>
                                         </div>
@@ -337,7 +337,7 @@
         
         // Jornada de la ficha para generar horarios automáticamente
         @if($ficha->jornadaFormacion)
-            window.fichaJornadaNombre = @json($ficha->jornadaFormacion->jornada);
+            window.fichaJornadaNombre = @json($ficha->jornadaFormacion->parametro->name ?? null);
             window.fichaJornadaId = {{ $ficha->jornada_id }};
         @else
             window.fichaJornadaNombre = null;

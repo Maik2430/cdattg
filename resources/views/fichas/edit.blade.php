@@ -215,7 +215,7 @@
                                         <option value="">Seleccione una jornada...</option>
                                         @foreach($jornadas as $jornada)
                                             <option value="{{ $jornada->id }}" {{ old('jornada_id', $ficha->jornada_id) == $jornada->id ? 'selected' : '' }}>
-                                                {{ $jornada->jornada }}
+                                                {{ $jornada->parametro->name ?? $jornada->name ?? 'N/A' }}
                                             </option>
                                         @endforeach
                                     </select>

@@ -36,10 +36,14 @@ class AsignacionInstructorService
             }
 
             // Preparar datos para validaciones
+            $redConocimientoId = $ficha->programaFormacion->red_conocimiento_id ?? null;
+            $instructorLiderId = $ficha->instructor_id;
             $datosFicha = [
                 'fecha_inicio' => $ficha->fecha_inicio,
                 'fecha_fin' => $ficha->fecha_fin,
                 'especialidad_requerida' => $ficha->programaFormacion->redConocimiento->nombre ?? null,
+                'especialidad_requerida_id' => $redConocimientoId,
+                'instructor_lider_id' => $instructorLiderId,
                 'regional_id' => $ficha->regional_id,
                 'jornada_id' => $ficha->jornada_id,
                 'horas_semanales' => 0
@@ -703,22 +707,27 @@ class AsignacionInstructorService
     public function obtenerInstructoresDisponibles(int $fichaId): array
     {
         try {
-            $ficha = FichaCaracterizacion::with(['programaFormacion.redConocimiento', 'diasFormacion', 'sede.regional', 'jornadaFormacion.parametro'])->findOrFail($fichaId);
+            $ficha = FichaCaracterizacion::with(['programaFormacion.redConocimiento', 'diasFormacion', 'sede.regional', 'jornadaFormacion.parametro', 'modalidadFormacion'])->findOrFail($fichaId);
             
             $regionalId = $ficha->sede->regional_id ?? null;
             $redConocimientoId = $ficha->programaFormacion->red_conocimiento_id ?? null;
             $instructorLiderId = $ficha->instructor_id;
+            $fichaJornadaId = $ficha->jornada_id;
+            $fichaModalidadId = $ficha->modalidad_formacion_id;
             
             $datosFicha = [
                 'fecha_inicio' => $ficha->fecha_inicio,
                 'fecha_fin' => $ficha->fecha_fin,
                 'especialidad_requerida' => $ficha->programaFormacion->redConocimiento->nombre ?? null,
+                'especialidad_requerida_id' => $redConocimientoId,
+                'instructor_lider_id' => $instructorLiderId,
                 'regional_id' => $regionalId,
-                'jornada_id' => $ficha->jornada_id,
+                'jornada_id' => $fichaJornadaId,
+                'modalidad_id' => $fichaModalidadId,
                 'horas_semanales' => 0
             ];
 
-            $instructores = Instructor::with(['persona', 'regional'])
+            $instructores = Instructor::with(['persona', 'regional', 'jornadas.parametro', 'modalidades.parametro'])
                 ->where('status', true);
             
             // Filtrar por regional si existe
@@ -726,6 +735,9 @@ class AsignacionInstructorService
                 $instructores->where('regional_id', $regionalId);
             }
             
+            // SOLO FILTRAR POR RED DE CONOCIMIENTO Y REGIONAL
+            // Mostrar todos los instructores con la misma red de conocimiento para que puedan ser modificados
+            // pero solo habilitar los que pasen todas las validaciones
             // Filtrar por red de conocimiento si existe
             // Incluir siempre al instructor líder aunque no tenga la especialidad
             if ($redConocimientoId !== null) {
@@ -743,27 +755,79 @@ class AsignacionInstructorService
                           ->orWhereJsonContains('especialidades->secundarias', $redConocimientoId);
                     });
                 });
+                Log::info('Filtro por red de conocimiento aplicado', [
+                    'red_conocimiento_id' => $redConocimientoId,
+                    'instructor_lider_id' => $instructorLiderId
+                ]);
+            } else {
+                Log::info('No se aplicó filtro por red de conocimiento (red_conocimiento_id es null)');
             }
+            
+            // NO FILTRAR POR JORNADA NI MODALIDAD AQUÍ
+            // Estos filtros se aplicarán en las validaciones individuales
             
             $instructores = $instructores->get();
 
-            Log::info('Instructores encontrados para ficha', [
+            Log::info('Instructores encontrados para ficha con filtros', [
                 'ficha_id' => $fichaId,
                 'regional_id' => $regionalId,
                 'red_conocimiento_id' => $redConocimientoId,
+                'jornada_id_ficha' => $fichaJornadaId,
+                'modalidad_id_ficha' => $fichaModalidadId,
                 'instructor_lider_id' => $instructorLiderId,
-                'total_instructores' => $instructores->count(),
-                'instructores' => $instructores->pluck('id')->toArray()
+                'total_instructores_filtrados' => $instructores->count(),
+                'instructores_filtrados_ids' => $instructores->pluck('id')->toArray(),
+                'instructores_con_detalles' => $instructores->map(function($inst) {
+                    return [
+                        'id' => $inst->id,
+                        'nombre' => $inst->persona->nombre_completo ?? 'N/A',
+                        'regional_id' => $inst->regional_id,
+                        'jornadas_json' => $inst->jornadas,
+                        'jornadas_relacion_count' => $inst->jornadas()->count(),
+                        'especialidades' => $inst->especialidades,
+                        'status' => $inst->status
+                    ];
+                })->toArray()
             ]);
 
             $disponibles = [];
             foreach ($instructores as $instructor) {
+                // Verificar disponibilidad general
                 $disponibilidad = $this->businessRulesService->verificarDisponibilidad($instructor, $datosFicha, $fichaId);
                 $validacionSENA = $this->businessRulesService->validarReglasSENA($instructor, $datosFicha);
                 
-                $esDisponible = $disponibilidad['disponible'] && $validacionSENA['valido'];
+                // Verificar jornada
+                $tieneJornada = true;
+                $razonJornada = null;
+                if ($fichaJornadaId && $instructor->id != $instructorLiderId) {
+                    $tieneJornadaRelacion = $instructor->jornadas()->where('parametros_temas.id', $fichaJornadaId)->exists();
+                    $tieneJornadaJSON = in_array($fichaJornadaId, $instructor->jornadas ?? []);
+                    $tieneJornada = $tieneJornadaRelacion || $tieneJornadaJSON;
+                    if (!$tieneJornada) {
+                        $jornadaNombre = $ficha->jornadaFormacion->parametro->name ?? "Jornada ID: {$fichaJornadaId}";
+                        $razonJornada = "No tiene la jornada requerida: {$jornadaNombre}";
+                    }
+                }
                 
-                // INSTRUCTOR LÍDER: Siempre marcarlo como disponible para que aparezca en la lista
+                // Verificar modalidad
+                $tieneModalidad = true;
+                $razonModalidad = null;
+                if ($fichaModalidadId && $instructor->id != $instructorLiderId) {
+                    $tieneModalidad = $instructor->modalidades()->where('parametros_temas.parametro_id', $fichaModalidadId)->exists();
+                    if (!$tieneModalidad) {
+                        $modalidadNombre = $ficha->modalidadFormacion->name ?? "Modalidad ID: {$fichaModalidadId}";
+                        $razonModalidad = "No tiene la modalidad requerida: {$modalidadNombre}";
+                    }
+                }
+                
+                // El instructor pasa TODAS las validaciones si:
+                // 1. Disponibilidad general OK
+                // 2. Validación SENA OK
+                // 3. Tiene la jornada requerida (o es el líder)
+                // 4. Tiene la modalidad requerida (o es el líder)
+                $esDisponible = $disponibilidad['disponible'] && $validacionSENA['valido'] && $tieneJornada && $tieneModalidad;
+                
+                // INSTRUCTOR LÍDER: Siempre marcarlo como disponible y habilitado
                 if ($instructor->id == $ficha->instructor_id) {
                     $esDisponible = true; // Forzar disponibilidad para instructor líder
                     Log::info('🔍 INSTRUCTOR LÍDER FORZADO COMO DISPONIBLE', [
@@ -775,10 +839,32 @@ class AsignacionInstructorService
                     ]);
                 }
                 
+                // Recolectar todas las razones por las que no está disponible
+                $razonesNoDisponible = array_merge($disponibilidad['razones'], $validacionSENA['errores']);
+                if ($razonJornada) {
+                    $razonesNoDisponible[] = $razonJornada;
+                }
+                if ($razonModalidad) {
+                    $razonesNoDisponible[] = $razonModalidad;
+                }
+                
+                // Crear mensaje breve de por qué no está disponible
+                $mensajeNoDisponible = null;
+                if (!$esDisponible && !empty($razonesNoDisponible)) {
+                    // Tomar las primeras 2 razones más importantes
+                    $razonesPrincipales = array_slice($razonesNoDisponible, 0, 2);
+                    $mensajeNoDisponible = implode('; ', $razonesPrincipales);
+                    if (count($razonesNoDisponible) > 2) {
+                        $mensajeNoDisponible .= '...';
+                    }
+                }
+                
                 $disponibles[] = [
                     'instructor' => $instructor,
                     'disponible' => $esDisponible,
-                    'razones_no_disponible' => array_merge($disponibilidad['razones'], $validacionSENA['errores']),
+                    'habilitado' => $esDisponible, // Puede ser seleccionado solo si pasa todas las validaciones
+                    'razones_no_disponible' => $razonesNoDisponible,
+                    'mensaje_no_disponible' => $mensajeNoDisponible, // Mensaje breve para mostrar en el select
                     'conflictos' => $disponibilidad['conflictos'] ?? [],
                     'advertencias' => $validacionSENA['advertencias'] ?? []
                 ];
@@ -787,7 +873,16 @@ class AsignacionInstructorService
             Log::info('Instructores disponibles procesados', [
                 'ficha_id' => $fichaId,
                 'total_disponibles' => count($disponibles),
-                'disponibles_ids' => array_map(fn($d) => $d['instructor']->id, $disponibles)
+                'disponibles_ids' => array_map(fn($d) => $d['instructor']->id, $disponibles),
+                'disponibles_con_detalles' => array_map(function($d) {
+                    return [
+                        'id' => $d['instructor']->id,
+                        'nombre' => $d['instructor']->persona->nombre_completo ?? 'N/A',
+                        'disponible' => $d['disponible'],
+                        'razones_no_disponible' => $d['razones_no_disponible'] ?? [],
+                        'advertencias' => $d['advertencias'] ?? []
+                    ];
+                }, $disponibles)
             ]);
 
             return $disponibles;

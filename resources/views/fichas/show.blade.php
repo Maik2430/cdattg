@@ -65,7 +65,7 @@
                                         </tr>
                                         <tr>
                                             <th class="py-3">Jornada</th>
-                                            <td class="py-3">{{ $ficha->jornadaFormacion->jornada ?? 'N/A' }}</td>
+                                            <td class="py-3">{{ $ficha->jornadaFormacion->parametro->name ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <th class="py-3">Ambiente</th>

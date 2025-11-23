@@ -177,3 +177,55 @@
         </form>
     </div>
 @endif
+
+@if (!isset($inAccordion) || !$inAccordion)
+    @section('js')
+        @vite(['resources/js/pages/competencias-form.js'])
+        <style>
+            /* Estilos inline para asegurar que el contorno sea visible */
+            .select2-container--bootstrap-5 .select2-selection,
+            .select2-container--bootstrap-5 .select2-selection--multiple {
+                border: 1px solid #ced4da !important;
+            }
+            
+            .select2-container--bootstrap-5.select2-container--focus .select2-selection,
+            .select2-container--bootstrap-5.select2-container--focus .select2-selection--multiple {
+                border-color: #80bdff !important;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+            }
+            
+            .select2-container.is-invalid .select2-selection,
+            .select2-container.is-invalid .select2-selection--multiple,
+            .select2-container--bootstrap-5.is-invalid .select2-selection,
+            .select2-container--bootstrap-5.is-invalid .select2-selection--multiple {
+                border: 1px solid #dc3545 !important;
+                border-color: #dc3545 !important;
+            }
+        </style>
+    @endsection
+@else
+    @push('js')
+        @vite(['resources/js/pages/competencias-form.js'])
+        <style>
+            /* Estilos inline para asegurar que el contorno sea visible */
+            .select2-container--bootstrap-5 .select2-selection,
+            .select2-container--bootstrap-5 .select2-selection--multiple {
+                border: 1px solid #ced4da !important;
+            }
+            
+            .select2-container--bootstrap-5.select2-container--focus .select2-selection,
+            .select2-container--bootstrap-5.select2-container--focus .select2-selection--multiple {
+                border-color: #80bdff !important;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+            }
+            
+            .select2-container.is-invalid .select2-selection,
+            .select2-container.is-invalid .select2-selection--multiple,
+            .select2-container--bootstrap-5.is-invalid .select2-selection,
+            .select2-container--bootstrap-5.is-invalid .select2-selection--multiple {
+                border: 1px solid #dc3545 !important;
+                border-color: #dc3545 !important;
+            }
+        </style>
+    @endpush
+@endif

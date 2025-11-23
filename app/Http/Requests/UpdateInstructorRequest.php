@@ -32,8 +32,8 @@ class UpdateInstructorRequest extends FormRequest
             'regional_id' => 'required|integer|exists:regionals,id',
             'centro_formacion_id' => 'nullable|integer|exists:centro_formacions,id',
             'tipo_vinculacion_id' => 'nullable|integer|exists:parametros_temas,id',
-            'jornadas' => 'nullable|array',
-            'jornadas.*' => 'exists:parametros_temas,id',
+            'jornadas' => 'required|array|min:1',
+            'jornadas.*' => 'required|exists:parametros_temas,id',
             'fecha_ingreso_sena' => 'nullable|date|before_or_equal:today',
             'status' => 'required|boolean',
             
@@ -64,8 +64,8 @@ class UpdateInstructorRequest extends FormRequest
             'habilidades_pedagogicas.*' => 'in:virtual,presencial,dual',
             
             // Especialidades
-            'especialidades' => 'nullable|array',
-            'especialidades.*' => 'exists:red_conocimientos,id',
+            'especialidades' => 'required|array|min:1',
+            'especialidades.*' => 'required|exists:red_conocimientos,id',
             
             // Información administrativa
             'numero_contrato' => 'nullable|string|max:100',
@@ -89,6 +89,10 @@ class UpdateInstructorRequest extends FormRequest
             'regional_id.exists' => 'La regional seleccionada no es válida.',
             'centro_formacion_id.exists' => 'El centro de formación seleccionado no es válido.',
             'tipo_vinculacion_id.exists' => 'El tipo de vinculación seleccionado no es válido.',
+            'jornadas.required' => 'Debe seleccionar al menos una jornada de trabajo.',
+            'jornadas.array' => 'Las jornadas deben ser una lista.',
+            'jornadas.min' => 'Debe seleccionar al menos una jornada de trabajo.',
+            'jornadas.*.required' => 'Cada jornada seleccionada es obligatoria.',
             'jornadas.*.exists' => 'Una o más jornadas seleccionadas no son válidas.',
             'fecha_ingreso_sena.before_or_equal' => 'La fecha de ingreso no puede ser posterior a hoy.',
             'status.required' => 'El estado es obligatorio.',
@@ -97,6 +101,10 @@ class UpdateInstructorRequest extends FormRequest
             'nivel_academico_id.exists' => 'El nivel académico seleccionado no es válido.',
             'idiomas.*.nivel.in' => 'El nivel de idioma debe ser: básico, intermedio, avanzado o nativo.',
             'habilidades_pedagogicas.*.in' => 'Las habilidades pedagógicas deben ser: virtual, presencial o dual.',
+            'especialidades.required' => 'Debe seleccionar al menos una especialidad (red de conocimiento).',
+            'especialidades.array' => 'Las especialidades deben ser una lista.',
+            'especialidades.min' => 'Debe seleccionar al menos una especialidad (red de conocimiento).',
+            'especialidades.*.required' => 'Cada especialidad seleccionada es obligatoria.',
             'especialidades.*.exists' => 'Una o más especialidades seleccionadas no son válidas.',
             'fecha_fin_contrato.after_or_equal' => 'La fecha de fin de contrato debe ser posterior o igual a la fecha de inicio.'
         ];

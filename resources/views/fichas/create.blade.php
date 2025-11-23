@@ -70,9 +70,9 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="sede_id" class="form-label fw-bold">Sede</label>
+                        <label for="sede_id" class="form-label fw-bold">Sede <span class="text-danger">*</span></label>
                         <select class="form-control select2 @error('sede_id') is-invalid @enderror" id="sede_id"
-                            name="sede_id" data-placeholder="Seleccione una sede...">
+                            name="sede_id" data-placeholder="Seleccione una sede..." required>
                             <option value="">Seleccione una sede...</option>
                             @foreach($sedes ?? [] as $sede)
                                 <option value="{{ $sede->id }}" {{ old('sede_id') == $sede->id ? 'selected' : '' }}>
@@ -88,9 +88,9 @@
 
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="instructor_id" class="form-label fw-bold">Instructor Principal</label>
+                        <label for="instructor_id" class="form-label fw-bold">Instructor Principal <span class="text-danger">*</span></label>
                         <select class="form-control select2 @error('instructor_id') is-invalid @enderror" id="instructor_id"
-                            name="instructor_id" data-placeholder="Seleccione un instructor...">
+                            name="instructor_id" data-placeholder="Seleccione un instructor..." required>
                             <option value="">Seleccione un instructor...</option>
                             @foreach($instructores ?? [] as $instructor)
                                 <option value="{{ $instructor->id }}"
@@ -115,10 +115,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="modalidad_formacion_id" class="form-label fw-bold">Modalidad de Formación</label>
+                        <label for="modalidad_formacion_id" class="form-label fw-bold">Modalidad de Formación <span class="text-danger">*</span></label>
                         <select class="form-control select2 @error('modalidad_formacion_id') is-invalid @enderror"
                             id="modalidad_formacion_id" name="modalidad_formacion_id"
-                            data-placeholder="Seleccione una modalidad...">
+                            data-placeholder="Seleccione una modalidad..." required>
                             <option value="">Seleccione una modalidad...</option>
                             @foreach($modalidades ?? [] as $modalidad)
                                 <option value="{{ $modalidad->id }}"
@@ -135,13 +135,13 @@
 
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="jornada_id" class="form-label fw-bold">Jornada de Formación</label>
+                        <label for="jornada_id" class="form-label fw-bold">Jornada de Formación <span class="text-danger">*</span></label>
                         <select class="form-control select2 @error('jornada_id') is-invalid @enderror" id="jornada_id"
-                            name="jornada_id" data-placeholder="Seleccione una jornada...">
+                            name="jornada_id" data-placeholder="Seleccione una jornada..." required>
                             <option value="">Seleccione una jornada...</option>
                             @foreach($jornadas ?? [] as $jornada)
                                 <option value="{{ $jornada->id }}" {{ old('jornada_id') == $jornada->id ? 'selected' : '' }}>
-                                    {{ $jornada->jornada }}
+                                    {{ $jornada->parametro->name ?? $jornada->name ?? 'N/A' }}
                                 </option>
                             @endforeach
                         </select>
@@ -155,9 +155,9 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="ambiente_id" class="form-label fw-bold">Ambiente</label>
+                        <label for="ambiente_id" class="form-label fw-bold">Ambiente <span class="text-danger">*</span></label>
                         <select class="form-control select2 @error('ambiente_id') is-invalid @enderror" id="ambiente_id"
-                            name="ambiente_id" data-placeholder="Seleccione un ambiente..." disabled>
+                            name="ambiente_id" data-placeholder="Seleccione un ambiente..." disabled required>
                             <option value="">Primero seleccione una sede...</option>
                         </select>
                         @error('ambiente_id')
@@ -168,10 +168,10 @@
 
                 <div class="col-md-6">
                     <div class="form-group mb-3">
-                        <label for="total_horas" class="form-label fw-bold">Total de Horas</label>
+                        <label for="total_horas" class="form-label fw-bold">Total de Horas <span class="text-danger">*</span></label>
                         <input type="number" class="form-control @error('total_horas') is-invalid @enderror"
                             id="total_horas" name="total_horas" value="{{ old('total_horas') }}" min="1" max="9999"
-                            placeholder="Ej: 120">
+                            placeholder="Ej: 120" required>
                         @error('total_horas')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -227,9 +227,9 @@
                     <div class="form-group mb-3">
                         <div class="custom-control custom-switch">
                             <input type="checkbox" class="custom-control-input" id="status" name="status" value="1"
-                                {{ old('status', '1') ? 'checked' : '' }}>
+                                {{ old('status', '1') ? 'checked' : '' }} required>
                             <label class="custom-control-label fw-bold" for="status">
-                                Ficha Activa
+                                Ficha Activa <span class="text-danger">*</span>
                             </label>
                         </div>
                     </div>

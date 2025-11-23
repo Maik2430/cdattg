@@ -108,7 +108,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Jornada(s) de Trabajo</label>
+                                    <label class="form-label required-field">Jornada(s) de Trabajo <span class="text-danger">*</span></label>
                                     @php
                                         $jornadasCount = isset($jornadasTrabajo) ? $jornadasTrabajo->count() : 0;
                                     @endphp
@@ -444,8 +444,8 @@
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="especialidades" class="form-label">Especialidades (Redes de Conocimiento)</label>
-                                    <select wire:model="especialidades" id="especialidades" class="form-control" multiple>
+                                    <label for="especialidades" class="form-label required-field">Especialidades (Redes de Conocimiento) <span class="text-danger">*</span></label>
+                                    <select wire:model="especialidades" id="especialidades" class="form-control @error('especialidades') is-invalid @enderror" multiple required>
                                         @foreach($especialidadesList as $especialidad)
                                             <option value="{{ $especialidad->id }}">{{ $especialidad->nombre }}</option>
                                         @endforeach

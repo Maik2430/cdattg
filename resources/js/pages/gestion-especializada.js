@@ -624,7 +624,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         data.instructores.forEach(instructor => {
                             const option = document.createElement('option');
                             option.value = instructor.id;
-                            option.textContent = `${instructor.persona.primer_nombre} ${instructor.persona.primer_apellido} (${instructor.persona.numero_documento})`;
+                            
+                            // Construir el texto de la opción
+                            let textoOpcion = `${instructor.persona.primer_nombre} ${instructor.persona.primer_apellido} (${instructor.persona.numero_documento})`;
+                            
+                            // Si no está habilitado, agregar mensaje y deshabilitar
+                            if (!instructor.habilitado) {
+                                option.disabled = true;
+                                if (instructor.mensaje_no_disponible) {
+                                    textoOpcion += ` - ${instructor.mensaje_no_disponible}`;
+                                } else if (instructor.razones_no_disponible && instructor.razones_no_disponible.length > 0) {
+                                    // Tomar las primeras 2 razones
+                                    const razones = instructor.razones_no_disponible.slice(0, 2);
+                                    textoOpcion += ` - ${razones.join('; ')}`;
+                                }
+                                // Agregar clase para estilo visual
+                                option.classList.add('text-muted');
+                            }
+                            
+                            option.textContent = textoOpcion;
                             select.appendChild(option);
                         });
 

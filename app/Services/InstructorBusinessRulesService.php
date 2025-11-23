@@ -73,8 +73,8 @@ class InstructorBusinessRulesService
             //         . "h semanales asignadas en la misma jornada";
             // }
 
-            // NOTA: Validación de especialidades deshabilitada por solicitud del usuario
-            // No se valida la especialidad del instructor para la ficha
+            // Validar especialidad del instructor
+            $this->evaluarEspecialidadRequerida($instructor, $datosFicha, $resultado);
         } catch (\Exception $e) {
             Log::error('Error verificando disponibilidad del instructor', [
                 'instructor_id' => $instructor->id,
@@ -696,6 +696,57 @@ class InstructorBusinessRulesService
 
         if (($instructor->anos_experiencia ?? 0) < 3) {
             $resultado['advertencias'][] = 'Instructor con poca experiencia, considere asignar fichas básicas';
+        }
+    }
+
+    /**
+     * Evaluar si el instructor tiene la especialidad requerida
+     */
+    private function evaluarEspecialidadRequerida(Instructor $instructor, array $datosFicha, array &$resultado): void
+    {
+        $especialidadRequeridaId = $datosFicha['especialidad_requerida_id'] ?? null;
+        $instructorLiderId = $datosFicha['instructor_lider_id'] ?? null;
+        
+        // Si no hay especialidad requerida, cualquier instructor puede tomar la ficha
+        if (!$especialidadRequeridaId) {
+            return;
+        }
+
+        // El instructor líder siempre pasa la validación de especialidad
+        if ($instructorLiderId && $instructor->id == $instructorLiderId) {
+            return;
+        }
+
+        // Obtener especialidades del instructor
+        $especialidades = $instructor->especialidades ?? [];
+        
+        if (empty($especialidades)) {
+            $resultado['disponible'] = false;
+            $especialidadNombre = $datosFicha['especialidad_requerida'] ?? 'especialidad requerida';
+            $resultado['razones'][] = "El instructor no tiene especialidades asignadas. La ficha requiere: {$especialidadNombre}";
+            return;
+        }
+
+        // Verificar si tiene la especialidad requerida (principal o secundaria)
+        $especialidadPrincipal = $especialidades['principal'] ?? null;
+        $especialidadesSecundarias = $especialidades['secundarias'] ?? [];
+        
+        $tieneEspecialidad = false;
+        
+        // Verificar si la especialidad requerida coincide con la principal
+        if ($especialidadPrincipal == $especialidadRequeridaId) {
+            $tieneEspecialidad = true;
+        }
+        
+        // Verificar si está en las secundarias
+        if (!$tieneEspecialidad && is_array($especialidadesSecundarias)) {
+            $tieneEspecialidad = in_array($especialidadRequeridaId, $especialidadesSecundarias);
+        }
+
+        if (!$tieneEspecialidad) {
+            $resultado['disponible'] = false;
+            $especialidadNombre = $datosFicha['especialidad_requerida'] ?? 'especialidad requerida';
+            $resultado['razones'][] = "El instructor no tiene la especialidad requerida para esta ficha. Requerida: {$especialidadNombre}";
         }
     }
 }

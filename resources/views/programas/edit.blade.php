@@ -81,10 +81,12 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="red_conocimiento_id" class="form-label font-weight-bold">Red de Conocimiento</label>
+                                        <label for="red_conocimiento_id" class="form-label font-weight-bold">
+                                            Red de Conocimiento <span class="text-danger">*</span>
+                                        </label>
                                         <select name="red_conocimiento_id" id="red_conocimiento_id" class="form-control @error('red_conocimiento_id') is-invalid @enderror" required>
                                             <option value="">Seleccione una red de conocimiento</option>
-                                            @foreach(\App\Models\RedConocimiento::all() as $red)
+                                            @foreach(\App\Models\RedConocimiento::where('status', true)->orderBy('nombre')->get() as $red)
                                                 <option value="{{ $red->id }}" {{ old('red_conocimiento_id', $programa->red_conocimiento_id) == $red->id ? 'selected' : '' }}>
                                                     {{ $red->nombre }}
                                                 </option>

@@ -202,7 +202,7 @@ class CreateInstructor extends Component
                 $datos['especialidades'] = $this->especialidades;
             }
             
-            // Preparar jornadas (array de IDs) - mapear desde parametro_temas a jornadas_formacion
+            // Preparar jornadas (array de IDs) - guardar en campo JSON y tabla pivot
             $jornadasIds = [];
             if (!empty($this->jornadas)) {
                 // Obtener los parametro_temas seleccionados
@@ -214,6 +214,11 @@ class CreateInstructor extends Component
                 foreach ($parametrosTemas as $parametroTema) {
                     $jornadasIds[] = $parametroTema->id;
                 }
+                
+                // Guardar jornadas en el campo JSON
+                $datos['jornadas'] = $jornadasIds;
+            } else {
+                $datos['jornadas'] = null;
             }
             
             // Preparar arrays JSON - campos dinámicos que vienen como arrays
@@ -345,8 +350,8 @@ class CreateInstructor extends Component
             'regional_id' => 'required|exists:regionals,id',
             'centro_formacion_id' => 'nullable|exists:centro_formacions,id',
             'tipo_vinculacion_id' => 'nullable|exists:parametros_temas,id',
-            'jornadas' => 'nullable|array',
-            'jornadas.*' => 'exists:parametros_temas,id',
+            'jornadas' => 'required|array|min:1',
+            'jornadas.*' => 'required|exists:parametros_temas,id',
             'fecha_ingreso_sena' => 'nullable|date|before_or_equal:today',
             'anos_experiencia' => 'nullable|integer|min:0|max:50',
             'experiencia_instructor_meses' => 'nullable|integer|min:0',
@@ -370,14 +375,34 @@ class CreateInstructor extends Component
             'idiomas.*.nivel' => 'nullable|string|in:básico,intermedio,avanzado,nativo',
             'habilidades_pedagogicas' => 'nullable|array',
             'habilidades_pedagogicas.*' => 'in:virtual,presencial,dual',
-            'especialidades' => 'nullable|array',
-            'especialidades.*' => 'exists:red_conocimientos,id',
+            'especialidades' => 'required|array|min:1',
+            'especialidades.*' => 'required|exists:red_conocimientos,id',
             'numero_contrato' => 'nullable|string|max:100',
             'fecha_inicio_contrato' => 'nullable|date',
             'fecha_fin_contrato' => 'nullable|date|after_or_equal:fecha_inicio_contrato',
             'supervisor_contrato' => 'nullable|string|max:255',
             'eps' => 'nullable|string|max:100',
             'arl' => 'nullable|string|max:100',
+        ];
+    }
+    
+    protected function messages(): array
+    {
+        return [
+            'persona_id.required' => 'La persona es obligatoria.',
+            'persona_id.exists' => 'La persona seleccionada no existe.',
+            'regional_id.required' => 'La regional es obligatoria.',
+            'regional_id.exists' => 'La regional seleccionada no existe.',
+            'jornadas.required' => 'Debe seleccionar al menos una jornada de trabajo.',
+            'jornadas.array' => 'Las jornadas deben ser una lista.',
+            'jornadas.min' => 'Debe seleccionar al menos una jornada de trabajo.',
+            'jornadas.*.required' => 'Cada jornada seleccionada es obligatoria.',
+            'jornadas.*.exists' => 'Una o más jornadas seleccionadas no existen en el sistema.',
+            'especialidades.required' => 'Debe seleccionar al menos una especialidad (red de conocimiento).',
+            'especialidades.array' => 'Las especialidades deben ser una lista.',
+            'especialidades.min' => 'Debe seleccionar al menos una especialidad (red de conocimiento).',
+            'especialidades.*.required' => 'Cada especialidad seleccionada es obligatoria.',
+            'especialidades.*.exists' => 'Una o más especialidades seleccionadas no existen en el sistema.',
         ];
     }
     

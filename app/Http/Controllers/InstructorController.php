@@ -435,21 +435,19 @@ class InstructorController extends Controller
                 })->toArray()
             ]);
             
-            // Obtener jornadas asignadas al instructor - mapear desde jornadas_formacion a parametros_temas
+            // Obtener jornadas asignadas al instructor - primero desde el campo JSON, luego desde la relación
             $jornadasAsignadas = [];
             try {
-                $jornadasFormacionAsignadas = $instructor->jornadas()->pluck('jornadas_formacion.id')->toArray();
-                if (!empty($jornadasFormacionAsignadas)) {
-                    // Obtener los nombres de las jornadas desde jornadas_formacion
-                    $jornadasFormacion = \App\Models\JornadaFormacion::whereIn('id', $jornadasFormacionAsignadas)->pluck('jornada')->toArray();
-                    // Buscar los parametros_temas que corresponden a estos nombres
-                    if (!empty($jornadasFormacion)) {
-                        $parametrosTemas = \App\Models\ParametroTema::whereHas('tema', function($q) {
-                            $q->where('name', 'LIKE', '%JORNADAS%');
-                        })->whereHas('parametro', function($query) use ($jornadasFormacion) {
-                            $query->whereIn('name', $jornadasFormacion);
-                        })->pluck('id')->toArray();
-                        $jornadasAsignadas = $parametrosTemas;
+                // Intentar obtener desde el campo JSON jornadas
+                if ($instructor->jornadas && is_array($instructor->jornadas) && !empty($instructor->jornadas)) {
+                    $jornadasIds = $instructor->jornadas;
+                    $jornadasAsignadas = array_map('intval', $jornadasIds);
+                } 
+                // Si no hay en JSON, obtener desde la relación many-to-many
+                elseif ($instructor->jornadas()->exists()) {
+                    $parametrosTemas = $instructor->jornadas()->get();
+                    if ($parametrosTemas->isNotEmpty()) {
+                        $jornadasAsignadas = $parametrosTemas->pluck('id')->toArray();
                     }
                 }
             } catch (\Exception $e) {
@@ -515,7 +513,7 @@ class InstructorController extends Controller
                 ];
             }
             
-            // Preparar jornadas (array de IDs) - usar directamente parametros_temas
+            // Preparar jornadas (array de IDs) - usar directamente parametros_temas y guardar en campo JSON
             $jornadasIds = [];
             if ($request->has('jornadas') && is_array($request->input('jornadas'))) {
                 $jornadasRequest = $request->input('jornadas');
@@ -553,7 +551,14 @@ class InstructorController extends Controller
                             ]);
                         }
                     }
+                    
+                    // Guardar jornadas en el campo JSON
+                    $datos['jornadas'] = $jornadasIds;
+                } else {
+                    $datos['jornadas'] = null;
                 }
+            } else {
+                $datos['jornadas'] = null;
             }
             
             Log::info('Jornadas IDs finales para sincronizar', [
@@ -723,6 +728,10 @@ class InstructorController extends Controller
                     
                     $resultado = $instructor->jornadas()->sync($pivotData);
                     
+                    // Actualizar también el campo JSON jornadas
+                    $instructor->jornadas = $jornadasIds;
+                    $instructor->save();
+                    
                     Log::info('Jornadas sincronizadas exitosamente', [
                         'instructor_id' => $instructor->id,
                         'resultado_sync' => $resultado,
@@ -734,6 +743,9 @@ class InstructorController extends Controller
                         'instructor_id' => $instructor->id
                     ]);
                     $instructor->jornadas()->detach();
+                    // También limpiar el campo JSON
+                    $instructor->jornadas = null;
+                    $instructor->save();
                 }
             } catch (\Exception $e) {
                 Log::error('Error al sincronizar jornadas del instructor', [

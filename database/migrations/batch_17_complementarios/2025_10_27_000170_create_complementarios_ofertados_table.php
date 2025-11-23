@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('cupos');
             $table->tinyInteger('estado')->default(0);
             $table->foreignId('modalidad_id')->constrained('parametros_temas');
-            $table->foreignId('jornada_id')->constrained('jornadas_formacion');
+            $table->foreignId('jornada_id')->nullable()->constrained('parametros_temas')->onDelete('set null');
             $table->timestamps();
         });
     }
