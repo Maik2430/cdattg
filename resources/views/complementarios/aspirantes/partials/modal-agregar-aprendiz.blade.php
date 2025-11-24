@@ -32,7 +32,6 @@
                     <div id="loading-busqueda" class="text-center d-none py-4">
                         <img src="{{ asset('dist/img/LogoSena.png') }}" alt="Logo SENA" 
                              class="img-fluid sena-loading-logo mx-auto d-block">
-                        <p class="mt-3 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Buscando persona...</p>
                     </div>
                 </div>
 
