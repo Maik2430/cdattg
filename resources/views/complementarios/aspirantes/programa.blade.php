@@ -37,7 +37,13 @@
                 </div>
                 <div class="col-md-6">
                     <h5 class="font-weight-bold text-dark mb-2">{{ $programa->nombre }}</h5>
-                    <p class="text-muted mb-2 small">{{ Str::limit($programa->descripcion ?? 'Sin descripción', 200) }}</p>
+                    
+                    @if($programa->justificacion)
+                    <div class="alert alert-info mb-2 py-2 px-3" style="font-size: 0.875rem;">
+                        <strong><i class="fas fa-lightbulb mr-1"></i>Justificación:</strong>
+                        <p class="mb-0 mt-1">{{ $programa->justificacion }}</p>
+                    </div>
+                    @endif
                     <div class="d-flex flex-wrap gap-2">
                         @if(isset($programa->modalidad) && $programa->modalidad)
                             <span class="badge badge-light border">
@@ -352,13 +358,14 @@
         font-size: 0.875rem;
     }
 
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.9; }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        20%, 40%, 60%, 80% { transform: translateX(10px); }
     }
     
     .sena-loading-logo {
-        animation: pulse 2s ease-in-out infinite;
+        animation: shake 0.5s ease-in-out infinite;
         max-width: 120px;
         height: auto;
     }

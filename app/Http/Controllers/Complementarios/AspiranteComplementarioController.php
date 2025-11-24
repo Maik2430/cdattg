@@ -19,6 +19,9 @@ use App\Services\ComplementarioService;
 use App\Repositories\TemaRepository;
 use App\Models\Pais;
 use App\Models\Departamento;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AspiranteComplementarioController extends Controller
 {
@@ -205,7 +208,7 @@ class AspiranteComplementarioController extends Controller
 
                 // Si existe pero no está inscrita, actualizar datos y crear aspirante
                 $personaExistente->update($validated);
-                $persona = $personaExistente;
+                $persona = $personaExistente->fresh();
             } else {
                 // Crear nueva persona
                 $persona = Persona::create($validated + [
@@ -214,16 +217,8 @@ class AspiranteComplementarioController extends Controller
                 ]);
             }
 
-            // Guardar caracterizaciones si existen
-            if (isset($validated['caracterizacion_ids']) && !empty($validated['caracterizacion_ids'])) {
-                $persona->caracterizacionesComplementarias()->sync($validated['caracterizacion_ids']);
-                
-                Log::info('Caracterizaciones guardadas para persona', [
-                    'persona_id' => $persona->id,
-                    'caracterizacion_ids' => $validated['caracterizacion_ids'],
-                    'total_caracterizaciones' => count($validated['caracterizacion_ids'])
-                ]);
-            }
+            // Crear o actualizar usuario con rol ASPIRANTE
+            $this->crearOActualizarUsuarioAspirante($persona);
 
             // Crear aspirante
             AspiranteComplementario::create([
@@ -272,6 +267,93 @@ class AspiranteComplementarioController extends Controller
     }
 
     /**
+     * Crear o actualizar usuario para aspirante con rol ASPIRANTE
+     */
+    private function crearOActualizarUsuarioAspirante(Persona $persona)
+    {
+        // Verificar si la persona tiene email (requerido para crear usuario)
+        if (empty($persona->email)) {
+            Log::warning('No se puede crear usuario para aspirante sin email', [
+                'persona_id' => $persona->id,
+                'numero_documento' => $persona->numero_documento
+            ]);
+            return null;
+        }
+
+        // Verificar si la persona tiene número de documento (requerido para contraseña)
+        if (empty($persona->numero_documento)) {
+            Log::warning('No se puede crear usuario para aspirante sin número de documento', [
+                'persona_id' => $persona->id
+            ]);
+            return null;
+        }
+
+        // Si ya tiene usuario, solo asegurar que tenga el rol ASPIRANTE
+        if ($persona->user) {
+            $user = $persona->user;
+            
+            // Verificar que el rol ASPIRANTE existe
+            $aspiranteRole = Role::firstOrCreate(['name' => 'ASPIRANTE']);
+            
+            // Asignar rol si no lo tiene
+            if (!$user->hasRole('ASPIRANTE')) {
+                $user->assignRole('ASPIRANTE');
+                Log::info('Rol ASPIRANTE asignado a usuario existente', [
+                    'user_id' => $user->id,
+                    'persona_id' => $persona->id
+                ]);
+            }
+            
+            return $user;
+        }
+
+        // Crear nuevo usuario
+        try {
+            // Verificar que el email no esté en uso por otro usuario
+            $existingUser = User::where('email', $persona->email)->first();
+            if ($existingUser) {
+                Log::warning('Email ya está en uso por otro usuario', [
+                    'email' => $persona->email,
+                    'persona_id' => $persona->id,
+                    'existing_user_id' => $existingUser->id
+                ]);
+                return null;
+            }
+
+            $user = User::create([
+                'email' => strtolower($persona->email),
+                'password' => Hash::make($persona->numero_documento),
+                'persona_id' => $persona->id,
+                'status' => 1,
+            ]);
+
+            // Verificar que el rol ASPIRANTE existe
+            $aspiranteRole = Role::firstOrCreate(['name' => 'ASPIRANTE']);
+            
+            // Asignar rol ASPIRANTE
+            $user->assignRole('ASPIRANTE');
+
+            // Enviar email de verificación
+            $user->sendEmailVerificationNotification();
+
+            Log::info('Usuario creado para aspirante con rol ASPIRANTE', [
+                'user_id' => $user->id,
+                'persona_id' => $persona->id,
+                'email' => $user->email
+            ]);
+
+            return $user;
+        } catch (\Exception $e) {
+            Log::error('Error al crear usuario para aspirante', [
+                'persona_id' => $persona->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return null;
+        }
+    }
+
+    /**
      * Agregar aspirante existente a un programa complementario
      */
     public function agregarAspirante(Request $request, $complementarioId)
@@ -313,6 +395,9 @@ class AspiranteComplementarioController extends Controller
                 'estado' => 1, // Estado "En proceso"
                 'observaciones' => 'Agregado manualmente desde gestión de aspirantes'
             ]);
+
+            // Crear o actualizar usuario con rol ASPIRANTE
+            $this->crearOActualizarUsuarioAspirante($persona);
 
             return $this->createSuccessResponse(
                 'Aspirante agregado exitosamente. ' . $persona->primer_nombre . ' ' .
