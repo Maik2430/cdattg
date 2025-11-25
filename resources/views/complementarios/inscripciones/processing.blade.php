@@ -20,14 +20,11 @@
      <!-- Main Content -->
     <div class="main-content">
 
-        
-   
-        
         <!-- Upload Form Section -->
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Formulario de Documento</h5>
-                
+
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -48,7 +45,7 @@
 
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-triangle"></i> 
+                        <i class="fas fa-exclamation-triangle"></i>
                         <strong>Por favor corrija los siguientes errores:</strong>
                         <ul class="mb-0">
                             @foreach ($errors->all() as $error)
@@ -63,7 +60,7 @@
 
                 <form action="{{ route('procesar-documentos.submit') }}" method="POST" enctype="multipart/form-data" id="documentForm">
                     @csrf
-                    
+
                     <div class="row">
                         <!-- Tipo de Documento -->
                         <div class="col-md-6">
@@ -71,11 +68,11 @@
                                 <label for="tipo_documento" class="form-label">
                                     <strong>Tipo de Documento *</strong>
                                 </label>
-                                <select class="form-control @error('tipo_documento') is-invalid @enderror" 
+                                <select class="form-control @error('tipo_documento') is-invalid @enderror"
                                         id="tipo_documento" name="tipo_documento" required>
                                     <option value="">Seleccione un tipo de documento</option>
                                     @foreach($tiposDocumento as $tipo)
-                                        <option value="{{ $tipo->id }}" 
+                                        <option value="{{ $tipo->id }}"
                                             {{ old('tipo_documento') == $tipo->id ? 'selected' : '' }}>
                                             {{ $tipo->name }}
                                         </option>
@@ -93,10 +90,10 @@
                                 <label for="numero_documento" class="form-label">
                                     <strong>Número de Documento *</strong>
                                 </label>
-                                <input type="text" 
-                                       class="form-control @error('numero_documento') is-invalid @enderror" 
-                                       id="numero_documento" 
-                                       name="numero_documento" 
+                                <input type="text"
+                                       class="form-control @error('numero_documento') is-invalid @enderror"
+                                       id="numero_documento"
+                                       name="numero_documento"
                                        value="{{ old('numero_documento') }}"
                                        placeholder="Ingrese el número de documento"
                                        required>
@@ -112,7 +109,7 @@
                         <label for="documento_identidad" class="form-label">
                             <strong>Documento de Identidad *</strong>
                         </label>
-                        
+
                         <div class="upload-area" id="uploadArea">
                             <div class="upload-icon">
                                 <i class="fas fa-cloud-upload-alt"></i>
@@ -122,10 +119,10 @@
                             <button type="button" class="btn btn-primary" id="selectFileBtn">
                                 Seleccionar Archivo
                             </button>
-                            <input type="file" 
-                                   id="documento_identidad" 
-                                   name="documento_identidad" 
-                                   class="d-none" 
+                            <input type="file"
+                                   id="documento_identidad"
+                                   name="documento_identidad"
+                                   class="d-none"
                                    accept=".pdf,.jpg,.jpeg,.png"
                                    required>
                             <div id="fileInfo" class="mt-3" style="display: none;">
@@ -157,7 +154,7 @@
                 </form>
             </div>
         </div>
-        
+
         <!-- Information Section -->
         <div class="card mt-4">
             <div class="card-body">

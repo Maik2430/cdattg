@@ -16,7 +16,7 @@
     </style>
 @endsection
 @section('content')
-    
+
 
     <div class="container-fluid mt-4 px-2 px-md-4" style="background-color: #ebf1f4; min-height: 100vh;">
         <div class="row justify-content-center">
@@ -35,8 +35,11 @@
     </div>
 
     <!-- Modal de Inscripción -->
-    <dialog class="modal fade" id="inscripcionModal"
-        aria-labelledby="inscripcionModalLabel">
+    {{-- SonarQube S6819: Se usa div con role="dialog" en lugar de <dialog> porque Bootstrap 4 modals
+         no son compatibles con el elemento <dialog> nativo de HTML5. Bootstrap modals requieren
+         elementos div con clases específicas para funcionar correctamente. --}}
+    <div class="modal fade" id="inscripcionModal" tabindex="-1" role="dialog"
+        aria-labelledby="inscripcionModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #ffffff; color: #343a40;
@@ -44,7 +47,7 @@
                     <h5 class="modal-title" id="inscripcionModalLabel">
                         <i class="fas fa-user-plus mr-2"></i>Inscripción al Programa
                     </h5>
-                    <button type="button" class="close" onclick="document.getElementById('inscripcionModal').close()" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -85,12 +88,7 @@ function openInscripcionModal(programaId, programaNombre) {
    selectedProgramaId = programaId;
    document.getElementById('inscripcionModalLabel').innerHTML =
        '<i class="fas fa-user-plus mr-2"></i>Inscripción: ' + programaNombre;
-   const inscripcionModal = document.getElementById('inscripcionModal');
-   if (inscripcionModal instanceof HTMLDialogElement) {
-       inscripcionModal.showModal();
-   } else {
-       $('#inscripcionModal').modal('show');
-   }
+   $('#inscripcionModal').modal('show');
 }
 
 function redirectToLogin() {

@@ -77,25 +77,26 @@
                         </div>
 
                         <div class="card-body">
-                            <ul class="nav nav-pills nav-form-steps flex-column flex-md-row mb-4" id="formTabs"
-                                role="tablist">
-                                <li class="nav-item flex-md-fill mr-md-2 mb-2 mb-md-0" role="presentation">
+                            <ul class="nav nav-pills nav-form-steps flex-column flex-md-row mb-4" id="formTabs">
+                                <li class="nav-item flex-md-fill mr-md-2 mb-2 mb-md-0">
                                     <a class="nav-link active d-flex align-items-center justify-content-center"
                                         id="tab-general-tab" data-toggle="tab" href="#tab-general" role="tab"
                                         aria-controls="tab-general" aria-selected="true">
                                         <i class="fas fa-layer-group mr-2"></i> Información general
                                     </a>
                                 </li>
-                                <li class="nav-item flex-md-fill mr-md-2 mb-2 mb-md-0" role="presentation">
+                                <li class="nav-item flex-md-fill mr-md-2 mb-2 mb-md-0">
                                     <a class="nav-link d-flex align-items-center justify-content-center" id="tab-config-tab"
-                                        data-toggle="tab" href="#tab-config" role="tab" aria-controls="tab-config"
+                                        data-toggle="tab" href="#tab-config" role="tab"
+                                        aria-controls="tab-config"
                                         aria-selected="false">
                                         <i class="fas fa-sliders-h mr-2"></i> Configuración académica
                                     </a>
                                 </li>
-                                <li class="nav-item flex-md-fill" role="presentation">
+                                <li class="nav-item flex-md-fill">
                                     <a class="nav-link d-flex align-items-center justify-content-center" id="tab-estado-tab"
-                                        data-toggle="tab" href="#tab-estado" role="tab" aria-controls="tab-estado"
+                                        data-toggle="tab" href="#tab-estado" role="tab"
+                                        aria-controls="tab-estado"
                                         aria-selected="false">
                                         <i class="fas fa-traffic-light mr-2"></i> Estado operativo
                                     </a>
@@ -169,7 +170,7 @@
                                 <div class="tab-pane fade" id="tab-config" role="tabpanel"
                                     aria-labelledby="tab-config-tab">
                                     <p class="text-muted">Define la logística académica del programa.</p>
-                                    
+
                                     <!-- Sección de Estructura Académica -->
                                     <div class="card card-outline card-info mb-4">
                                         <div class="card-header">
@@ -358,7 +359,7 @@
                                     </div>
                                 </div>
 
-                                <div class="tab-pane fade" id="tab-estado" role="tabpanel"
+                                <div class="tab-pane fade" id="tab-estado"
                                     aria-labelledby="tab-estado-tab">
                                     <p class="text-muted">Selecciona el estado del programa en la planeación actual.</p>
                                     <div class="form-group mb-4">
@@ -495,14 +496,14 @@
             const updateJustificacionCounter = () => {
                 justificacionCounter.textContent = `${justificacion.value.length}/600`;
             };
-            
+
             const updateRequisitosCounter = () => {
                 requisitosCounter.textContent = `${requisitosIngreso.value.length}/400`;
             };
 
             updateJustificacionCounter();
             updateRequisitosCounter();
-            
+
             justificacion.addEventListener('input', updateJustificacionCounter);
             requisitosIngreso.addEventListener('input', updateRequisitosCounter);
 

@@ -11,7 +11,9 @@
      <div class="container-fluid mt-4" style="background-color: #ebf1f4; min-height: 100vh;">
          @if(session('user_data'))
              <div class="alert alert-info alert-dismissible">
-                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                 </button>
                  <h5><i class="icon fas fa-info"></i> Información Pre-llenada</h5>
                  Hemos completado algunos campos con la información de su cuenta.
                  Por favor, complete los campos faltantes y revise que toda la información sea correcta.

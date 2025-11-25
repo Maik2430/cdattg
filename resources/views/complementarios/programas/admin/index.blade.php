@@ -566,7 +566,7 @@
 
             // Los botones de view y edit ahora son enlaces directos, no necesitan event listeners
             // El delete se maneja automáticamente por el componente action-buttons con la clase formulario-eliminar
-            
+
             // Mantener el modal de edición para compatibilidad si se accede desde otra parte
             $(document).on('click', '[data-action="edit-modal"]', function() {
                 const id = $(this).data('id');

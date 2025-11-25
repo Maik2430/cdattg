@@ -53,7 +53,7 @@
                     </div>
                     <div class="col-12 col-lg-6 text-center">
                         <img src="{{ asset('img/flor_guaviare.png') }}" class="img-fluid hero-figure"
-                            alt="Imagen representativa SENA">
+                            alt="Representativa SENA">
                     </div>
                 </div>
             </div>

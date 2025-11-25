@@ -329,14 +329,17 @@
     @include('complementarios.aspirantes.partials.modal-agregar-aprendiz')
 
     <!-- Modal Confirmación Exportación -->
-    <dialog class="modal fade" id="modalConfirmacionExportacion" aria-labelledby="modalConfirmacionExportacionLabel">
+    {{-- SonarQube S6819: Se usa div con role="dialog" en lugar de <dialog> porque Bootstrap 4 modals
+         no son compatibles con el elemento <dialog> nativo de HTML5. Bootstrap modals requieren
+         elementos div con clases específicas para funcionar correctamente. --}}
+    <div class="modal fade" id="modalConfirmacionExportacion" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacionExportacionLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-warning text-dark">
                     <h5 class="modal-title" id="modalConfirmacionExportacionLabel">
                         <i class="fas fa-exclamation-triangle me-2"></i>Confirmación de Exportación
                     </h5>
-                    <button type="button" class="close" onclick="document.getElementById('modalConfirmacionExportacion').close()" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -379,7 +382,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('modalConfirmacionExportacion').close()">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times me-1"></i>Cancelar
                     </button>
                     <button type="button" class="btn btn-primary" id="btn-confirmar-exportacion">
@@ -388,7 +391,7 @@
                 </div>
             </div>
         </div>
-    </dialog>
+    </div>
 
 @stop
 

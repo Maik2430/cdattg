@@ -82,7 +82,7 @@
                 <div class="row align-items-center">
                     <div class="col-12 col-md-5 text-center mb-4 mb-md-0">
                         <img src="{{ asset('img/flor_guaviare.png') }}" class="img-fluid hero-figure"
-                            alt="Imagen representativa SENA">
+                            alt="Representativa SENA">
                     </div>
                     <div class="col-12 col-md-7 text-dark">
                         <span class="badge hero-badge mb-2">Formación Complementaria</span>

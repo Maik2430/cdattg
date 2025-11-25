@@ -809,12 +809,7 @@ class AspirantesPrograma {
         }
 
         // Mostrar modal
-        const modalElement = document.getElementById('modalConfirmacionExportacion');
-        if (modalElement instanceof HTMLDialogElement) {
-            modalElement.showModal();
-        } else {
-            $('#modalConfirmacionExportacion').modal('show');
-        }
+        $('#modalConfirmacionExportacion').modal('show');
     }
 
     /**
@@ -836,12 +831,7 @@ class AspirantesPrograma {
         }
 
         // Cerrar modal
-        const modalElement = document.getElementById('modalConfirmacionExportacion');
-        if (modalElement instanceof HTMLDialogElement) {
-            modalElement.close();
-        } else {
-            $('#modalConfirmacionExportacion').modal('hide');
-        }
+        $('#modalConfirmacionExportacion').modal('hide');
 
         // Redirigir a la URL de exportación
         window.location.href = exportUrl;
