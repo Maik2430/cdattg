@@ -10,7 +10,7 @@
             </h1>
             <p class="text-muted mb-0">Programa: {{ $programa->nombre }}</p>
         </div>
-        <a href="{{ route('aspirantes.programa', ['programa' => $programa->id]) }}" 
+        <a href="{{ route('aspirantes.programa', ['programa' => $programa->id]) }}"
            class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-1"></i> Volver
         </a>
@@ -105,7 +105,7 @@
                 <div class="col-12">
                     <hr class="mt-4">
                     <div class="d-flex justify-content-center gap-2">
-                        <a href="{{ route('aspirantes.programa', ['programa' => $programa->id]) }}" 
+                        <a href="{{ route('aspirantes.programa', ['programa' => $programa->id]) }}"
                            class="btn btn-outline-secondary btn-sm mx-1">
                             <i class="fas fa-times mr-1"></i> Cancelar
                         </a>

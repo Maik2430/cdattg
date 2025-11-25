@@ -35,16 +35,16 @@
     </div>
 
     <!-- Modal de Inscripción -->
-    <div class="modal fade" id="inscripcionModal" tabindex="-1" role="dialog"
-        aria-labelledby="inscripcionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <dialog class="modal fade" id="inscripcionModal"
+        aria-labelledby="inscripcionModalLabel">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #ffffff; color: #343a40;
                     border-left: 4px solid #007bff;">
                     <h5 class="modal-title" id="inscripcionModalLabel">
                         <i class="fas fa-user-plus mr-2"></i>Inscripción al Programa
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" onclick="document.getElementById('inscripcionModal').close()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -85,7 +85,12 @@ function openInscripcionModal(programaId, programaNombre) {
    selectedProgramaId = programaId;
    document.getElementById('inscripcionModalLabel').innerHTML =
        '<i class="fas fa-user-plus mr-2"></i>Inscripción: ' + programaNombre;
-   $('#inscripcionModal').modal('show');
+   const inscripcionModal = document.getElementById('inscripcionModal');
+   if (inscripcionModal instanceof HTMLDialogElement) {
+       inscripcionModal.showModal();
+   } else {
+       $('#inscripcionModal').modal('show');
+   }
 }
 
 function redirectToLogin() {

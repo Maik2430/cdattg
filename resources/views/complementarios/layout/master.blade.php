@@ -60,7 +60,7 @@
                 @yield('preloader')
             @else
                 <img src="{{ asset('img/sena-logo.png') }}" alt="SENA Logo" class="img-circle animation__shake"
-                    width="80" height="80">
+                    style="width: 80px; height: 80px;">
                 <p class="mt-3 text-muted">Cargando...</p>
             @endif
         </div>

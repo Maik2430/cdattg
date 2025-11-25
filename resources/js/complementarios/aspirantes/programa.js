@@ -809,7 +809,12 @@ class AspirantesPrograma {
         }
 
         // Mostrar modal
-        $('#modalConfirmacionExportacion').modal('show');
+        const modalElement = document.getElementById('modalConfirmacionExportacion');
+        if (modalElement instanceof HTMLDialogElement) {
+            modalElement.showModal();
+        } else {
+            $('#modalConfirmacionExportacion').modal('show');
+        }
     }
 
     /**
@@ -831,7 +836,12 @@ class AspirantesPrograma {
         }
 
         // Cerrar modal
-        $('#modalConfirmacionExportacion').modal('hide');
+        const modalElement = document.getElementById('modalConfirmacionExportacion');
+        if (modalElement instanceof HTMLDialogElement) {
+            modalElement.close();
+        } else {
+            $('#modalConfirmacionExportacion').modal('hide');
+        }
 
         // Redirigir a la URL de exportación
         window.location.href = exportUrl;

@@ -58,7 +58,7 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <div class="btn-group" role="group">
+                    <div class="btn-group">
                         <button type="button" class="btn btn-outline-primary">Todos</button>
                         <button type="button" class="btn btn-outline-success">Con cupos disponibles</button>
                         <button type="button" class="btn btn-outline-warning">Prรณximos a iniciar</button>
@@ -245,13 +245,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Duración (horas)</label>
+                                <div class="form-label fw-bold">Duración (horas)</div>
                                 <p id="view_duracion" class="form-control-plaintext"></p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Cupos</label>
+                                <div class="form-label fw-bold">Cupos</div>
                                 <p id="view_cupos" class="form-control-plaintext"></p>
                             </div>
                         </div>
@@ -259,27 +259,27 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Modalidad</label>
+                                <div class="form-label fw-bold">Modalidad</div>
                                 <p id="view_modalidad" class="form-control-plaintext"></p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Jornada</label>
+                                <div class="form-label fw-bold">Jornada</div>
                                 <p id="view_jornada" class="form-control-plaintext"></p>
                             </div>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Estado</label>
+                        <div class="form-label fw-bold">Estado</div>
                         <p id="view_estado" class="form-control-plaintext"></p>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Ambiente</label>
+                        <div class="form-label fw-bold">Ambiente</div>
                         <p id="view_ambiente" class="form-control-plaintext"></p>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Dรญas de Formaciรณn</label>
+                        <div class="form-label fw-bold">Dรญas de Formaciรณn</div>
                         <p id="view_dias" class="form-control-plaintext"></p>
                     </div>
                 </div>

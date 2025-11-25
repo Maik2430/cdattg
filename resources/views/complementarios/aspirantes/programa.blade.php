@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-md-6">
                     <h5 class="font-weight-bold text-dark mb-2">{{ $programa->nombre }}</h5>
-                    
+
                     @if($programa->justificacion)
                     <div class="alert alert-info mb-2 py-2 px-3" style="font-size: 0.875rem;">
                         <strong><i class="fas fa-lightbulb mr-1"></i>Justificación:</strong>
@@ -162,16 +162,16 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-5 mb-3 mb-md-0">
-                    <label class="form-label font-weight-bold">
+                    <label for="buscar-aspirante" class="form-label font-weight-bold">
                         <i class="fas fa-search mr-1"></i>Buscar Aspirante
                     </label>
-                    <input type="text" 
-                           class="form-control" 
+                    <input type="text"
+                           class="form-control"
                            id="buscar-aspirante"
                            placeholder="Buscar por nombre, documento o email...">
                 </div>
                 <div class="col-md-3 mb-3 mb-md-0">
-                    <label class="form-label font-weight-bold">
+                    <label for="filtro-estado" class="form-label font-weight-bold">
                         <i class="fas fa-tag mr-1"></i>Filtrar por Estado
                     </label>
                     <select class="form-control" id="filtro-estado">
@@ -182,7 +182,7 @@
                     </select>
                 </div>
                 <div class="col-md-2 mb-3 mb-md-0">
-                    <label class="form-label font-weight-bold">
+                    <label for="filtro-documento" class="form-label font-weight-bold">
                         <i class="fas fa-file-pdf mr-1"></i>Documento
                     </label>
                     <select class="form-control" id="filtro-documento">
@@ -213,19 +213,19 @@
                 <table class="table table-hover table-striped mb-0" id="aspirantes-table">
                     <thead class="thead-light">
                         <tr>
-                            <th width="5%">#</th>
-                            <th width="20%">Nombre Completo</th>
-                            <th width="12%">N# Documento</th>
-                            <th width="10%">Fecha Solicitud</th>
-                            <th width="10%">Estado</th>
-                            <th width="12%">SenaSofiaPlus</th>
-                            <th width="12%"> PDF Documento</th>
-                            <th width="10%">Acciones</th>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 20%;">Nombre Completo</th>
+                            <th style="width: 12%;">N# Documento</th>
+                            <th style="width: 10%;">Fecha Solicitud</th>
+                            <th style="width: 10%;">Estado</th>
+                            <th style="width: 12%;">SenaSofiaPlus</th>
+                            <th style="width: 12%;"> PDF Documento</th>
+                            <th style="width: 10%;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($aspirantes as $index => $aspirante)
-                        <tr data-estado="{{ $aspirante->estado }}" 
+                        <tr data-estado="{{ $aspirante->estado }}"
                             data-documento="{{ $aspirante->persona->condocumento }}"
                             data-nombre="{{ strtolower(trim(($aspirante->persona->primer_nombre ?? '') . ' ' . ($aspirante->persona->segundo_nombre ?? '') . ' ' . ($aspirante->persona->primer_apellido ?? '') . ' ' . ($aspirante->persona->segundo_apellido ?? ''))) }}"
                             data-documento-numero="{{ strtolower($aspirante->persona->numero_documento ?? '') }}"
@@ -286,8 +286,8 @@
                                 @endif
                             </td>
                             <td class="align-middle">
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-danger aspirante-action-btn" 
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-danger aspirante-action-btn"
                                         title="Rechazar aspirante"
                                         data-aspirante-id="{{ $aspirante->id }}"
                                         data-aspirante-nombre="{{ trim(($aspirante->persona->primer_nombre ?? '') . ' ' . ($aspirante->persona->primer_apellido ?? '')) }}"
@@ -295,8 +295,8 @@
                                         <i class="fas fa-times"></i>
                                     </button>
                                     @can('VER PERSONA')
-                                        <a href="{{ route('personas.show', $aspirante->persona->id) }}" 
-                                           class="btn btn-sm btn-info" 
+                                        <a href="{{ route('personas.show', $aspirante->persona->id) }}"
+                                           class="btn btn-sm btn-info"
                                            title="Ver perfil completo"
                                            target="_blank">
                                             <i class="fas fa-eye"></i>
@@ -329,14 +329,14 @@
     @include('complementarios.aspirantes.partials.modal-agregar-aprendiz')
 
     <!-- Modal Confirmación Exportación -->
-    <div class="modal fade" id="modalConfirmacionExportacion" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacionExportacionLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+    <dialog class="modal fade" id="modalConfirmacionExportacion" aria-labelledby="modalConfirmacionExportacionLabel">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-warning text-dark">
                     <h5 class="modal-title" id="modalConfirmacionExportacionLabel">
                         <i class="fas fa-exclamation-triangle me-2"></i>Confirmación de Exportación
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" onclick="document.getElementById('modalConfirmacionExportacion').close()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -345,7 +345,7 @@
                         <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Información Importante</h6>
                         <p class="mb-0">Se excluirán automáticamente los siguientes aspirantes:</p>
                     </div>
-                    
+
                     <div class="row text-center mb-4">
                         <div class="col-6 mb-3">
                             <div class="border rounded p-3 bg-light">
@@ -379,7 +379,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('modalConfirmacionExportacion').close()">
                         <i class="fas fa-times me-1"></i>Cancelar
                     </button>
                     <button type="button" class="btn btn-primary" id="btn-confirmar-exportacion">
@@ -388,7 +388,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </dialog>
 
 @stop
 
@@ -427,7 +427,7 @@
         10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
         20%, 40%, 60%, 80% { transform: translateX(10px); }
     }
-    
+
     .sena-loading-logo {
         animation: shake 0.5s ease-in-out infinite;
         max-width: 120px;
@@ -439,7 +439,7 @@
 @section('js')
     <!-- CSRF Token para AJAX -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <!-- Configuración para pasar datos de PHP a JavaScript -->
     <script>
         window.aspirantesConfig = {
@@ -459,6 +459,6 @@
             }
         };
     </script>
-    
+
     @vite(['resources/js/complementarios/aspirantes/programa.js'])
 @stop

@@ -30,7 +30,7 @@
                         </div>
                     </form>
                     <div id="loading-busqueda" class="text-center d-none py-4">
-                        <img src="{{ asset('dist/img/LogoSena.png') }}" alt="Logo SENA" 
+                        <img src="{{ asset('dist/img/LogoSena.png') }}" alt="Logo SENA"
                              class="img-fluid sena-loading-logo mx-auto d-block">
                     </div>
                 </div>
