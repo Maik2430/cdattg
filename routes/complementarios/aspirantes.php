@@ -40,5 +40,9 @@ Route::middleware('auth')->group(function () {
     // Descargar cédulas de aspirantes
     Route::get('/aspirantes/programa/{complementarioId}/descargar-cedulas', [AspiranteComplementarioController::class, 'descargarCedulas'])
         ->name('aspirantes.descargar-cedulas');
+
+    // Obtener estadísticas de exclusión para modal
+    Route::get('/aspirantes/programa/{complementarioId}/estadisticas-exclusion', [AspiranteComplementarioController::class, 'getEstadisticasExclusion'])
+        ->name('aspirantes.estadisticas-exclusion');
 });
 

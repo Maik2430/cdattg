@@ -558,6 +558,33 @@ class AspiranteComplementarioController extends Controller
     }
 
     /**
+     * Obtener estadísticas de exclusión para modal
+     */
+    public function getEstadisticasExclusion($complementarioId)
+    {
+        try {
+            $programa = ComplementarioOfertado::findOrFail($complementarioId);
+            $estadisticas = $this->complementarioService->getEstadisticasExclusion($complementarioId);
+            
+            return response()->json([
+                'success' => true,
+                'estadisticas' => $estadisticas,
+                'programa_nombre' => $programa->nombre
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error obteniendo estadísticas de exclusión: ' . $e->getMessage(), [
+                'complementario_id' => $complementarioId,
+                'exception' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener estadísticas de exclusión'
+            ], 500);
+        }
+    }
+
+    /**
      * Exportar aspirantes a Excel
      */
     public function exportarAspirantesExcel($complementarioId)
@@ -566,10 +593,8 @@ class AspiranteComplementarioController extends Controller
             // Verificar que el programa existe
             $programa = ComplementarioOfertado::findOrFail($complementarioId);
 
-            // Obtener todos los aspirantes del programa con sus datos de persona y caracterización
-            $aspirantes = AspiranteComplementario::with(['persona.caracterizacionesComplementarias', 'persona.caracterizacion', 'persona.tipoDocumento', 'persona.parametroCaracterizacion'])
-                ->where('complementario_id', $complementarioId)
-                ->get();
+            // Obtener aspirantes válidos para exportación (excluye rechazados y sin documento)
+            $aspirantes = $this->complementarioService->getAspirantesParaExportacion($complementarioId);
 
             // Log para debugging
             Log::info('Exportando aspirantes a Excel', [

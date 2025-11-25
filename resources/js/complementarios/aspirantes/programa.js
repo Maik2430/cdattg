@@ -39,6 +39,9 @@ class AspirantesPrograma {
             
             // Configurar botones de acción de aspirantes
             this.setupAspiranteActionButtons();
+            
+            // Configurar botones de exportación
+            this.setupExportButtons();
         });
     }
 
@@ -727,6 +730,117 @@ class AspirantesPrograma {
             button.disabled = false;
             button.innerHTML = originalHTML;
         }
+    }
+
+    /**
+     * Configurar botones de exportación
+     */
+    setupExportButtons() {
+        // Botón de exportar Excel
+        document.getElementById('btn-descargar-excel')?.addEventListener('click', () => {
+            this.handleExportAction('excel');
+        });
+
+        // Botón de descargar cédulas
+        document.getElementById('btn-descargar-cedulas')?.addEventListener('click', () => {
+            this.handleExportAction('cedulas');
+        });
+
+        // Botón de confirmar exportación
+        document.getElementById('btn-confirmar-exportacion')?.addEventListener('click', () => {
+            this.confirmExport();
+        });
+    }
+
+    /**
+     * Manejar acción de exportación
+     */
+    async handleExportAction(action) {
+        const button = document.getElementById(`btn-descargar-${action}`);
+        const originalText = button.innerHTML;
+        
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Cargando...';
+
+        try {
+            // Obtener estadísticas de exclusión
+            const response = await fetch(this.config.routes.estadisticasExclusion, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': this.getCsrfToken()
+                }
+            });
+
+            const data = await response.json();
+            button.disabled = false;
+            button.innerHTML = originalText;
+
+            if (data.success) {
+                this.currentExportAction = action;
+                this.showExportConfirmationModal(data.estadisticas);
+            } else {
+                this.showAlert('error', 'Error al obtener estadísticas de exclusión');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            button.disabled = false;
+            button.innerHTML = originalText;
+            this.showAlert('error', 'Error de conexión. Intente nuevamente.');
+        }
+    }
+
+    /**
+     * Mostrar modal de confirmación de exportación
+     */
+    showExportConfirmationModal(estadisticas) {
+        // Actualizar contadores en el modal
+        document.getElementById('contador-rechazados').textContent = estadisticas.rechazados;
+        document.getElementById('contador-sin-documento').textContent = estadisticas.sin_documento;
+        document.getElementById('contador-no-registrados').textContent = estadisticas.no_registrados_sofia;
+        document.getElementById('contador-validos').textContent = estadisticas.validos;
+
+        // Actualizar título según la acción
+        const modalTitle = document.getElementById('modalConfirmacionExportacionLabel');
+        if (this.currentExportAction === 'excel') {
+            modalTitle.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Confirmación de Exportación Excel';
+        } else {
+            modalTitle.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Confirmación de Descarga de Cédulas';
+        }
+
+        // Mostrar modal
+        $('#modalConfirmacionExportacion').modal('show');
+    }
+
+    /**
+     * Confirmar exportación y proceder
+     */
+    confirmExport() {
+        const button = document.getElementById('btn-confirmar-exportacion');
+        const originalText = button.innerHTML;
+        
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Procesando...';
+
+        // Determinar la URL según la acción
+        let exportUrl;
+        if (this.currentExportAction === 'excel') {
+            exportUrl = this.config.routes.exportarExcel;
+        } else {
+            exportUrl = this.config.routes.descargarCedulas;
+        }
+
+        // Cerrar modal
+        $('#modalConfirmacionExportacion').modal('hide');
+
+        // Redirigir a la URL de exportación
+        window.location.href = exportUrl;
+
+        // Restaurar botón después de un tiempo
+        setTimeout(() => {
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }, 3000);
     }
 
     /**

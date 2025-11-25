@@ -114,18 +114,20 @@
 
                         <!-- Grupo: Exportar/Descargar -->
                         <div class="d-flex align-items-center" style="gap: 0.5rem;">
-                            <a href="{{ route('aspirantes.exportar-excel', $programa->id) }}"
-                                class="btn btn-success"
+                            <button class="btn btn-success"
                                 id="btn-descargar-excel"
-                                @if(isset($existingProgress) && $existingProgress) style="pointer-events: none; opacity: 0.5;" @endif>
+                                data-action="excel"
+                                data-programa-id="{{ $programa->id }}"
+                                @if(isset($existingProgress) && $existingProgress) disabled @endif>
                                 <i class="fas fa-download me-1"></i>Exportar Excel
-                            </a>
-                            <a href="{{ route('aspirantes.descargar-cedulas', $programa->id) }}"
-                                class="btn btn-info"
+                            </button>
+                            <button class="btn btn-info"
                                 id="btn-descargar-cedulas"
-                                @if(isset($existingProgress) && $existingProgress) style="pointer-events: none; opacity: 0.5;" @endif>
+                                data-action="cedulas"
+                                data-programa-id="{{ $programa->id }}"
+                                @if(isset($existingProgress) && $existingProgress) disabled @endif>
                                 <i class="fas fa-file-pdf me-1"></i>Descargar Cédulas
-                            </a>
+                            </button>
                         </div>
 
                         <!-- Separador visual -->
@@ -326,6 +328,68 @@
     <!-- Modal Agregar Aprendiz -->
     @include('complementarios.aspirantes.partials.modal-agregar-aprendiz')
 
+    <!-- Modal Confirmación Exportación -->
+    <div class="modal fade" id="modalConfirmacionExportacion" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacionExportacionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="modalConfirmacionExportacionLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmación de Exportación
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Información Importante</h6>
+                        <p class="mb-0">Se excluirán automáticamente los siguientes aspirantes:</p>
+                    </div>
+                    
+                    <div class="row text-center mb-4">
+                        <div class="col-6 mb-3">
+                            <div class="border rounded p-3 bg-light">
+                                <div class="h3 mb-1 text-danger font-weight-bold" id="contador-rechazados">0</div>
+                                <small class="text-muted">Aspirantes Rechazados</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="border rounded p-3 bg-light">
+                                <div class="h3 mb-1 text-warning font-weight-bold" id="contador-sin-documento">0</div>
+                                <small class="text-muted">Sin Documento en Drive</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-3 bg-light">
+                                <div class="h3 mb-1 text-warning font-weight-bold" id="contador-no-registrados">0</div>
+                                <small class="text-muted">No Registrados en SenaSofiaPlus</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-3 bg-success text-white">
+                                <div class="h3 mb-1 font-weight-bold" id="contador-validos">0</div>
+                                <small>Aspirantes Válidos</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Nota</h6>
+                        <p class="mb-0">Solo se incluirán los aspirantes que cumplan con todos los requisitos: <strong>No rechazados, con documento subido y registrados en SenaSofiaPlus</strong>.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btn-confirmar-exportacion">
+                        <i class="fas fa-check me-1"></i>Continuar con la Exportación
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @stop
 
 @section('css')
@@ -388,7 +452,10 @@
                 agregarExistente: '{{ route("aspirantes.agregar-existente", ["complementarioId" => $programa->id]) }}',
                 destroy: '{{ route("aspirantes.destroy", ["complementarioId" => $programa->id, "aspiranteId" => "__ID__"]) }}',
                 validarDocumento: '{{ route("programas-complementarios.validar-documento", ["programa" => $programa->id]) }}',
-                validarSofia: '{{ route("programas-complementarios.validar-sofia", ["programa" => $programa->id]) }}'
+                validarSofia: '{{ route("programas-complementarios.validar-sofia", ["programa" => $programa->id]) }}',
+                exportarExcel: '{{ route("aspirantes.exportar-excel", ["complementarioId" => $programa->id]) }}',
+                descargarCedulas: '{{ route("aspirantes.descargar-cedulas", ["complementarioId" => $programa->id]) }}',
+                estadisticasExclusion: '{{ route("aspirantes.estadisticas-exclusion", ["complementarioId" => $programa->id]) }}'
             }
         };
     </script>
