@@ -353,7 +353,7 @@
         </div>
     </div>
 
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 
