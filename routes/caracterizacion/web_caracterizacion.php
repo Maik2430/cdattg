@@ -5,7 +5,7 @@ use App\Http\Controllers\CaracterizacionController;
 
 // Rutas para CaracterizacionController
 Route::resource('caracterizacion', CaracterizacionController::class);
-route::middleware('can:VER PROGRAMA DE CARACTERIZACION')->group(function () {
+route::middleware('can:TOMAR ASISTENCIA')->group(function () {
     Route::get('/caracter/index', [CaracterizacionController::class, 'index'])->name('caracter.index');
     Route::get('/caracterizacion/search', [CaracterizacionController::class, 'show'])->name('caracterizacion.search');
     Route::get('/caracterizacion/create', [CaracterizacionController::class, 'create'])->name('caracterizacion.legacy.create');

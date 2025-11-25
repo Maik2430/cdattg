@@ -82,68 +82,10 @@
                         </div>
                     @endcan
 
-                    {{-- Tabla Principal con Filtros --}}
-                    <div class="card shadow-sm no-hover">
-                        <div class="card-header bg-white py-3">
-                            <h6 class="m-0 font-weight-bold text-primary mb-3">Lista de Guías de Aprendizaje</h6>
-                            
-                            {{-- Filtros Avanzados --}}
-                            <div class="d-flex flex-wrap align-items-center gap-2">
-                                {{-- Filtro por Programa de Formación --}}
-                                <div class="mr-2">
-                                    <select id="filterPrograma" class="form-control form-control-sm" style="width: 200px;">
-                                        <option value="">Todos los programas</option>
-                                        @php
-                                            $programas = \App\Models\ProgramaFormacion::orderBy('nombre')->get();
-                                        @endphp
-                                        @foreach($programas as $programa)
-                                            <option value="{{ $programa->id }}">{{ Str::limit($programa->nombre, 25) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                {{-- Filtro por Competencia --}}
-                                <div class="mr-2">
-                                    <select id="filterCompetencia" class="form-control form-control-sm" style="width: 180px;">
-                                        <option value="">Todas las competencias</option>
-                                        @php
-                                            $competencias = \App\Models\Competencia::orderBy('nombre')->get();
-                                        @endphp
-                                        @foreach($competencias as $competencia)
-                                            <option value="{{ $competencia->id }}">{{ Str::limit($competencia->nombre, 22) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                {{-- Filtro por Estado --}}
-                                <div class="mr-2">
-                                    <select id="filterStatus" class="form-control form-control-sm" style="width: 100px;">
-                                        <option value="">Todos</option>
-                                        <option value="1">Activos</option>
-                                        <option value="0">Inactivos</option>
-                                    </select>
-                                </div>
-
-                                {{-- Barra de Búsqueda --}}
-                                <div class="input-group" style="width: 250px;">
-                                    <input type="text" id="searchGuia" class="form-control form-control-sm" 
-                                           placeholder="Buscar por código, nombre..." autocomplete="off">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary btn-sm" type="button" id="btnSearch">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                        <button class="btn btn-secondary btn-sm" type="button" id="btnClearFilters">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <x-data-table 
                             title="Lista de Guías de Aprendizaje"
                             searchable="true"
-                            searchAction="{{ route('guiasAprendizaje.index') }}"
+                            searchAction="{{ route('guias-aprendizaje.index') }}"
                             searchPlaceholder="Buscar por código, nombre..."
                             searchValue="{{ request('search') }}"
                             :columns="[
@@ -211,8 +153,6 @@
                                         @empty
                                             <tr>
                                                 <td colspan="7" class="text-center py-5">
-                                                    <img src="{{ asset('img/no-data.svg') }}" alt="No data" 
-                                                        style="width: 120px" class="mb-3">
                                                     <p class="text-muted">No hay guías de aprendizaje registradas</p>
                                                 </td>
                                             </tr>

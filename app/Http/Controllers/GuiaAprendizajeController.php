@@ -216,11 +216,33 @@ class GuiaAprendizajeController extends Controller
     public function create()
     {
         try {
-            $resultadosAprendizaje = ResultadosAprendizaje::orderBy('codigo')->get();
+            // Usar DB::raw para evitar problemas con el cast del status
+            $resultadosAprendizaje = ResultadosAprendizaje::whereRaw('status = 1')
+                ->orderBy('codigo')
+                ->get();
+            
+            // Si no hay activos, obtener todos para debug
+            if ($resultadosAprendizaje->isEmpty()) {
+                $todosResultados = ResultadosAprendizaje::orderBy('codigo')->get();
+                Log::warning('No hay resultados activos, mostrando todos para debug', [
+                    'total' => $todosResultados->count(),
+                    'user_id' => Auth::id()
+                ]);
+                $resultadosAprendizaje = $todosResultados;
+            }
+            
+            Log::info('Resultados de aprendizaje cargados para crear guía', [
+                'total' => $resultadosAprendizaje->count(),
+                'user_id' => Auth::id(),
+                'ids' => $resultadosAprendizaje->pluck('id')->take(10)->toArray()
+            ]);
             
             return view('guias_aprendizaje.create', compact('resultadosAprendizaje'));
         } catch (Exception $e) {
-            Log::error('Error al cargar formulario de creación de guía de aprendizaje: ' . $e->getMessage());
+            Log::error('Error al cargar formulario de creación de guía de aprendizaje: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id()
+            ]);
             return redirect()->back()->with('error', 'Error al cargar el formulario de creación.');
         }
     }

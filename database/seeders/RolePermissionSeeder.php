@@ -61,7 +61,8 @@ class RolePermissionSeeder extends Seeder
             $this->getPermisosCompetencias(),
             $this->getPermisosComplementarios(),
             $this->getPermisosControlSeguimiento(),
-            $this->getPermisosGenerales()
+            $this->getPermisosGenerales(),
+            $this->getPermisosGuiasAprendizaje()
         );
 
         foreach ($permisos as $permiso) {
@@ -402,6 +403,21 @@ class RolePermissionSeeder extends Seeder
     }
 
     /**
+     * Permisos del módulo de Guías de Aprendizaje
+     */
+    private function getPermisosGuiasAprendizaje(): array
+    {
+        return [
+            'VER GUIA APRENDIZAJE',
+            'VER GUIAS APRENDIZAJE',
+            'CREAR GUIA APRENDIZAJE',
+            'EDITAR GUIA APRENDIZAJE',
+            'ELIMINAR GUIA APRENDIZAJE',
+            'CAMBIAR ESTADO GUIA APRENDIZAJE',
+        ];
+    }
+
+    /**
      * Permisos del módulo de Programas Complementarios
      */
     private function getPermisosComplementarios(): array
@@ -467,7 +483,8 @@ class RolePermissionSeeder extends Seeder
                 'ELIMINAR ASPIRANTE COMPLEMENTARIO',
                 'VER INGRESO SALIDA',
                 'ASIGNACION DE INSTRUCTORES',
-            ]
+            ],
+            $this->getPermisosGuiasAprendizaje()
         );
     }
 

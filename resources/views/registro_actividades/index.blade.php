@@ -121,7 +121,19 @@
 
         <div class="collapse show" id="createParameterForm">
             <div class="card-body">
-                @include('registro_actividades.create', compact('caracterizacion'))
+                @if(!$guiaAprendizajeActual)
+                    <div class="alert alert-warning border-0">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <div>
+                                <strong>No se puede crear actividades</strong>
+                                <p class="mb-0">El RAP "{{ $rapActual->nombre ?? 'N/A' }}" no tiene una guía de aprendizaje asociada. Contacte al administrador para asignar una guía de aprendizaje antes de crear actividades.</p>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    @include('registro_actividades.create', compact('caracterizacion', 'rapActual', 'actividades'))
+                @endif
             </div>
         </div>
     </div>
@@ -129,7 +141,18 @@
 
     <!-- Lista de Actividades -->
     <div class="row">
-        @if (count($actividades) == 0)
+        @if (!$guiaAprendizajeActual)
+            <div class="col-12">
+                <div class="card border-warning">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                        <h3 class="mt-3 text-muted">Guía de aprendizaje no asignada</h3>
+                        <p class="text-muted">El RAP "{{ $rapActual->nombre ?? 'N/A' }}" no tiene una guía de aprendizaje asociada.</p>
+                        <p class="text-muted">Contacte al administrador para asignar una guía de aprendizaje a este RAP antes de crear actividades.</p>
+                    </div>
+                </div>
+            </div>
+        @elseif (count($actividades) == 0)
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
@@ -169,7 +192,7 @@
                                     <div>
                                         <h5 class="mb-0 text-white">{{ $actividad['nombre'] }}</h5>
                                         <div class="text-white-50">
-                                            {{ $guiaAprendizajeActual->codigo}} EV-{{ $loop->iteration}}
+                                            {{ $guiaAprendizajeActual ? $guiaAprendizajeActual->codigo . ' EV-' . $loop->iteration : 'EV-' . $loop->iteration}}
                                         </div>
                                     </div>
                                 </div>

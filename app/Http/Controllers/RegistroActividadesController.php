@@ -27,10 +27,15 @@ class RegistroActividadesController extends Controller
      */
     public function index(InstructorFichaCaracterizacion $caracterizacion)
     {
-        $actividades = $this->registroActividadesServices->getActividades($caracterizacion);
-        $guiaAprendizajeActual = $this->registroActividadesServices->getGuiasAprendizaje($caracterizacion);
-        $rapActual = $caracterizacion->ficha->programaFormacion->competenciaActual()->rapActual();
-        return view('registro_actividades.index', compact('caracterizacion', 'actividades', 'rapActual', 'guiaAprendizajeActual'));
+        try {
+            $actividades = $this->registroActividadesServices->getActividades($caracterizacion);
+            $guiaAprendizajeActual = $this->registroActividadesServices->getGuiasAprendizaje($caracterizacion);
+            // Obtener el primer RAP asignado desde instructor_ficha_resultados_aprendizaje
+            $rapActual = $caracterizacion->resultadosAprendizaje->first();
+            return view('registro_actividades.index', compact('caracterizacion', 'actividades', 'rapActual', 'guiaAprendizajeActual'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -46,6 +51,7 @@ class RegistroActividadesController extends Controller
      */
     public function store(StoreRegistroActividadesRequest $request, InstructorFichaCaracterizacion $caracterizacion)
     {
+        try {
             $fecha_evidencia = $request->fecha_evidencia;
             $data = [
                 'nombre' => $request->nombre,
@@ -61,7 +67,9 @@ class RegistroActividadesController extends Controller
             // Redirigir con mensaje de éxito
             return redirect()->route('registro-actividades.index', ['caracterizacion' => $caracterizacion])
                 ->with('success', 'Registro de actividad creado exitosamente.');
-
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -77,9 +85,14 @@ class RegistroActividadesController extends Controller
      */
     public function edit(InstructorFichaCaracterizacion $caracterizacion, Evidencias $actividad)
     {
-        $actividades = $this->registroActividadesServices->getActividades($caracterizacion);
-        $rapActual = $caracterizacion->ficha->programaFormacion->competenciaActual()->rapActual();
-        return view('registro_actividades.edit', compact('actividad', 'caracterizacion', 'actividades', 'rapActual'));
+        try {
+            $actividades = $this->registroActividadesServices->getActividades($caracterizacion);
+            // Obtener el primer RAP asignado desde instructor_ficha_resultados_aprendizaje
+            $rapActual = $caracterizacion->resultadosAprendizaje->first();
+            return view('registro_actividades.edit', compact('actividad', 'caracterizacion', 'actividades', 'rapActual'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**

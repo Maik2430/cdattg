@@ -81,7 +81,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
             'jornada_id' => [
                 'nullable',
                 'integer',
-                'exists:jornadas_formacion,id'
+                'exists:parametros_temas,id'
             ],
 
             // Validación de campos numéricos
@@ -206,7 +206,20 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
         $validator->after(function ($validator) {
             $fichaId = $this->route('fichaCaracterizacion') ?? $this->route('id');
 
-            // 1. Validar disponibilidad del ambiente (excluyendo la ficha actual)
+            // 1. Validar que jornada_id pertenezca al tema JORNADA
+            if ($this->jornada_id) {
+                $jornadaParametroTema = \App\Models\ParametroTema::where('id', $this->jornada_id)
+                    ->whereHas('tema', function($q) {
+                        $q->where('name', 'LIKE', '%JORNADA%');
+                    })
+                    ->first();
+                
+                if (!$jornadaParametroTema) {
+                    $validator->errors()->add('jornada_id', 'La jornada seleccionada no pertenece al tema JORNADA.');
+                }
+            }
+
+            // 2. Validar disponibilidad del ambiente (excluyendo la ficha actual)
             if ($this->ambiente_id && $this->fecha_inicio && $this->fecha_fin) {
                 $validacionAmbiente = $this->validarDisponibilidadAmbiente(
                     $this->ambiente_id,
@@ -220,7 +233,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
                 }
             }
 
-            // 2. Validar disponibilidad del instructor (excluyendo la ficha actual)
+            // 3. Validar disponibilidad del instructor (excluyendo la ficha actual)
             if ($this->instructor_id && $this->fecha_inicio && $this->fecha_fin) {
                 $validacionInstructor = $this->validarDisponibilidadInstructor(
                     $this->instructor_id,
@@ -234,7 +247,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
                 }
             }
 
-            // 3. Validar que el número de ficha sea único por programa (excluyendo la ficha actual)
+            // 4. Validar que el número de ficha sea único por programa (excluyendo la ficha actual)
             if ($this->ficha && $this->programa_formacion_id) {
                 $validacionFicha = $this->validarFichaUnicaPorPrograma(
                     $this->ficha,
@@ -247,7 +260,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
                 }
             }
 
-            // 4. Validar reglas de negocio específicas del SENA (excluyendo la ficha actual)
+            // 5. Validar reglas de negocio específicas del SENA (excluyendo la ficha actual)
             $datos = $this->all();
             $validacionReglas = $this->validarReglasNegocioSena($datos, $fichaId);
             

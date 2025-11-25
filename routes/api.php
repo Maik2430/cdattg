@@ -227,7 +227,19 @@ Route::get('/modalidades', function () {
 })->name('api.modalidades');
 
 Route::get('/jornadas', function () {
-    return \App\Models\JornadaFormacion::all(['id', 'name']);
+    return \App\Models\ParametroTema::whereHas('tema', function($q) {
+        $q->where('name', 'LIKE', '%JORNADA%');
+    })->whereHas('parametro', function($query) {
+        $query->where('status', true);
+    })->where('status', true)
+      ->with('parametro')
+      ->get()
+      ->map(function($pt) {
+          return [
+              'id' => $pt->id,
+              'name' => $pt->parametro->name ?? ''
+          ];
+      });
 })->name('api.jornadas');
 
 Route::get('/instructores', function () {

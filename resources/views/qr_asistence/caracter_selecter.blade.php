@@ -86,7 +86,7 @@
                                             <i class="far fa-sun text-primary mr-2"></i>
                                             <h6 class="mb-0"><b>Jornada:</b></h6>
                                         </div>
-                                        <p class="ml-4 text-muted">{{ $caracterizacion->ficha->jornadaFormacion->jornada }}
+                                        <p class="ml-4 text-muted">{{ $caracterizacion->ficha->jornadaFormacion->parametro->name ?? 'No asignada' }}
                                         </p>
                                     </div>
                                     <div class="col-6">
@@ -145,10 +145,19 @@
                                         </a>
                                     </div>
                                     <div class="col-6">
-                                        <a href="{{ route('asistence.weblist', ['ficha' => $caracterizacion->ficha->ficha, 'jornada' => $caracterizacion->ficha->jornadaFormacion->jornada]) }}"
-                                            class="btn btn-success btn-block py-2 font-weight-bold">
-                                            <i class="fas fa-newspaper mr-1"></i> Novedades
-                                        </a>
+                                        @php
+                                            $jornadaNombre = $caracterizacion->ficha->jornadaFormacion?->parametro?->name ?? '';
+                                        @endphp
+                                        @if($jornadaNombre)
+                                            <a href="{{ route('asistence.weblist', ['ficha' => $caracterizacion->ficha->ficha, 'jornada' => $jornadaNombre]) }}"
+                                                class="btn btn-success btn-block py-2 font-weight-bold">
+                                                <i class="fas fa-newspaper mr-1"></i> Novedades
+                                            </a>
+                                        @else
+                                            <button class="btn btn-success btn-block py-2 font-weight-bold" disabled title="Jornada no asignada">
+                                                <i class="fas fa-newspaper mr-1"></i> Novedades
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

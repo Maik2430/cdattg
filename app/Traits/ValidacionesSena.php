@@ -280,8 +280,9 @@ trait ValidacionesSena
             }
 
             // 5. Validar límite de aprendices por ficha según programa
-            if (isset($datos['programa_formacion_id'])) {
-                $validacionLimiteAprendices = $this->validarLimiteAprendicesPorPrograma($datos['programa_formacion_id']);
+            // Solo validar si se está actualizando una ficha existente (tiene excluirFichaId)
+            if ($excluirFichaId !== null && isset($datos['programa_formacion_id'])) {
+                $validacionLimiteAprendices = $this->validarLimiteAprendicesPorFicha($excluirFichaId, $datos['programa_formacion_id']);
                 if (!$validacionLimiteAprendices['valido']) {
                     $errores[] = $validacionLimiteAprendices['mensaje'];
                 }
@@ -498,7 +499,15 @@ trait ValidacionesSena
      * @param int $programaId ID del programa
      * @return array Resultado de la validación
      */
-    private function validarLimiteAprendicesPorPrograma($programaId)
+    /**
+     * Valida el límite de aprendices por ficha de caracterización.
+     * El límite se determina según el tipo de programa de formación.
+     *
+     * @param int $fichaId ID de la ficha de caracterización
+     * @param int $programaId ID del programa de formación (para obtener el tipo y límite)
+     * @return array Resultado de la validación
+     */
+    private function validarLimiteAprendicesPorFicha($fichaId, $programaId)
     {
         try {
             $programa = \App\Models\ProgramaFormacion::find($programaId);
@@ -520,18 +529,16 @@ trait ValidacionesSena
             $tipoPrograma = $programa->nivel ?? 'TÉCNICO';
             $limiteMaximo = $limitesPorTipo[$tipoPrograma] ?? 30;
 
-            // Contar aprendices actuales en el programa
-            $aprendicesActuales = DB::table('aprendices')
-                ->join('fichas_caracterizacion', 'aprendices.ficha_caracterizacion_id', '=', 'fichas_caracterizacion.id')
-                ->where('fichas_caracterizacion.programa_formacion_id', $programaId)
-                ->where('fichas_caracterizacion.status', true)
-                ->whereNull('aprendices.deleted_at')
+            // Contar aprendices de la ficha específica
+            $aprendicesEnFicha = DB::table('aprendices')
+                ->where('ficha_caracterizacion_id', $fichaId)
+                ->whereNull('deleted_at')
                 ->count();
 
-            if ($aprendicesActuales >= $limiteMaximo) {
+            if ($aprendicesEnFicha >= $limiteMaximo) {
                 return [
                     'valido' => false,
-                    'mensaje' => "Se ha alcanzado el límite máximo de {$limiteMaximo} aprendices para este programa de formación."
+                    'mensaje' => "Se ha alcanzado el límite máximo de {$limiteMaximo} aprendices para esta ficha de caracterización."
                 ];
             }
 
@@ -546,6 +553,24 @@ trait ValidacionesSena
                 'mensaje' => 'Error al validar límite de aprendices: ' . $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * @deprecated Esta función está obsoleta. Usar validarLimiteAprendicesPorFicha en su lugar.
+     * Mantenida por compatibilidad temporal.
+     */
+    private function validarLimiteAprendicesPorPrograma($programaId, $excluirFichaId = null)
+    {
+        // Si se proporciona un fichaId, usar la nueva función
+        if ($excluirFichaId !== null) {
+            return $this->validarLimiteAprendicesPorFicha($excluirFichaId, $programaId);
+        }
+
+        // Si no hay fichaId, no validar (al crear una ficha nueva aún no tiene aprendices)
+        return [
+            'valido' => true,
+            'mensaje' => 'Validación omitida: ficha nueva sin aprendices.'
+        ];
     }
 
     /**

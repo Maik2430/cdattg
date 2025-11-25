@@ -10,22 +10,18 @@
             <div class="card-body">
                 @if($rapActual)
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <strong>RAP:</strong> {{ $rapActual->codigo }} - {{ $rapActual->nombre }}
                         </div>
-                        <div class="col-md-3">
-                            <strong>Inicio:</strong> {{ \Carbon\Carbon::parse($rapActual->fecha_inicio)->format('d/m/Y') }}
-                        </div>
-                        <div class="col-md-3">
-                            <strong>Fin:</strong> {{ \Carbon\Carbon::parse($rapActual->fecha_fin)->format('d/m/Y') }}
-                        </div>
                     </div>
-                    <small class="text-muted mt-2 d-block">
-                        <i class="fas fa-info-circle"></i> Solo podrás crear actividades hasta el {{ \Carbon\Carbon::parse($rapActual->fecha_fin)->format('d/m/Y') }}.
-                    </small>
+                    @if($caracterizacion->fecha_fin)
+                        <small class="text-muted mt-2 d-block">
+                            <i class="fas fa-info-circle"></i> Solo podrás crear actividades hasta el {{ \Carbon\Carbon::parse($caracterizacion->fecha_fin)->format('d/m/Y') }}.
+                        </small>
+                    @endif
                 @else
                     <div class="text-muted">
-                        <i class="fas fa-exclamation-triangle"></i> No hay un RAP activo configurado para el período actual.
+                        <i class="fas fa-exclamation-triangle"></i> No hay un RAP asignado a esta ficha de instructor.
                     </div>
                 @endif
             </div>
@@ -109,6 +105,6 @@
 <script>
 // Pasar datos del PHP al JavaScript
 window.diasFormacion = @json($caracterizacion->instructorFichaDias->pluck('dia_id')->toArray());
-window.fechaFinRap = @json($caracterizacion->ficha->programaFormacion->competenciaActual()->rapActual()?->fecha_fin);
+window.fechaFinRap = @json($caracterizacion->fecha_fin);
 window.actividades = @json($actividades ?? []);
 </script>

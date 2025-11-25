@@ -589,7 +589,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Tomar Asistencia',
-                    'url' => 'asistencia',
+                    'route' => 'asistence.web',
                     'icon' => 'fas fa-fw fa-check-square',
                     'can' => 'TOMAR ASISTENCIA',
                 ],

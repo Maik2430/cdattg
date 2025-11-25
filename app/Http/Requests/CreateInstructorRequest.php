@@ -68,7 +68,7 @@ class CreateInstructorRequest extends FormRequest
             ],
             'jornadas.*' => [
                 'integer',
-                'exists:jornadas_formacion,id'
+                'exists:parametros_temas,id'
             ],
             'experiencia_instructor_meses' => [
                 'nullable',
@@ -228,6 +228,26 @@ class CreateInstructorRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
+            // Validar que las jornadas pertenezcan al tema JORNADA
+            if ($this->has('jornadas') && is_array($this->jornadas)) {
+                $jornadasInvalidas = [];
+                foreach ($this->jornadas as $jornadaId) {
+                    $jornadaParametroTema = \App\Models\ParametroTema::where('id', $jornadaId)
+                        ->whereHas('tema', function($q) {
+                            $q->where('name', 'LIKE', '%JORNADA%');
+                        })
+                        ->first();
+                    
+                    if (!$jornadaParametroTema) {
+                        $jornadasInvalidas[] = $jornadaId;
+                    }
+                }
+                
+                if (!empty($jornadasInvalidas)) {
+                    $validator->errors()->add('jornadas', 'Una o más jornadas seleccionadas no pertenecen al tema JORNADA.');
+                }
+            }
+
             // Validaciones adicionales de negocio
             if ($this->has('persona_id')) {
                 $persona = \App\Models\Persona::with(['instructor', 'user'])->find($this->input('persona_id'));

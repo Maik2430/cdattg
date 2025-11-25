@@ -101,7 +101,7 @@ class CaracterizacionController extends Controller
             'ficha_id' => 'required|exists:fichas_caracterizacion,id',
             'programa_id' => 'required|exists:programas_formacion,id',
             'sede_id' => 'required|exists:sedes,id',
-            'jornada_id' => 'required|exists:jornadas_formacion,id',
+            'jornada_id' => 'required|exists:parametros_temas,id',
             'persona_id' => 'required|exists:instructors,persona_id',
         ]);
 
@@ -164,7 +164,7 @@ class CaracterizacionController extends Controller
             'ficha_id' => 'required|exists:fichas_caracterizacion,id',
             'programa_formacion_id' => 'required|exists:programas_formacion,id',
             'instructor_persona_id' => 'required|exists:instructors,persona_id',
-            'jornada_id' => 'required|exists:jornadas_formacion,id',
+            'jornada_id' => 'required|exists:parametros_temas,id',
             'sede_id' => 'required|exists:sedes,id',
         ]);
 

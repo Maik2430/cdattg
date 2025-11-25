@@ -32,14 +32,16 @@
                         @else
                             <div class="form-group">
                                 <label for="persona_id" class="form-label required-field">Persona</label>
-                                <select wire:model="persona_id" id="persona_id" class="form-control @error('persona_id') is-invalid @enderror" required>
-                                    <option value="">-- Selecciona una persona --</option>
-                                    @foreach ($personasDisponibles as $persona)
-                                        <option value="{{ $persona->id }}">
-                                            {{ $persona->nombre_completo }} — {{ $persona->numero_documento }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <div wire:ignore>
+                                    <select wire:model="persona_id" id="persona_id" class="form-control select2 @error('persona_id') is-invalid @enderror" required data-placeholder="-- Selecciona una persona --">
+                                        <option value="">-- Selecciona una persona --</option>
+                                        @foreach ($personasDisponibles as $persona)
+                                            <option value="{{ $persona->id }}">
+                                                {{ $persona->nombre_completo }} — {{ $persona->numero_documento }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 @error('persona_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -564,4 +566,95 @@
         </div>
     </div>
 </div>
+
+@push('js')
+<script>
+    (function() {
+        let select2Initialized = false;
+
+        function inicializarSelect2Persona() {
+            const $ = window.jQuery;
+            if (!$ || !$.fn.select2) {
+                console.warn('jQuery o Select2 no están disponibles');
+                return;
+            }
+
+            const $selectPersona = $('#persona_id');
+            if ($selectPersona.length === 0) {
+                return;
+            }
+
+            // Evitar múltiples inicializaciones
+            if ($selectPersona.hasClass('select2-hidden-accessible')) {
+                return;
+            }
+
+            // Inicializar Select2 solo en el campo persona_id
+            $selectPersona.select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: function() {
+                    return $(this).data('placeholder') || '-- Selecciona una persona --';
+                },
+                allowClear: true,
+                language: {
+                    noResults: function() {
+                        return "No se encontraron resultados";
+                    },
+                    searching: function() {
+                        return "Buscando...";
+                    }
+                }
+            });
+
+            // Sincronizar cambios de Select2 con Livewire
+            $selectPersona.off('change.select2-livewire').on('change.select2-livewire', function() {
+                const value = $(this).val();
+                @this.set('persona_id', value);
+            });
+
+            // Sincronizar valor inicial desde Livewire
+            try {
+                const currentValue = @this.get('persona_id');
+                if (currentValue) {
+                    $selectPersona.val(currentValue).trigger('change.select2');
+                }
+            } catch (e) {
+                // Si @this no está disponible aún, intentar más tarde
+                setTimeout(function() {
+                    try {
+                        const currentValue = @this.get('persona_id');
+                        if (currentValue) {
+                            $selectPersona.val(currentValue).trigger('change.select2');
+                        }
+                    } catch (err) {
+                        console.warn('No se pudo sincronizar valor inicial:', err);
+                    }
+                }, 200);
+            }
+
+            select2Initialized = true;
+        }
+
+        // Inicializar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', inicializarSelect2Persona);
+        } else {
+            setTimeout(inicializarSelect2Persona, 100);
+        }
+
+        // Reinicializar cuando Livewire actualice el DOM
+        if (window.Livewire) {
+            document.addEventListener('livewire:init', function() {
+                Livewire.hook('morph.updated', function() {
+                    setTimeout(function() {
+                        select2Initialized = false;
+                        inicializarSelect2Persona();
+                    }, 150);
+                });
+            });
+        }
+    })();
+</script>
+@endpush
 

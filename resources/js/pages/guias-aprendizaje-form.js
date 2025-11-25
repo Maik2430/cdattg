@@ -10,39 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
         hideDelay: 5000,
         alertSelector: '.alert'
     });
-    
-    // Inicializar Select2 para resultados de aprendizaje
-    if (typeof $ !== 'undefined' && $.fn.select2) {
-        $('#resultados_aprendizaje').select2({
-            placeholder: 'Seleccione los resultados de aprendizaje',
-            allowClear: true,
-            width: '100%',
-            language: {
-                noResults: function() {
-                    return "No se encontraron resultados";
-                },
-                searching: function() {
-                    return "Buscando...";
-                }
-            }
-        });
-
-        // Inicializar otros Select2 si existen
-        $('.select2').select2({
-            theme: 'bootstrap-5',
-            width: '100%',
-            placeholder: 'Seleccione una opción',
-            allowClear: true,
-            language: {
-                noResults: function() {
-                    return "No se encontraron resultados";
-                },
-                searching: function() {
-                    return "Buscando...";
-                }
-            }
-        });
-    }
 
     // Validación de formulario
     const form = document.querySelector('form');
@@ -55,31 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alertHandler.showError('Debe seleccionar al menos un resultado de aprendizaje.');
                 return;
             }
-
-            // Validar otros campos requeridos
-            const titulo = $('#titulo').val();
-            if (!titulo || titulo.trim() === '') {
-                event.preventDefault();
-                alertHandler.showError('El título es requerido.');
-                return;
-            }
         });
-    }
-
-    // Auto-focus en el primer campo
-    const firstInput = document.querySelector('input[type="text"], input[type="number"], select');
-    if (firstInput && !firstInput.value) {
-        firstInput.focus();
-    }
-
-    // Limpiar formulario después de envío exitoso
-    if (window.location.search.includes('success')) {
-        if (form) {
-            form.reset();
-            if (typeof $ !== 'undefined' && $.fn.select2) {
-                $('.select2').val(null).trigger('change');
-            }
-        }
     }
 
     // Confirmación de eliminación si es necesario
@@ -95,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Crear formulario para enviar DELETE
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = url;
@@ -117,6 +59,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
-
-    console.log('Formulario de guías de aprendizaje inicializado correctamente');
 });

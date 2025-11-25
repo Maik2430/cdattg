@@ -96,7 +96,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
             'jornada_id' => [
                 'required',
                 'integer',
-                'exists:jornadas_formacion,id'
+                'exists:parametros_temas,id'
             ],
 
             // Validación de campos numéricos
@@ -280,7 +280,20 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                 'errors_count' => $validator->errors()->count(),
                 'errors' => $validator->errors()->toArray()
             ]);
-            // 1. Validar disponibilidad del ambiente
+            // 1. Validar que jornada_id pertenezca al tema JORNADA
+            if ($this->jornada_id) {
+                $jornadaParametroTema = \App\Models\ParametroTema::where('id', $this->jornada_id)
+                    ->whereHas('tema', function($q) {
+                        $q->where('name', 'LIKE', '%JORNADA%');
+                    })
+                    ->first();
+                
+                if (!$jornadaParametroTema) {
+                    $validator->errors()->add('jornada_id', 'La jornada seleccionada no pertenece al tema JORNADA.');
+                }
+            }
+
+            // 2. Validar disponibilidad del ambiente
             if ($this->ambiente_id && $this->fecha_inicio && $this->fecha_fin) {
                 $validacionAmbiente = $this->validarDisponibilidadAmbiente(
                     $this->ambiente_id,
@@ -293,7 +306,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                 }
             }
 
-            // 2. Validar disponibilidad del instructor
+            // 3. Validar disponibilidad del instructor
             if ($this->instructor_id && $this->fecha_inicio && $this->fecha_fin) {
                 $validacionInstructor = $this->validarDisponibilidadInstructor(
                     $this->instructor_id,
@@ -306,7 +319,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                 }
             }
 
-            // 3. Validar que el número de ficha sea único por programa
+            // 4. Validar que el número de ficha sea único por programa
             if ($this->ficha && $this->programa_formacion_id) {
                 $validacionFicha = $this->validarFichaUnicaPorPrograma(
                     $this->ficha,
@@ -318,7 +331,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                 }
             }
 
-            // 4. Validar que los días de formación estén dentro del rango de fechas
+            // 5. Validar que los días de formación estén dentro del rango de fechas
             if ($this->fecha_inicio && $this->fecha_fin && $this->dias_formacion && is_array($this->dias_formacion)) {
                 $fechaInicio = \Carbon\Carbon::parse($this->fecha_inicio);
                 $fechaFin = \Carbon\Carbon::parse($this->fecha_fin);
@@ -379,7 +392,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                 }
             }
 
-            // 5. Validar reglas de negocio específicas del SENA
+            // 6. Validar reglas de negocio específicas del SENA
             $datos = $this->all();
             $validacionReglas = $this->validarReglasNegocioSena($datos);
             
