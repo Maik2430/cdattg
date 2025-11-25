@@ -10268,7 +10268,7 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PARAFINA LIQUIDA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'SIN ETIQUETA ORIGINAL',
+                'descripcion' => 'SIN ETIQUETA ORIGINAL DEL FABRICANTE',
                 'peso' => 0,
                 'unidad_medida_id' => 36,
                 'cantidad' => 45.0,
@@ -12890,7 +12890,9 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'COPA MEDIDORA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'COPA MEDIDORA DE ONZAS EN CÓCTELES Y BEBIDAS CON UNA CAPACIDAD DE 30 ML (1 OZ) POR LA PARTE MAS GRANDE- 20 ML (0,68 OZ) POR LA PARTE MAS PEQUEÑA',
+                'descripcion' => 'COPA MEDIDORA DE ONZAS EN CÓCTELES Y
+                 BEBIDAS CON UNA CAPACIDAD DE 30 ML (1 OZ) POR LA PARTE MAS
+                  GRANDE- 20 ML (0,68 OZ) POR LA PARTE MAS PEQUEÑA',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -12909,7 +12911,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'ESPOLVOREADOR',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ESPOLVOREADOR  DE ACERO INOXIDABLE PARA CACAO, AZÚCAR, GLASS O CANELA CON UNA CAPACIDAD DE 10 OZ (APROX 295 ML)',
+                'descripcion' => 'ESPOLVOREADOR  DE ACERO INOXIDABLE PARA CACAO, AZÚCAR,
+                 GLASS O CANELA CON UNA CAPACIDAD DE 10 OZ (APROX 295 ML)',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -12966,7 +12969,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BROCHA DE COCINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BROCHA DE COCINA CON UNA ESTRUCTURA QUE CONSTA DE MANGO, CABEZA Y CERDAS DE PLASTICO RESISTENTE Y FIBRAS DE SILICONA O MATERIAL SINTÉTICO',
+                'descripcion' => 'BROCHA DE COCINA CON UNA ESTRUCTURA QUE CONSTA DE MANGO,
+                 CABEZA Y CERDAS DE PLASTICO RESISTENTE Y FIBRAS DE SILICONA O MATERIAL SINTÉTICO',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 3.0,
@@ -12985,7 +12989,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'MAZO METÁLICO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL EN ACERO INOXIDABLE O TEMPLADO, COMPACTADOR DE CAFÉ MOLIDO CON UN DIAMETRO DE 57 MM',
+                'descripcion' => 'MATERIAL EN ACERO INOXIDABLE O TEMPLADO,
+                 COMPACTADOR DE CAFÉ MOLIDO CON UN DIAMETRO DE 57 MM',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -13004,7 +13009,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'AZAFATE',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ACERO INOXIDABLE CUADRADO, BARRA DE GOMA EN EL CENTRO, DIMENCIONES APROPIADAS PARA LA BARRA DE CAFÉ, BARRA 10 CM CON CAPACIDAD DE 1-2 LT',
+                'descripcion' => 'ACERO INOXIDABLE CUADRADO, BARRA DE GOMA EN EL CENTRO,
+                 DIMENCIONES APROPIADAS PARA LA BARRA DE CAFÉ, BARRA 10 CM CON CAPACIDAD DE 1-2 LT',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -13023,7 +13029,9 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PINCEL LATTE ART',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HERRAMIENTA MANUAL COMPUESTA POR UN MANGO ROJO, CON UN EXTREMO ESFÉRICO METÁLICO Y OTOR EXTREMO PUNTIAGUDO UTILIZADO PARA LA LECHE, CON UNA LONGITUD DE 10 A 15 CM',
+                'descripcion' => 'HERRAMIENTA MANUAL COMPUESTA POR UN MANGO ROJO,
+                 CON UN EXTREMO ESFÉRICO METÁLICO Y OTOR EXTREMO PUNTIAGUDO UTILIZADO PARA LA LECHE,
+                 CON UNA LONGITUD DE 10 A 15 CM',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -13080,7 +13088,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PRENSADORA CON TAPA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE ACORO INOXIDABLE CON ORIFICIOS DISTRIBUIDOS EN LA FUPERFICIE Y EN EL FONDO CON SU RESPECTIVA TAPA DE BASE CIRCULAR',
+                'descripcion' => 'MATERIAL DE ACORO INOXIDABLE CON ORIFICIOS DISTRIBUIDOS EN LA FUPERFICIE
+                 Y EN EL FONDO CON SU RESPECTIVA TAPA DE BASE CIRCULAR',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 5.0,
@@ -13118,7 +13127,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'FILTRO PARA LECHERÍA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'FILTRO DE ALUMINIO CON DOS MALLAS (TAMIZ) REEMPLAZABLE, ARO DE SUJETACIÓN Y PAPEL FILTRO.',
+                'descripcion' => 'FILTRO DE ALUMINIO CON DOS MALLAS (TAMIZ) REEMPLAZABLE,
+                 ARO DE SUJETACIÓN Y PAPEL FILTRO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13137,7 +13147,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'GUANTES INDUSTRIAL',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 10.',
+                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS,
+                 CALIBRE 35, TALLA 10.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 36.0,
@@ -13156,7 +13167,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'GUANTES INDUSTRIAL',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 9.',
+                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL
+                 CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 9.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 25.0,
@@ -13175,7 +13187,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'GUANTES INDUSTRIAL',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 8 1/2.',
+                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL
+                 CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 8 1/2.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 16.0,
@@ -13194,7 +13207,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOLSA PARA BASURA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA OXO-BIODEGRADABLE TAMAÑO GRANDE CON MEDIDAS DE 65X90 CM, 9 ROLLO X 10 UNIDADES CADA UNO.',
+                'descripcion' => 'BOLSA OXO-BIODEGRADABLE TAMAÑO GRANDE
+                 CON MEDIDAS DE 65X90 CM, 9 ROLLO X 10 UNIDADES CADA UNO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 90.0,
@@ -13384,7 +13398,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PAÑOS DE LIMPIEZA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ROLLO DE 36 METROS, DEL CUAL SE OBTIENEN 88 PAÑOS, CADA UNO CON MEDIDAS DE 27,8 CM X 41 CM',
+                'descripcion' => 'ROLLO DE 36 METROS, DEL CUAL SE OBTIENEN 88 PAÑOS,
+                 CADA UNO CON MEDIDAS DE 27,8 CM X 41 CM',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 19.0,
@@ -13403,7 +13418,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'TOALLAS MULTIUSO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'TOLLAS COLOR NATURAL DE 150 METROS; CADA PAQUETE CONSTA DE DOS ROLLOS DE HOJA DOBLE, CON UN ANCHO DE ROLLO DE 18,8 CM.',
+                'descripcion' => 'TOLLAS COLOR NATURAL DE 150 METROS;
+                 CADA PAQUETE CONSTA DE DOS ROLLOS DE HOJA DOBLE, CON UN ANCHO DE ROLLO DE 18,8 CM.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 7.0,
@@ -13479,7 +13495,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PALA DE COCINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE ACERO INOXIDABLE, SE USA PARA SERVIR, TRASLADAR O DICIFICAR INGREDIENTES SÓLIDOS',
+                'descripcion' => 'MATERIAL DE ACERO INOXIDABLE, SE USA PARA SERVIR,
+                 TRASLADAR O DICIFICAR INGREDIENTES SÓLIDOS',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13517,7 +13534,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'TERMÓMETRO DE COCINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'FABRICADO EN ACERO INOXIDABLE, COMPUESTO POR UNA CARCASA, VARILLA, BORDE Y CARÁTULA DE VIDRIO',
+                'descripcion' => 'FABRICADO EN ACERO INOXIDABLE,
+                 COMPUESTO POR UNA CARCASA, VARILLA, BORDE Y CARÁTULA DE VIDRIO',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13536,7 +13554,9 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO DE COCINA PROFECIONAL',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'LA HOJA ES DE MATERIAL DE ACERO INOXIDABLE Y EL MANGO ES DE PLÁSTICO RESISTENTE DE COLOR BLANCO Y NEGRO, SE USA PARA CORTAR, TROCEAR, PICAR Y FILETEAR',
+                'descripcion' => 'LA HOJA ES DE MATERIAL DE ACERO INOXIDABLE Y
+                 EL MANGO ES DE PLÁSTICO RESISTENTE DE COLOR BLANCO Y NEGRO, SE USA PARA CORTAR,
+                 TROCEAR, PICAR Y FILETEAR',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13555,7 +13575,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PELADOR DE COCINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'LA CUCHILLA ESTA FABRICADA EN ACERO INOXIDABLE, EL MANGO ES DE PLÁSTICO RESISTENTE, SE UTILIZA PARA OELAR LA PIEL DE LAS VERDURAS Y FRUTAS',
+                'descripcion' => 'LA CUCHILLA ESTA FABRICADA EN ACERO INOXIDABLE,
+                 EL MANGO ES DE PLÁSTICO RESISTENTE, SE UTILIZA PARA OELAR LA PIEL DE LAS VERDURAS Y FRUTAS',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -13574,7 +13595,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO DE SIERRA GRANDE',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HOJA DE ACERO INOXIDABLE, MANGO DE PLÁSTICO COLOR NEGRO, USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS',
+                'descripcion' => 'HOJA DE ACERO INOXIDABLE, MANGO DE PLÁSTICO COLOR NEGRO,
+                 USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -13593,7 +13615,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO CARNICERO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HOJA DE ACERO INOXIDABLE, MANGO DE POLIPROPILENO, SIRVE PARA CORTAR, DESHUESAR Y FILETEAR GRANDES PUEZAS DE CARNE',
+                'descripcion' => 'HOJA DE ACERO INOXIDABLE, MANGO DE POLIPROPILENO,
+                 SIRVE PARA CORTAR, DESHUESAR Y FILETEAR GRANDES PUEZAS DE CARNE',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -13631,7 +13654,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'ESPÁTULA GRANDE',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ESPÁTULA CON CABEZA COLOR BLANCA, FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.',
+                'descripcion' => 'ESPÁTULA CON CABEZA COLOR BLANCA,
+                 FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13650,7 +13674,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'ESPÁTULA PEQUEÑA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ESPÁTULA CON CABEZA COLOR BLANCA, FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.',
+                'descripcion' => 'ESPÁTULA CON CABEZA COLOR BLANCA,
+                 FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -13669,7 +13694,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO PARA DESHUESAR',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HOJA DE ACERO INOXIDABLE, Y MANGO DE POLIPROPILENO BLANCO, SU USO PRINCIPALMENTE PARA SEPARAR LA CARNE DEL HUESO.',
+                'descripcion' => 'HOJA DE ACERO INOXIDABLE,
+                 Y MANGO DE POLIPROPILENO BLANCO, SU USO PRINCIPALMENTE PARA SEPARAR LA CARNE DEL HUESO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 3.0,
@@ -13707,7 +13733,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO DE SIERRA PEQUEÑO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HOJA DE ACERO INOXIDABLE, Y MANGO DE PLÁSTICO COLOR NEGRO, USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS',
+                'descripcion' => 'HOJA DE ACERO INOXIDABLE, Y MANGO DE PLÁSTICO COLOR NEGRO,
+                 USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13726,7 +13753,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO PUNTILLA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE LA HOJA EN ACERO INOXIDABLE, Y EL MANGO EN POLIPROPILENO, DOS EN COLOR NEGRO Y UNO EN COLOR BLANCO.',
+                'descripcion' => 'MATERIAL DE LA HOJA EN ACERO INOXIDABLE,
+                 Y EL MANGO EN POLIPROPILENO, DOS EN COLOR NEGRO Y UNO EN COLOR BLANCO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 3.0,
@@ -13897,7 +13925,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOTELLA PLÁSTICA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ENVASE COMÚN PARA CONTENER LÍQUIDOS COMO LECHE, JUGOS, AGUA, Y PRODUCTOS SIMILARES, CON UNA CAPACIDAD DE 250 ML.',
+                'descripcion' => 'ENVASE COMÚN PARA CONTENER LÍQUIDOS COMO LECHE,
+                 JUGOS, AGUA, Y PRODUCTOS SIMILARES, CON UNA CAPACIDAD DE 250 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 54.0,
@@ -13916,7 +13945,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'ENVASE PLÁSTICO DE YOGURT',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ENVASE PLÁSTICO CON TAPA DE ROSCA Y ASA, PARA ENVASAR BEBIDAS LÁCTEAS, CON CAPACIDAD DE 250 ML.',
+                'descripcion' => 'ENVASE PLÁSTICO CON TAPA DE ROSCA Y ASA,
+                 PARA ENVASAR BEBIDAS LÁCTEAS, CON CAPACIDAD DE 250 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 110.0,
@@ -14015,7 +14045,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOMBA DE PIPETA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE PLÁSTICO ROJO, CAPACIDAD DE 25 ML, SE UA PARA SUCCIONAR Y DIPENSAR LÍQUIDOS CON PRECISÓN.',
+                'descripcion' => 'MATERIAL DE PLÁSTICO ROJO, CAPACIDAD DE 25 ML,
+                 SE UA PARA SUCCIONAR Y DIPENSAR LÍQUIDOS CON PRECISÓN.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -14034,7 +14065,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'TERMOMETRO DE BARILLA PARA BARBACOA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'LA VARILLA (SONDA) ESTA HECHA DE ACERO INOXIDABLE, EL CUERPO Y EL MANGO SON DE MATERIAL PLÁSTICO, RANGO DE TEMPERATURA DESDE -50°C HASTA 300°C.',
+                'descripcion' => 'LA VARILLA (SONDA) ESTA HECHA DE ACERO INOXIDABLE,
+                 EL CUERPO Y EL MANGO SON DE MATERIAL PLÁSTICO, RANGO DE TEMPERATURA DESDE -50°C HASTA 300°C.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -14053,7 +14085,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'ACIDIMETRO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'LA BURETA ESTA FABRICADA DE VIDRIO BORORSILICATO, EL FRASCO ES DE PLÁSTICO, CON UNA CAPACIDAD DE 10 ML.',
+                'descripcion' => 'LA BURETA ESTA FABRICADA DE VIDRIO BORORSILICATO,
+                 EL FRASCO ES DE PLÁSTICO, CON UNA CAPACIDAD DE 10 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 6.0,
@@ -14224,7 +14257,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'TUBO DE ENSAYO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'FABRICADO EN VIDRIO BOROSILICATO, SE USA PARA CONTENER O MEZCLAR SUSTANCIAS QUÍMICAS, CON UNA CAPACIDAD DE 6-8 ML.',
+                'descripcion' => 'FABRICADO EN VIDRIO BOROSILICATO,
+                 SE USA PARA CONTENER O MEZCLAR SUSTANCIAS QUÍMICAS, CON UNA CAPACIDAD DE 6-8 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 13.0,
@@ -14493,7 +14527,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'AZUCAR EXTRAFINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BULTO DE 25 KG DIVIDIDO EN UNIDADES DE 1 KG DE APROX 20 PORCIONES, INGRESO EL DÍA 24/09/2025.',
+                'descripcion' => 'BULTO DE 25 KG DIVIDIDO EN UNIDADES DE 1 KG DE APROX 20 PORCIONES,
+                 INGRESO EL DÍA 24/09/2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 25.0,
@@ -14874,7 +14909,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'FUENTE DE CHOCOLATE EN CASCADA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'FABRICADO EN ACERO INOXIDABLE Y PLÁSTICO RESISTENTE AL CALOR, CAPACIDAD DE 32 ONZAS, (APROX 900 ML), HASTA DOS LIBRAS CHOCOLATE.',
+                'descripcion' => 'FABRICADO EN ACERO INOXIDABLE Y PLÁSTICO RESISTENTE AL CALOR,
+                 CAPACIDAD DE 32 ONZAS, (APROX 900 ML), HASTA DOS LIBRAS CHOCOLATE.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -14912,7 +14948,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'FRASCO DE VIDRIO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE VIDRIO TRANSPARENTE CON TAPA DORADA DE METAL, CAPACIDAD DE 180 ML, USO COMÚN PARA MERMELADAS, MIEL O DULCES.',
+                'descripcion' => 'MATERIAL DE VIDRIO TRANSPARENTE CON TAPA DORADA DE METAL,
+                 CAPACIDAD DE 180 ML, USO COMÚN PARA MERMELADAS, MIEL O DULCES.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 8.0,
@@ -14950,7 +14987,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'GRINDSTED PECTIN RS 461 (RAPIDA)',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'INSUMO PARA LA INDUSTRIA ALIMENTARIA, CON UNA CANTIDAD DE 1 KG, DEBE CONSERVARSE EN UN LUGAR FRESCO Y SECO, LLEGO EN OCTUBRE DEL 2025.',
+                'descripcion' => 'INSUMO PARA LA INDUSTRIA ALIMENTARIA, CON UNA CANTIDAD DE 1 KG,
+                 DEBE CONSERVARSE EN UN LUGAR FRESCO Y SECO, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -14988,7 +15026,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 15 X 16 CM, DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.',
+                'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 15 X 16 CM,
+                 DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 300.0,
@@ -15007,7 +15046,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 18 X 25 CM, DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.',
+                'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 18 X 25 CM,
+                DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 300.0,
@@ -15026,7 +15066,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOLSA PARA EMPAQUE',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE EN PLÁSTICO PARA VER SU CONTENIDO, TAMAÑO GRANDE, LLEGO EN OCTUBRE DEL 2025.',
+                'descripcion' => 'BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE EN PLÁSTICO PARA VER SU CONTENIDO,
+                 TAMAÑO GRANDE, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 200.0,
@@ -15045,7 +15086,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOLSA PARA EMPAQUE',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE PARA OBSERVAR SU CONTENIDO, DE TAMAÑO PEQUEÑO, LLEGO EN OCTUBRE DEL 2025.',
+                'descripcion' => 'BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE PARA OBSERVAR SU CONTENIDO,
+                 DE TAMAÑO PEQUEÑO, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 100.0,
@@ -15064,7 +15106,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CIRUELAS DESIDRATADAS',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'CIRUELA DESIDRATADA CON UN CONTENIDO DE 0,625 KG CADA BOLSITA, PARA UN TOTAL DE 10 KG, LLEGO EN OCTUBRE DEL 2025.',
+                'descripcion' => 'CIRUELA DESIDRATADA CON UN CONTENIDO DE 0,625 KG CADA BOLSITA,
+                 PARA UN TOTAL DE 10 KG, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 16.0,
@@ -15235,7 +15278,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'FRASCO PLÁSTICO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOTELLAS PLÁSTICA CON TAPA VERDE, USADA COMÚNMENTE PARA MUESTRAS, CON CAPACIDAD DE 250 ML.',
+                'descripcion' => 'BOTELLAS PLÁSTICA CON TAPA VERDE,
+                 USADA COMÚNMENTE PARA MUESTRAS, CON CAPACIDAD DE 250 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 107.0,
@@ -15368,7 +15412,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'VINAGRE BLANCO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'VINAGRE BLANCO PARA PREPARACIONES GASTRONÓMICAS, CON UN CONTENIDO DE 3800 ML, PRODUCTO VENCIDO.',
+                'descripcion' => 'VINAGRE BLANCO PARA PREPARACIONES GASTRONÓMICAS,
+                 CON UN CONTENIDO DE 3800 ML, PRODUCTO VENCIDO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
