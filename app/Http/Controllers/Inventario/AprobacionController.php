@@ -1,62 +1,47 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
+use App\Repositories\Inventario\OrdenRepository;
+use App\Services\Inventario\AprobacionService;
 use App\Exceptions\AprobacionException;
 use Illuminate\Http\Request;
-use App\Models\Inventario\Aprobacion;
 use App\Models\Inventario\DetalleOrden;
-use App\Models\Inventario\Producto;
 use App\Models\Inventario\Orden;
-use App\Models\ParametroTema;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use App\Notifications\OrdenAprobadaNotification;
-use App\Notifications\OrdenRechazadaNotification;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\AprobacionesRequest;
 
 class AprobacionController extends InventarioController
 {
-    private const STATUS_PENDING = 'EN ESPERA';
-    private const ORDER_STATUS_THEME = 'ESTADOS DE ORDEN';
+    protected OrdenRepository $repository;
+    protected AprobacionService $service;
 
-    public function __construct()
-    {
+    public function __construct(
+        OrdenRepository $repository,
+        AprobacionService $service
+    ) {
         parent::__construct();
         $this->middleware('can:APROBAR ORDEN')->only(['aprobar', 'rechazar', 'pendientes']);
+        
+        $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
      * Mostrar órdenes pendientes de aprobación
      */
-    public function pendientes() : View
+    public function pendientes(): View
     {
-        // Obtener estado EN ESPERA
-        $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::STATUS_PENDING);
-        })
-        ->whereHas('tema', function ($q) {
-            $q->where('name', self::ORDER_STATUS_THEME);
-        })
-        ->first();
+        $estadoEnEspera = $this->service->obtenerEstadoEnEspera();
 
         if (!$estadoEnEspera) {
             return view('inventario.aprobaciones.pendientes', ['detalles' => collect()]);
         }
 
-        // Obtener detalles de orden en estado EN ESPERA
-        $detalles = DetalleOrden::with([
-            'orden.tipoOrden.parametro',
-            'orden.userCreate',
-            'producto',
-            'estadoOrden.parametro'
-        ])
-        ->where('estado_orden_id', $estadoEnEspera->id)
-        ->whereDoesntHave('aprobacion') // Solo los que no tienen aprobación aún
-        ->latest()
-        ->get();
+        $detalles = $this->repository->obtenerDetallesPendientes($estadoEnEspera->id);
 
         return view('inventario.aprobaciones.pendientes', compact('detalles'));
     }
@@ -64,80 +49,13 @@ class AprobacionController extends InventarioController
     /**
      * Aprobar una solicitud
      */
-    public function aprobar(Request $request, $detalleOrdenId) : RedirectResponse
+    public function aprobar(Request $request, int $detalleOrdenId): RedirectResponse
     {
         try {
-            DB::beginTransaction();
-
             $detalleOrden = DetalleOrden::with(['producto', 'orden'])->findOrFail($detalleOrdenId);
+            $this->service->aprobarDetalle($detalleOrden);
 
-            // Verificar que esté en estado EN ESPERA
-            $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-                $q->where('name', self::STATUS_PENDING);
-            })
-            ->whereHas('tema', function ($q) {
-                $q->where('name', self::ORDER_STATUS_THEME);
-            })
-            ->first();
-
-            if ($detalleOrden->estado_orden_id != $estadoEnEspera->id) {
-                throw new AprobacionException('Esta solicitud no está pendiente de aprobación.');
-            }
-
-            // Verificar que no tenga aprobación previa
-            if ($detalleOrden->aprobacion) {
-                throw new AprobacionException('Esta solicitud ya fue procesada anteriormente.');
-            }
-
-            // Verificar stock disponible
             $producto = $detalleOrden->producto;
-            if ($producto->cantidad < $detalleOrden->cantidad) {
-                throw new AprobacionException(
-                    "Stock insuficiente para '{$producto->producto}'. " .
-                    "Disponible: {$producto->cantidad}, Solicitado: {$detalleOrden->cantidad}"
-                );
-            }
-
-            // Obtener estado APROBADA
-            $estadoAprobada = ParametroTema::whereHas('parametro', function ($q) {
-                $q->where('name', 'APROBADA');
-            })
-            ->whereHas('tema', function ($q) {
-                $q->where('name', self::ORDER_STATUS_THEME);
-            })
-            ->first();
-
-            if (!$estadoAprobada) {
-                throw new AprobacionException("Estado 'APROBADA' no encontrado en parámetros.");
-            }
-
-            // Actualizar estado del detalle de orden
-            $detalleOrden->update([
-                'estado_orden_id' => $estadoAprobada->id,
-                'user_update_id' => Auth::id()
-            ]);
-
-            // Crear registro de aprobación
-            $aprobacion = new Aprobacion([
-                'detalle_orden_id' => $detalleOrden->id,
-                'estado_aprobacion_id' => $estadoAprobada->id,
-                'user_create_id' => Auth::id(),
-                'user_update_id' => Auth::id()
-            ]);
-            $aprobacion->save();
-
-            // Descontar el stock del producto
-            $producto->cantidad -= $detalleOrden->cantidad;
-            $producto->user_update_id = Auth::id();
-            $producto->save();
-
-            // Enviar notificación al solicitante de la orden
-            $solicitante = $detalleOrden->orden->userCreate;
-            if ($solicitante) {
-                $solicitante->notify(new OrdenAprobadaNotification($detalleOrden, Auth::user()));
-            }
-
-            DB::commit();
 
             return redirect()
                 ->back()
@@ -146,8 +64,7 @@ class AprobacionController extends InventarioController
                     "Solicitud aprobada exitosamente. Stock actualizado para '{$producto->producto}'."
                 );
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (AprobacionException $e) {
             return back()
                 ->with('error', 'Error al aprobar la solicitud: ' . $e->getMessage());
         }
@@ -156,88 +73,19 @@ class AprobacionController extends InventarioController
     /**
      * Rechazar una solicitud
      */
-    public function rechazar(AprobacionesRequest $request, $detalleOrdenId) : RedirectResponse
+    public function rechazar(AprobacionesRequest $request, int $detalleOrdenId): RedirectResponse
     {
-        $validated = $request->validated();
-        
         try {
-            DB::beginTransaction();
-
+            $validated = $request->validated();
             $detalleOrden = DetalleOrden::with(['producto', 'orden'])->findOrFail($detalleOrdenId);
+            
+            $this->service->rechazarDetalle($detalleOrden, $validated['motivo_rechazo']);
 
-            // Verificar que esté en estado EN ESPERA
-            $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-                $q->where('name', self::STATUS_PENDING);
-            })
-            ->whereHas('tema', function ($q) {
-                $q->where('name', self::ORDER_STATUS_THEME);
-            })
-            ->first();
-
-            if ($detalleOrden->estado_orden_id != $estadoEnEspera->id) {
-                throw new AprobacionException('Esta solicitud no está pendiente de aprobación.');
-            }
-
-            // Verificar que no tenga aprobación previa
-            if ($detalleOrden->aprobacion) {
-                throw new AprobacionException('Esta solicitud ya fue procesada anteriormente.');
-            }
-
-            // Obtener estado RECHAZADA
-            $estadoRechazada = ParametroTema::whereHas('parametro', function ($q) {
-                $q->where('name', 'RECHAZADA');
-            })
-            ->whereHas('tema', function ($q) {
-                $q->where('name', self::ORDER_STATUS_THEME);
-            })
-            ->first();
-
-            if (!$estadoRechazada) {
-                throw new AprobacionException("Estado 'RECHAZADA' no encontrado en parámetros.");
-            }
-
-            // Actualizar estado del detalle de orden
-            $detalleOrden->update([
-                'estado_orden_id' => $estadoRechazada->id,
-                'user_update_id' => Auth::id()
-            ]);
-
-            // Crear registro en aprobaciones (con estado rechazada)
-            $aprobacion = new Aprobacion([
-                'detalle_orden_id' => $detalleOrden->id,
-                'estado_aprobacion_id' => $estadoRechazada->id,
-                'user_create_id' => Auth::id(),
-                'user_update_id' => Auth::id()
-            ]);
-            $aprobacion->save();
-
-            // Agregar motivo de rechazo a la descripción de la orden
-            $orden = $detalleOrden->orden;
-            $orden->descripcion_orden .= "\n\n--- SOLICITUD RECHAZADA ---\n";
-            $orden->descripcion_orden .= "Producto: {$detalleOrden->producto->producto}\n";
-            $orden->descripcion_orden .= "Motivo: {$validated['motivo_rechazo']}\n";
-            $orden->descripcion_orden .= "Rechazado por: " . Auth::user()->name . "\n";
-            $orden->descripcion_orden .= "Fecha: " . now()->format('d/m/Y H:i') . "\n";
-            $orden->user_update_id = Auth::id();
-            $orden->save();
-
-            // Enviar notificación al solicitante de la orden
-            $solicitante = $detalleOrden->orden->userCreate;
-            if ($solicitante) {
-                $solicitante->notify(new OrdenRechazadaNotification(
-                    $detalleOrden,
-                    Auth::user(),
-                    $validated['motivo_rechazo']
-                ));
-            }
-
-            DB::commit();
-
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->with('success', 'Solicitud rechazada exitosamente.');
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (AprobacionException $e) {
             return back()
                 ->with('error', 'Error al rechazar la solicitud: ' . $e->getMessage());
         }
@@ -246,89 +94,11 @@ class AprobacionController extends InventarioController
     /**
      * Aprobar toda una orden completa
      */
-    public function aprobarOrden(Request $request, $ordenId) : RedirectResponse
+    public function aprobarOrden(Request $request, int $ordenId): RedirectResponse
     {
         try {
-            DB::beginTransaction();
-
             $orden = Orden::with('detalles.producto')->findOrFail($ordenId);
-
-            // Verificar que todos los detalles estén en estado EN ESPERA
-            $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-                $q->where('name', self::STATUS_PENDING);
-            })
-            ->whereHas('tema', function ($q) {
-                $q->where('name', self::ORDER_STATUS_THEME);
-            })
-            ->first();
-
-            if (!$estadoEnEspera) {
-                throw new AprobacionException("Estado 'EN ESPERA' no encontrado.");
-            }
-
-            // Verificar que todos los detalles estén pendientes
-            $detallesPendientes = $orden->detalles->where('estado_orden_id', $estadoEnEspera->id);
-
-            if ($detallesPendientes->isEmpty()) {
-                throw new AprobacionException('No hay productos pendientes de aprobación en esta orden.');
-            }
-
-            // Verificar stock para todos los productos
-            foreach ($detallesPendientes as $detalle) {
-                if ($detalle->producto->cantidad < $detalle->cantidad) {
-                    throw new AprobacionException(
-                        "Stock insuficiente para '{$detalle->producto->producto}'. " .
-                        "Disponible: {$detalle->producto->cantidad}, Solicitado: {$detalle->cantidad}"
-                    );
-                }
-            }
-
-            // Obtener estado APROBADA
-            $estadoAprobada = ParametroTema::whereHas('parametro', function ($q) {
-                $q->where('name', 'APROBADA');
-            })
-            ->whereHas('tema', function ($q) {
-                $q->where('name', self::ORDER_STATUS_THEME);
-            })
-            ->first();
-
-            if (!$estadoAprobada) {
-                throw new AprobacionException("Estado 'APROBADA' no encontrado.");
-            }
-
-            // Aprobar todos los detalles
-            foreach ($detallesPendientes as $detalle) {
-                // Actualizar estado del detalle
-                $detalle->update([
-                    'estado_orden_id' => $estadoAprobada->id,
-                    'user_update_id' => Auth::id()
-                ]);
-
-                // Crear registro de aprobación
-                $aprobacion = new Aprobacion([
-                    'detalle_orden_id' => $detalle->id,
-                    'estado_aprobacion_id' => $estadoAprobada->id,
-                    'user_create_id' => Auth::id(),
-                    'user_update_id' => Auth::id()
-                ]);
-                $aprobacion->save();
-
-                // Descontar stock
-                $detalle->producto->cantidad -= $detalle->cantidad;
-                $detalle->producto->user_update_id = Auth::id();
-                $detalle->producto->save();
-            }
-
-            // Enviar notificación al solicitante de la orden
-            $solicitante = $orden->userCreate;
-            if ($solicitante) {
-                // Enviar una notificación por cada detalle aprobado
-                foreach ($detallesPendientes as $detalle) {
-                    $solicitante->notify(new OrdenAprobadaNotification($detalle, Auth::user()));
-                }
-            }
-
-            DB::commit();
+            $this->service->aprobarOrdenCompleta($orden);
 
             return redirect()
                 ->back()
@@ -337,8 +107,7 @@ class AprobacionController extends InventarioController
                     "Orden #{$ordenId} aprobada exitosamente. Stock actualizado para todos los productos."
                 );
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (AprobacionException $e) {
             return back()
                 ->with('error', 'Error al aprobar la orden: ' . $e->getMessage());
         }
@@ -347,95 +116,19 @@ class AprobacionController extends InventarioController
     /**
      * Rechazar toda una orden completa
      */
-    public function rechazarOrden(AprobacionesRequest $request, $ordenId) : RedirectResponse
+    public function rechazarOrden(AprobacionesRequest $request, int $ordenId): RedirectResponse
     {
-        $validated = $request->validated();
-        
         try {
-            DB::beginTransaction();
-
+            $validated = $request->validated();
             $orden = Orden::with('detalles.producto')->findOrFail($ordenId);
-            $orden = Orden::with('detalles.producto')->findOrFail($ordenId);
+            
+            $this->service->rechazarOrdenCompleta($orden, $validated['motivo_rechazo']);
 
-            // Verificar que todos los detalles estén en estado EN ESPERA
-            $estadoEnEspera = ParametroTema::whereHas('parametro', function ($q) {
-                $q->where('name', self::STATUS_PENDING);
-            })
-            ->whereHas('tema', function ($q) {
-                $q->where('name', self::ORDER_STATUS_THEME);
-            })
-            ->first();
-
-            if (!$estadoEnEspera) {
-                throw new AprobacionException("Estado 'EN ESPERA' no encontrado.");
-            }
-
-            // Verificar que todos los detalles estén pendientes
-            $detallesPendientes = $orden->detalles->where('estado_orden_id', $estadoEnEspera->id);
-
-            if ($detallesPendientes->isEmpty()) {
-                throw new AprobacionException('No hay productos pendientes de aprobación en esta orden.');
-            }
-
-            // Obtener estado RECHAZADA
-            $estadoRechazada = ParametroTema::whereHas('parametro', function ($q) {
-                $q->where('name', 'RECHAZADA');
-            })
-            ->whereHas('tema', function ($q) {
-                $q->where('name', self::ORDER_STATUS_THEME);
-            })
-            ->first();
-
-            if (!$estadoRechazada) {
-                throw new AprobacionException("Estado 'RECHAZADA' no encontrado.");
-            }
-
-            // Rechazar todos los detalles
-            foreach ($detallesPendientes as $detalle) {
-                // Actualizar estado del detalle
-                $detalle->update([
-                    'estado_orden_id' => $estadoRechazada->id,
-                    'user_update_id' => Auth::id()
-                ]);
-
-                // Crear registro de aprobación (con estado rechazada)
-                $aprobacion = new Aprobacion([
-                    'detalle_orden_id' => $detalle->id,
-                    'estado_aprobacion_id' => $estadoRechazada->id,
-                    'user_create_id' => Auth::id(),
-                    'user_update_id' => Auth::id()
-                ]);
-                $aprobacion->save();
-            }
-
-            // Agregar motivo de rechazo a la descripción de la orden
-            $orden->descripcion_orden .= "\n\n--- ORDEN RECHAZADA COMPLETA ---\n";
-            $orden->descripcion_orden .= "Motivo: {$validated['motivo_rechazo']}\n";
-            $orden->descripcion_orden .= "Rechazado por: " . Auth::user()->name . "\n";
-            $orden->descripcion_orden .= "Fecha: " . now()->format('d/m/Y H:i') . "\n";
-            $orden->user_update_id = Auth::id();
-            $orden->save();
-
-            // Enviar notificación al solicitante de la orden
-            $solicitante = $orden->userCreate;
-            if ($solicitante) {
-                // Enviar una notificación por cada detalle rechazado
-                foreach ($detallesPendientes as $detalle) {
-                    $solicitante->notify(new OrdenRechazadaNotification(
-                        $detalle,
-                        Auth::user(),
-                        $validated['motivo_rechazo']
-                    ));
-                }
-            }
-
-            DB::commit();
-
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->with('success', "Orden #{$ordenId} rechazada exitosamente.");
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (AprobacionException $e) {
             return back()
                 ->with('error', 'Error al rechazar la orden: ' . $e->getMessage());
         }

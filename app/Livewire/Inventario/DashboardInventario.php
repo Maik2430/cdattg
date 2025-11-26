@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire\Inventario;
 
 use App\Models\Inventario\Producto;
-use App\Models\Inventario\Categoria;
 use Carbon\Carbon;
+use App\Models\Tema;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -106,7 +106,7 @@ class DashboardInventario extends Component
      */
     protected function obtenerTotalCategorias(): int
     {
-        $temaCategorias = \App\Models\Tema::where('name', 'CATEGORIAS')->first();
+        $temaCategorias = Tema::where('name', 'CATEGORIAS')->first();
 
         if (!$temaCategorias) {
             return 0;
