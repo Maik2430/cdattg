@@ -1,62 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
+use App\Repositories\Inventario\MarcaRepository;
+use App\Services\Inventario\MarcaService;
 use App\Models\Inventario\Marca;
 use App\Models\Parametro;
-use App\Models\ParametroTema;
-use App\Models\Tema;
+use App\Exceptions\MarcaException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\QueryException;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\MarcaCategoriaRequest;
+use Illuminate\Support\Facades\Auth;
 
 class MarcaController extends InventarioController
 {
-    protected $temaMarcas;
+    protected MarcaRepository $repository;
+    protected MarcaService $service;
 
-    public function __construct()
-    {
+    public function __construct(
+        MarcaRepository $repository,
+        MarcaService $service
+    ) {
         parent::__construct();
 
         $this->middleware('can:VER MARCA')->only('index', 'show');
         $this->middleware('can:CREAR MARCA')->only('create', 'store');
         $this->middleware('can:EDITAR MARCA')->only('edit', 'update');
         $this->middleware('can:ELIMINAR MARCA')->only('destroy');
-
-        $this->temaMarcas = Tema::where('name', 'MARCAS')->first();
+        
+        $this->repository = $repository;
+        $this->service = $service;
     }
 
-    public function index(Request $request) : View|RedirectResponse
+    public function index(Request $request): View|RedirectResponse
     {
-        if (!$this->temaMarcas) {
+        $temaMarcas = $this->repository->obtenerTemaMarcas();
+        
+        if (!$temaMarcas) {
             return back()->with('error', 'No existe el tema "MARCAS" en la base de datos.');
         }
 
-        $search = $request->input('search');
+        $filtros = [
+            'search' => $request->input('search'),
+            'per_page' => 10
+        ];
 
-        $marcasQuery = $this->temaMarcas->parametros()
-            ->with(['userCreate.persona', 'userUpdate.persona'])
-            ->wherePivot('status', 1);
-
-        if (!empty($search)) {
-            $marcasQuery->where(function ($query) use ($search) {
-                $query->where('parametros.name', 'LIKE', "%{$search}%");
-            });
-        }
-
-        $marcas = $marcasQuery
-            ->paginate(10)
-            ->appends($request->only('search'));
-
-        $marcas->withPath(route('inventario.marcas.index'));
-
-        // Cargar conteo de productos manualmente para cada marca
-        $marcas->each(function($marca) {
-            $marca->productos_count = \App\Models\Inventario\Producto::where('marca_id', $marca->id)->count();
-        });
+        $marcas = $this->repository->obtenerConFiltros($filtros);
+        $marcas->appends($request->only('search'));
 
         return view('inventario.marcas.index', compact('marcas'));
     }
@@ -67,26 +60,17 @@ class MarcaController extends InventarioController
     }
 
 
-    public function store(MarcaCategoriaRequest $request) : RedirectResponse
-    { 
-        $validated = $request->validated();
-
+    public function store(MarcaCategoriaRequest $request): RedirectResponse
+    {
         try {
-            $marca = new Marca([
-                'name'           => $validated['name'],
-                'status'         => 1,
-                'user_create_id' => Auth::id(),
-                'user_edit_id'   => Auth::id(),
-            ]);
-            $marca->save();
+            $validated = $request->validated();
+            $this->service->crear($validated, Auth::id());
 
-            // Se asocia al tema "MARCAS"
-            $marca->asociarATemaMarcas();
-
-            return redirect()->route('inventario.marcas.index')
+            return redirect()
+                ->route('inventario.marcas.index')
                 ->with('success', 'Marca creada exitosamente.');
-        } catch (QueryException $e) {
-            return back()->with('error', 'Error al crear la marca: ' . $e->getMessage());
+        } catch (MarcaException $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -104,39 +88,49 @@ class MarcaController extends InventarioController
     }
 
 
-    public function update(MarcaCategoriaRequest $request, Parametro $marca) : RedirectResponse
+    public function update(MarcaCategoriaRequest $request, Parametro $marca): RedirectResponse
     {
         $validated = $request->validated();
+        $marcaModel = Marca::find($marca->id);
+        
+        if (!$marcaModel) {
+            abort(404);
+        }
 
-        $marca->update([
-            'name'         => strtoupper($validated['name']),
-            'user_edit_id' => Auth::id(),
-        ]);
+        $this->service->actualizar($marcaModel, $validated, Auth::id());
 
-        return redirect()->route('inventario.marcas.index')
+        return redirect()
+            ->route('inventario.marcas.index')
             ->with('success', 'Marca actualizada exitosamente.');
     }
 
-    public function destroy(Parametro $marca) : RedirectResponse
+    public function destroy(Parametro $marca): RedirectResponse
     {
         try {
-            // Desvincular del tema "MARCAS"
-            ParametroTema::where('parametro_id', $marca->id)
-                ->where('tema_id', $this->temaMarcas->id)
-                ->delete();
+            $marcaModel = Marca::find($marca->id);
+            
+            if (!$marcaModel) {
+                abort(404);
+            }
 
-            $marca->delete();
+            $this->service->eliminar($marcaModel);
 
-            return redirect()->route('inventario.marcas.index')
+            return redirect()
+                ->route('inventario.marcas.index')
                 ->with('success', 'Marca eliminada exitosamente.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'No se puede eliminar la marca porque está en uso.');
+        } catch (MarcaException $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 
-    public function show(Parametro $marca)
+    public function show(Parametro $marca): View
     {
-        $marca->load(['userCreate.persona', 'userUpdate.persona']);
+        $marca = $this->repository->encontrarConRelaciones($marca->id);
+        
+        if (!$marca) {
+            abort(404);
+        }
+
         return view('inventario.marcas.show', [
             'title' => 'Detalle de la marca',
             'icon' => 'fas fa-eye',

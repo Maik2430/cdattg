@@ -1,62 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
+use App\Repositories\Inventario\ProveedorRepository;
+use App\Services\Inventario\ProveedorService;
 use App\Models\Inventario\Proveedor;
 use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Http\Requests\Inventario\ProveedorRequest;
+use App\Exceptions\ProveedorException;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 class ProveedorController extends InventarioController
 {
-    public function __construct()
-    {
+    protected ProveedorRepository $repository;
+    protected ProveedorService $service;
+
+    public function __construct(
+        ProveedorRepository $repository,
+        ProveedorService $service
+    ) {
         parent::__construct();
         $this->middleware('can:VER PROVEEDOR')->only('index', 'show');
         $this->middleware('can:CREAR PROVEEDOR')->only('create', 'store');
         $this->middleware('can:EDITAR PROVEEDOR')->only('edit', 'update');
         $this->middleware('can:ELIMINAR PROVEEDOR')->only('destroy');
+        
+        $this->repository = $repository;
+        $this->service = $service;
     }
 
-    public function index(Request $request) : View
+    public function index(Request $request): View
     {
-        $search = $request->input('search');
+        $filtros = [
+            'search' => $request->input('search'),
+            'per_page' => 10
+        ];
 
-        $proveedoresQuery = Proveedor::with([
-                'userCreate.persona',
-                'userUpdate.persona',
-                'estado.parametro',
-                'departamento',
-                'municipio'
-            ])
-            ->withCount('contratosConvenios')
-            ->latest();
-
-        if (!empty($search)) {
-            $proveedoresQuery->where(function ($query) use ($search) {
-                $query->where('proveedor', 'LIKE', "%{$search}%")
-                    ->orWhere('nit', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%")
-                    ->orWhere('telefono', 'LIKE', "%{$search}%")
-                    ->orWhere('contacto', 'LIKE', "%{$search}%")
-                    ->orWhereHas('departamento', function ($departamentoQuery) use ($search) {
-                        $departamentoQuery->where('departamento', 'LIKE', "%{$search}%");
-                    })
-                    ->orWhereHas('municipio', function ($municipioQuery) use ($search) {
-                        $municipioQuery->where('municipio', 'LIKE', "%{$search}%");
-                    });
-            });
-        }
-
-        $proveedores = $proveedoresQuery
-            ->paginate(10)
-            ->appends($request->only('search'));
-
-        $proveedores->withPath(route('inventario.proveedores.index'));
+        $proveedores = $this->repository->obtenerConFiltros($filtros);
+        $proveedores->appends($request->only('search'));
 
         return view('inventario.proveedores.index', compact('proveedores'));
     }
@@ -68,16 +56,14 @@ class ProveedorController extends InventarioController
         return view('inventario.proveedores.create', compact('departamentos', 'municipios'));
     }
 
-    public function show(Proveedor $proveedor)
+    public function show(Proveedor $proveedor): View
     {
-        $proveedor->load([
-            'contratosConvenios',
-            'userCreate.persona',
-            'userUpdate.persona',
-            'estado.parametro',
-            'departamento',
-            'municipio'
-        ]);
+        $proveedor = $this->repository->encontrarConRelaciones($proveedor->id);
+        
+        if (!$proveedor) {
+            abort(404);
+        }
+
         return view('inventario.proveedores.show', compact('proveedor'));
     }
 
@@ -88,40 +74,36 @@ class ProveedorController extends InventarioController
         return view('inventario.proveedores.edit', compact('proveedor', 'departamentos', 'municipios'));
     }
 
-    public function store(ProveedorRequest $request) : RedirectResponse
+    public function store(ProveedorRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $this->service->crear($validated, Auth::id());
 
-        $proveedor = new Proveedor($validated);
-        $this->setUserIds($proveedor);
-        $proveedor->save();
-
-        return redirect()->route('inventario.proveedores.index')
+        return redirect()
+            ->route('inventario.proveedores.index')
             ->with('success', 'Proveedor creado exitosamente.');
     }
 
-    public function update(ProveedorRequest $request, string $id) : RedirectResponse
+    public function update(ProveedorRequest $request, string $id): RedirectResponse
     {
         $proveedor = Proveedor::findOrFail($id);
-
         $validated = $request->validated();
+        $this->service->actualizar($proveedor, $validated, Auth::id());
 
-        $proveedor->fill($validated);
-        $this->setUserIds($proveedor, true);
-        $proveedor->save();
-
-        return redirect()->route('inventario.proveedores.index')
+        return redirect()
+            ->route('inventario.proveedores.index')
             ->with('success', 'Proveedor actualizado exitosamente.');
     }
 
-    public function destroy(Proveedor $proveedor) : RedirectResponse
+    public function destroy(Proveedor $proveedor): RedirectResponse
     {
         try {
-            $proveedor->delete();
-            return redirect()->route('inventario.proveedores.index')
+            $this->service->eliminar($proveedor);
+            return redirect()
+                ->route('inventario.proveedores.index')
                 ->with('success', 'Proveedor eliminado exitosamente.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'No se puede eliminar el proveedor porque está en uso.');
+        } catch (ProveedorException $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 
