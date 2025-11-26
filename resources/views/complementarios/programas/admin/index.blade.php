@@ -458,7 +458,27 @@
 @endsection
 
 @section('js')
+    <!-- Datos del servidor para JavaScript -->
+    <script type="application/json" id="modalidades-data">
+        @json($modalidades)
+    </script>
+    <script type="application/json" id="jornadas-data">
+        @json($jornadas)
+    </script>
+    <script type="application/json" id="ambientes-data">
+        @json($ambientes)
+    </script>
+    <!-- Rutas del servidor para JavaScript -->
+    <script type="application/json" id="routes-data">
+        {
+            "editApi": "{{ route('complementarios-ofertados.edit-api', ':id') }}",
+            "update": "{{ route('complementarios-ofertados.update', ':id') }}",
+            "destroy": "{{ route('complementarios-ofertados.destroy', ':id') }}"
+        }
+    </script>
     <script>
+        // Rutas del servidor
+        const routes = JSON.parse(document.getElementById('routes-data').textContent);
         $(function() {
             const table = $('#programas-table').DataTable({
                 language: {
@@ -505,7 +525,7 @@
             });
 
             const fetchPrograma = (id) => {
-                const url = '{{ route('complementarios-ofertados.edit-api', ':id') }}'.replace(':id', id);
+                const url = routes.editApi.replace(':id', id);
                 return axios.get(url).then(response => response.data);
             };
 
@@ -516,9 +536,9 @@
                 $('#detalle-duracion').text(`${data.duracion} horas`);
                 $('#detalle-cupos').text(data.cupos);
 
-                const modalidades = @json($modalidades);
-                const jornadas = @json($jornadas);
-                const ambientes = @json($ambientes);
+                const modalidades = JSON.parse(document.getElementById('modalidades-data').textContent);
+                const jornadas = JSON.parse(document.getElementById('jornadas-data').textContent);
+                const ambientes = JSON.parse(document.getElementById('ambientes-data').textContent);
                 const estados = {
                     0: 'Sin oferta',
                     1: 'Con oferta',
@@ -594,8 +614,7 @@
                         return;
                     }
 
-                    const url = '{{ route('complementarios-ofertados.destroy', ':id') }}'
-                        .replace(':id', id);
+                    const url = routes.destroy.replace(':id', id);
 
                     axios.delete(url)
                         .then(response => {
@@ -624,8 +643,7 @@
             $('#form-editar-programa').on('submit', function(event) {
                 event.preventDefault();
                 const id = $('#edit-programa-id').val();
-                const url = '{{ route('complementarios-ofertados.update', ':id') }}'
-                    .replace(':id', id);
+                const url = routes.update.replace(':id', id);
 
                 const payload = {
                     nombre: $('#edit-nombre').val(),

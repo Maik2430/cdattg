@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // Esta tabla ya no se usa, los datos se manejan en la tabla parametros con tema_id = 16
         // Se mantiene la migración por compatibilidad pero no crea la tabla
-        return;
+        
     }
 
     /**

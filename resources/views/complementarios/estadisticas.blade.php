@@ -127,9 +127,13 @@
 
 @section('js')
     <script src="{{ asset('js/complementarios/estadisticas.js') }}"></script>
+    <!-- Datos del servidor para JavaScript -->
+    <script type="application/json" id="estadisticas-iniciales-data">
+        @json($estadisticas)
+    </script>
     <script>
         let inscripcionesChart, programasPieChart;
-        const estadisticasIniciales = @json($estadisticas);
+        const estadisticasIniciales = JSON.parse(document.getElementById('estadisticas-iniciales-data').textContent);
 
         // Función para formatear datos de tendencia
         function formatearTendenciaInscripciones(tendencia) {

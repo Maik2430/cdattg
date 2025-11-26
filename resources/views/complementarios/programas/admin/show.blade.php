@@ -141,7 +141,7 @@
                     <div class="card shadow-lg mb-4" style="border: none; overflow: hidden;">
                         <div class="program-header">
                             <div class="d-flex justify-content-between align-items-start">
-                                <div class="flex-grow-1">
+                                <div class="grow">
                                     <h2 class="mb-2 font-weight-bold">
                                         <i class="fas fa-graduation-cap mr-2"></i>{{ $programa->nombre }}
                                     </h2>
@@ -217,7 +217,7 @@
                                     @foreach($programa->competencias as $competencia)
                                     <div class="competencia-item">
                                         <div class="d-flex align-items-start">
-                                            <div class="flex-grow-1">
+                                            <div class="grow">
                                                 <h6 class="mb-1">
                                                     <span class="badge mr-2" style="background-color: #00794d; color: white;">{{ $competencia->codigo }}</span>
                                                     <strong>{{ $competencia->nombre }}</strong>
@@ -243,7 +243,7 @@
                                     @foreach($programa->raps as $rap)
                                     <div class="rap-item">
                                         <div class="d-flex align-items-start">
-                                            <div class="flex-grow-1">
+                                            <div class="grow">
                                                 <h6 class="mb-1">
                                                     <span class="badge mr-2" style="background-color: #00a859; color: white;">{{ $rap->codigo }}</span>
                                                     <strong>{{ $rap->nombre }}</strong>

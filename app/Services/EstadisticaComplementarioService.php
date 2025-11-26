@@ -10,7 +10,7 @@ class EstadisticaComplementarioService
     /**
      * Obtener estadísticas reales de la base de datos
      */
-    public function obtenerEstadisticasReales($filtros = [])
+    public function obtenerEstadisticasReales()
     {
         // Total de aspirantes
         $totalAspirantes = AspiranteComplementario::count();

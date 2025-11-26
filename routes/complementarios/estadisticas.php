@@ -10,3 +10,4 @@ Route::get('/estadisticas', [EstadisticaComplementarioController::class, 'estadi
 Route::get('/estadisticas/api', [EstadisticaComplementarioController::class, 'apiEstadisticas'])
     ->name('estadisticas.api')
     ->middleware('auth');
+

@@ -70,7 +70,7 @@ class InscripcionComplementarioController extends Controller
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                function ($attribute, $value, $fail) {
+                function ($value, $fail) {
                     if (empty($value)) {
                         return;
                     }
@@ -111,7 +111,7 @@ class InscripcionComplementarioController extends Controller
         }
 
         // Crear nueva persona
-        $persona = Persona::create($request->only([
+        Persona::create($request->only([
             'tipo_documento',
             'numero_documento',
             'primer_nombre',
@@ -232,39 +232,53 @@ class InscripcionComplementarioController extends Controller
     public function procesarInscripcion(Request $request, $id)
     {
         try {
+            $response = null;
+
             // Verificar si el usuario ya está inscrito
             $existingInscription = $this->checkExistingInscription($id);
             if ($existingInscription) {
-                return redirect()->back()->with('error', 'Ya estás inscrito en este programa complementario.');
+                $response = redirect()->back()->with('error', 'Ya estás inscrito en este programa complementario.');
             }
 
-            // Validar los datos del formulario
-            $validatedData = $this->validateInscripcionData($request);
+            if ($response === null) {
+                // Validar los datos del formulario
+                $validatedData = $this->validateInscripcionData($request);
 
-            // Procesar persona y usuario
-            $persona = $this->processPersona($validatedData);
-            $this->processUser($validatedData, $persona);
+                // Procesar persona y usuario
+                $persona = $this->processPersona($validatedData);
+                $this->processUser($validatedData, $persona);
 
-            // Crear aspirante
-            $aspirante = $this->createAspirante($persona, $id, $validatedData);
+                // Crear aspirante
+                $aspirante = $this->createAspirante($persona, $id, $validatedData);
 
-            // Procesar documento
-            return $this->processDocumento($request, $aspirante, $persona);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()
-                ->withErrors($e->validator)
-                ->withInput();
+                // Procesar documento
+                $response = $this->processDocumento($request, $aspirante, $persona);
+            }
+
+            return $response;
         } catch (\Exception $e) {
-            \Log::error('Error al procesar inscripción', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'programa_id' => $id,
-                'request_data' => $request->except(['documento_identidad', '_token'])
-            ]);
+            $response = null;
 
-            return redirect()->back()
-                ->with('error', 'Ocurrió un error al procesar la inscripción. Por favor, inténtalo nuevamente.')
-                ->withInput();
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                $response = redirect()->back()
+                    ->withErrors($e->validator)
+                    ->withInput();
+            }
+
+            if ($response === null) {
+                \Log::error('Error al procesar inscripción', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                    'programa_id' => $id,
+                    'request_data' => $request->except(['documento_identidad', '_token'])
+                ]);
+
+                $response = redirect()->back()
+                    ->with('error', 'Ocurrió un error al procesar la inscripción. Por favor, inténtalo nuevamente.')
+                    ->withInput();
+            }
+
+            return $response;
         }
     }
 
@@ -297,7 +311,7 @@ class InscripcionComplementarioController extends Controller
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                function ($attribute, $value, $fail) {
+                function ($value, $fail) {
                     if (empty($value)) {
                         return;
                     }
@@ -502,7 +516,7 @@ class InscripcionComplementarioController extends Controller
 
                 // Verificar que el archivo sea válido
                 if (!$file->isValid()) {
-                    throw new \Exception('El archivo no es válido: ' . $file->getErrorMessage());
+                    throw new \InvalidArgumentException('El archivo no es válido: ' . $file->getErrorMessage());
                 }
 
                 $path = Storage::disk('google')->putFileAs('documentos_aspirantes', $file, $fileName);
@@ -513,7 +527,7 @@ class InscripcionComplementarioController extends Controller
                     'estado' => 2, // Estado "Completo"
                 ]);
             } else {
-                throw new \Exception('No se encontró el archivo de documento de identidad');
+                throw new \InvalidArgumentException('No se encontró el archivo de documento de identidad');
             }
 
             return redirect()->route('login.index')->with(

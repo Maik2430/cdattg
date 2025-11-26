@@ -150,3 +150,4 @@ class ValidacionSofiaController extends Controller
         }
     }
 }
+

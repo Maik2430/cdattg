@@ -230,13 +230,13 @@ class AspirantesPrograma {
             const data = await response.json();
             this.mostrarLoading(false);
 
-            if (data.success && data.found) {
+            if (data?.success && data?.found) {
                 this.personaEncontrada = data.persona;
                 this.mostrarInformacionPersona(data.persona);
                 this.verificarInscripcionExistente(data.persona.numero_documento);
             } else {
                 // Persona no encontrada - redirigir al formulario
-                window.location.href = `${this.config.routes.create}?numero_documento=${encodeURIComponent(numeroDocumento)}`;
+                globalThis.location.href = `${this.config.routes.create}?numero_documento=${encodeURIComponent(numeroDocumento)}`;
             }
         } catch (error) {
             console.error('Error:', error);
@@ -520,8 +520,12 @@ class AspirantesPrograma {
         const successRate = progress.processed_aspirantes > 0 ?
             Math.round((progress.successful_validations / progress.processed_aspirantes) * 100) : 0;
         const estimatedTimeRemaining = this.calculateEstimatedTime(progress);
-        const progressBarClass = progress.status === 'failed' ? 'bg-danger' :
-                               progress.status === 'completed' ? 'bg-success' : 'bg-info';
+        let progressBarClass = 'bg-info';
+        if (progress.status === 'failed') {
+            progressBarClass = 'bg-danger';
+        } else if (progress.status === 'completed') {
+            progressBarClass = 'bg-success';
+        }
 
         progressContainer.innerHTML = `
             <div class="card border-info shadow-sm">
@@ -597,7 +601,7 @@ class AspirantesPrograma {
             return 'Calculando...';
         }
 
-        const elapsed = (new Date() - new Date(progress.started_at)) / 1000;
+        const elapsed = (Date.now() - new Date(progress.started_at).getTime()) / 1000;
         const avgTimePerAspirante = elapsed / progress.processed_aspirantes;
         const remaining = progress.total_aspirantes - progress.processed_aspirantes;
         const estimatedSeconds = avgTimePerAspirante * remaining;
@@ -635,7 +639,7 @@ class AspirantesPrograma {
             }, 3000);
         } else if (progress.status === 'failed') {
             let errorMessage = 'La validación falló. ';
-            if (progress.errors && progress.errors.length > 0) {
+            if (progress.errors?.length > 0) {
                 errorMessage += `Errores encontrados: ${progress.errors.length}. `;
             }
             this.showAlert('error', errorMessage);
@@ -680,7 +684,7 @@ class AspirantesPrograma {
     setupAspiranteActionButtons() {
         document.addEventListener('click', (e) => {
             const button = e.target.closest('.aspirante-action-btn');
-            if (button && button.dataset.aspiranteId) {
+            if (button?.dataset.aspiranteId) {
                 e.preventDefault();
                 this.handleRechazarAspirante(button);
             }
@@ -834,7 +838,7 @@ class AspirantesPrograma {
         $('#modalConfirmacionExportacion').modal('hide');
 
         // Redirigir a la URL de exportación
-        window.location.href = exportUrl;
+        globalThis.location.href = exportUrl;
 
         // Restaurar botón después de un tiempo
         setTimeout(() => {
@@ -877,13 +881,13 @@ class AspirantesPrograma {
 }
 
 // Exportar para uso global
-if (typeof window !== 'undefined') {
-    window.AspirantesPrograma = AspirantesPrograma;
+if (typeof globalThis !== 'undefined') {
+    globalThis.AspirantesPrograma = AspirantesPrograma;
     
     // Auto-inicializar cuando la configuración esté disponible
     function initAspirantes() {
-        if (window.aspirantesConfig && typeof jQuery !== 'undefined') {
-            window.aspirantesPrograma = new AspirantesPrograma(window.aspirantesConfig);
+        if (globalThis.aspirantesConfig && typeof jQuery !== 'undefined') {
+            globalThis.aspirantesPrograma = new AspirantesPrograma(globalThis.aspirantesConfig);
         } else {
             // Reintentar si jQuery o la configuración aún no están disponibles
             setTimeout(initAspirantes, 100);

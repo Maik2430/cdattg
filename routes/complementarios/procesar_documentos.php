@@ -10,3 +10,4 @@ Route::get('/procesar-documentos', [DocumentoComplementarioController::class, 'p
 Route::post('/procesar-documentos', [DocumentoComplementarioController::class, 'procesarDocumentoSubmit'])
     ->name('procesar-documentos.submit')
     ->middleware('auth');
+

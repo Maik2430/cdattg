@@ -444,23 +444,26 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Configuración para pasar datos de PHP a JavaScript -->
-    <script>
-        window.aspirantesConfig = {
-            hasAspirantes: {{ $aspirantes->count() > 0 ? 'true' : 'false' }},
-            existingProgressId: {{ isset($existingProgress) && $existingProgress ? $existingProgress->id : 'null' }},
-            programaId: {{ $programa->id }},
-            routes: {
-                buscarPersona: '{{ route("aspirantes.buscar-persona") }}',
-                create: '{{ route("aspirantes.create", ["programa" => $programa->id]) }}',
-                agregarExistente: '{{ route("aspirantes.agregar-existente", ["complementarioId" => $programa->id]) }}',
-                destroy: '{{ route("aspirantes.destroy", ["complementarioId" => $programa->id, "aspiranteId" => "__ID__"]) }}',
-                validarDocumento: '{{ route("programas-complementarios.validar-documento", ["programa" => $programa->id]) }}',
-                validarSofia: '{{ route("programas-complementarios.validar-sofia", ["programa" => $programa->id]) }}',
-                exportarExcel: '{{ route("aspirantes.exportar-excel", ["complementarioId" => $programa->id]) }}',
-                descargarCedulas: '{{ route("aspirantes.descargar-cedulas", ["complementarioId" => $programa->id]) }}',
-                estadisticasExclusion: '{{ route("aspirantes.estadisticas-exclusion", ["complementarioId" => $programa->id]) }}'
+    <script type="application/json" id="aspirantes-config-data">
+        {
+            "hasAspirantes": {{ $aspirantes->count() > 0 ? 'true' : 'false' }},
+            "existingProgressId": {{ isset($existingProgress) && $existingProgress ? $existingProgress->id : 'null' }},
+            "programaId": {{ $programa->id }},
+            "routes": {
+                "buscarPersona": "{{ route("aspirantes.buscar-persona") }}",
+                "create": "{{ route("aspirantes.create", ["programa" => $programa->id]) }}",
+                "agregarExistente": "{{ route("aspirantes.agregar-existente", ["complementarioId" => $programa->id]) }}",
+                "destroy": "{{ route("aspirantes.destroy", ["complementarioId" => $programa->id, "aspiranteId" => "__ID__"]) }}",
+                "validarDocumento": "{{ route("programas-complementarios.validar-documento", ["programa" => $programa->id]) }}",
+                "validarSofia": "{{ route("programas-complementarios.validar-sofia", ["programa" => $programa->id]) }}",
+                "exportarExcel": "{{ route("aspirantes.exportar-excel", ["complementarioId" => $programa->id]) }}",
+                "descargarCedulas": "{{ route("aspirantes.descargar-cedulas", ["complementarioId" => $programa->id]) }}",
+                "estadisticasExclusion": "{{ route("aspirantes.estadisticas-exclusion", ["complementarioId" => $programa->id]) }}"
             }
-        };
+        }
+    </script>
+    <script>
+        globalThis.aspirantesConfig = JSON.parse(document.getElementById('aspirantes-config-data').textContent);
     </script>
 
     @vite(['resources/js/complementarios/aspirantes/programa.js'])

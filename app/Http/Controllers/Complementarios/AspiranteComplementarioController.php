@@ -25,6 +25,8 @@ use Spatie\Permission\Models\Role;
 
 class AspiranteComplementarioController extends Controller
 {
+    private const COLOR_NEGRO_RGB = '000000';
+
     protected $documentoService;
     protected $complementarioService;
     protected $temaRepository;
@@ -102,9 +104,9 @@ class AspiranteComplementarioController extends Controller
             'persona' => [
                 'id' => $persona->id,
                 'numero_documento' => $persona->numero_documento,
-                'nombre_completo' => trim(($persona->primer_nombre ?? '') . ' ' . 
-                                         ($persona->segundo_nombre ?? '') . ' ' . 
-                                         ($persona->primer_apellido ?? '') . ' ' . 
+                'nombre_completo' => trim(($persona->primer_nombre ?? '') . ' ' .
+                                         ($persona->segundo_nombre ?? '') . ' ' .
+                                         ($persona->primer_apellido ?? '') . ' ' .
                                          ($persona->segundo_apellido ?? '')),
                 'email' => $persona->email ?? 'No registrado',
                 'telefono' => $persona->telefono ?? $persona->celular ?? 'No registrado',
@@ -271,31 +273,29 @@ class AspiranteComplementarioController extends Controller
      */
     private function crearOActualizarUsuarioAspirante(Persona $persona)
     {
-        // Verificar si la persona tiene email (requerido para crear usuario)
-        if (empty($persona->email)) {
-            Log::warning('No se puede crear usuario para aspirante sin email', [
-                'persona_id' => $persona->id,
-                'numero_documento' => $persona->numero_documento
-            ]);
-            return null;
-        }
+        $user = null;
 
-        // Verificar si la persona tiene número de documento (requerido para contraseña)
-        if (empty($persona->numero_documento)) {
-            Log::warning('No se puede crear usuario para aspirante sin número de documento', [
-                'persona_id' => $persona->id
-            ]);
-            return null;
+        // Validar datos requeridos
+        if (empty($persona->email) || empty($persona->numero_documento)) {
+            if (empty($persona->email)) {
+                Log::warning('No se puede crear usuario para aspirante sin email', [
+                    'persona_id' => $persona->id,
+                    'numero_documento' => $persona->numero_documento
+                ]);
+            }
+            if (empty($persona->numero_documento)) {
+                Log::warning('No se puede crear usuario para aspirante sin número de documento', [
+                    'persona_id' => $persona->id
+                ]);
+            }
+            return $user;
         }
 
         // Si ya tiene usuario, solo asegurar que tenga el rol ASPIRANTE
         if ($persona->user) {
             $user = $persona->user;
-            
-            // Verificar que el rol ASPIRANTE existe
-            $aspiranteRole = Role::firstOrCreate(['name' => 'ASPIRANTE']);
-            
-            // Asignar rol si no lo tiene
+            Role::firstOrCreate(['name' => 'ASPIRANTE']);
+
             if (!$user->hasRole('ASPIRANTE')) {
                 $user->assignRole('ASPIRANTE');
                 Log::info('Rol ASPIRANTE asignado a usuario existente', [
@@ -303,54 +303,45 @@ class AspiranteComplementarioController extends Controller
                     'persona_id' => $persona->id
                 ]);
             }
-            
-            return $user;
-        }
+        } else {
+            // Crear nuevo usuario
+            try {
+                $existingUser = User::where('email', $persona->email)->first();
+                if ($existingUser) {
+                    Log::warning('Email ya está en uso por otro usuario', [
+                        'email' => $persona->email,
+                        'persona_id' => $persona->id,
+                        'existing_user_id' => $existingUser->id
+                    ]);
+                } else {
+                    $user = User::create([
+                        'email' => strtolower($persona->email),
+                        'password' => Hash::make($persona->numero_documento),
+                        'persona_id' => $persona->id,
+                        'status' => 1,
+                    ]);
 
-        // Crear nuevo usuario
-        try {
-            // Verificar que el email no esté en uso por otro usuario
-            $existingUser = User::where('email', $persona->email)->first();
-            if ($existingUser) {
-                Log::warning('Email ya está en uso por otro usuario', [
-                    'email' => $persona->email,
+                    Role::firstOrCreate(['name' => 'ASPIRANTE']);
+                    $user->assignRole('ASPIRANTE');
+                    $user->sendEmailVerificationNotification();
+
+                    Log::info('Usuario creado para aspirante con rol ASPIRANTE', [
+                        'user_id' => $user->id,
+                        'persona_id' => $persona->id,
+                        'email' => $user->email
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Error al crear usuario para aspirante', [
                     'persona_id' => $persona->id,
-                    'existing_user_id' => $existingUser->id
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
                 ]);
-                return null;
+                $user = null;
             }
-
-            $user = User::create([
-                'email' => strtolower($persona->email),
-                'password' => Hash::make($persona->numero_documento),
-                'persona_id' => $persona->id,
-                'status' => 1,
-            ]);
-
-            // Verificar que el rol ASPIRANTE existe
-            $aspiranteRole = Role::firstOrCreate(['name' => 'ASPIRANTE']);
-            
-            // Asignar rol ASPIRANTE
-            $user->assignRole('ASPIRANTE');
-
-            // Enviar email de verificación
-            $user->sendEmailVerificationNotification();
-
-            Log::info('Usuario creado para aspirante con rol ASPIRANTE', [
-                'user_id' => $user->id,
-                'persona_id' => $persona->id,
-                'email' => $user->email
-            ]);
-
-            return $user;
-        } catch (\Exception $e) {
-            Log::error('Error al crear usuario para aspirante', [
-                'persona_id' => $persona->id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return null;
         }
+
+        return $user;
     }
 
     /**
@@ -369,40 +360,50 @@ class AspiranteComplementarioController extends Controller
             // Buscar persona por número de documento
             $persona = Persona::where('numero_documento', $request->numero_documento)->first();
 
+            $response = null;
+
+            // Validar que la persona existe
             if (!$persona) {
-                return $this->createErrorResponse(
+                $response = $this->createErrorResponse(
                     'No se encontró ninguna persona registrada con el número de documento "' .
                         $request->numero_documento . '".'
                 );
             }
 
             // Verificar si ya está inscrita en este programa
-            $aspiranteExistente = AspiranteComplementario::where('persona_id', $persona->id)
-                ->where('complementario_id', $complementarioId)
-                ->first();
+            if ($response === null) {
+                $aspiranteExistente = AspiranteComplementario::where('persona_id', $persona->id)
+                    ->where('complementario_id', $complementarioId)
+                    ->first();
 
-            if ($aspiranteExistente) {
-                return $this->createErrorResponse(
-                    'La persona con documento "' . $request->numero_documento .
-                        '" ya se encuentra inscrita en este programa complementario.'
+                if ($aspiranteExistente) {
+                    $response = $this->createErrorResponse(
+                        'La persona con documento "' . $request->numero_documento .
+                            '" ya se encuentra inscrita en este programa complementario.'
+                    );
+                }
+            }
+
+            // Si no hay errores, procesar la creación del aspirante
+            if ($response === null) {
+                // Crear nuevo aspirante - ahora permite múltiples programas por persona
+                AspiranteComplementario::create([
+                    'persona_id' => $persona->id,
+                    'complementario_id' => $complementarioId,
+                    'estado' => 1, // Estado "En proceso"
+                    'observaciones' => 'Agregado manualmente desde gestión de aspirantes'
+                ]);
+
+                // Crear o actualizar usuario con rol ASPIRANTE
+                $this->crearOActualizarUsuarioAspirante($persona);
+
+                $response = $this->createSuccessResponse(
+                    'Aspirante agregado exitosamente. ' . $persona->primer_nombre . ' ' .
+                        $persona->primer_apellido . ' ha sido inscrito en el programa.'
                 );
             }
 
-            // Crear nuevo aspirante - ahora permite múltiples programas por persona
-            AspiranteComplementario::create([
-                'persona_id' => $persona->id,
-                'complementario_id' => $complementarioId,
-                'estado' => 1, // Estado "En proceso"
-                'observaciones' => 'Agregado manualmente desde gestión de aspirantes'
-            ]);
-
-            // Crear o actualizar usuario con rol ASPIRANTE
-            $this->crearOActualizarUsuarioAspirante($persona);
-
-            return $this->createSuccessResponse(
-                'Aspirante agregado exitosamente. ' . $persona->primer_nombre . ' ' .
-                    $persona->primer_apellido . ' ha sido inscrito en el programa.'
-            );
+            return $response;
         } catch (\Exception $e) {
             return $this->handleAspiranteException($e, $complementarioId, $request->numero_documento);
         }
@@ -452,6 +453,14 @@ class AspiranteComplementarioController extends Controller
      */
     public function eliminarAspirante($complementarioId, $aspiranteId)
     {
+        // Verificar permisos del usuario (solo administradores pueden rechazar)
+        if (!auth()->user()->can('ELIMINAR ASPIRANTE COMPLEMENTARIO')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tiene permisos para rechazar aspirantes.'
+            ], 403);
+        }
+
         try {
             // Verificar que el programa existe
             ComplementarioOfertado::findOrFail($complementarioId);
@@ -461,14 +470,6 @@ class AspiranteComplementarioController extends Controller
                 ->where('complementario_id', $complementarioId)
                 ->with('persona')
                 ->firstOrFail();
-
-            // Verificar permisos del usuario (solo administradores pueden rechazar)
-            if (!auth()->user()->can('ELIMINAR ASPIRANTE COMPLEMENTARIO')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No tiene permisos para rechazar aspirantes.'
-                ], 403);
-            }
 
             // Guardar información del aspirante para el mensaje
             $personaNombre = $aspirante->persona->primer_nombre . ' ' . $aspirante->persona->primer_apellido;
@@ -490,23 +491,26 @@ class AspiranteComplementarioController extends Controller
                 'message' => 'Aspirante rechazado exitosamente. ' .
                     $personaNombre . ' (' . $numeroDocumento . ') ha sido marcado como rechazado en el programa.'
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Aspirante o programa no encontrado.'
-            ], 404);
         } catch (\Exception $e) {
-            Log::error('Error rechazando aspirante: ' . $e->getMessage(), [
-                'complementario_id' => $complementarioId,
-                'aspirante_id' => $aspiranteId,
-                'user_id' => auth()->id(),
-                'exception' => $e->getTraceAsString()
-            ]);
+            $statusCode = 500;
+            $message = 'Error interno del servidor. Por favor intente nuevamente.';
+
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                $statusCode = 404;
+                $message = 'Aspirante o programa no encontrado.';
+            } else {
+                Log::error('Error rechazando aspirante: ' . $e->getMessage(), [
+                    'complementario_id' => $complementarioId,
+                    'aspirante_id' => $aspiranteId,
+                    'user_id' => auth()->id(),
+                    'exception' => $e->getTraceAsString()
+                ]);
+            }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error interno del servidor. Por favor intente nuevamente.'
-            ], 500);
+                'message' => $message
+            ], $statusCode);
         }
     }
 
@@ -618,7 +622,7 @@ class AspiranteComplementarioController extends Controller
                 'font' => [
                     'bold' => false,
                     'size' => 14,
-                    'color' => ['rgb' => '000000'],
+                    'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                     'name' => 'Calibri',
                 ],
                 'fill' => [
@@ -631,7 +635,7 @@ class AspiranteComplementarioController extends Controller
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                        'color' => ['rgb' => '000000'],
+                        'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                     ],
                 ],
             ];
@@ -650,7 +654,7 @@ class AspiranteComplementarioController extends Controller
             $headerStyle = [
                 'font' => [
                     'bold' => false,
-                    'color' => ['rgb' => '000000'],
+                    'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                     'name' => 'Calibri',
                     'size' => 8,
                 ],
@@ -662,7 +666,7 @@ class AspiranteComplementarioController extends Controller
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                        'color' => ['rgb' => '000000'],
+                        'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                     ],
                 ],
             ];
@@ -713,7 +717,7 @@ class AspiranteComplementarioController extends Controller
             $sheet->getRowDimension(2)->setRowHeight(45); // Encabezados más altos con texto centrado verticalmente
             // Las filas de datos mantienen la altura normal por defecto (~15px)
 
-            // Aplicar estilo Calibri a todo el documento
+            
             $calibriStyle = [
                 'font' => [
                     'name' => 'Calibri',
@@ -786,29 +790,37 @@ class AspiranteComplementarioController extends Controller
             // Obtener aspirantes con documentos
             $aspirantes = $this->complementarioService->getAspirantesConDocumentos($complementarioId);
 
+            $response = null;
+
             if ($aspirantes->isEmpty()) {
-                return back()->with('error', 'No hay aspirantes con documentos de identidad para descargar.');
+                $response = back()->with('error', 'No hay aspirantes con documentos de identidad para descargar.');
             }
 
-            $tempDir = $this->documentoService->createTempDirectory();
-            $pdf = new Fpdi();
+            if ($response === null) {
+                $tempDir = $this->documentoService->createTempDirectory();
+                $pdf = new Fpdi();
 
-            $resultados = $this->complementarioService->procesarDescargaDocumentos($aspirantes, $pdf, $tempDir);
+                $resultados = $this->complementarioService->procesarDescargaDocumentos($aspirantes, $pdf, $tempDir);
 
-            if ($resultados['archivos_agregados'] === 0) {
-                $this->documentoService->limpiarArchivosTemporales($resultados['archivos_temporales']);
-                return back()->with(
-                    'error',
-                    'No se pudieron descargar los documentos. Verifique que los archivos existan en Google Drive.'
-                );
+                if ($resultados['archivos_agregados'] === 0) {
+                    $this->documentoService->limpiarArchivosTemporales($resultados['archivos_temporales']);
+                    $response = back()->with(
+                        'error',
+                        'No se pudieron descargar los documentos. Verifique que los archivos existan en Google Drive.'
+                    );
+                }
+
+                if ($response === null) {
+                    $response = $this->complementarioService->generarArchivoPDF(
+                        $programa,
+                        $pdf,
+                        $tempDir,
+                        $resultados['archivos_temporales']
+                    );
+                }
             }
 
-            return $this->complementarioService->generarArchivoPDF(
-                $programa,
-                $pdf,
-                $tempDir,
-                $resultados['archivos_temporales']
-            );
+            return $response;
         } catch (\Exception $e) {
             Log::error('Error descargando cédulas: ' . $e->getMessage(), [
                 'complementario_id' => $complementarioId,
@@ -835,51 +847,60 @@ class AspiranteComplementarioController extends Controller
                 ->where('complementario_id', $complementarioId)
                 ->get();
 
+            $response = null;
+
             if ($aspirantes->isEmpty()) {
-                return response()->json([
+                $response = response()->json([
                     'success' => false,
                     'message' => 'No hay aspirantes en este programa para validar documentos.'
                 ]);
             }
 
-            $files = $this->documentoService->getGoogleDriveFiles();
-            $resultados = $this->complementarioService->procesarValidacionDocumentos($aspirantes, $files);
+            if ($response === null) {
+                $files = $this->documentoService->getGoogleDriveFiles();
+                $resultados = $this->complementarioService->procesarValidacionDocumentos($aspirantes, $files);
 
-            Log::info("Validación de documentos completada", [
-                'complementario_id' => $complementarioId,
-                'total' => $resultados['total'],
-                'con_documento' => $resultados['con_documento'],
-                'sin_documento' => $resultados['sin_documento'],
-                'errores' => $resultados['errores']
-            ]);
+                Log::info("Validación de documentos completada", [
+                    'complementario_id' => $complementarioId,
+                    'total' => $resultados['total'],
+                    'con_documento' => $resultados['con_documento'],
+                    'sin_documento' => $resultados['sin_documento'],
+                    'errores' => $resultados['errores']
+                ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => "Validación completada. Total: {$resultados['total']}, " .
-                    "Con documento: {$resultados['con_documento']}, " .
-                    "Sin documento: {$resultados['sin_documento']}" .
-                    ($resultados['errores'] > 0 ? ", Errores: {$resultados['errores']}" : ""),
-                'total' => $resultados['total'],
-                'con_documento' => $resultados['con_documento'],
-                'sin_documento' => $resultados['sin_documento'],
-                'errores' => $resultados['errores']
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Programa no encontrado.'
-            ], 404);
+                $response = response()->json([
+                    'success' => true,
+                    'message' => "Validación completada. Total: {$resultados['total']}, " .
+                        "Con documento: {$resultados['con_documento']}, " .
+                        "Sin documento: {$resultados['sin_documento']}" .
+                        ($resultados['errores'] > 0 ? ", Errores: {$resultados['errores']}" : ""),
+                    'total' => $resultados['total'],
+                    'con_documento' => $resultados['con_documento'],
+                    'sin_documento' => $resultados['sin_documento'],
+                    'errores' => $resultados['errores']
+                ]);
+            }
+
+            return $response;
         } catch (\Exception $e) {
-            Log::error('Error validando documentos: ' . $e->getMessage(), [
-                'complementario_id' => $complementarioId,
-                'user_id' => auth()->id(),
-                'exception' => $e->getTraceAsString()
-            ]);
+            $statusCode = 500;
+            $message = 'Error interno del servidor: ' . $e->getMessage();
+
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                $statusCode = 404;
+                $message = 'Programa no encontrado.';
+            } else {
+                Log::error('Error validando documentos: ' . $e->getMessage(), [
+                    'complementario_id' => $complementarioId,
+                    'user_id' => auth()->id(),
+                    'exception' => $e->getTraceAsString()
+                ]);
+            }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error interno del servidor: ' . $e->getMessage()
-            ], 500);
+                'message' => $message
+            ], $statusCode);
         }
     }
 

@@ -8,23 +8,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const allMunicipios = Array.from(municipioSelect.options).map(option => ({
         value: option.value,
         text: option.text,
-        departamentoId: option.getAttribute('data-departamento')
+        departamentoId: option.dataset.departamento
     }));
 
     departamentoSelect.addEventListener('change', function () {
         const selectedDepartamento = this.value;
         municipioSelect.innerHTML = '<option value="">Seleccione...</option>';
 
-        allMunicipios.forEach(mun => {
+        for (const mun of allMunicipios) {
             if (!selectedDepartamento || mun.departamentoId === selectedDepartamento) {
                 if (mun.value !== "") {
                     const opt = document.createElement('option');
                     opt.value = mun.value;
                     opt.text = mun.text;
-                    opt.setAttribute('data-departamento', mun.departamentoId);
+                    opt.dataset.departamento = mun.departamentoId;
                     municipioSelect.appendChild(opt);
                 }
             }
-        });
+        }
     });
 });

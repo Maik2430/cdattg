@@ -7,27 +7,30 @@ Route::middleware('auth')
     ->prefix('complementarios-ofertados')
     ->name('complementarios-ofertados.')
     ->group(function () {
+        $rutaPrograma = '/{programa}';
+
         Route::get('/', [ProgramaComplementarioController::class, 'index'])
             ->name('index');
 
         Route::get('/create', [ProgramaComplementarioController::class, 'create'])
             ->name('create');
 
-        Route::get('/{programa}', [ProgramaComplementarioController::class, 'show'])
+        Route::get($rutaPrograma, [ProgramaComplementarioController::class, 'show'])
             ->name('show');
 
-        Route::get('/{programa}/edit', [ProgramaComplementarioController::class, 'edit'])
+        Route::get($rutaPrograma . '/edit', [ProgramaComplementarioController::class, 'edit'])
             ->name('edit');
 
-        Route::get('/{programa}/edit-api', [ProgramaComplementarioController::class, 'editApi'])
+        Route::get($rutaPrograma . '/edit-api', [ProgramaComplementarioController::class, 'editApi'])
             ->name('edit-api');
 
         Route::post('/', [ProgramaComplementarioController::class, 'store'])
             ->name('store');
 
-        Route::put('/{programa}', [ProgramaComplementarioController::class, 'update'])
+        Route::put($rutaPrograma, [ProgramaComplementarioController::class, 'update'])
             ->name('update');
 
-        Route::delete('/{programa}', [ProgramaComplementarioController::class, 'destroy'])
+        Route::delete($rutaPrograma, [ProgramaComplementarioController::class, 'destroy'])
             ->name('destroy');
     });
+

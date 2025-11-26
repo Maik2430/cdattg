@@ -472,7 +472,14 @@
 @endsection
 
 @section('js')
+    <!-- Datos del servidor para JavaScript -->
+    <script type="application/json" id="raps-seleccionados-data">
+        @json($rapsSeleccionados ?? [])
+    </script>
     <script>
+        // Datos del servidor
+        const rapsSeleccionados = JSON.parse(document.getElementById('raps-seleccionados-data').textContent);
+        
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof $ !== 'undefined' && $.fn.select2) {
                 // Configurar Select2 para campos existentes
@@ -564,7 +571,6 @@
                     return;
                 }
 
-                const rapsSeleccionados = @json($rapsSeleccionados ?? []);
                 let html = '';
                 raps.forEach(rap => {
                     const isSelected = rapsSeleccionados.includes(rap.id);

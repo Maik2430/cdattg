@@ -40,8 +40,14 @@ class EstadisticaComplementarioController extends Controller
     {
         $filtros = $request->only(['fecha_inicio', 'fecha_fin', 'departamento_id', 'municipio_id', 'programa_id']);
 
-        $estadisticas = $this->estadisticaService->obtenerEstadisticasReales($filtros);
+        // Si hay filtros, usar el método filtrado; si no, usar el método general
+        if (!empty(array_filter($filtros))) {
+            $estadisticas = $this->estadisticaService->obtenerEstadisticasFiltradas($filtros);
+        } else {
+            $estadisticas = $this->estadisticaService->obtenerEstadisticasReales();
+        }
 
         return response()->json($estadisticas);
     }
 }
+

@@ -9,9 +9,9 @@
     background-color: #dc3545 !important;
 }
 .btn-info {
-    background-color: #17a2b8 !important;
+    background-color: #0c5460 !important;
     border: none;
-    color: #fff;
+    color: #ffffff;
 }
 .btn-warning {
     background-color: #ffc107 !important;
@@ -33,7 +33,7 @@
 }
 .btn-outline-warning {
     border-color: #ffc107;
-    color: #ffc107;
+    color: #856404;
 }
 .btn-outline-success {
     border-color: #28a745;
