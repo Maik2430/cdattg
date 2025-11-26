@@ -67,6 +67,17 @@ class ProductoRepository
     }
 
     /**
+     * Encuentra un producto por ID sin relaciones (más eficiente para validaciones)
+     *
+     * @param int $id
+     * @return Producto|null
+     */
+    public function findById(int $id): ?Producto
+    {
+        return Producto::find($id);
+    }
+
+    /**
      * Obtiene producto con todas sus relaciones
      *
      * @param int $id
