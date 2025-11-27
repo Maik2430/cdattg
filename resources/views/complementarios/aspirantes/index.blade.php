@@ -103,7 +103,7 @@
                                             {{ $programa->nombre }}
                                         </h4>
                                         <p class="text-muted mb-3">
-                                            {{ Str::limit($programa->descripcion ?? 'Sin descripción', 150) }}
+                                            {{ Str::limit($programa->justificacion ?? 'Sin justificación', 150) }}
                                         </p>
                                         <div class="row">
                                             @if(isset($programa->modalidad) && $programa->modalidad)

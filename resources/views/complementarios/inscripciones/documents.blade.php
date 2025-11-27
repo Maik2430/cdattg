@@ -127,7 +127,7 @@
                                             <div class="col-sm-12">
                                                 <div class="description-block">
                                                     <span class="description-text">DESCRIPCIÓN</span>
-                                                    <p class="text-muted mb-3">{{ $programa->descripcion }}</p>
+                                                    <p class="text-muted mb-3">{{ $programa->justificacion ?? 'Sin justificación' }}</p>
                                                     <div class="row">
                                                         <div class="col-6">
                                                             <div class="description-block">

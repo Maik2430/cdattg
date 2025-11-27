@@ -8,7 +8,7 @@
     $slugModalidad = \Illuminate\Support\Str::slug($modalidad ?? 'todas');
     $slugJornada = \Illuminate\Support\Str::slug($jornada ?? 'todas');
     $slugEstado = \Illuminate\Support\Str::slug($estadoBadge);
-    $searchSegments = [$programa->nombre ?? '', $modalidad ?? '', $jornada ?? '', $programa->descripcion ?? ''];
+    $searchSegments = [$programa->nombre ?? '', $modalidad ?? '', $jornada ?? '', $programa->justificacion ?? ''];
     $searchTokens = \Illuminate\Support\Str::of(implode(' ', array_filter($searchSegments)))
         ->lower()
         ->value();
@@ -30,7 +30,7 @@
                     <i class="{{ $programa->icono }} fa-3x text-primary"></i>
                 </div>
                 <h5 class="font-weight-bold mb-2 text-dark">{{ $programa->nombre }}</h5>
-                <p class="text-muted small mb-3">{{ \Illuminate\Support\Str::limit($programa->descripcion, 110) }}</p>
+                <p class="text-muted small mb-3">{{ \Illuminate\Support\Str::limit($programa->justificacion ?? 'Sin justificación', 110) }}</p>
             </div>
 
             <div class="border-top pt-3">

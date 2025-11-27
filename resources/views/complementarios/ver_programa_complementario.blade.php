@@ -42,7 +42,7 @@
 
                         <h5>Descripción</h5>
                         <p class="text-muted">
-                            {!! is_object($programa) ? ($programa->descripcion ?? 'No hay descripción disponible.') :
+                            {!! is_object($programa) ? ($programa->justificacion ?? 'No hay justificación disponible.') :
                                 'No hay descripción disponible.' !!}
                         </p>
 

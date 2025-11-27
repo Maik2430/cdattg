@@ -85,7 +85,7 @@
                                 @forelse ($programas as $programa)
                                     @php
                                         $busqueda = Str::of(
-                                            $programa->nombre . ' ' . $programa->codigo . ' ' . $programa->descripcion,
+                                            $programa->nombre . ' ' . $programa->codigo . ' ' . ($programa->justificacion ?? ''),
                                         )->lower();
                                         $modalidadSlug = Str::slug($programa->modalidad->parametro->name ?? '');
                                         $jornadaSlug = Str::slug($programa->jornada->jornada ?? '');
@@ -100,7 +100,7 @@
                                                 {{ $programa->nombre }}
                                             </div>
                                             <small class="text-muted d-block">
-                                                {{ Str::limit($programa->descripcion, 90) }}
+                                                {{ Str::limit($programa->justificacion ?? 'Sin justificación', 90) }}
                                             </small>
                                         </td>
                                         <td class="align-middle">
@@ -343,8 +343,10 @@
                         <dd class="col-sm-8" id="detalle-nombre">-</dd>
                         <dt class="col-sm-4">Código</dt>
                         <dd class="col-sm-8" id="detalle-codigo">-</dd>
-                        <dt class="col-sm-4">Descripción</dt>
-                        <dd class="col-sm-8" id="detalle-descripcion">-</dd>
+                        <dt class="col-sm-4">Justificación</dt>
+                        <dd class="col-sm-8" id="detalle-justificacion">-</dd>
+                        <dt class="col-sm-4">Requisitos de Ingreso</dt>
+                        <dd class="col-sm-8" id="detalle-requisitos-ingreso">-</dd>
                         <dt class="col-sm-4">Duración</dt>
                         <dd class="col-sm-8" id="detalle-duracion">-</dd>
                         <dt class="col-sm-4">Cupos</dt>
@@ -395,8 +397,14 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="font-weight-semibold" for="edit-descripcion">Descripción</label>
-                            <textarea class="form-control" id="edit-descripcion" rows="3" required></textarea>
+                            <label class="font-weight-semibold" for="edit-justificacion">Justificación</label>
+                            <textarea class="form-control" id="edit-justificacion" rows="3" required maxlength="600"></textarea>
+                            <small class="form-text text-muted">Máximo 600 caracteres</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-semibold" for="edit-requisitos-ingreso">Requisitos de Ingreso</label>
+                            <textarea class="form-control" id="edit-requisitos-ingreso" rows="3" required maxlength="400"></textarea>
+                            <small class="form-text text-muted">Máximo 400 caracteres</small>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
@@ -532,7 +540,8 @@
             const showDetalle = (data) => {
                 $('#detalle-nombre').text(data.nombre);
                 $('#detalle-codigo').text(data.codigo);
-                $('#detalle-descripcion').text(data.descripcion || 'N/A');
+                $('#detalle-justificacion').text(data.justificacion || 'N/A');
+                $('#detalle-requisitos-ingreso').text(data.requisitos_ingreso || 'N/A');
                 $('#detalle-duracion').text(`${data.duracion} horas`);
                 $('#detalle-cupos').text(data.cupos);
 
@@ -574,7 +583,8 @@
                 $('#edit-programa-id').val(data.id);
                 $('#edit-nombre').val(data.nombre);
                 $('#edit-codigo').val(data.codigo);
-                $('#edit-descripcion').val(data.descripcion);
+                $('#edit-justificacion').val(data.justificacion);
+                $('#edit-requisitos-ingreso').val(data.requisitos_ingreso);
                 $('#edit-duracion').val(data.duracion);
                 $('#edit-cupos').val(data.cupos);
                 $('#edit-modalidad').val(data.modalidad_id);
@@ -648,7 +658,8 @@
                 const payload = {
                     nombre: $('#edit-nombre').val(),
                     codigo: $('#edit-codigo').val(),
-                    descripcion: $('#edit-descripcion').val(),
+                    justificacion: $('#edit-justificacion').val(),
+                    requisitos_ingreso: $('#edit-requisitos-ingreso').val(),
                     duracion: $('#edit-duracion').val(),
                     cupos: $('#edit-cupos').val(),
                     modalidad_id: $('#edit-modalidad').val(),
