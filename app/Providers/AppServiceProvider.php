@@ -18,7 +18,46 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Bindings de repositorios de Inventario
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\ProductoRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\CategoriaRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\CategoriaRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\ProveedorRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\ProveedorRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\OrdenRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\DevolucionRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\DevolucionRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\MarcaRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\MarcaRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\ContratoConvenioRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\ContratoConvenioRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\AprobacionRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\AprobacionRepository::class
+        );
     }
 
     /**

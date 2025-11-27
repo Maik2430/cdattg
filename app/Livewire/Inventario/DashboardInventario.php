@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Inventario;
 
-use App\Models\Inventario\Producto;
-use Carbon\Carbon;
-use App\Models\Tema;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\BD\DashboardRepository;
 use Livewire\Component;
 
 class DashboardInventario extends Component
@@ -20,7 +17,14 @@ class DashboardInventario extends Component
     public int $totalCategorias = 0;
     public array $productosMasSolicitados = [];
     public array $productosPorCategoria = [];
-    public $productosRecientes = [];
+    public array $productosRecientes = [];
+
+    protected DashboardRepository $dashboardRepository;
+
+    public function boot(DashboardRepository $dashboardRepository): void
+    {
+        $this->dashboardRepository = $dashboardRepository;
+    }
 
     public function mount(): void
     {
@@ -32,106 +36,15 @@ class DashboardInventario extends Component
      */
     public function cargarDatos(): void
     {
-        $this->totalProductos = Producto::count();
-
-        $this->productosConsumibles = Producto::whereHas('tipoProducto', function ($query) {
-            $query->whereHas('parametro', function ($subQuery) {
-                $subQuery->where('name', 'CONSUMIBLE');
-            });
-        })->count();
-
-        $this->productosNoConsumibles = Producto::whereHas('tipoProducto', function ($query) {
-            $query->whereHas('parametro', function ($subQuery) {
-                $subQuery->where('name', 'NO CONSUMIBLE');
-            });
-        })->count();
-
-        $this->productosMasSolicitados = $this->obtenerProductosMasSolicitados();
-
-        $this->productosPorVencer = Producto::whereNotNull('fecha_vencimiento')
-            ->whereDate('fecha_vencimiento', '>', Carbon::now())
-            ->whereDate('fecha_vencimiento', '<=', Carbon::now()->addDays(30))
-            ->count();
-
-        $this->productosStockBajo = Producto::where('cantidad', '<', 10)->count();
-
-        $this->totalCategorias = $this->obtenerTotalCategorias();
-
-        $this->productosRecientes = Producto::with(['estado', 'estado.parametro'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($producto) {
-                return [
-                    'producto' => $producto->producto,
-                    'cantidad' => $producto->cantidad,
-                    'estado' => $producto->estado ? [
-                        'parametro' => $producto->estado->parametro ? [
-                            'name' => $producto->estado->parametro->name,
-                        ] : null,
-                    ] : null,
-                    'created_at' => $producto->created_at->toDateTimeString(),
-                ];
-            })
-            ->toArray();
-
-        $this->productosPorCategoria = $this->obtenerProductosPorCategoria();
-    }
-
-    /**
-     * Obtiene los productos más solicitados
-     */
-    protected function obtenerProductosMasSolicitados(): array
-    {
-        $productos = DB::table('detalle_ordenes')
-            ->join('productos', 'detalle_ordenes.producto_id', '=', 'productos.id')
-            ->select('productos.producto', DB::raw('SUM(detalle_ordenes.cantidad) as solicitudes'))
-            ->groupBy('productos.id', 'productos.producto')
-            ->orderBy('solicitudes', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'nombre' => $item->producto,
-                    'solicitudes' => (int) $item->solicitudes,
-                ];
-            })
-            ->toArray();
-
-        return $productos ?: [];
-    }
-
-    /**
-     * Obtiene el total de categorías activas
-     */
-    protected function obtenerTotalCategorias(): int
-    {
-        $temaCategorias = Tema::where('name', 'CATEGORIAS')->first();
-
-        if (!$temaCategorias) {
-            return 0;
-        }
-
-        return $temaCategorias->parametros()->wherePivot('status', 1)->count();
-    }
-
-    /**
-     * Obtiene productos agrupados por categoría
-     */
-    protected function obtenerProductosPorCategoria(): array
-    {
-        return DB::table('productos')
-            ->join('parametros', 'productos.categoria_id', '=', 'parametros.id')
-            ->select('parametros.name as categoria', DB::raw('count(*) as total'))
-            ->groupBy('parametros.id', 'parametros.name')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'categoria' => $item->categoria,
-                    'total' => (int) $item->total,
-                ];
-            })
-            ->toArray();
+        $this->totalProductos = $this->dashboardRepository->obtenerTotalProductos();
+        $this->productosConsumibles = $this->dashboardRepository->obtenerProductosConsumibles();
+        $this->productosNoConsumibles = $this->dashboardRepository->obtenerProductosNoConsumibles();
+        $this->productosPorVencer = $this->dashboardRepository->obtenerProductosPorVencer();
+        $this->productosStockBajo = $this->dashboardRepository->obtenerProductosStockBajo();
+        $this->totalCategorias = $this->dashboardRepository->obtenerTotalCategorias();
+        $this->productosMasSolicitados = $this->dashboardRepository->obtenerProductosMasSolicitados(5);
+        $this->productosPorCategoria = $this->dashboardRepository->obtenerProductosPorCategoria();
+        $this->productosRecientes = $this->dashboardRepository->obtenerProductosRecientes(5);
     }
 
     /**
