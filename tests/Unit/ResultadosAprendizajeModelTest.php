@@ -301,7 +301,7 @@ class ResultadosAprendizajeModelTest extends TestCase
      */
     public function test_atributo_estado_formateado_funciona()
     {
-        $this->assertEquals('Activo', $this->rap->estadoFormateado);
+        $this->assertEquals('ACTIVO', $this->rap->estadoFormateado);
 
         $rapInactivo = ResultadosAprendizaje::create([
             'codigo' => 'RAP008',
@@ -314,7 +314,7 @@ class ResultadosAprendizajeModelTest extends TestCase
             'user_edit_id' => $this->user->id,
         ]);
 
-        $this->assertEquals('Inactivo', $rapInactivo->estadoFormateado);
+        $this->assertEquals('INACTIVO', $rapInactivo->estadoFormateado);
     }
 
     /**

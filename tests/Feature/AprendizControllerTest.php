@@ -10,6 +10,7 @@ use App\Models\FichaCaracterizacion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
+use Spatie\Permission\Models\Permission;
 
 class AprendizControllerTest extends TestCase
 {
@@ -20,7 +21,13 @@ class AprendizControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
+        // Crear permisos necesarios
+        Permission::firstOrCreate(['name' => 'VER APRENDIZ']);
+        Permission::firstOrCreate(['name' => 'CREAR APRENDIZ']);
+        Permission::firstOrCreate(['name' => 'EDITAR APRENDIZ']);
+        Permission::firstOrCreate(['name' => 'ELIMINAR APRENDIZ']);
+
         // Crear usuario con permisos
         $this->user = User::factory()->create();
         $this->user->givePermissionTo('VER APRENDIZ');
@@ -47,7 +54,7 @@ class AprendizControllerTest extends TestCase
             'primer_nombre' => 'Juan',
             'primer_apellido' => 'Pérez'
         ]);
-        
+
         Aprendiz::factory()->create(['persona_id' => $persona->id]);
 
         $response = $this->get(route('aprendices.index', ['search' => 'Juan']));
@@ -60,7 +67,7 @@ class AprendizControllerTest extends TestCase
     public function puede_filtrar_aprendices_por_ficha()
     {
         $this->actingAs($this->user);
-        
+
         $ficha = FichaCaracterizacion::factory()->create();
         Aprendiz::factory()->create(['ficha_caracterizacion_id' => $ficha->id]);
 
@@ -86,7 +93,7 @@ class AprendizControllerTest extends TestCase
 
         $response->assertRedirect(route('aprendices.index'));
         $response->assertSessionHas('success');
-        
+
         $this->assertDatabaseHas('aprendices', [
             'persona_id' => $persona->id,
             'ficha_caracterizacion_id' => $ficha->id,
@@ -124,7 +131,7 @@ class AprendizControllerTest extends TestCase
 
         $response->assertRedirect(route('aprendices.show', $aprendiz->id));
         $response->assertSessionHas('success');
-        
+
         $this->assertDatabaseHas('aprendices', [
             'id' => $aprendiz->id,
             'ficha_caracterizacion_id' => $nuevaFicha->id,
@@ -143,7 +150,7 @@ class AprendizControllerTest extends TestCase
 
         $response->assertRedirect(route('aprendices.index'));
         $response->assertSessionHas('success');
-        
+
         $this->assertSoftDeleted('aprendices', [
             'id' => $aprendiz->id,
         ]);
@@ -156,7 +163,7 @@ class AprendizControllerTest extends TestCase
 
         Aprendiz::factory()->count(5)->create();
 
-        $response = $this->getJson(route('aprendices.api.index'));
+        $response = $this->getJson(route('api.aprendices.index'));
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -175,10 +182,9 @@ class AprendizControllerTest extends TestCase
         $persona = Persona::factory()->create(['primer_nombre' => 'María']);
         Aprendiz::factory()->create(['persona_id' => $persona->id]);
 
-        $response = $this->getJson(route('aprendices.search', ['q' => 'María']));
+        $response = $this->getJson(route('api.aprendices.search', ['q' => 'María']));
 
         $response->assertStatus(200);
         $response->assertJsonFragment(['nombre_completo' => $persona->nombre_completo]);
     }
 }
-
