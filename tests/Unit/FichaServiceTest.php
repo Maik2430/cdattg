@@ -7,8 +7,10 @@ use App\Services\FichaService;
 use App\Repositories\FichaRepository;
 use App\Repositories\InstructorFichaRepository;
 use App\Repositories\AprendizFichaRepository;
+use App\Models\FichaCaracterizacion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class FichaServiceTest extends TestCase
 {
@@ -40,7 +42,7 @@ class FichaServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas()
     {
         $estadisticasEsperadas = [
@@ -59,19 +61,20 @@ class FichaServiceTest extends TestCase
         $this->assertEquals($estadisticasEsperadas, $resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_verificar_disponibilidad()
     {
         $fichaId = 1;
 
+        $fichaMock = Mockery::mock(FichaCaracterizacion::class);
+        $fichaMock->id = $fichaId;
+        $fichaMock->status = true;
+        $fichaMock->cupos_maximos = 40;
+        
         $this->mockFichaRepo
             ->shouldReceive('encontrarConRelaciones')
             ->once()
-            ->andReturn((object)[
-                'id' => $fichaId,
-                'status' => true,
-                'cupos_maximos' => 40,
-            ]);
+            ->andReturn($fichaMock);
 
         $this->mockInstructorFichaRepo
             ->shouldReceive('obtenerPorFicha')

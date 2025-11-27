@@ -9,6 +9,7 @@ use App\Models\Persona;
 use App\Models\FichaCaracterizacion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 
 class AprendizControllerTest extends TestCase
 {
@@ -25,7 +26,7 @@ class AprendizControllerTest extends TestCase
         $this->user->givePermissionTo('VER APRENDIZ');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_listado_de_aprendices()
     {
         $this->actingAs($this->user);
@@ -37,7 +38,7 @@ class AprendizControllerTest extends TestCase
         $response->assertViewHas('aprendices');
     }
 
-    /** @test */
+    #[Test]
     public function puede_buscar_aprendices_por_nombre()
     {
         $this->actingAs($this->user);
@@ -55,7 +56,7 @@ class AprendizControllerTest extends TestCase
         $response->assertSee('Juan');
     }
 
-    /** @test */
+    #[Test]
     public function puede_filtrar_aprendices_por_ficha()
     {
         $this->actingAs($this->user);
@@ -68,7 +69,7 @@ class AprendizControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function puede_crear_aprendiz()
     {
         $this->user->givePermissionTo('CREAR APRENDIZ');
@@ -92,7 +93,7 @@ class AprendizControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_detalles_de_aprendiz()
     {
         $this->actingAs($this->user);
@@ -106,7 +107,7 @@ class AprendizControllerTest extends TestCase
         $response->assertViewHas('aprendiz');
     }
 
-    /** @test */
+    #[Test]
     public function puede_actualizar_aprendiz()
     {
         $this->user->givePermissionTo('EDITAR APRENDIZ');
@@ -130,7 +131,7 @@ class AprendizControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_eliminar_aprendiz()
     {
         $this->user->givePermissionTo('ELIMINAR APRENDIZ');
@@ -148,7 +149,7 @@ class AprendizControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function api_puede_listar_aprendices()
     {
         $this->actingAs($this->user);
@@ -166,7 +167,7 @@ class AprendizControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function api_puede_buscar_aprendices()
     {
         $this->actingAs($this->user);

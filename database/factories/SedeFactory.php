@@ -17,7 +17,13 @@ class SedeFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'sede' => $this->faker->unique()->company(),
+            'direccion' => $this->faker->address(),
+            'municipio_id' => 1,
+            'regional_id' => 1,
+            'user_create_id' => 1,
+            'user_edit_id' => 1,
+            'status' => 1,
         ];
     }
 }

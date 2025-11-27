@@ -5,8 +5,13 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Repositories\FichaRepository;
 use App\Models\FichaCaracterizacion;
+use App\Models\ProgramaFormacion;
+use App\Models\JornadaFormacion;
+use App\Models\Sede;
+use App\Models\Ambiente;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\Test;
 
 class FichaRepositoryTest extends TestCase
 {
@@ -19,9 +24,23 @@ class FichaRepositoryTest extends TestCase
         parent::setUp();
         $this->repository = new FichaRepository();
         Cache::flush();
+        
+        // Crear datos necesarios para el factory de FichaCaracterizacion
+        if (ProgramaFormacion::count() === 0) {
+            ProgramaFormacion::factory()->create();
+        }
+        if (JornadaFormacion::count() === 0) {
+            JornadaFormacion::factory()->create();
+        }
+        if (Sede::count() === 0) {
+            Sede::factory()->create();
+        }
+        if (Ambiente::count() === 0) {
+            Ambiente::factory()->create();
+        }
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_fichas_activas()
     {
         FichaCaracterizacion::factory()->count(3)->create(['status' => 1]);
@@ -32,7 +51,7 @@ class FichaRepositoryTest extends TestCase
         $this->assertCount(3, $fichas);
     }
 
-    /** @test */
+    #[Test]
     public function cachea_fichas_activas()
     {
         FichaCaracterizacion::factory()->create(['status' => 1]);
@@ -46,7 +65,7 @@ class FichaRepositoryTest extends TestCase
         $this->assertEquals($fichas1->count(), $fichas2->count());
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas()
     {
         FichaCaracterizacion::factory()->count(5)->create(['status' => 1]);
@@ -60,7 +79,7 @@ class FichaRepositoryTest extends TestCase
         $this->assertEquals(5, $estadisticas['activas']);
     }
 
-    /** @test */
+    #[Test]
     public function invalida_cache_al_modificar()
     {
         $ficha = FichaCaracterizacion::factory()->create(['status' => 1]);

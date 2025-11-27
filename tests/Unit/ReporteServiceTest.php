@@ -9,6 +9,7 @@ use App\Repositories\AprendizRepository;
 use App\Repositories\FichaRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class ReporteServiceTest extends TestCase
 {
@@ -40,7 +41,7 @@ class ReporteServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function puede_generar_reporte_de_asistencia()
     {
         $fichaId = 1;
@@ -74,7 +75,7 @@ class ReporteServiceTest extends TestCase
         $this->assertArrayHasKey('estadisticas', $resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_generar_reporte_de_aprendices()
     {
         $fichaId = 1;
@@ -99,7 +100,7 @@ class ReporteServiceTest extends TestCase
         $this->assertArrayHasKey('aprendices_activos', $resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_generar_reporte_consolidado_mes()
     {
         $mes = 1;

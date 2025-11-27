@@ -24,11 +24,31 @@ class FichaCaracterizacionFactory extends Factory
 
     public function definition(): array
     {
-        $programaId = ProgramaFormacion::query()->inRandomOrder()->value('id') ?? 1;
+        try {
+            $programaId = ProgramaFormacion::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            $programaId = null;
+        }
+        
         $modalidades = [18, 19, 20];
-        $jornadaId = JornadaFormacion::query()->inRandomOrder()->value('id') ?? 1;
-        $sedeId = Sede::query()->inRandomOrder()->value('id') ?? 1;
-        $ambienteId = Ambiente::query()->inRandomOrder()->value('id') ?? 1;
+        
+        try {
+            $jornadaId = JornadaFormacion::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            $jornadaId = null;
+        }
+        
+        try {
+            $sedeId = Sede::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            $sedeId = null;
+        }
+        
+        try {
+            $ambienteId = Ambiente::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            $ambienteId = null;
+        }
 
         $mesesAtras = rand(0, 6);
         $mesesAdelante = rand(0, 2);
@@ -38,15 +58,15 @@ class FichaCaracterizacionFactory extends Factory
         $fechaFin = date('Y-m-d', strtotime($fechaInicio . " +{$duracionMeses} months"));
 
         return [
-            'programa_formacion_id' => $programaId,
+            'programa_formacion_id' => $programaId ?? 1,
             'ficha' => '29' . str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
             'instructor_id' => Instructor::factory(),
             'fecha_inicio' => $fechaInicio,
             'fecha_fin' => $fechaFin,
-            'ambiente_id' => $ambienteId,
+            'ambiente_id' => $ambienteId ?? 1,
             'modalidad_formacion_id' => $modalidades[array_rand($modalidades)],
-            'sede_id' => $sedeId,
-            'jornada_id' => $jornadaId,
+            'sede_id' => $sedeId ?? 1,
+            'jornada_id' => $jornadaId ?? 1,
             'total_horas' => rand(1200, 3200),
             'user_create_id' => 1,
             'user_edit_id' => 1,

@@ -10,6 +10,7 @@ use App\Models\Aprendiz;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class NotificacionServiceTest extends TestCase
 {
@@ -23,7 +24,7 @@ class NotificacionServiceTest extends TestCase
         $this->service = new NotificacionService();
     }
 
-    /** @test */
+    #[Test]
     public function puede_notificar_instructor_sin_email()
     {
         $instructor = Instructor::factory()->create();
@@ -37,7 +38,7 @@ class NotificacionServiceTest extends TestCase
         $this->assertFalse($resultado);
     }
 
-    /** @test */
+    #[Test]
     public function registra_log_al_notificar()
     {
         Log::shouldReceive('info')
@@ -53,7 +54,7 @@ class NotificacionServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_notificar_multiples_aprendices()
     {
         $aprendices = Aprendiz::factory()->count(5)->create();
@@ -64,7 +65,7 @@ class NotificacionServiceTest extends TestCase
         $this->assertLessThanOrEqual(5, $enviados);
     }
 
-    /** @test */
+    #[Test]
     public function maneja_errores_al_notificar()
     {
         Log::shouldReceive('error')->atLeast()->once();
