@@ -3,17 +3,20 @@
 namespace App\Services;
 
 use App\Models\Ambiente;
-use App\Models\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
 use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
+use App\Repositories\AspiranteComplementarioRepository;
+use App\Repositories\ComplementarioOfertadoRepository;
 use App\Repositories\TemaRepository;
 use Illuminate\Database\Eloquent\Collection;
 
 class ComplementarioService
 {
     public function __construct(
-        private readonly TemaRepository $temaRepository
+        private readonly TemaRepository $temaRepository,
+        private readonly ComplementarioOfertadoRepository $programaRepository,
+        private readonly AspiranteComplementarioRepository $aspiranteRepository
     ) {}
     /**
      * Obtener icono para un programa complementario
@@ -89,13 +92,11 @@ class ComplementarioService
      */
     public function obtenerProgramas(array $relations = [], ?int $estado = null): Collection
     {
-        $query = ComplementarioOfertado::query()->with($relations);
-
         if (!is_null($estado)) {
-            $query->where('estado', $estado);
+            return $this->programaRepository->getByEstado($estado, $relations);
         }
 
-        return $query->get();
+        return $this->programaRepository->getAll($relations);
     }
 
     /**
@@ -193,9 +194,7 @@ class ComplementarioService
      */
     public function verificarInscripcionExistente($personaId, $programaId)
     {
-        return AspiranteComplementario::where('persona_id', $personaId)
-            ->where('complementario_id', $programaId)
-            ->exists();
+        return $this->aspiranteRepository->existeInscripcion($personaId, $programaId);
     }
 
     /**
@@ -203,7 +202,7 @@ class ComplementarioService
      */
     public function crearAspirante($personaId, $programaId, $observaciones = null)
     {
-        return AspiranteComplementario::create([
+        return $this->aspiranteRepository->create([
             'persona_id' => $personaId,
             'complementario_id' => $programaId,
             'observaciones' => $observaciones,
@@ -216,8 +215,8 @@ class ComplementarioService
      */
     public function actualizarEstadoAspirante($aspiranteId, $estado)
     {
-        $aspirante = AspiranteComplementario::findOrFail($aspiranteId);
-        $aspirante->update(['estado' => $estado]);
+        $aspirante = $this->aspiranteRepository->findById($aspiranteId);
+        $this->aspiranteRepository->update($aspirante, ['estado' => $estado]);
         return $aspirante;
     }
 
@@ -226,16 +225,21 @@ class ComplementarioService
      */
     public function obtenerEstadisticasPrograma($programaId)
     {
-        $programa = ComplementarioOfertado::findOrFail($programaId);
+        $programa = $this->programaRepository->findWithRelations($programaId);
+        
+        if (!$programa) {
+            throw new \Exception('Programa no encontrado');
+        }
+
+        $totalAspirantes = $this->aspiranteRepository->countByPrograma($programaId);
+        $aspirantesActivos = $this->aspiranteRepository->countByEstado($programaId, 1);
+        $aspirantesAceptados = $this->aspiranteRepository->countByEstado($programaId, 3);
 
         return [
-            'total_aspirantes' => AspiranteComplementario::where('complementario_id', $programaId)->count(),
-            'aspirantes_activos' => AspiranteComplementario::where('complementario_id', $programaId)
-                ->where('estado', 1)->count(),
-            'aspirantes_aceptados' => AspiranteComplementario::where('complementario_id', $programaId)
-                ->where('estado', 3)->count(),
-            'cupos_disponibles' => $programa->cupos
-                - AspiranteComplementario::where('complementario_id', $programaId)->count(),
+            'total_aspirantes' => $totalAspirantes,
+            'aspirantes_activos' => $aspirantesActivos,
+            'aspirantes_aceptados' => $aspirantesAceptados,
+            'cupos_disponibles' => max(0, $programa->cupos - $totalAspirantes),
         ];
     }
 }
