@@ -863,7 +863,7 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Lista de Productos',
-                            'url'  => 'inventario/productos',
+                            'url'  => 'inventario/productos/index',
                             'icon' => $iconoLista,
                             'can'  => $permisoVerProducto,
                         ],
@@ -899,6 +899,18 @@ return [
                             'can'  => $permisoVerOrden,
                         ],
                         [
+                            'text' => 'Órdenes Pendientes',
+                            'url'  => 'inventario/ordenes/pendientes',
+                            'icon' => 'fas fa-fw fa-clock',
+                            'can'  => $permisoVerOrden,
+                        ],
+                        [
+                            'text' => 'Solicitar Préstamo/Salida',
+                            'url'  => 'inventario/ordenes/prestamos-salidas',
+                            'icon' => 'fas fa-fw fa-hand-holding',
+                            'can'  => 'CREAR ORDEN',
+                        ],
+                        [
                             'text' => 'Aprobaciones Pendientes',
                             'url'  => 'inventario/aprobaciones/pendientes',
                             'icon' => 'fas fa-fw fa-hourglass-half',
@@ -921,7 +933,10 @@ return [
                 [
                     'text' => 'Devoluciones',
                     'icon' => 'fas fa-fw fa-undo',
-                    'can'  => 'DEVOLVER PRESTAMO',
+                    'can'  => [
+                        'DEVOLVER PRESTAMO',
+                        'VER DEVOLUCION',
+                    ],
                     'submenu' => [
                         [
                             'text' => 'Préstamos Pendientes',
@@ -934,6 +949,12 @@ return [
                             'url'  => 'inventario/devoluciones-historial',
                             'icon' => 'fas fa-fw fa-history',
                             'can'  => 'VER DEVOLUCION',
+                        ],
+                        [
+                            'text' => 'Historial Mis Préstamos',
+                            'url'  => 'inventario/historial-prestamos',
+                            'icon' => 'fas fa-fw fa-user-clock',
+                            'can'  => 'VER ORDEN',
                         ],
                     ],
                 ],
