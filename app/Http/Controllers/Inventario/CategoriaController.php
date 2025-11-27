@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Inventario\CategoriaRepository;
+use App\Repositories\Interfaces\Inventario\CategoriaRepositoryInterface;
 use App\Services\Inventario\CategoriaService;
 use App\Models\Inventario\Categoria;
 use App\Models\Parametro;
@@ -14,17 +14,17 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\MarcaCategoriaRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
-class CategoriaController extends InventarioController
+class CategoriaController extends Controller
 {
-    protected CategoriaRepository $repository;
+    protected CategoriaRepositoryInterface $repository;
     protected CategoriaService $service;
 
     public function __construct(
-        CategoriaRepository $repository,
+        CategoriaRepositoryInterface $repository,
         CategoriaService $service
     ) {
-        parent::__construct();
 
         $this->middleware('can:VER CATEGORIA')->only('index', 'show');
         $this->middleware('can:CREAR CATEGORIA')->only('create', 'store');

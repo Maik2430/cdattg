@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Inventario\MarcaRepository;
+use App\Repositories\Interfaces\Inventario\MarcaRepositoryInterface;
 use App\Services\Inventario\MarcaService;
 use App\Models\Inventario\Marca;
 use App\Models\Parametro;
@@ -14,17 +14,17 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\MarcaCategoriaRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
-class MarcaController extends InventarioController
+class MarcaController extends Controller
 {
-    protected MarcaRepository $repository;
+    protected MarcaRepositoryInterface $repository;
     protected MarcaService $service;
 
     public function __construct(
-        MarcaRepository $repository,
+        MarcaRepositoryInterface $repository,
         MarcaService $service
     ) {
-        parent::__construct();
 
         $this->middleware('can:VER MARCA')->only('index', 'show');
         $this->middleware('can:CREAR MARCA')->only('create', 'store');

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Inventario\OrdenRepository;
+use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
 use App\Services\Inventario\AprobacionService;
 use App\Exceptions\AprobacionException;
 use Illuminate\Http\Request;
@@ -13,17 +13,17 @@ use App\Models\Inventario\Orden;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\AprobacionesRequest;
+use App\Http\Controllers\Controller;
 
-class AprobacionController extends InventarioController
+class AprobacionController extends Controller
 {
-    protected OrdenRepository $repository;
+    protected OrdenRepositoryInterface $repository;
     protected AprobacionService $service;
 
     public function __construct(
-        OrdenRepository $repository,
+        OrdenRepositoryInterface $repository,
         AprobacionService $service
     ) {
-        parent::__construct();
         $this->middleware('can:APROBAR ORDEN')->only(['aprobar', 'rechazar', 'pendientes']);
         
         $this->repository = $repository;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Inventario\ProveedorRepository;
+use App\Repositories\Interfaces\Inventario\ProveedorRepositoryInterface;
 use App\Services\Inventario\ProveedorService;
 use App\Models\Inventario\Proveedor;
 use App\Models\Departamento;
@@ -16,17 +16,17 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
-class ProveedorController extends InventarioController
+class ProveedorController extends Controller
 {
-    protected ProveedorRepository $repository;
+    protected ProveedorRepositoryInterface $repository;
     protected ProveedorService $service;
 
     public function __construct(
-        ProveedorRepository $repository,
+        ProveedorRepositoryInterface $repository,
         ProveedorService $service
     ) {
-        parent::__construct();
         $this->middleware('can:VER PROVEEDOR')->only('index', 'show');
         $this->middleware('can:CREAR PROVEEDOR')->only('create', 'store');
         $this->middleware('can:EDITAR PROVEEDOR')->only('edit', 'update');

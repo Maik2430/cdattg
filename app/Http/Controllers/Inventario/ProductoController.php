@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Inventario\ProductoRepository;
+use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
 use App\Services\Inventario\ProductoService;
 use Illuminate\Http\Request;
 use App\Models\Inventario\Producto;
@@ -20,18 +20,18 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Inventario\ProductoRequest;
 
-class ProductoController extends InventarioController
+
+class ProductoController extends Controller
 {
     private const THEME_PRODUCT_STATES = 'ESTADOS DE PRODUCTO';
 
-    protected ProductoRepository $repository;
+    protected ProductoRepositoryInterface $repository;
     protected ProductoService $service;
 
     public function __construct(
-        ProductoRepository $repository,
+        ProductoRepositoryInterface $repository,
         ProductoService $service
     ) {
-        parent::__construct();
         $this->middleware('auth');
         
         $this->repository = $repository;
@@ -67,8 +67,10 @@ class ProductoController extends InventarioController
                 $producto->categoria = Parametro::find($producto->categoria_id);
             }
         }
+
+        $tiposProductos = $this->repository->obtenerTiposProductos();
         
-        return view('inventario.productos.index', compact('productos'));
+        return view('inventario.productos.index', compact('productos', 'tiposProductos'));
     }
 
     /**
@@ -82,12 +84,30 @@ class ProductoController extends InventarioController
         $ambientes = Ambiente::all();
         $proveedores = Proveedor::all();
 
+        $filtros = [
+            'per_page' => 12
+        ];
+        $productos = $this->repository->obtenerParaCatalogo($filtros);
+        $tiposProductos = $this->repository->obtenerTiposProductos();
+
+        // Cargar marca y categoria directamente para cada producto
+        foreach ($productos as $producto) {
+            if ($producto->marca_id) {
+                $producto->marca = Parametro::find($producto->marca_id);
+            }
+            if ($producto->categoria_id) {
+                $producto->categoria = Parametro::find($producto->categoria_id);
+            }
+        }
+
         return view(
             'inventario.productos.create',
             array_merge($opciones, [
                 'contratosConvenios' => $contratosConvenios,
                 'ambientes' => $ambientes,
-                'proveedores' => $proveedores
+                'proveedores' => $proveedores,
+                'productos' => $productos,
+                'tiposProductos' => $tiposProductos
             ])
         );
     }
@@ -229,16 +249,7 @@ class ProductoController extends InventarioController
             }
         }
 
-        $tiposProductos = ParametroTema::with(['parametro', 'tema'])
-            ->whereHas('tema', function ($query) {
-                $query->where('name', 'TIPOS DE PRODUCTO');
-            })
-            ->where('status', 1)
-            ->get()
-            ->sortBy(function ($tipo) {
-                return mb_strtolower($tipo->parametro->name ?? '');
-            })
-            ->values();
+        $tiposProductos = $this->repository->obtenerTiposProductos();
 
         return view('inventario.productos.card', compact('productos', 'tiposProductos'));
     }

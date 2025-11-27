@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Inventario\ContratoConvenioRepository;
+use App\Repositories\Interfaces\Inventario\ContratoConvenioRepositoryInterface;
 use App\Services\Inventario\ContratoConvenioService;
 use App\Models\Inventario\ContratoConvenio;
 use App\Models\ParametroTema;
@@ -14,17 +14,17 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\ContratoConvenioRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
-class ContratoConvenioController extends InventarioController
+class ContratoConvenioController extends Controller
 {
-    protected ContratoConvenioRepository $repository;
+    protected ContratoConvenioRepositoryInterface $repository;
     protected ContratoConvenioService $service;
 
     public function __construct(
-        ContratoConvenioRepository $repository,
+        ContratoConvenioRepositoryInterface $repository,
         ContratoConvenioService $service
     ) {
-        parent::__construct();
         $this->middleware('can:VER CONTRATO')->only('index', 'show');
         $this->middleware('can:CREAR CONTRATO')->only('create', 'store');
         $this->middleware('can:EDITAR CONTRATO')->only('edit', 'update');
