@@ -6,8 +6,11 @@ namespace App\Services\Inventario;
 
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Orden;
-use App\Models\ParametroTema;
 use App\Repositories\Interfaces\Inventario\AprobacionRepositoryInterface;
+use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
+use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
+use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
 use App\Exceptions\AprobacionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -17,10 +20,23 @@ use App\Notifications\OrdenRechazadaNotification;
 class AprobacionService
 {
     protected AprobacionRepositoryInterface $repository;
+    protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
+    protected OrdenRepositoryInterface $ordenRepository;
+    protected ProductoRepositoryInterface $productoRepository;
+    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
 
-    public function __construct(AprobacionRepositoryInterface $repository)
-    {
+    public function __construct(
+        AprobacionRepositoryInterface $repository,
+        DetalleOrdenRepositoryInterface $detalleOrdenRepository,
+        OrdenRepositoryInterface $ordenRepository,
+        ProductoRepositoryInterface $productoRepository,
+        ParametroTemaRepositoryInterface $parametroTemaRepository
+    ) {
         $this->repository = $repository;
+        $this->detalleOrdenRepository = $detalleOrdenRepository;
+        $this->ordenRepository = $ordenRepository;
+        $this->productoRepository = $productoRepository;
+        $this->parametroTemaRepository = $parametroTemaRepository;
     }
     private const STATUS_PENDING = 'EN ESPERA';
     private const STATUS_APPROVED = 'APROBADA';
@@ -32,15 +48,9 @@ class AprobacionService
      *
      * @return ParametroTema|null
      */
-    public function obtenerEstadoEnEspera(): ?ParametroTema
+    public function obtenerEstadoEnEspera()
     {
-        return ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::STATUS_PENDING);
-        })
-        ->whereHas('tema', function ($q) {
-            $q->where('name', self::ORDER_STATUS_THEME);
-        })
-        ->first();
+        return $this->parametroTemaRepository->buscarPorTemaYNombre(self::ORDER_STATUS_THEME, self::STATUS_PENDING);
     }
 
     /**
@@ -49,15 +59,9 @@ class AprobacionService
      * @return ParametroTema
      * @throws AprobacionException
      */
-    public function obtenerEstadoAprobada(): ParametroTema
+    public function obtenerEstadoAprobada()
     {
-        $estado = ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::STATUS_APPROVED);
-        })
-        ->whereHas('tema', function ($q) {
-            $q->where('name', self::ORDER_STATUS_THEME);
-        })
-        ->first();
+        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::ORDER_STATUS_THEME, self::STATUS_APPROVED);
 
         if (!$estado) {
             throw new AprobacionException("Estado 'APROBADA' no encontrado en parámetros.");
@@ -72,15 +76,9 @@ class AprobacionService
      * @return ParametroTema
      * @throws AprobacionException
      */
-    public function obtenerEstadoRechazada(): ParametroTema
+    public function obtenerEstadoRechazada()
     {
-        $estado = ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::STATUS_REJECTED);
-        })
-        ->whereHas('tema', function ($q) {
-            $q->where('name', self::ORDER_STATUS_THEME);
-        })
-        ->first();
+        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::ORDER_STATUS_THEME, self::STATUS_REJECTED);
 
         if (!$estado) {
             throw new AprobacionException("Estado 'RECHAZADA' no encontrado en parámetros.");
@@ -120,7 +118,7 @@ class AprobacionService
                 );
             }
 
-            $detalleOrden->update([
+            $this->detalleOrdenRepository->actualizar($detalleOrden, [
                 'estado_orden_id' => $estadoAprobada->id,
                 'user_update_id' => Auth::id()
             ]);
@@ -132,9 +130,9 @@ class AprobacionService
                 'user_update_id' => Auth::id()
             ]);
 
-            $producto->cantidad -= $detalleOrden->cantidad;
-            $producto->user_update_id = Auth::id();
-            $producto->save();
+            $nuevaCantidad = $producto->cantidad - $detalleOrden->cantidad;
+            $this->productoRepository->actualizarStock($producto, $nuevaCantidad);
+            $this->productoRepository->actualizar($producto, ['user_update_id' => Auth::id()]);
 
             $solicitante = $detalleOrden->orden->userCreate;
             if ($solicitante) {
@@ -173,7 +171,7 @@ class AprobacionService
                 throw new AprobacionException('Esta solicitud ya fue procesada anteriormente.');
             }
 
-            $detalleOrden->update([
+            $this->detalleOrdenRepository->actualizar($detalleOrden, [
                 'estado_orden_id' => $estadoRechazada->id,
                 'user_update_id' => Auth::id()
             ]);
@@ -186,13 +184,16 @@ class AprobacionService
             ]);
 
             $orden = $detalleOrden->orden;
-            $orden->descripcion_orden .= "\n\n--- SOLICITUD RECHAZADA ---\n";
-            $orden->descripcion_orden .= "Producto: {$detalleOrden->producto->producto}\n";
-            $orden->descripcion_orden .= "Motivo: {$motivoRechazo}\n";
-            $orden->descripcion_orden .= "Rechazado por: " . Auth::user()->name . "\n";
-            $orden->descripcion_orden .= "Fecha: " . now()->format('d/m/Y H:i') . "\n";
-            $orden->user_update_id = Auth::id();
-            $orden->save();
+            $descripcionActualizada = $orden->descripcion_orden . "\n\n--- SOLICITUD RECHAZADA ---\n";
+            $descripcionActualizada .= "Producto: {$detalleOrden->producto->producto}\n";
+            $descripcionActualizada .= "Motivo: {$motivoRechazo}\n";
+            $descripcionActualizada .= "Rechazado por: " . Auth::user()->name . "\n";
+            $descripcionActualizada .= "Fecha: " . now()->format('d/m/Y H:i') . "\n";
+            
+            $this->ordenRepository->actualizar($orden, [
+                'descripcion_orden' => $descripcionActualizada,
+                'user_update_id' => Auth::id()
+            ]);
 
             $solicitante = $detalleOrden->orden->userCreate;
             if ($solicitante) {
@@ -246,7 +247,7 @@ class AprobacionService
             }
 
             foreach ($detallesPendientes as $detalle) {
-                $detalle->update([
+                $this->detalleOrdenRepository->actualizar($detalle, [
                     'estado_orden_id' => $estadoAprobada->id,
                     'user_update_id' => Auth::id()
                 ]);
@@ -258,9 +259,9 @@ class AprobacionService
                     'user_update_id' => Auth::id()
                 ]);
 
-                $detalle->producto->cantidad -= $detalle->cantidad;
-                $detalle->producto->user_update_id = Auth::id();
-                $detalle->producto->save();
+                $nuevaCantidad = $detalle->producto->cantidad - $detalle->cantidad;
+                $this->productoRepository->actualizarStock($detalle->producto, $nuevaCantidad);
+                $this->productoRepository->actualizar($detalle->producto, ['user_update_id' => Auth::id()]);
             }
 
             $solicitante = $orden->userCreate;
@@ -305,7 +306,7 @@ class AprobacionService
             }
 
             foreach ($detallesPendientes as $detalle) {
-                $detalle->update([
+                $this->detalleOrdenRepository->actualizar($detalle, [
                     'estado_orden_id' => $estadoRechazada->id,
                     'user_update_id' => Auth::id()
                 ]);
@@ -318,12 +319,15 @@ class AprobacionService
                 ]);
             }
 
-            $orden->descripcion_orden .= "\n\n--- ORDEN RECHAZADA COMPLETA ---\n";
-            $orden->descripcion_orden .= "Motivo: {$motivoRechazo}\n";
-            $orden->descripcion_orden .= "Rechazado por: " . Auth::user()->name . "\n";
-            $orden->descripcion_orden .= "Fecha: " . now()->format('d/m/Y H:i') . "\n";
-            $orden->user_update_id = Auth::id();
-            $orden->save();
+            $descripcionActualizada = $orden->descripcion_orden . "\n\n--- ORDEN RECHAZADA COMPLETA ---\n";
+            $descripcionActualizada .= "Motivo: {$motivoRechazo}\n";
+            $descripcionActualizada .= "Rechazado por: " . Auth::user()->name . "\n";
+            $descripcionActualizada .= "Fecha: " . now()->format('d/m/Y H:i') . "\n";
+            
+            $this->ordenRepository->actualizar($orden, [
+                'descripcion_orden' => $descripcionActualizada,
+                'user_update_id' => Auth::id()
+            ]);
 
             $solicitante = $orden->userCreate;
             if ($solicitante) {

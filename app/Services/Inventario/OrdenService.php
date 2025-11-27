@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services\Inventario;
 
-use App\Repositories\Inventario\OrdenRepository;
 use App\Models\Inventario\Orden;
 use App\Models\Inventario\DetalleOrden;
-use App\Models\Inventario\Producto;
-use App\Models\ParametroTema;
+use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
+use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
+use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
 use App\Exceptions\OrdenException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,15 +19,24 @@ use App\Notifications\NuevaOrdenNotification;
 class OrdenService
 {
     private const THEME_ORDER_STATES = 'ESTADOS DE ORDEN';
-    private const THEME_ORDER_TYPES = 'TIPOS DE ORDEN';
     private const STATUS_EN_ESPERA = 'EN ESPERA';
     private const STATUS_APROBADA = 'APROBADA';
 
-    protected OrdenRepository $repository;
+    protected OrdenRepositoryInterface $ordenRepository;
+    protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
+    protected ProductoRepositoryInterface $productoRepository;
+    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
 
-    public function __construct(OrdenRepository $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        OrdenRepositoryInterface $ordenRepository,
+        DetalleOrdenRepositoryInterface $detalleOrdenRepository,
+        ProductoRepositoryInterface $productoRepository,
+        ParametroTemaRepositoryInterface $parametroTemaRepository
+    ) {
+        $this->ordenRepository = $ordenRepository;
+        $this->detalleOrdenRepository = $detalleOrdenRepository;
+        $this->productoRepository = $productoRepository;
+        $this->parametroTemaRepository = $parametroTemaRepository;
     }
 
     /**
@@ -42,14 +52,13 @@ class OrdenService
         try {
             DB::beginTransaction();
 
-            $orden = new Orden([
+            $orden = $this->ordenRepository->crear([
                 'descripcion_orden' => $datos['descripcion_orden'],
                 'tipo_orden_id' => $datos['tipo_orden_id'],
-                'fecha_devolucion' => $datos['fecha_devolucion'] ?? null
+                'fecha_devolucion' => $datos['fecha_devolucion'] ?? null,
+                'user_create_id' => $userId,
+                'user_update_id' => $userId
             ]);
-            $orden->user_create_id = $userId;
-            $orden->user_update_id = $userId;
-            $orden->save();
 
             foreach ($datos['productos'] as $productoData) {
                 $this->procesarDetalleOrden($orden, $productoData, $userId);
@@ -96,14 +105,13 @@ class OrdenService
             $usuario = Auth::user();
             $descripcionDetallada = $this->generarDescripcionOrden($datos, $usuario);
 
-            $orden = new Orden([
+            $orden = $this->ordenRepository->crear([
                 'descripcion_orden' => $descripcionDetallada,
                 'tipo_orden_id' => $parametroTipoOrden->id,
-                'fecha_devolucion' => $datos['tipo'] === 'prestamo' ? $datos['fecha_devolucion'] : null
+                'fecha_devolucion' => $datos['tipo'] === 'prestamo' ? $datos['fecha_devolucion'] : null,
+                'user_create_id' => $userId,
+                'user_update_id' => $userId
             ]);
-            $orden->user_create_id = $userId;
-            $orden->user_update_id = $userId;
-            $orden->save();
 
             foreach ($carrito as $item) {
                 $productoId = $item['id'] ?? $item['producto_id'] ?? null;
@@ -113,7 +121,7 @@ class OrdenService
                     continue;
                 }
 
-                $producto = Producto::find($productoId);
+                $producto = $this->productoRepository->encontrar($productoId);
                 
                 if (!$producto) {
                     throw new OrdenException("Producto con ID {$productoId} no encontrado.");
@@ -126,15 +134,14 @@ class OrdenService
                     );
                 }
 
-                $detalle = new DetalleOrden([
+                $this->detalleOrdenRepository->crear([
                     'orden_id' => $orden->id,
                     'producto_id' => $producto->id,
                     'cantidad' => $cantidad,
-                    'estado_orden_id' => $estadoEnEspera->id
+                    'estado_orden_id' => $estadoEnEspera->id,
+                    'user_create_id' => $userId,
+                    'user_update_id' => $userId
                 ]);
-                $detalle->user_create_id = $userId;
-                $detalle->user_update_id = $userId;
-                $detalle->save();
             }
 
             $this->notificarNuevaOrden($orden);
@@ -166,7 +173,11 @@ class OrdenService
      */
     private function procesarDetalleOrden(Orden $orden, array $productoData, int $userId): void
     {
-        $producto = Producto::findOrFail($productoData['producto_id']);
+        $producto = $this->productoRepository->encontrar($productoData['producto_id']);
+
+        if (!$producto) {
+            throw new OrdenException("Producto con ID {$productoData['producto_id']} no encontrado.");
+        }
 
         if (!$producto->tieneStockDisponible($productoData['cantidad'])) {
             throw new OrdenException(
@@ -175,17 +186,17 @@ class OrdenService
             );
         }
 
-        $detalle = new DetalleOrden([
+        $this->detalleOrdenRepository->crear([
             'orden_id' => $orden->id,
             'producto_id' => $producto->id,
             'cantidad' => $productoData['cantidad'],
-            'estado_orden_id' => $productoData['estado_orden_id']
+            'estado_orden_id' => $productoData['estado_orden_id'],
+            'user_create_id' => $userId,
+            'user_update_id' => $userId
         ]);
-        $detalle->user_create_id = $userId;
-        $detalle->user_update_id = $userId;
-        $detalle->save();
 
-        $producto->descontarStock($productoData['cantidad']);
+        $nuevaCantidad = $producto->cantidad - $productoData['cantidad'];
+        $this->productoRepository->actualizarStock($producto, $nuevaCantidad);
     }
 
     /**
@@ -195,20 +206,9 @@ class OrdenService
      * @return ParametroTema
      * @throws OrdenException
      */
-    public function obtenerParametroTipoOrden(string $codigo): ParametroTema
+    public function obtenerParametroTipoOrden(string $codigo)
     {
-        $parametro = ParametroTema::whereHas('tema', function ($q) {
-            $q->whereRaw('UPPER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(name, "Á", "A"), "É", "E"), "Í", "I"), "Ó", "O"), "Ú", "U")) = ?', ['TIPOS DE ORDEN']);
-        })
-        ->whereHas('parametro', function ($q) use ($codigo) {
-            $nombreNormalizado = str_replace(
-                ['Á', 'É', 'Í', 'Ó', 'Ú'],
-                ['A', 'E', 'I', 'O', 'U'],
-                strtoupper($codigo)
-            );
-            $q->whereRaw('UPPER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(name, "Á", "A"), "É", "E"), "Í", "I"), "Ó", "O"), "Ú", "U")) = ?', [$nombreNormalizado]);
-        })
-        ->first();
+        $parametro = $this->parametroTemaRepository->buscarPorTemaYNombreNormalizado('TIPOS DE ORDEN', $codigo);
 
         if (!$parametro) {
             throw new OrdenException("Tipo de orden '{$codigo}' no encontrado. Verifique los parámetros del sistema.");
@@ -223,15 +223,9 @@ class OrdenService
      * @return ParametroTema
      * @throws OrdenException
      */
-    public function obtenerEstadoEnEspera(): ParametroTema
+    public function obtenerEstadoEnEspera()
     {
-        $estado = ParametroTema::whereHas('tema', function ($q) {
-            $q->whereRaw('UPPER(name) = ?', [self::THEME_ORDER_STATES]);
-        })
-        ->whereHas('parametro', function ($q) {
-            $q->whereRaw('UPPER(name) = ?', ['EN ESPERA']);
-        })
-        ->first();
+        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::THEME_ORDER_STATES, self::STATUS_EN_ESPERA);
 
         if (!$estado) {
             throw new OrdenException("Estado 'EN ESPERA' no encontrado. Verifique los parámetros del sistema.");
@@ -246,15 +240,9 @@ class OrdenService
      * @return ParametroTema
      * @throws OrdenException
      */
-    public function obtenerEstadoAprobada(): ParametroTema
+    public function obtenerEstadoAprobada()
     {
-        $estado = ParametroTema::whereHas('tema', function ($q) {
-            $q->where('name', self::THEME_ORDER_STATES);
-        })
-        ->whereHas('parametro', function ($q) {
-            $q->where('name', self::STATUS_APROBADA);
-        })
-        ->first();
+        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::THEME_ORDER_STATES, self::STATUS_APROBADA);
 
         if (!$estado) {
             throw new OrdenException("Estado 'APROBADA' no encontrado.");
@@ -330,20 +318,22 @@ class OrdenService
 
             // Devolver stock de productos anteriores
             foreach ($orden->detalles as $detalle) {
-                $detalle->producto->devolverStock($detalle->cantidad);
+                $producto = $detalle->producto;
+                $nuevaCantidad = $producto->cantidad + $detalle->cantidad;
+                $this->productoRepository->actualizarStock($producto, $nuevaCantidad);
             }
 
             // Eliminar detalles anteriores
-            $orden->detalles()->delete();
+            $this->detalleOrdenRepository->eliminarPorOrden($orden->id);
 
             // Actualizar la orden
-            $orden->fill([
+            $this->ordenRepository->actualizar($orden, [
                 'descripcion_orden' => $datos['descripcion_orden'],
                 'tipo_orden_id' => $datos['tipo_orden_id'],
-                'fecha_devolucion' => $datos['fecha_devolucion'] ?? null
+                'fecha_devolucion' => $datos['fecha_devolucion'] ?? null,
+                'user_update_id' => $userId
             ]);
-            $orden->user_update_id = $userId;
-            $orden->save();
+            $orden->refresh();
 
             // Procesar nuevos productos
             foreach ($datos['productos'] as $productoData) {
@@ -374,14 +364,16 @@ class OrdenService
 
             // Devolver stock de todos los productos
             foreach ($orden->detalles as $detalle) {
-                $detalle->producto->devolverStock($detalle->cantidad);
+                $producto = $detalle->producto;
+                $nuevaCantidad = $producto->cantidad + $detalle->cantidad;
+                $this->productoRepository->actualizarStock($producto, $nuevaCantidad);
             }
 
             // Eliminar detalles
-            $orden->detalles()->delete();
+            $this->detalleOrdenRepository->eliminarPorOrden($orden->id);
 
             // Eliminar orden
-            $resultado = $orden->delete();
+            $resultado = $this->ordenRepository->eliminar($orden);
 
             DB::commit();
 

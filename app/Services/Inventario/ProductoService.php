@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Services\Inventario;
 
 use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
 use App\Models\Inventario\Producto;
-use App\Models\ParametroTema;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use App\Notifications\StockBajoNotification;
 
 class ProductoService
@@ -17,10 +16,14 @@ class ProductoService
     private const BARCODE_LENGTH = 11;
 
     protected ProductoRepositoryInterface $repository;
+    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
 
-    public function __construct(ProductoRepositoryInterface $repository)
-    {
+    public function __construct(
+        ProductoRepositoryInterface $repository,
+        ParametroTemaRepositoryInterface $parametroTemaRepository
+    ) {
         $this->repository = $repository;
+        $this->parametroTemaRepository = $parametroTemaRepository;
     }
 
     /**
@@ -37,7 +40,7 @@ class ProductoService
         $datos['user_create_id'] = $userId;
         $datos['user_update_id'] = $userId;
 
-        $producto = Producto::create($datos);
+        $producto = $this->repository->crear($datos);
 
         $this->repository->invalidarCache();
 
@@ -78,7 +81,8 @@ class ProductoService
 
         $datos['user_update_id'] = $userId;
 
-        $producto->update($datos);
+        $this->repository->actualizar($producto, $datos);
+        $producto->refresh();
 
         $this->verificarYNotificarStockBajo($producto, $cantidadAnterior);
         $this->repository->invalidarCache();
@@ -95,7 +99,7 @@ class ProductoService
     public function eliminar(Producto $producto): bool
     {
         $this->eliminarImagenSiExiste($producto);
-        $resultado = $producto->delete();
+        $resultado = $this->repository->eliminar($producto);
         $this->repository->invalidarCache();
 
         return $resultado;
@@ -125,35 +129,27 @@ class ProductoService
      */
     public function generarSiguienteCodigoBarras(): string
     {
-        return DB::transaction(function () {
-            $max = DB::table('productos')
-                ->whereNotNull('codigo_barras')
-                ->max('codigo_barras');
+        $max = $this->repository->obtenerMaxCodigoBarras();
 
-            $onlyDigits = preg_replace('/\D/', '', (string) $max);
-            $num = $onlyDigits === '' ? 0 : (int) $onlyDigits;
-            $next = $num + 1;
-            $code = str_pad((string) $next, self::BARCODE_LENGTH, '0', STR_PAD_LEFT);
+        $onlyDigits = preg_replace('/\D/', '', (string) $max);
+        $num = $onlyDigits === '' ? 0 : (int) $onlyDigits;
+        $next = $num + 1;
+        $code = str_pad((string) $next, self::BARCODE_LENGTH, '0', STR_PAD_LEFT);
 
-            for ($i = 0; $i < 3; $i++) {
-                $exists = DB::table('productos')
-                    ->where('codigo_barras', $code)
-                    ->exists();
-
-                if (!$exists) {
-                    return $code;
-                }
-
-                $code = str_pad(
-                    (string) ($next + $i + 1),
-                    self::BARCODE_LENGTH,
-                    '0',
-                    STR_PAD_LEFT
-                );
+        for ($i = 0; $i < 3; $i++) {
+            if (!$this->repository->existeCodigoBarras($code)) {
+                return $code;
             }
 
-            return $code;
-        }, 3);
+            $code = str_pad(
+                (string) ($next + $i + 1),
+                self::BARCODE_LENGTH,
+                '0',
+                STR_PAD_LEFT
+            );
+        }
+
+        return $code;
     }
 
     /**
@@ -259,26 +255,11 @@ class ProductoService
     public function obtenerOpcionesFormulario(string $temaEstados = 'ESTADOS DE PRODUCTO'): array
     {
         return [
-            'tiposProductos' => ParametroTema::with(['parametro', 'tema'])
-                ->whereHas('tema', fn($q) => $q->where('name', 'TIPOS DE PRODUCTO'))
-                ->where('status', 1)
-                ->get(),
-            'unidadesMedida' => ParametroTema::with(['parametro', 'tema'])
-                ->whereHas('tema', fn($q) => $q->where('name', 'UNIDADES DE MEDIDA'))
-                ->where('status', 1)
-                ->get(),
-            'estados' => ParametroTema::with(['parametro', 'tema'])
-                ->whereHas('tema', fn($q) => $q->where('name', $temaEstados))
-                ->where('status', 1)
-                ->get(),
-            'categorias' => ParametroTema::with(['parametro', 'tema'])
-                ->whereHas('tema', fn($q) => $q->where('name', 'CATEGORIAS'))
-                ->where('status', 1)
-                ->get(),
-            'marcas' => ParametroTema::with(['parametro', 'tema'])
-                ->whereHas('tema', fn($q) => $q->where('name', 'MARCAS'))
-                ->where('status', 1)
-                ->get(),
+            'tiposProductos' => collect($this->parametroTemaRepository->obtenerPorTema('TIPOS DE PRODUCTO')),
+            'unidadesMedida' => collect($this->parametroTemaRepository->obtenerPorTema('UNIDADES DE MEDIDA')),
+            'estados' => collect($this->parametroTemaRepository->obtenerPorTema($temaEstados)),
+            'categorias' => collect($this->parametroTemaRepository->obtenerPorTema('CATEGORIAS')),
+            'marcas' => collect($this->parametroTemaRepository->obtenerPorTema('MARCAS')),
         ];
     }
 }

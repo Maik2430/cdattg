@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Inventario;
 
 use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
+use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
 use App\Services\Inventario\AprobacionService;
 use App\Exceptions\AprobacionException;
 use Illuminate\Http\Request;
-use App\Models\Inventario\DetalleOrden;
-use App\Models\Inventario\Orden;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\AprobacionesRequest;
@@ -18,15 +17,18 @@ use App\Http\Controllers\Controller;
 class AprobacionController extends Controller
 {
     protected OrdenRepositoryInterface $repository;
+    protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
     protected AprobacionService $service;
 
     public function __construct(
         OrdenRepositoryInterface $repository,
+        DetalleOrdenRepositoryInterface $detalleOrdenRepository,
         AprobacionService $service
     ) {
         $this->middleware('can:APROBAR ORDEN')->only(['aprobar', 'rechazar', 'pendientes']);
         
         $this->repository = $repository;
+        $this->detalleOrdenRepository = $detalleOrdenRepository;
         $this->service = $service;
     }
 
@@ -52,7 +54,11 @@ class AprobacionController extends Controller
     public function aprobar(Request $request, int $detalleOrdenId): RedirectResponse
     {
         try {
-            $detalleOrden = DetalleOrden::with(['producto', 'orden'])->findOrFail($detalleOrdenId);
+            $detalleOrden = $this->detalleOrdenRepository->encontrarConRelaciones($detalleOrdenId);
+            
+            if (!$detalleOrden) {
+                abort(404);
+            }
             $this->service->aprobarDetalle($detalleOrden);
 
             $producto = $detalleOrden->producto;
@@ -77,7 +83,11 @@ class AprobacionController extends Controller
     {
         try {
             $validated = $request->validated();
-            $detalleOrden = DetalleOrden::with(['producto', 'orden'])->findOrFail($detalleOrdenId);
+            $detalleOrden = $this->detalleOrdenRepository->encontrarConRelaciones($detalleOrdenId);
+            
+            if (!$detalleOrden) {
+                abort(404);
+            }
             
             $this->service->rechazarDetalle($detalleOrden, $validated['motivo_rechazo']);
 
@@ -97,7 +107,11 @@ class AprobacionController extends Controller
     public function aprobarOrden(Request $request, int $ordenId): RedirectResponse
     {
         try {
-            $orden = Orden::with('detalles.producto')->findOrFail($ordenId);
+            $orden = $this->repository->encontrarConDetallesYDevoluciones($ordenId);
+            
+            if (!$orden) {
+                abort(404);
+            }
             $this->service->aprobarOrdenCompleta($orden);
 
             return redirect()
@@ -120,7 +134,11 @@ class AprobacionController extends Controller
     {
         try {
             $validated = $request->validated();
-            $orden = Orden::with('detalles.producto')->findOrFail($ordenId);
+            $orden = $this->repository->encontrarConDetallesYDevoluciones($ordenId);
+            
+            if (!$orden) {
+                abort(404);
+            }
             
             $this->service->rechazarOrdenCompleta($orden, $validated['motivo_rechazo']);
 

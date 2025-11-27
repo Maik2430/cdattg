@@ -4,33 +4,34 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Inventario\DevolucionRepository;
-use App\Services\Inventario\OrdenService;
+use App\Repositories\Interfaces\Inventario\DevolucionRepositoryInterface;
+use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
+use App\Services\Inventario\DevolucionesServices;
 use App\Exceptions\DevolucionException;
-use App\Exceptions\OrdenException;
-use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Devolucion;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\DevolucionRequest;
+use App\Http\Controllers\Controller;
 
-class DevolucionController extends InventarioController
+class DevolucionController extends Controller
 {
-    protected DevolucionRepository $repository;
-    protected OrdenService $ordenService;
+    protected DevolucionRepositoryInterface $repository;
+    protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
+    protected DevolucionesServices $devolucionesService;
 
     public function __construct(
-        DevolucionRepository $repository,
-        OrdenService $ordenService
+        DevolucionRepositoryInterface $repository,
+        DetalleOrdenRepositoryInterface $detalleOrdenRepository,
+        DevolucionesServices $devolucionesService
     ) {
-        parent::__construct();
         $this->middleware('can:DEVOLVER PRESTAMO')->only(['index', 'create', 'store']);
         
         $this->repository = $repository;
-        $this->ordenService = $ordenService;
+        $this->detalleOrdenRepository = $detalleOrdenRepository;
+        $this->devolucionesService = $devolucionesService;
     }
 
     // Mostrar lista de préstamos pendientes de devolución
@@ -46,7 +47,11 @@ class DevolucionController extends InventarioController
     // Mostrar formulario de devolución
     public function create(int $detalleOrdenId): View|RedirectResponse
     {
-        $detalleOrden = DetalleOrden::with(['orden', 'producto'])->findOrFail($detalleOrdenId);
+        $detalleOrden = $this->detalleOrdenRepository->encontrarConRelaciones($detalleOrdenId);
+        
+        if (!$detalleOrden) {
+            abort(404);
+        }
         
         if ($detalleOrden->estaCompletamenteDevuelto()) {
             return redirect()
@@ -130,7 +135,7 @@ class DevolucionController extends InventarioController
         $estadoAprobadaId = $this->getEstadoOrdenAprobadaId();
         $prestamos = $this->repository->obtenerPrestamosActivosUsuario($userId, $estadoAprobadaId);
 
-        return view('inventario.prestamos.mis', compact('prestamos'));
+        return view('inventario.prestamos.usuariosPrestamos', compact('prestamos'));
     }
 
     // Historial de préstamos del usuario
@@ -144,7 +149,7 @@ class DevolucionController extends InventarioController
 
     private function getEstadoOrdenAprobadaId(): int
     {
-        $estadoAprobada = $this->ordenService->obtenerEstadoAprobada();
+        $estadoAprobada = $this->devolucionesService->obtenerEstadoAprobada();
         return (int) $estadoAprobada->id;
     }
 }

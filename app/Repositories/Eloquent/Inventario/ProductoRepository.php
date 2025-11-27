@@ -201,6 +201,86 @@ class ProductoRepository implements ProductoRepositoryInterface
     }
 
     /**
+     * Encuentra un producto por ID
+     *
+     * @param int $id
+     * @return Producto|null
+     */
+    public function encontrar(int $id): ?Producto
+    {
+        return Producto::find($id);
+    }
+
+    /**
+     * Crea un nuevo producto
+     *
+     * @param array $datos
+     * @return Producto
+     */
+    public function crear(array $datos): Producto
+    {
+        return Producto::create($datos);
+    }
+
+    /**
+     * Actualiza un producto
+     *
+     * @param Producto $producto
+     * @param array $datos
+     * @return bool
+     */
+    public function actualizar(Producto $producto, array $datos): bool
+    {
+        return $producto->update($datos);
+    }
+
+    /**
+     * Elimina un producto
+     *
+     * @param Producto $producto
+     * @return bool
+     */
+    public function eliminar(Producto $producto): bool
+    {
+        return $producto->delete();
+    }
+
+    /**
+     * Actualiza el stock de un producto
+     *
+     * @param Producto $producto
+     * @param int $cantidad
+     * @return bool
+     */
+    public function actualizarStock(Producto $producto, int $cantidad): bool
+    {
+        $producto->cantidad = $cantidad;
+        return $producto->save();
+    }
+
+    /**
+     * Obtiene el código de barras máximo
+     *
+     * @return string|null
+     */
+    public function obtenerMaxCodigoBarras(): ?string
+    {
+        return Producto::whereNotNull('codigo_barras')
+            ->max('codigo_barras');
+    }
+
+    /**
+     * Verifica si existe un código de barras
+     *
+     * @param string $codigo
+     * @return bool
+     */
+    public function existeCodigoBarras(string $codigo): bool
+    {
+        return Producto::where('codigo_barras', $codigo)->exists();
+    }
+
+    /**
      * Invalida caché
      *
      * @return void

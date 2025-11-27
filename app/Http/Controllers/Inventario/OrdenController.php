@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Inventario\OrdenRepository;
+use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
 use App\Services\Inventario\OrdenService;
 use Illuminate\Http\Request;
 use App\Exceptions\OrdenException;
@@ -15,19 +15,17 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Inventario\OrdenRequest;
+use App\Http\Controllers\Controller;
 
-class OrdenController extends InventarioController
+class OrdenController extends Controller
 {
-    private const THEME_ORDER_STATES = 'ESTADOS DE ORDEN';
-
-    protected OrdenRepository $repository;
+    protected OrdenRepositoryInterface $repository;
     protected OrdenService $service;
 
     public function __construct(
-        OrdenRepository $repository,
+        OrdenRepositoryInterface $repository,
         OrdenService $service
     ) {
-        parent::__construct();
         $this->middleware('can:VER ORDEN')->only(['index', 'show', 'prestamosSalidas']);
         $this->middleware('can:CREAR ORDEN')->only(['store', 'storePrestamos']);
         $this->middleware('can:EDITAR ORDEN')->only(['update']);

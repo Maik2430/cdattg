@@ -37,7 +37,7 @@ class CarritoService
                 continue;
             }
 
-            $producto = Producto::find($productoId);
+            $producto = $this->productoRepository->encontrar($productoId);
 
             if (!$producto) {
                 throw new CarritoException("Producto con ID {$productoId} no encontrado.");
@@ -65,7 +65,7 @@ class CarritoService
      */
     public function validarItem(int $productoId, int $cantidad): array
     {
-        $producto = Producto::find($productoId);
+        $producto = $this->productoRepository->encontrar($productoId);
 
         if (!$producto) {
             throw new CarritoException('Producto no encontrado');

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Inventario;
 
 use App\Repositories\Interfaces\Inventario\ContratoConvenioRepositoryInterface;
+use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
 use App\Services\Inventario\ContratoConvenioService;
 use App\Models\Inventario\ContratoConvenio;
-use App\Models\ParametroTema;
 use App\Exceptions\ContratoConvenioException;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,10 +20,12 @@ class ContratoConvenioController extends Controller
 {
     protected ContratoConvenioRepositoryInterface $repository;
     protected ContratoConvenioService $service;
+    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
 
     public function __construct(
         ContratoConvenioRepositoryInterface $repository,
-        ContratoConvenioService $service
+        ContratoConvenioService $service,
+        ParametroTemaRepositoryInterface $parametroTemaRepository
     ) {
         $this->middleware('can:VER CONTRATO')->only('index', 'show');
         $this->middleware('can:CREAR CONTRATO')->only('create', 'store');
@@ -32,6 +34,7 @@ class ContratoConvenioController extends Controller
         
         $this->repository = $repository;
         $this->service = $service;
+        $this->parametroTemaRepository = $parametroTemaRepository;
     }
 
     public function index(Request $request): View
@@ -44,10 +47,7 @@ class ContratoConvenioController extends Controller
         $contratosConvenios = $this->repository->obtenerConFiltros($filtros);
         $contratosConvenios->appends($request->only('search'));
 
-        $estados = ParametroTema::with(['parametro', 'tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'ESTADOS'))
-            ->where('parametros_temas.status', 1)
-            ->get();
+        $estados = collect($this->parametroTemaRepository->obtenerPorTema('ESTADOS'));
 
         return view('inventario.contratos_convenios.index', compact('contratosConvenios', 'estados'));
     }

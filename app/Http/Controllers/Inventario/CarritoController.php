@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
 use App\Services\Inventario\CarritoService;
-use App\Models\Inventario\Producto;
 use App\Exceptions\CarritoException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,9 +16,12 @@ use App\Http\Requests\Inventario\CarritoRequest;
 class CarritoController extends Controller
 {
     protected CarritoService $service;
+    protected ProductoRepositoryInterface $productoRepository;
 
-    public function __construct(CarritoService $service)
-    {
+    public function __construct(
+        CarritoService $service,
+        ProductoRepositoryInterface $productoRepository
+    ) {
         // Middlewares de permisos de carrito
         $this->middleware('can:VER CARRITO')->only(['index']);
         $this->middleware('can:AGREGAR CARRITO')->only(['agregar', 'store']);
@@ -27,6 +30,7 @@ class CarritoController extends Controller
         $this->middleware('can:VACIAR CARRITO')->only(['vaciar']);
         
         $this->service = $service;
+        $this->productoRepository = $productoRepository;
     }
 
     // Vista del carrito
@@ -102,7 +106,7 @@ class CarritoController extends Controller
         try {
             // Esta es una operación del lado del cliente (localStorage)
             // Solo validamos que el producto existe
-            $producto = Producto::find($id);
+            $producto = $this->productoRepository->encontrar($id);
 
             if (!$producto) {
                 return response()->json([

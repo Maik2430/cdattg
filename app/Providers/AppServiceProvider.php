@@ -58,6 +58,16 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\Inventario\AprobacionRepositoryInterface::class,
             \App\Repositories\Eloquent\Inventario\AprobacionRepository::class
         );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\DetalleOrdenRepository::class
+        );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\ParametroTemaRepositoryInterface::class,
+            \App\Repositories\Eloquent\ParametroTemaRepository::class
+        );
     }
 
     /**

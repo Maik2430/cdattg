@@ -6,11 +6,11 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
+use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
 use App\Services\Inventario\ProductoService;
 use Illuminate\Http\Request;
 use App\Models\Inventario\Producto;
 use App\Models\Parametro;
-use App\Models\ParametroTema;
 use App\Models\Inventario\ContratoConvenio;
 use App\Models\Ambiente;
 use App\Models\Inventario\Proveedor;
@@ -27,15 +27,18 @@ class ProductoController extends Controller
 
     protected ProductoRepositoryInterface $repository;
     protected ProductoService $service;
+    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
 
     public function __construct(
         ProductoRepositoryInterface $repository,
-        ProductoService $service
+        ProductoService $service,
+        ParametroTemaRepositoryInterface $parametroTemaRepository
     ) {
         $this->middleware('auth');
         
         $this->repository = $repository;
         $this->service = $service;
+        $this->parametroTemaRepository = $parametroTemaRepository;
         
         // Middlewares de permisos de inventario
         $this->middleware('can:VER PRODUCTO')->only(['index', 'show']);
@@ -146,7 +149,11 @@ class ProductoController extends Controller
      */
     public function edit(string $id): View
     {
-        $producto = Producto::with(['tipoProducto', 'unidadMedida', 'estado'])->findOrFail($id);
+        $producto = $this->repository->encontrarConRelaciones((int) $id);
+        
+        if (!$producto) {
+            abort(404);
+        }
         $opciones = $this->service->obtenerOpcionesFormulario(self::THEME_PRODUCT_STATES);
         
         $contratosConvenios = ContratoConvenio::all();
@@ -166,7 +173,11 @@ class ProductoController extends Controller
      */
     public function update(ProductoRequest $request, string $id): RedirectResponse
     {
-        $producto = Producto::findOrFail($id);
+        $producto = $this->repository->encontrar((int) $id);
+        
+        if (!$producto) {
+            abort(404);
+        }
         $validated = $request->validated();
         
         if ($request->hasFile('imagen')) {
@@ -185,7 +196,11 @@ class ProductoController extends Controller
      */
     public function destroy(string $id): RedirectResponse
     {
-        $producto = Producto::findOrFail($id);
+        $producto = $this->repository->encontrar((int) $id);
+        
+        if (!$producto) {
+            abort(404);
+        }
         $this->service->eliminar($producto);
         
         return redirect()
@@ -213,11 +228,10 @@ class ProductoController extends Controller
         $estadoAgotadoId = null;
 
         if ($parametroAgotado) {
-            $estadoAgotadoTema = ParametroTema::where('parametro_id', 43)
-                ->whereHas('tema', function ($query) {
-                    $query->where('name', self::THEME_PRODUCT_STATES);
-                })
-                ->first();
+            $estadoAgotadoTema = $this->parametroTemaRepository->buscarPorTemaYNombre(
+                self::THEME_PRODUCT_STATES,
+                $parametroAgotado->name
+            );
             
             if ($estadoAgotadoTema) {
                 $estadoAgotadoId = $estadoAgotadoTema->id;
@@ -263,11 +277,10 @@ class ProductoController extends Controller
         $estadoAgotadoId = null;
 
         if ($parametroAgotado) {
-            $estadoAgotadoTema = ParametroTema::where('parametro_id', 43)
-                ->whereHas('tema', function ($query) {
-                    $query->where('name', self::THEME_PRODUCT_STATES);
-                })
-                ->first();
+            $estadoAgotadoTema = $this->parametroTemaRepository->buscarPorTemaYNombre(
+                self::THEME_PRODUCT_STATES,
+                $parametroAgotado->name
+            );
 
             if ($estadoAgotadoTema) {
                 $estadoAgotadoId = $estadoAgotadoTema->id;
@@ -305,7 +318,14 @@ class ProductoController extends Controller
     public function agregarAlCarrito(ProductoRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $producto = Producto::findOrFail($validated['producto_id']);
+        $producto = $this->repository->encontrar((int) $validated['producto_id']);
+        
+        if (!$producto) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Producto no encontrado'
+            ], 404);
+        }
 
         if ($producto->cantidad < $validated['cantidad']) {
             return response()->json([
@@ -353,7 +373,11 @@ class ProductoController extends Controller
      */
     public function etiqueta(string $id): View
     {
-        $producto = Producto::findOrFail($id);
+        $producto = $this->repository->encontrar((int) $id);
+        
+        if (!$producto) {
+            abort(404);
+        }
         return view('inventario.productos.etiqueta', compact('producto'));
     }
 }
