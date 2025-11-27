@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Instructor;
 use App\Models\Aprendiz;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -22,14 +23,33 @@ class NotificacionServiceTest extends TestCase
     {
         parent::setUp();
         $this->service = new NotificacionService();
+
+        // Ejecutar seeders necesarios para las pruebas
+        // Estos datos son requeridos por las claves foráneas en PersonaFactory
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+        ]);
     }
 
     #[Test]
     public function puede_notificar_instructor_sin_email()
     {
         $instructor = Instructor::factory()->create();
-        $instructor->persona->email = null;
-        $instructor->persona->save();
+        
+        // Eliminar el usuario directamente desde la BD para evitar problemas de cache
+        // El servicio verifica $user->email, no $persona->email
+        if ($instructor->persona->user) {
+            DB::table('users')->where('persona_id', $instructor->persona->id)->delete();
+            // Limpiar la relación cacheada y refrescar
+            $instructor->persona->refresh();
+            $instructor->refresh();
+        }
 
         $resultado = $this->service->notificarNuevaFichaInstructor($instructor, [
             'numero' => '2089876',
@@ -84,4 +104,3 @@ class NotificacionServiceTest extends TestCase
         $this->assertEquals(0, $enviados);
     }
 }
-

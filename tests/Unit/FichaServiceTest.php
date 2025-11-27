@@ -8,6 +8,7 @@ use App\Repositories\FichaRepository;
 use App\Repositories\InstructorFichaRepository;
 use App\Repositories\AprendizFichaRepository;
 use App\Models\FichaCaracterizacion;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -24,11 +25,11 @@ class FichaServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->mockFichaRepo = Mockery::mock(FichaRepository::class);
         $this->mockInstructorFichaRepo = Mockery::mock(InstructorFichaRepository::class);
         $this->mockAprendizFichaRepo = Mockery::mock(AprendizFichaRepository::class);
-        
+
         $this->service = new FichaService(
             $this->mockFichaRepo,
             $this->mockInstructorFichaRepo,
@@ -67,6 +68,15 @@ class FichaServiceTest extends TestCase
         $fichaId = 1;
 
         $fichaMock = Mockery::mock(FichaCaracterizacion::class);
+        $fichaMock->shouldReceive('offsetExists')
+            ->with('cupos_maximos')
+            ->andReturn(true);
+        $fichaMock->shouldReceive('offsetExists')
+            ->with('status')
+            ->andReturn(true);
+        $fichaMock->shouldReceive('offsetExists')
+            ->byDefault()
+            ->andReturn(false);
         $fichaMock->shouldReceive('__get')
             ->with('status')
             ->andReturn(true);
@@ -79,7 +89,7 @@ class FichaServiceTest extends TestCase
         $fichaMock->shouldReceive('getAttribute')
             ->with('cupos_maximos')
             ->andReturn(40);
-        
+
         $this->mockFichaRepo
             ->shouldReceive('encontrarConRelaciones')
             ->once()
@@ -90,13 +100,13 @@ class FichaServiceTest extends TestCase
             ->shouldReceive('obtenerPorFicha')
             ->once()
             ->with($fichaId)
-            ->andReturn(collect([]));
+            ->andReturn(new Collection([]));
 
         $this->mockAprendizFichaRepo
             ->shouldReceive('obtenerPorFicha')
             ->once()
             ->with($fichaId)
-            ->andReturn(collect([]));
+            ->andReturn(new Collection([]));
 
         $resultado = $this->service->verificarDisponibilidad($fichaId);
 
@@ -106,4 +116,3 @@ class FichaServiceTest extends TestCase
         $this->assertArrayHasKey('total_aprendices', $resultado);
     }
 }
-

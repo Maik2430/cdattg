@@ -25,8 +25,17 @@ class FichaRepositoryTest extends TestCase
         $this->repository = new FichaRepository();
         Cache::flush();
         
-        // Crear datos necesarios para el factory de FichaCaracterizacion
-        // Los factories ya manejan la creación de dependencias automáticamente
+        // Ejecutar seeders necesarios para las pruebas
+        // Estos datos son requeridos por las claves foráneas en PersonaFactory
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+        ]);
     }
 
     #[Test]

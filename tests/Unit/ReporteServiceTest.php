@@ -25,11 +25,22 @@ class ReporteServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
+        // Ejecutar seeders necesarios para las pruebas
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+        ]);
+
         $this->mockAsistenciaRepo = Mockery::mock(AsistenciaAprendizRepository::class);
         $this->mockAprendizRepo = Mockery::mock(AprendizRepository::class);
         $this->mockFichaRepo = Mockery::mock(FichaRepository::class);
-        
+
         $this->service = new ReporteService(
             $this->mockAsistenciaRepo,
             $this->mockAprendizRepo,
@@ -46,7 +57,7 @@ class ReporteServiceTest extends TestCase
     #[Test]
     public function puede_generar_reporte_de_asistencia()
     {
-        $fichaId = 1;
+        $ficha = FichaCaracterizacion::factory()->create();
         $fechaInicio = '2024-01-01';
         $fechaFin = '2024-01-31';
 
@@ -60,16 +71,13 @@ class ReporteServiceTest extends TestCase
             ->once()
             ->andReturn(['total_registros' => 0]);
 
-        $fichaMock = Mockery::mock(FichaCaracterizacion::class);
-        $fichaMock->shouldReceive('__get')->with('ficha')->andReturn('2089876');
-        $fichaMock->ficha = '2089876';
-        
         $this->mockFichaRepo
             ->shouldReceive('encontrarConRelaciones')
             ->once()
-            ->andReturn($fichaMock);
+            ->with($ficha->id)
+            ->andReturn($ficha->load(['programaFormacion', 'jornadaFormacion']));
 
-        $resultado = $this->service->generarReporteAsistencia($fichaId, $fechaInicio, $fechaFin, 'array');
+        $resultado = $this->service->generarReporteAsistencia($ficha->id, $fechaInicio, $fechaFin, 'array');
 
         $this->assertIsArray($resultado);
         $this->assertArrayHasKey('ficha', $resultado);
@@ -80,23 +88,20 @@ class ReporteServiceTest extends TestCase
     #[Test]
     public function puede_generar_reporte_de_aprendices()
     {
-        $fichaId = 1;
+        $ficha = FichaCaracterizacion::factory()->create();
 
         $this->mockAprendizRepo
             ->shouldReceive('obtenerPorFicha')
             ->once()
             ->andReturn(new Collection([]));
 
-        $fichaMock = Mockery::mock(FichaCaracterizacion::class);
-        $fichaMock->shouldReceive('__get')->with('ficha')->andReturn('2089876');
-        $fichaMock->ficha = '2089876';
-        
         $this->mockFichaRepo
             ->shouldReceive('encontrarConRelaciones')
             ->once()
-            ->andReturn($fichaMock);
+            ->with($ficha->id)
+            ->andReturn($ficha->load('programaFormacion'));
 
-        $resultado = $this->service->generarReporteAprendices($fichaId, 'array');
+        $resultado = $this->service->generarReporteAprendices($ficha->id, 'array');
 
         $this->assertIsArray($resultado);
         $this->assertArrayHasKey('total_aprendices', $resultado);
@@ -122,4 +127,3 @@ class ReporteServiceTest extends TestCase
         $this->assertArrayHasKey('fichas', $resultado);
     }
 }
-

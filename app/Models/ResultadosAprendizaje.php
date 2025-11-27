@@ -161,9 +161,10 @@ class ResultadosAprendizaje extends Model
     /**
      * MÉTODO HELPER: Obtener duración en horas
      */
-    public function duracionEnHoras(): int
+    public function duracionEnHoras(): string
     {
-        return $this->duracion ?? 0;
+        $duracion = $this->duracion ?? 0;
+        return "{$duracion} horas";
     }
 
     /**

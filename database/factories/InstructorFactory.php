@@ -52,13 +52,24 @@ class InstructorFactory extends Factory
             'Redes de Computadores',
         ];
 
-        // Regional - usar valor por defecto si la tabla no existe
+        // Regional - crear una si no existe
         $regionalId = 1;
         if (Schema::hasTable('regionals')) {
             try {
-                $regionalId = Regional::query()->inRandomOrder()->value('id') ?? 1;
+                $regionalId = Regional::query()->inRandomOrder()->value('id');
+                if (!$regionalId) {
+                    // Si no hay regionals, crear una
+                    $regional = Regional::factory()->create();
+                    $regionalId = $regional->id;
+                }
             } catch (\Exception $e) {
-                $regionalId = 1;
+                // Si hay error, intentar crear una regional
+                try {
+                    $regional = Regional::factory()->create();
+                    $regionalId = $regional->id;
+                } catch (\Exception $e2) {
+                    $regionalId = 1; // Último recurso
+                }
             }
         }
 
