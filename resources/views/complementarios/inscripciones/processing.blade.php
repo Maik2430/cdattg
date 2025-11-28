@@ -209,7 +209,7 @@
                 const form = document.getElementById('documentForm');
 
                 // Verificar que todos los elementos existan
-                if (!uploadArea || !fileInput || !selectFileBtn || !fileInfo || !fileName || 
+                if (!uploadArea || !fileInput || !selectFileBtn || !fileInfo || !fileName ||
                     !fileSize || !removeFileBtn || !uploadText || !submitBtn || !form) {
                     return false;
                 }

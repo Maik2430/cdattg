@@ -82,7 +82,7 @@
     <div class="card shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <strong>Programas con Mayor Demanda</strong>
-            <a href="{{ route('complementarios.estadisticas.exportar-excel') }}" 
+            <a href="{{ route('complementarios.estadisticas.exportar-excel') }}"
                class="btn btn-outline-primary btn-sm"
                title="Exportar a Excel">
                 <i class="fas fa-file-excel me-1"></i>Exportar Excel

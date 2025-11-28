@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ProcesarDocumentoIdentidadException;
 use App\Models\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
 use App\Models\Departamento;
@@ -257,7 +258,7 @@ class InscripcionComplementarioService
             // Mantener aspirante en estado "En proceso"
             $this->aspiranteRepository->update($aspirante, ['estado' => 1]);
             
-            throw new \Exception('Error al procesar el documento de identidad');
+            throw new ProcesarDocumentoIdentidadException('Error al procesar el documento de identidad');
         }
     }
 
