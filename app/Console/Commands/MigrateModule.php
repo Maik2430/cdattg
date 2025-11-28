@@ -98,7 +98,7 @@ class MigrateModule extends Command
             $path = database_path("migrations/{$key}");
             $exists = is_dir($path);
             $status = $exists ? '✓' : '✗';
-            
+
             $this->line("  {$status} <fg=cyan>{$key}</> - {$description}");
         }
 
@@ -125,14 +125,14 @@ class MigrateModule extends Command
         foreach ($this->batches as $batch => $description) {
             $currentBatch++;
             $this->info("[{$currentBatch}/{$totalBatches}] Migrando: {$batch}");
-            
+
             $result = $this->migrateSingleBatch($batch, false);
-            
+
             if ($result !== 0) {
                 $this->error("❌ Error al migrar el batch: {$batch}");
                 return 1;
             }
-            
+
             $this->newLine();
         }
 

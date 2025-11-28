@@ -22,7 +22,7 @@ class NotificacionController extends InventarioController
     {
         $notificaciones = Auth::user()->notifications()
             ->paginate(10);
-        
+
         return view('inventario.notificaciones.index', compact('notificaciones'));
     }
 
@@ -34,9 +34,9 @@ class NotificacionController extends InventarioController
         $notificaciones = Auth::user()->unreadNotifications()
             ->take(5)
             ->get();
-        
+
         $count = Auth::user()->unreadNotifications()->count();
-        
+
         return response()->json([
             'notificaciones' => $notificaciones,
             'count' => $count
@@ -51,16 +51,16 @@ class NotificacionController extends InventarioController
         $notificacion = Auth::user()->notifications()
             ->where('id', $id)
             ->first();
-        
+
         if ($notificacion) {
             $notificacion->markAsRead();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Notificación marcada como leída'
             ]);
         }
-        
+
         return response()->json([
             'success' => false,
             'message' => 'Notificación no encontrada'
@@ -75,7 +75,7 @@ class NotificacionController extends InventarioController
         Auth::user()->unreadNotifications->each(function ($notification) {
             $notification->markAsRead();
         });
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Todas las notificaciones marcadas como leídas'
@@ -90,13 +90,13 @@ class NotificacionController extends InventarioController
         $notificacion = Auth::user()->notifications()
             ->where('id', $id)
             ->first();
-        
+
         if ($notificacion) {
             $notificacion->delete();
-            
+
             return back()->with('success', 'Notificación eliminada exitosamente');
         }
-        
+
         return back()->with('error', 'Notificación no encontrada');
     }
 
@@ -106,9 +106,9 @@ class NotificacionController extends InventarioController
     public function destroyAll()
     {
         $count = Auth::user()->notifications()->count();
-        
+
         Auth::user()->notifications()->delete();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Todas las notificaciones han sido eliminadas',

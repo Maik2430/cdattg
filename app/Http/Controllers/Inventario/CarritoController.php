@@ -13,7 +13,7 @@ class CarritoController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        
+
         // Middlewares de permisos de carrito
         $this->middleware('can:VER CARRITO')->only(['index']);
         $this->middleware('can:AGREGAR CARRITO')->only(['agregar', 'store']);
@@ -61,7 +61,7 @@ class CarritoController extends Controller
     }
 
     // Actualizar cantidad de un producto en el carrito
-     
+
     public function actualizar(Request $request, $id)
     {
         $validated = $request->validate([
@@ -98,7 +98,7 @@ class CarritoController extends Controller
     }
 
     //Eliminar producto del carrito
-     
+
     public function eliminar($id)
     {
         try {

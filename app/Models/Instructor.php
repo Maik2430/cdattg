@@ -395,7 +395,7 @@ class Instructor extends Model
         if (!$this->anos_experiencia) {
             return 'Sin especificar';
         }
-        
+
         return $this->anos_experiencia . ' año' . ($this->anos_experiencia > 1 ? 's' : '');
     }
 

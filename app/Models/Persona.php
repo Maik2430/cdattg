@@ -63,7 +63,7 @@ class Persona extends Model
             if ($persona->isDirty('email') && Schema::hasTable('users')) {
                 // Obtener el nuevo valor del email desde los atributos (no del accessor)
                 $newEmail = $persona->getAttributes()['email'] ?? $persona->getOriginal('email');
-                
+
                 // Buscar si existe un usuario relacionado
                 try {
                     $user = DB::table('users')->where('persona_id', $persona->id)->first();

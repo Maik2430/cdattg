@@ -45,7 +45,7 @@ class DevolucionController extends InventarioController
     public function create($detalleOrdenId)
     {
         $detalleOrden = DetalleOrden::with(['orden', 'producto'])->findOrFail($detalleOrdenId);
-        
+
         if ($detalleOrden->estaCompletamenteDevuelto()) {
             return redirect()->route('inventario.devoluciones.index')
                 ->with('error', 'Este préstamo ya fue completamente devuelto.');
@@ -54,7 +54,7 @@ class DevolucionController extends InventarioController
         return view('inventario.devoluciones.create', compact('detalleOrden'));
     }
 
-    
+
     // Registrar devolució
     public function store(Request $request)
     {
@@ -81,7 +81,7 @@ class DevolucionController extends InventarioController
             );
 
             $mensaje = 'Devolución registrada exitosamente.';
-            
+
             if ($devolucion->cierra_sin_stock) {
                 $mensaje .= ' Se registró el consumo total sin restaurar stock.';
             }
@@ -104,7 +104,7 @@ class DevolucionController extends InventarioController
         }
     }
 
-    
+
     // Mostrar historial de devoluciones
     public function historial()
     {

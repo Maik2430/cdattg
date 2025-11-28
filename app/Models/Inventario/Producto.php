@@ -100,14 +100,14 @@ class Producto extends Model
     {
         return $this->belongsTo(Proveedor::class);
     }
-    
+
     // Relación con detalles de órdenes
     public function detalleOrdenes()
     {
         return $this->hasMany(DetalleOrden::class, 'producto_id');
     }
 
-  
+
     // Verificar si hay stock disponible
     public function tieneStockDisponible($cantidadRequerida)
     {
@@ -128,7 +128,7 @@ class Producto extends Model
         return $this;
     }
 
-   
+
     // Devolver stock al producto
     public function devolverStock($cantidad)
     {
@@ -159,7 +159,7 @@ class Producto extends Model
         return round(($this->cantidad / $stockMaximo) * 100, 2);
     }
 
- 
+
     // Obtener estado del stock (crítico, bajo, medio, normal)
     public function getEstadoStock()
     {

@@ -112,7 +112,7 @@ class FichaCaracterizacionFactory extends Factory
 
                 $programa = ProgramaFormacion::query()->create([
                     'codigo' => (string) rand(100000, 999999),
-                    'nombre' => 'PROGRAMA TEST ' . rand(1000, 9999),
+                    'nombre' => $this->faker->unique()->sentence(3),
                     'red_conocimiento_id' => $redConocimiento->id,
                     'nivel_formacion_id' => $nivelFormacionParametroTema->id,
                     'horas_totales' => 1200,
@@ -195,9 +195,26 @@ class FichaCaracterizacionFactory extends Factory
         $duracionMeses = rand(12, 24);
         $fechaFin = date('Y-m-d', strtotime($fechaInicio . " +{$duracionMeses} months"));
 
+        // Obtener o crear usuario para user_create_id y user_edit_id
+        $userId = null;
+        if (Schema::hasTable('users')) {
+            try {
+                $userId = User::query()->inRandomOrder()->value('id');
+                if (!$userId) {
+                    $userId = User::factory()->create()->id;
+                }
+            } catch (\Exception $e) {
+                $userId = User::factory()->create()->id;
+            }
+        }
+
+        // Generar número de ficha aleatorio sin prefijo hardcodeado
+        $prefijoFicha = $this->faker->numberBetween(10, 99);
+        $numeroFicha = str_pad($this->faker->numberBetween(10000, 99999), 5, '0', STR_PAD_LEFT);
+
         return [
             'programa_formacion_id' => $programaId,
-            'ficha' => '29' . str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
+            'ficha' => $prefijoFicha . $numeroFicha,
             'instructor_id' => Instructor::factory(),
             'fecha_inicio' => $fechaInicio,
             'fecha_fin' => $fechaFin,
@@ -206,8 +223,8 @@ class FichaCaracterizacionFactory extends Factory
             'sede_id' => $sedeId,
             'jornada_id' => $jornadaId,
             'total_horas' => rand(1200, 3200),
-            'user_create_id' => 1,
-            'user_edit_id' => 1,
+            'user_create_id' => $userId ?? 1,
+            'user_edit_id' => $userId ?? 1,
             'status' => (rand(1, 100) <= 90) ? 1 : 0,
         ];
     }

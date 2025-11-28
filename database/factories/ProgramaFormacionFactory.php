@@ -81,7 +81,7 @@ class ProgramaFormacionFactory extends Factory
         }
 
         return RedConocimiento::query()->create([
-            'nombre' => 'RED ' . Str::upper(Str::random(8)),
+            'nombre' => $this->faker->unique()->words(2, true),
             'regionals_id' => $regional->id,
             'user_create_id' => $usuario->id,
             'user_edit_id' => $usuario->id,

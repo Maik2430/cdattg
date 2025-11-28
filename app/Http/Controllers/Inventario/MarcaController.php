@@ -141,7 +141,7 @@ class MarcaController extends InventarioController
         return view('inventario.marcas.show', [
             'title' => 'Detalle de la marca',
             'icon' => 'fas fa-eye',
-            'marca' => $marca   
+            'marca' => $marca
         ]);
     }
 

@@ -79,12 +79,25 @@ class InstructorFactory extends Factory
             ->values()
             ->all();
 
+        // Obtener o crear usuario para user_create_id y user_edit_id
+        $userId = null;
+        if (Schema::hasTable('users')) {
+            try {
+                $userId = User::query()->inRandomOrder()->value('id');
+                if (!$userId) {
+                    $userId = User::factory()->create()->id;
+                }
+            } catch (\Exception $e) {
+                $userId = User::factory()->create()->id;
+            }
+        }
+
         return [
             'persona_id' => Persona::factory(),
             'regional_id' => $regionalId,
             'status' => (rand(1, 100) <= 85) ? 1 : 0,
-            'user_create_id' => 1,
-            'user_edit_id' => 1,
+            'user_create_id' => $userId ?? 1,
+            'user_edit_id' => $userId ?? 1,
             'especialidades' => [
                 'principal' => $principal,
                 'secundarias' => $secundarias,

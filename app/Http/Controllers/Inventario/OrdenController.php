@@ -72,7 +72,7 @@ class OrdenController extends InventarioController
             ->appends($request->only('search'));
 
         $ordenes->withPath(route('inventario.ordenes.index'));
-        
+
         return view('inventario.ordenes.index', compact('ordenes'));
     }
 
@@ -150,7 +150,7 @@ class OrdenController extends InventarioController
         $programas = ProgramaFormacion::where('status', true)
             ->orderBy('nombre', 'asc')
             ->get(['id', 'nombre', 'codigo']);
-            
+
         return view('inventario.ordenes.prestamos_salidas', compact('programas'));
     }
 
@@ -168,7 +168,7 @@ class OrdenController extends InventarioController
         ->first();
 
         $ordenes = collect();
-        
+
         if ($estadoEnEspera) {
             $ordenes = Orden::with([
                 'tipoOrden.parametro',
@@ -182,7 +182,7 @@ class OrdenController extends InventarioController
             ->latest()
             ->paginate(15);
         }
-        
+
         return view('inventario.ordenes.pendientes', compact('ordenes'));
     }
 
@@ -200,7 +200,7 @@ class OrdenController extends InventarioController
         ->first();
 
         $ordenes = collect();
-        
+
         if ($estadoAprobada) {
             $ordenes = Orden::with([
                 'tipoOrden.parametro',
@@ -214,7 +214,7 @@ class OrdenController extends InventarioController
             ->latest()
             ->paginate(15);
         }
-        
+
         return view('inventario.ordenes.completadas', compact('ordenes'));
     }
 
@@ -232,7 +232,7 @@ class OrdenController extends InventarioController
         ->first();
 
         $ordenes = collect();
-        
+
         if ($estadoRechazada) {
             $ordenes = Orden::with([
                 'tipoOrden.parametro',
@@ -246,7 +246,7 @@ class OrdenController extends InventarioController
             ->latest()
             ->paginate(15);
         }
-        
+
         return view('inventario.ordenes.rechazadas', compact('ordenes'));
     }
 
@@ -269,7 +269,7 @@ class OrdenController extends InventarioController
 
             // Decodificar el carrito
             $carrito = json_decode($validated['carrito'], true);
-            
+
             if (empty($carrito) || !is_array($carrito)) {
                 throw new OrdenException('El carrito está vacío. Agregue productos antes de crear la solicitud.');
             }
@@ -279,7 +279,7 @@ class OrdenController extends InventarioController
                 'prestamo' => 'PRÉSTAMO',
                 'salida' => 'SALIDA'
             ];
-            
+
             $codigoTipoOrden = $tipoMap[$validated['tipo']] ?? strtoupper($validated['tipo']);
 
             // Buscar el parámetro de tipo de orden (tema: TIPOS DE ORDEN)
@@ -312,8 +312,8 @@ class OrdenController extends InventarioController
                 $validated['rol'],
                 $validated['programa_formacion'],
                 ucfirst($validated['tipo']),
-                $validated['tipo'] === 'prestamo' && !empty($validated['fecha_devolucion']) 
-                    ? "Fecha de Devolución: {$validated['fecha_devolucion']}\n" 
+                $validated['tipo'] === 'prestamo' && !empty($validated['fecha_devolucion'])
+                    ? "Fecha de Devolución: {$validated['fecha_devolucion']}\n"
                     : "Sin fecha de devolución\n",
                 $validated['descripcion']
             );
@@ -324,7 +324,7 @@ class OrdenController extends InventarioController
                 'tipo_orden_id' => $parametroTipoOrden->id,
                 'fecha_devolucion' => $validated['tipo'] === 'prestamo' ? $validated['fecha_devolucion'] : null
             ]);
-            
+
             $this->setUserIds($orden);
             $orden->save();
 
@@ -338,7 +338,7 @@ class OrdenController extends InventarioController
                 }
 
                 $producto = Producto::find($productoId);
-                
+
                 if (!$producto) {
                     throw new OrdenException("Producto con ID {$productoId} no encontrado.");
                 }
@@ -432,7 +432,7 @@ class OrdenController extends InventarioController
 
         // Verificar si la orden ya tiene devoluciones
         $tieneDevoluciones = $orden->detalles()->whereHas('devoluciones')->exists();
-        
+
         if ($tieneDevoluciones) {
             return redirect()->route('inventario.ordenes.index', $orden->id)
                 ->with('error', 'No se puede editar una orden que ya tiene devoluciones registradas.');
@@ -516,7 +516,7 @@ class OrdenController extends InventarioController
 
         // Verificar si la orden ya tiene devoluciones
         $tieneDevoluciones = $orden->detalles()->whereHas('devoluciones')->exists();
-        
+
         if ($tieneDevoluciones) {
             return redirect()->route('inventario.ordenes.index')
                 ->with('error', 'No se puede eliminar una orden que ya tiene devoluciones registradas.');

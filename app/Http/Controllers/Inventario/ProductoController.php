@@ -29,7 +29,7 @@ class ProductoController extends InventarioController
     {
         parent::__construct();
         $this->middleware('auth');
-        
+
         // Middlewares de permisos de inventario
         $this->middleware('can:VER PRODUCTO')->only(['index', 'show']);
         $this->middleware('can:VER CATALOGO PRODUCTO')->only(['catalogo']);
@@ -77,7 +77,7 @@ class ProductoController extends InventarioController
                 $producto->categoria = Parametro::find($producto->categoria_id);
             }
         });
-        
+
         return view('inventario.productos.index', compact('productos'));
     }
 
@@ -111,7 +111,7 @@ class ProductoController extends InventarioController
             ->whereHas('tema', fn($q) => $q->where('name', 'MARCAS'))
             ->where('status', 1)
             ->get();
-        
+
         $contratosConvenios = ContratoConvenio::all();
 
         $ambientes = Ambiente::all();
@@ -265,7 +265,7 @@ class ProductoController extends InventarioController
         $contratosConvenios = ContratoConvenio::all();
         $ambientes = Ambiente::all();
         $proveedores = Proveedor::all();
-    
+
         return view('inventario.productos.edit', compact(
             'producto',
             'tiposProductos',
@@ -306,20 +306,20 @@ class ProductoController extends InventarioController
     public function destroy(string $id)
     {
         $producto = Producto::findOrFail($id);
-        
+
         // Se elimina la imagen si no es la de defecto
-        if ($producto->imagen && 
-            $producto->imagen !== self::DEFAULT_PRODUCT_IMAGE && 
+        if ($producto->imagen &&
+            $producto->imagen !== self::DEFAULT_PRODUCT_IMAGE &&
             file_exists(public_path($producto->imagen))) {
             unlink(public_path($producto->imagen));
         }
-        
+
         $producto->delete();
-        
+
         return redirect()->route('inventario.productos.index')
             ->with('success', 'Producto eliminado correctamente');
     }
-    
+
     public function buscarPorCodigo($codigo)
     {
         $producto = Producto::where('codigo_barras', $codigo)->first();
@@ -360,7 +360,7 @@ class ProductoController extends InventarioController
                     $query->where('name', self::THEME_PRODUCT_STATES);
                 })
                 ->first();
-            
+
             if ($estadoAgotadoTema) {
                 $query->where('estado_producto_id', '!=', $estadoAgotadoTema->id);
             }
@@ -602,7 +602,7 @@ class ProductoController extends InventarioController
     }
 
     /**
-     * Obtener detalles del producto para modal 
+     * Obtener detalles del producto para modal
      */
     public function detalles(string $id)
     {

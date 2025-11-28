@@ -22,13 +22,13 @@ class DetalleOrden extends Model
         'user_update_id'
     ];
 
-    // Relación con la orden 
+    // Relación con la orden
     public function orden()
     {
         return $this->belongsTo(Orden::class, 'orden_id');
     }
 
-    
+
     // Relación con el producto
     public function producto()
     {
@@ -41,7 +41,7 @@ class DetalleOrden extends Model
         return $this->belongsTo(ParametroTema::class, 'estado_orden_id');
     }
 
-    
+
     // Relación con devoluciones
     public function devoluciones()
     {
