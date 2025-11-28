@@ -92,7 +92,7 @@
                                 <input type="hidden" name="programa_id" value="{{ $programa->id }}">
 
                                 @include('personas.partials.form', [
-                                    'persona' => null,
+                                    'persona' => $personaAutenticada ?? null,
                                     'documentos' => $documentos,
                                     'generos' => $generos,
                                     'caracterizaciones' => $caracterizaciones,
