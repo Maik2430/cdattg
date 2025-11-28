@@ -9,7 +9,8 @@
          aria-label="Ampliar imagen del producto {{ $producto->producto }}"
          style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden;" 
          onclick="expandirImagen('{{ $imagenProducto }}')"
-         onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }">
+         onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }"
+         onkeypress="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirImagen('{{ $imagenProducto }}'); }">
         <img src="{{ $imagenProducto }}" 
              alt="{{ $producto->producto }}" 
              class="modal-img"
