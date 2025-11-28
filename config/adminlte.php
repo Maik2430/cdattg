@@ -470,7 +470,7 @@ return [
                         ],
                         [
                             'text' => 'Estadísticas',
-                            'url' => 'estadisticas',
+                            'url' => 'complementarios/estadisticas',
                             'icon' => 'fas fa-fw fa-chart-line',
                             'can' => 'VER ESTADISTICAS',
                         ],
