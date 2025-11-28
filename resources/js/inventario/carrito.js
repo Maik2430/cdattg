@@ -398,7 +398,8 @@ function removeItem(index) {
     });
 }
 /**
- * Confirmar vaciar todo el carrito
+ * Confirmar vaciar el carrito
+ * 
  */
 function confirmEmptyCart() {
     if (cart.length === 0) return;
