@@ -30,7 +30,8 @@ class InscripcionGeneralRequest extends FormRequest
             'fecha_nacimiento' => [
                 'required',
                 'date',
-                function ($value, $fail) {
+                // @phpstan-ignore-next-line Parameter required by Laravel validation closure signature
+                function ($attribute, $value, $fail) {
                     $fechaNacimiento = Carbon::parse($value);
                     $edadMinima = Carbon::now()->subYears(14);
 

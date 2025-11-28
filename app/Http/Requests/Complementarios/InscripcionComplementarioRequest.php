@@ -20,7 +20,7 @@ class InscripcionComplementarioRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'tipo_documento' => 'required|integer|exists:parametros,id',
             'numero_documento' => 'required|string|max:191',
             'primer_nombre' => 'required|string|max:191',
@@ -30,6 +30,7 @@ class InscripcionComplementarioRequest extends FormRequest
             'fecha_nacimiento' => [
                 'required',
                 'date',
+                // @phpstan-ignore-next-line Parameter required by Laravel validation closure signature
                 function ($attribute, $value, $fail) {
                     $fechaNacimiento = Carbon::parse($value);
                     $edadMinima = Carbon::now()->subYears(14);
@@ -53,6 +54,13 @@ class InscripcionComplementarioRequest extends FormRequest
             'acepto_privacidad' => 'required|accepted',
             'acepto_terminos' => 'required|accepted',
         ];
+
+        if (!$this->isUpdatingExistingPerson()) {
+            $rules['numero_documento'] .= '|unique:personas,numero_documento';
+            $rules['email'] .= '|unique:personas,email';
+        }
+
+        return $rules;
     }
 
     /**
@@ -92,23 +100,6 @@ class InscripcionComplementarioRequest extends FormRequest
     }
 
     /**
-     * Prepare the data for validation.
-     */
-    protected function prepareForValidation(): void
-    {
-        // Agregar validación única condicional para documento y email
-        $rules = $this->rules();
-        
-        // Solo validar unicidad si no existe una persona con estos datos
-        if (!$this->isUpdatingExistingPerson()) {
-            $rules['numero_documento'] .= '|unique:personas,numero_documento';
-            $rules['email'] .= '|unique:personas,email';
-        }
-        
-        $this->setRules($rules);
-    }
-
-    /**
      * Verificar si estamos actualizando una persona existente
      */
     private function isUpdatingExistingPerson(): bool
@@ -120,13 +111,5 @@ class InscripcionComplementarioRequest extends FormRequest
         return \App\Models\Persona::where('numero_documento', $this->input('numero_documento'))
             ->orWhere('email', $this->input('email'))
             ->exists();
-    }
-
-    /**
-     * Set validation rules dynamically
-     */
-    private function setRules(array $rules): void
-    {
-        $this->getValidatorInstance()->setRules($rules);
     }
 }
