@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Repositories\BD;
+namespace App\Inventario\Repositories\Dashboard;
 
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;

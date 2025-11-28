@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Inventario;
 
-use App\Repositories\BD\DashboardRepository;
+use App\Inventario\Repositories\Dashboard\DashboardRepository;
 use Livewire\Component;
 
 class DashboardInventario extends Component
