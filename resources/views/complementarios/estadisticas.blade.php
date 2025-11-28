@@ -82,7 +82,11 @@
     <div class="card shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <strong>Programas con Mayor Demanda</strong>
-            <button class="btn btn-outline-primary btn-sm"><i class="fas fa-file-export me-1"></i>Exportar</button>
+            <a href="{{ route('complementarios.estadisticas.exportar-excel') }}" 
+               class="btn btn-outline-primary btn-sm"
+               title="Exportar a Excel">
+                <i class="fas fa-file-excel me-1"></i>Exportar Excel
+            </a>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -94,7 +98,6 @@
                             <th>Aceptados</th>
                             <th>Pendientes</th>
                             <th>Tasa de Aceptación</th>
-                            <th>Tendencia</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-programas-demanda">
@@ -105,7 +108,6 @@
                                 <td>{{ $programa['aceptados'] }}</td>
                                 <td>{{ $programa['pendientes'] }}</td>
                                 <td>{{ $programa['tasa_aceptacion'] }}%</td>
-                                <td class="text-success"><i class="fas fa-arrow-up"></i> 0%</td>
                             </tr>
                         @endforeach
                     </tbody>
