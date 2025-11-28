@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\AspiranteComplementario;
+use App\Models\ComplementarioOfertado;
 use App\Repositories\AspiranteComplementarioRepository;
 use App\Repositories\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
