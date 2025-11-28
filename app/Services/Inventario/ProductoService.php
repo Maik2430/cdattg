@@ -5,25 +5,32 @@ declare(strict_types=1);
 namespace App\Services\Inventario;
 
 use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
-use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
+use App\Services\Inventario\Interfaces\ImageServiceInterface;
+use App\Services\Inventario\Interfaces\BarcodeServiceInterface;
+use App\Services\Inventario\Interfaces\StockValidatorServiceInterface;
 use App\Models\Inventario\Producto;
-use Illuminate\Http\UploadedFile;
-use App\Notifications\StockBajoNotification;
 
+/**
+ * Servicio para gestión de productos de inventario
+ * Cumple SOLID: SRP, OCP, DIP
+ */
 class ProductoService
 {
-    private const DEFAULT_PRODUCT_IMAGE = 'img/inventario/producto-default.png';
-    private const BARCODE_LENGTH = 11;
-
     protected ProductoRepositoryInterface $repository;
-    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
+    protected ImageServiceInterface $imageService;
+    protected BarcodeServiceInterface $barcodeService;
+    protected StockValidatorServiceInterface $stockValidator;
 
     public function __construct(
         ProductoRepositoryInterface $repository,
-        ParametroTemaRepositoryInterface $parametroTemaRepository
+        ImageServiceInterface $imageService,
+        BarcodeServiceInterface $barcodeService,
+        StockValidatorServiceInterface $stockValidator
     ) {
         $this->repository = $repository;
-        $this->parametroTemaRepository = $parametroTemaRepository;
+        $this->imageService = $imageService;
+        $this->barcodeService = $barcodeService;
+        $this->stockValidator = $stockValidator;
     }
 
     /**
@@ -35,14 +42,12 @@ class ProductoService
      */
     public function crear(array $datos, int $userId): Producto
     {
-        $datos['codigo_barras'] = $this->resolverCodigoBarras($datos['codigo_barras'] ?? null);
-        $datos['imagen'] = $this->procesarImagen($datos['imagen'] ?? null);
+        $datos['codigo_barras'] = $this->barcodeService->resolverCodigoBarras($datos['codigo_barras'] ?? null);
+        $datos['imagen'] = $this->imageService->procesarImagen($datos['imagen'] ?? null);
         $datos['user_create_id'] = $userId;
         $datos['user_update_id'] = $userId;
 
         $producto = $this->repository->crear($datos);
-
-        $this->repository->invalidarCache();
 
         return $producto;
     }
@@ -60,7 +65,7 @@ class ProductoService
         $cantidadAnterior = $producto->cantidad;
 
         if (isset($datos['imagen']) && $datos['imagen'] instanceof \Illuminate\Http\UploadedFile) {
-            $datos['imagen'] = $this->procesarImagenParaActualizacion(
+            $datos['imagen'] = $this->imageService->procesarImagenParaActualizacion(
                 $datos['imagen'],
                 $producto
             );
@@ -70,10 +75,10 @@ class ProductoService
         }
 
         if (isset($datos['codigo_barras'])) {
-            $codigoNormalizado = $this->normalizarCodigoBarras($datos['codigo_barras']);
+            $codigoNormalizado = $this->barcodeService->normalizarCodigoBarras($datos['codigo_barras']);
             if ($codigoNormalizado === null) {
                 // Si no se puede normalizar, generar uno nuevo
-                $datos['codigo_barras'] = $this->generarSiguienteCodigoBarras();
+                $datos['codigo_barras'] = $this->barcodeService->generarSiguienteCodigoBarras();
             } else {
                 $datos['codigo_barras'] = $codigoNormalizado;
             }
@@ -84,8 +89,8 @@ class ProductoService
         $this->repository->actualizar($producto, $datos);
         $producto->refresh();
 
-        $this->verificarYNotificarStockBajo($producto, $cantidadAnterior);
-        $this->repository->invalidarCache();
+        // Delegado a StockValidatorService (SRP)
+        $this->stockValidator->verificarYNotificarCambioStock($producto, $cantidadAnterior);
 
         return $producto;
     }
@@ -98,169 +103,9 @@ class ProductoService
      */
     public function eliminar(Producto $producto): bool
     {
-        $this->eliminarImagenSiExiste($producto);
+        $this->imageService->eliminarImagenSiExiste($producto);
         $resultado = $this->repository->eliminar($producto);
-        $this->repository->invalidarCache();
 
         return $resultado;
     }
-
-    /**
-     * Resuelve el código de barras para creación
-     *
-     * @param string|null $codigo
-     * @return string
-     */
-    public function resolverCodigoBarras(?string $codigo): string
-    {
-        $digits = preg_replace('/\D/', '', (string) $codigo);
-        
-        if (strlen($digits) === self::BARCODE_LENGTH) {
-            return $digits;
-        }
-
-        return $this->generarSiguienteCodigoBarras();
-    }
-
-    /**
-     * Genera el siguiente código de barras disponible
-     *
-     * @return string
-     */
-    public function generarSiguienteCodigoBarras(): string
-    {
-        $max = $this->repository->obtenerMaxCodigoBarras();
-
-        $onlyDigits = preg_replace('/\D/', '', (string) $max);
-        $num = $onlyDigits === '' ? 0 : (int) $onlyDigits;
-        $next = $num + 1;
-        $code = str_pad((string) $next, self::BARCODE_LENGTH, '0', STR_PAD_LEFT);
-
-        for ($i = 0; $i < 3; $i++) {
-            if (!$this->repository->existeCodigoBarras($code)) {
-                return $code;
-            }
-
-            $code = str_pad(
-                (string) ($next + $i + 1),
-                self::BARCODE_LENGTH,
-                '0',
-                STR_PAD_LEFT
-            );
-        }
-
-        return $code;
-    }
-
-    /**
-     * Normaliza código de barras para actualización
-     *
-     * @param string|null $codigo
-     * @return string|null
-     */
-    public function normalizarCodigoBarras(?string $codigo): ?string
-    {
-        if (empty($codigo)) {
-            return null;
-        }
-
-        $digits = preg_replace('/\D/', '', $codigo);
-        
-        return strlen($digits) === self::BARCODE_LENGTH ? $digits : null;
-    }
-
-    /**
-     * Procesa imagen para creación
-     *
-     * @param UploadedFile|null $imagen
-     * @return string
-     */
-    public function procesarImagen(?UploadedFile $imagen): string
-    {
-        if (!$imagen || !$imagen->isValid()) {
-            return self::DEFAULT_PRODUCT_IMAGE;
-        }
-
-        $nombreArchivo = time() . '.' . $imagen->extension();
-        $imagen->move(public_path('img/inventario'), $nombreArchivo);
-
-        return 'img/inventario/' . $nombreArchivo;
-    }
-
-    /**
-     * Procesa imagen para actualización
-     *
-     * @param UploadedFile|null $imagen
-     * @param Producto $producto
-     * @return string
-     */
-    public function procesarImagenParaActualizacion(
-        ?UploadedFile $imagen,
-        Producto $producto
-    ): string {
-        if (!$imagen || !$imagen->isValid()) {
-            return $producto->imagen ?? self::DEFAULT_PRODUCT_IMAGE;
-        }
-
-        $this->eliminarImagenSiExiste($producto);
-
-        return $this->procesarImagen($imagen);
-    }
-
-    /**
-     * Elimina imagen si existe y no es la por defecto
-     *
-     * @param Producto $producto
-     * @return void
-     */
-    public function eliminarImagenSiExiste(Producto $producto): void
-    {
-        if ($producto->imagen &&
-            $producto->imagen !== self::DEFAULT_PRODUCT_IMAGE &&
-            file_exists(public_path($producto->imagen))) {
-            unlink(public_path($producto->imagen));
-        }
-    }
-
-    /**
-     * Verifica y notifica si el stock está bajo
-     *
-     * @param Producto $producto
-     * @param int $cantidadAnterior
-     * @return void
-     */
-    public function verificarYNotificarStockBajo(Producto $producto, int $cantidadAnterior): void
-    {
-        if ($cantidadAnterior == $producto->cantidad || $producto->cantidad > 10) {
-            return;
-        }
-
-        $superadmins = \App\Models\User::role('SUPER ADMINISTRADOR')->get();
-
-        if ($superadmins->isEmpty()) {
-            return;
-        }
-
-        foreach ($superadmins as $admin) {
-            $admin->notify(new StockBajoNotification($producto, $producto->cantidad, 10));
-        }
-    }
-
-    /**
-     * Obtiene opciones para formularios (tipos, unidades, estados, etc.)
-     *
-     * @param string $temaEstados
-     * @return array
-     */
-    public function obtenerOpcionesFormulario(string $temaEstados = 'ESTADOS DE PRODUCTO'): array
-    {
-        return [
-            'tiposProductos' => collect($this->parametroTemaRepository->obtenerPorTema('TIPOS DE PRODUCTO')),
-            'unidadesMedida' => collect($this->parametroTemaRepository->obtenerPorTema('UNIDADES DE MEDIDA')),
-            'estados' => collect($this->parametroTemaRepository->obtenerPorTema($temaEstados)),
-            'categorias' => collect($this->parametroTemaRepository->obtenerPorTema('CATEGORIAS')),
-            'marcas' => collect($this->parametroTemaRepository->obtenerPorTema('MARCAS')),
-        ];
-    }
 }
-

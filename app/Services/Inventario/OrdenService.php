@@ -9,12 +9,13 @@ use App\Models\Inventario\DetalleOrden;
 use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
 use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
 use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
-use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
+use App\Services\Inventario\Interfaces\NotificationServiceInterface;
+use App\Services\Inventario\Interfaces\TransactionServiceInterface;
+use App\Services\Inventario\Interfaces\StockValidatorServiceInterface;
+use App\Models\Tema;
+use App\Models\Parametro;
 use App\Exceptions\OrdenException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\NuevaOrdenNotification;
 
 class OrdenService
 {
@@ -25,18 +26,24 @@ class OrdenService
     protected OrdenRepositoryInterface $ordenRepository;
     protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
     protected ProductoRepositoryInterface $productoRepository;
-    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
+    protected NotificationServiceInterface $notificationService;
+    protected TransactionServiceInterface $transactionService;
+    protected StockValidatorServiceInterface $stockValidator;
 
     public function __construct(
         OrdenRepositoryInterface $ordenRepository,
         DetalleOrdenRepositoryInterface $detalleOrdenRepository,
         ProductoRepositoryInterface $productoRepository,
-        ParametroTemaRepositoryInterface $parametroTemaRepository
+        NotificationServiceInterface $notificationService,
+        TransactionServiceInterface $transactionService,
+        StockValidatorServiceInterface $stockValidator
     ) {
         $this->ordenRepository = $ordenRepository;
         $this->detalleOrdenRepository = $detalleOrdenRepository;
         $this->productoRepository = $productoRepository;
-        $this->parametroTemaRepository = $parametroTemaRepository;
+        $this->notificationService = $notificationService;
+        $this->transactionService = $transactionService;
+        $this->stockValidator = $stockValidator;
     }
 
     /**
@@ -50,7 +57,7 @@ class OrdenService
     public function crear(array $datos, int $userId): Orden
     {
         try {
-            DB::beginTransaction();
+            $this->transactionService->beginTransaction();
 
             $orden = $this->ordenRepository->crear([
                 'descripcion_orden' => $datos['descripcion_orden'],
@@ -64,12 +71,12 @@ class OrdenService
                 $this->procesarDetalleOrden($orden, $productoData, $userId);
             }
 
-            DB::commit();
+            $this->transactionService->commit();
 
             return $orden;
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw new OrdenException('Error al crear la orden: ' . $e->getMessage());
         }
     }
@@ -85,7 +92,7 @@ class OrdenService
     public function crearDesdeCarrito(array $datos, int $userId): Orden
     {
         try {
-            DB::beginTransaction();
+            $this->transactionService->beginTransaction();
 
             $carrito = json_decode($datos['carrito'], true);
             
@@ -127,12 +134,7 @@ class OrdenService
                     throw new OrdenException("Producto con ID {$productoId} no encontrado.");
                 }
 
-                if ($producto->cantidad < $cantidad) {
-                    throw new OrdenException(
-                        "Stock insuficiente para '{$producto->producto}'. " .
-                        "Disponible: {$producto->cantidad}, Solicitado: {$cantidad}"
-                    );
-                }
+                $this->stockValidator->validarStockSuficiente($producto, $cantidad);
 
                 $this->detalleOrdenRepository->crear([
                     'orden_id' => $orden->id,
@@ -146,7 +148,7 @@ class OrdenService
 
             $this->notificarNuevaOrden($orden);
 
-            DB::commit();
+            $this->transactionService->commit();
 
             // Limpiar carrito después de crear la orden
             session()->forget('carrito_data');
@@ -154,10 +156,10 @@ class OrdenService
             return $orden;
 
         } catch (OrdenException $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw $e;
         } catch (\Exception $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw new OrdenException('Error al crear la orden: ' . $e->getMessage());
         }
     }
@@ -179,12 +181,8 @@ class OrdenService
             throw new OrdenException("Producto con ID {$productoData['producto_id']} no encontrado.");
         }
 
-        if (!$producto->tieneStockDisponible($productoData['cantidad'])) {
-            throw new OrdenException(
-                "Stock insuficiente para el producto '{$producto->producto}'. " .
-                "Disponible: {$producto->cantidad}, Solicitado: {$productoData['cantidad']}"
-            );
-        }
+        // Validar stock antes de procesar
+        $this->stockValidator->validarStockSuficiente($producto, $productoData['cantidad']);
 
         $this->detalleOrdenRepository->crear([
             'orden_id' => $orden->id,
@@ -200,15 +198,28 @@ class OrdenService
     }
 
     /**
-     * Obtiene parámetro de tipo de orden (con normalización de caracteres)
+     * Obtiene parámetro de tipo de orden
+     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
      * @param string $codigo
-     * @return ParametroTema
+     * @return Parametro
      * @throws OrdenException
      */
     public function obtenerParametroTipoOrden(string $codigo)
     {
-        $parametro = $this->parametroTemaRepository->buscarPorTemaYNombreNormalizado('TIPOS DE ORDEN', $codigo);
+        $tema = Tema::where('name', 'TIPOS DE ORDEN')->first();
+        if (!$tema) {
+            throw new OrdenException("Tema 'TIPOS DE ORDEN' no encontrado.");
+        }
+
+        // Normalizar caracteres (quitar acentos, convertir a mayúsculas)
+        $codigoNormalizado = strtoupper($codigo);
+        $codigoNormalizado = str_replace(['É', 'Í', 'Ó'], ['E', 'I', 'O'], $codigoNormalizado);
+
+        $parametro = $tema->parametros()
+            ->where('name', $codigoNormalizado)
+            ->wherePivot('status', 1)
+            ->first();
 
         if (!$parametro) {
             throw new OrdenException("Tipo de orden '{$codigo}' no encontrado. Verifique los parámetros del sistema.");
@@ -219,13 +230,22 @@ class OrdenService
 
     /**
      * Obtiene estado EN ESPERA
+     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
-     * @return ParametroTema
+     * @return Parametro
      * @throws OrdenException
      */
     public function obtenerEstadoEnEspera()
     {
-        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::THEME_ORDER_STATES, self::STATUS_EN_ESPERA);
+        $tema = Tema::where('name', self::THEME_ORDER_STATES)->first();
+        if (!$tema) {
+            throw new OrdenException("Tema 'ESTADOS DE ORDEN' no encontrado.");
+        }
+
+        $estado = $tema->parametros()
+            ->where('name', self::STATUS_EN_ESPERA)
+            ->wherePivot('status', 1)
+            ->first();
 
         if (!$estado) {
             throw new OrdenException("Estado 'EN ESPERA' no encontrado. Verifique los parámetros del sistema.");
@@ -236,13 +256,22 @@ class OrdenService
 
     /**
      * Obtiene estado APROBADA
+     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
-     * @return ParametroTema
+     * @return Parametro
      * @throws OrdenException
      */
     public function obtenerEstadoAprobada()
     {
-        $estado = $this->parametroTemaRepository->buscarPorTemaYNombre(self::THEME_ORDER_STATES, self::STATUS_APROBADA);
+        $tema = Tema::where('name', self::THEME_ORDER_STATES)->first();
+        if (!$tema) {
+            throw new OrdenException("Tema 'ESTADOS DE ORDEN' no encontrado.");
+        }
+
+        $estado = $tema->parametros()
+            ->where('name', self::STATUS_APROBADA)
+            ->wherePivot('status', 1)
+            ->first();
 
         if (!$estado) {
             throw new OrdenException("Estado 'APROBADA' no encontrado.");
@@ -280,8 +309,8 @@ class OrdenService
             $datos['rol'],
             $datos['programa_formacion'],
             ucfirst($datos['tipo']),
-            $datos['tipo'] === 'prestamo' && !empty($datos['fecha_devolucion']) 
-                ? "Fecha de Devolución: {$datos['fecha_devolucion']}\n" 
+            $datos['tipo'] === 'prestamo' && !empty($datos['fecha_devolucion'])
+                ? "Fecha de Devolución: {$datos['fecha_devolucion']}\n"
                 : "Sin fecha de devolución\n",
             $datos['descripcion']
         );
@@ -295,11 +324,7 @@ class OrdenService
      */
     private function notificarNuevaOrden(Orden $orden): void
     {
-        $superadmins = \App\Models\User::role('SUPER ADMINISTRADOR')->get();
-        
-        if ($superadmins->isNotEmpty()) {
-            Notification::send($superadmins, new NuevaOrdenNotification($orden));
-        }
+        $this->notificationService->notificarNuevaOrden($orden);
     }
 
     /**
@@ -314,7 +339,7 @@ class OrdenService
     public function actualizar(Orden $orden, array $datos, int $userId): Orden
     {
         try {
-            DB::beginTransaction();
+            $this->transactionService->beginTransaction();
 
             // Devolver stock de productos anteriores
             foreach ($orden->detalles as $detalle) {
@@ -340,12 +365,12 @@ class OrdenService
                 $this->procesarDetalleOrden($orden, $productoData, $userId);
             }
 
-            DB::commit();
+            $this->transactionService->commit();
 
             return $orden;
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw new OrdenException('Error al actualizar la orden: ' . $e->getMessage());
         }
     }
@@ -360,7 +385,7 @@ class OrdenService
     public function eliminar(Orden $orden): bool
     {
         try {
-            DB::beginTransaction();
+            $this->transactionService->beginTransaction();
 
             // Devolver stock de todos los productos
             foreach ($orden->detalles as $detalle) {
@@ -375,14 +400,25 @@ class OrdenService
             // Eliminar orden
             $resultado = $this->ordenRepository->eliminar($orden);
 
-            DB::commit();
+            $this->transactionService->commit();
 
             return $resultado;
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            $this->transactionService->rollBack();
             throw new OrdenException('Error al eliminar la orden: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Verifica si una orden tiene devoluciones registradas
+     *
+     * @param Orden $orden
+     * @return bool
+     */
+    public function tieneDevoluciones(Orden $orden): bool
+    {
+        return $orden->detalles()->whereHas('devoluciones')->exists();
     }
 }
 
