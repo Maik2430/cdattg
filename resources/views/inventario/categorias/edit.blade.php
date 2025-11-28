@@ -1,19 +1,19 @@
 @extends('inventario.layouts.base')
 
-@section('title', 'Registrar Categoría')
+@section('title', 'Editar Categoría')
 
 @include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
-        icon="fas fa-plus"
-        title="Registrar Categoría"
-        subtitle="Crear una nueva categoría en el inventario"
+        icon="fas fa-edit"
+        title="Editar Categoría"
+        subtitle="Modificar datos de la categoría"
         :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],
             ['label' => 'Categorías', 'url' => route('inventario.categorias.index')],
-            ['label' => 'Registrar', 'active' => true]
+            ['label' => 'Editar', 'active' => true]
         ]"
     />
 @endsection
@@ -35,8 +35,9 @@
                         </div>
 
                         <div class="card-body">
-                            <form action="{{ route('inventario.categorias.store') }}" method="POST">
+                            <form action="{{ route('inventario.categorias.update', $categoria->id) }}" method="POST">
                                 @csrf
+                                @method('PUT')
                                 
                                 <div class="row">
                                     <div class="col-md-6">
@@ -47,7 +48,7 @@
                                                 class="form-control @error('name') is-invalid @enderror"
                                                 id="name"
                                                 name="name"
-                                                value="{{ old('name') }}"
+                                                value="{{ old('name', $categoria->name) }}"
                                                 placeholder="Ingrese el nombre de la categoría"
                                                 required
                                             >
@@ -64,8 +65,8 @@
                                                 id="status"
                                                 name="status"
                                             >
-                                                <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Activa</option>
-                                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactiva</option>
+                                                <option value="1" {{ old('status', $categoria->status) == '1' ? 'selected' : '' }}>Activa</option>
+                                                <option value="0" {{ old('status', $categoria->status) == '0' ? 'selected' : '' }}>Inactiva</option>
                                             </select>
                                             @error('status')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -84,7 +85,7 @@
                                                 name="descripcion"
                                                 rows="3"
                                                 placeholder="Ingrese una descripción de la categoría (opcional)"
-                                            >{{ old('descripcion') }}</textarea>
+                                            >{{ old('descripcion', $categoria->descripcion) }}</textarea>
                                             @error('descripcion')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -97,7 +98,7 @@
                                         <div class="card-footer bg-white py-3">
                                             <div class="action-buttons">
                                                 <button type="submit" class="btn btn-outline-primary btn-sm">
-                                                    <i class="fas fa-save mr-1"></i> Guardar
+                                                    <i class="fas fa-save mr-1"></i> Guardar Cambios
                                                 </button>
                                                 <a href="{{ route('inventario.categorias.index') }}" class="btn btn-outline-secondary btn-sm">
                                                     <i class="fas fa-times mr-1"></i> Cancelar
@@ -116,3 +117,6 @@
 @endsection
 
 @include('inventario._components.common-footer')
+@endsection
+
+
