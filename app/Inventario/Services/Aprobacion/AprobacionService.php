@@ -18,6 +18,7 @@ use App\Inventario\Interfaces\Repositories\Orden\OrdenRepositoryInterface;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use App\Inventario\Interfaces\Services\TransactionServiceInterface;
 use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
+use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
 use Throwable;
 
 class AprobacionService
@@ -28,14 +29,30 @@ class AprobacionService
     private const ORDER_STATUS_THEME = 'ESTADOS DE ORDEN';
     private const ERROR_ESTADO_EN_ESPERA_NO_ENCONTRADO = "Estado 'EN ESPERA' no encontrado.";
 
+    protected AprobacionRepositoryInterface $repository;
+    protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
+    protected OrdenRepositoryInterface $ordenRepository;
+    protected ProductoRepositoryInterface $productoRepository;
+    protected TransactionServiceInterface $transactionService;
+    protected StockValidatorServiceInterface $stockValidator;
+    protected FormOptionsServiceInterface $formOptionsService;
+
     public function __construct(
-        private readonly AprobacionRepositoryInterface $repository,
-        private readonly DetalleOrdenRepositoryInterface $detalleOrdenRepository,
-        private readonly OrdenRepositoryInterface $ordenRepository,
-        private readonly ProductoRepositoryInterface $productoRepository,
-        private readonly TransactionServiceInterface $transactionService,
-        private readonly StockValidatorServiceInterface $stockValidator
+        AprobacionRepositoryInterface $repository,
+        DetalleOrdenRepositoryInterface $detalleOrdenRepository,
+        OrdenRepositoryInterface $ordenRepository,
+        ProductoRepositoryInterface $productoRepository,
+        TransactionServiceInterface $transactionService,
+        StockValidatorServiceInterface $stockValidator,
+        FormOptionsServiceInterface $formOptionsService
     ) {
+        $this->repository = $repository;
+        $this->detalleOrdenRepository = $detalleOrdenRepository;
+        $this->ordenRepository = $ordenRepository;
+        $this->productoRepository = $productoRepository;
+        $this->transactionService = $transactionService;
+        $this->stockValidator = $stockValidator;
+        $this->formOptionsService = $formOptionsService;
     }
 
     /**
@@ -54,7 +71,7 @@ class AprobacionService
     {
         $estado = $this->obtenerEstadoPorNombre(self::STATUS_APPROVED);
         if (!$estado) {
-            throw new AprobacionException("Estado '" . self::STATUS_APPROVED . "' no encontrado en '{$this->getOrderThemeName()}'.");
+            throw new AprobacionException("Estado '" . self::STATUS_APPROVED . "' no encontrado en '" . self::ORDER_STATUS_THEME . "'.");
         }
         return $estado;
     }
@@ -67,33 +84,21 @@ class AprobacionService
     {
         $estado = $this->obtenerEstadoPorNombre(self::STATUS_REJECTED);
         if (!$estado) {
-            throw new AprobacionException("Estado '" . self::STATUS_REJECTED . "' no encontrado en '{$this->getOrderThemeName()}'.");
+            throw new AprobacionException("Estado '" . self::STATUS_REJECTED . "' no encontrado en '" . self::ORDER_STATUS_THEME . "'.");
         }
         return $estado;
     }
 
     /**
      * Obtiene un estado por nombre en el tema de estados de orden.
+     * Usa FormOptionsService para centralizar acceso a Tema (SRP)
      *
      * @param string $name
      * @return Parametro|null
      */
     private function obtenerEstadoPorNombre(string $name): ?Parametro
     {
-        $tema = \App\Models\Tema::where('name', $this->getOrderThemeName())->first();
-        if (!$tema) {
-            return null;
-        }
-
-        return $tema->parametros()
-            ->where('name', $name)
-            ->wherePivot('status', 1)
-            ->first();
-    }
-
-    private function getOrderThemeName(): string
-    {
-        return self::ORDER_STATUS_THEME;
+        return $this->formOptionsService->obtenerEstadoOrdenPorNombre($name, self::ORDER_STATUS_THEME);
     }
 
     /**

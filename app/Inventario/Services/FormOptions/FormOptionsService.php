@@ -7,10 +7,6 @@ namespace App\Inventario\Services\FormOptions;
 use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
 use App\Models\Tema;
 
-/**
- * Servicio para obtener opciones de formularios de inventario
- * Uso directo de modelos externos
- */
 class FormOptionsService implements FormOptionsServiceInterface
 {
     /**
@@ -47,8 +43,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene tipos de producto
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
-     *
      * @return \Illuminate\Support\Collection
      */
     public function obtenerTiposProducto()
@@ -60,7 +54,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene unidades de medida
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
      * @return \Illuminate\Support\Collection
      */
@@ -73,7 +66,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene estados
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
      *
      * @param string $tema
      * @return \Illuminate\Support\Collection
@@ -85,8 +77,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene categorías
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
-     *
      * @return \Illuminate\Support\Collection
      */
     public function obtenerCategorias()
@@ -98,8 +88,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene marcas
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
-     *
      * @return \Illuminate\Support\Collection
      */
     public function obtenerMarcas()
@@ -111,8 +99,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene tipos de orden
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
-     *
      * @return \Illuminate\Support\Collection
      */
     public function obtenerTiposOrden()
@@ -124,8 +110,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene estados de orden
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
-     *
      * @return \Illuminate\Support\Collection
      */
     public function obtenerEstadosOrden()
@@ -136,9 +120,41 @@ class FormOptionsService implements FormOptionsServiceInterface
     }
 
     /**
-     * Obtiene parámetros por tema (método helper)
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
-     *
+     * Obtiene el estado "AGOTADO" de productos
+     * @param string|null $temaEstados
+     * @return \App\Models\ParametroTema|null
+     */
+    public function obtenerEstadoAgotado(?string $temaEstados = null)
+    {
+        $temaEstados = $temaEstados ?? config('inventario.temas.estados_producto', 'ESTADOS DE PRODUCTO');
+        
+        return $this->obtenerEstadoOrdenPorNombre('AGOTADO', $temaEstados);
+    }
+
+    /**
+     * Obtiene un estado de orden por nombre
+     * @param string $nombreEstado
+     * @param string|null $temaEstados
+     * @return \App\Models\ParametroTema|null
+     */
+    public function obtenerEstadoOrdenPorNombre(string $nombreEstado, ?string $temaEstados = null)
+    {
+        $temaEstados = $temaEstados ?? config('inventario.temas.estados_orden', 'ESTADOS DE ORDEN');
+        
+        $tema = Tema::where('name', $temaEstados)->first();
+        
+        if (!$tema) {
+            return null;
+        }
+
+        return $tema->parametros()
+            ->where('name', $nombreEstado)
+            ->wherePivot('status', 1)
+            ->first();
+    }
+
+    /**
+     * Obtiene parámetros por tema
      * @param string $nombreTema
      * @return \Illuminate\Support\Collection
      */

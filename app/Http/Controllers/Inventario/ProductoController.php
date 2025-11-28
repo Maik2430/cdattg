@@ -8,9 +8,10 @@ use App\Http\Controllers\Controller;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use App\Inventario\Services\Producto\ProductoService;
 use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
+use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
 use App\Inventario\Services\ProductoEnrichment\ProductoEnrichmentService;
 use App\Inventario\Services\FormData\FormDataService;
-use App\Models\Tema;
+use App\Exceptions\OrdenException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -26,6 +27,7 @@ class ProductoController extends Controller
     protected ProductoRepositoryInterface $repository;
     protected ProductoService $service;
     protected FormOptionsServiceInterface $formOptionsService;
+    protected StockValidatorServiceInterface $stockValidator;
     protected ProductoEnrichmentService $enrichmentService;
     protected FormDataService $formDataService;
 
@@ -33,6 +35,7 @@ class ProductoController extends Controller
         ProductoRepositoryInterface $repository,
         ProductoService $service,
         FormOptionsServiceInterface $formOptionsService,
+        StockValidatorServiceInterface $stockValidator,
         ProductoEnrichmentService $enrichmentService,
         FormDataService $formDataService
     ) {
@@ -41,6 +44,7 @@ class ProductoController extends Controller
         $this->repository = $repository;
         $this->service = $service;
         $this->formOptionsService = $formOptionsService;
+        $this->stockValidator = $stockValidator;
         $this->enrichmentService = $enrichmentService;
         $this->formDataService = $formDataService;
         
@@ -202,12 +206,7 @@ class ProductoController extends Controller
      */
     public function catalogo(Request $request): View
     {
-        // Obtener estado AGOTADO desde parámetros (uso directo de modelo externo)
-        $tema = Tema::where('name', self::THEME_PRODUCT_STATES)->first();
-        $estadoAgotado = $tema?->parametros()
-            ->where('name', 'AGOTADO')
-            ->wherePivot('status', 1)
-            ->first();
+        $estadoAgotado = $this->formOptionsService->obtenerEstadoAgotado(self::THEME_PRODUCT_STATES);
         
         $filtros = [
             'search' => $request->input('search'),
@@ -237,12 +236,7 @@ class ProductoController extends Controller
      */
     public function buscar(Request $request): JsonResponse
     {
-        // Obtener estado AGOTADO desde parámetros (uso directo de modelo externo)
-        $tema = Tema::where('name', self::THEME_PRODUCT_STATES)->first();
-        $estadoAgotado = $tema?->parametros()
-            ->where('name', 'AGOTADO')
-            ->wherePivot('status', 1)
-            ->first();
+        $estadoAgotado = $this->formOptionsService->obtenerEstadoAgotado(self::THEME_PRODUCT_STATES);
 
         $filtros = [
             'search' => $request->input('search'),
@@ -281,7 +275,9 @@ class ProductoController extends Controller
             ], 404);
         }
 
-        if ($producto->cantidad < $validated['cantidad']) {
+        try {
+            $this->stockValidator->validarStockSuficiente($producto, $validated['cantidad']);
+        } catch (OrdenException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Stock insuficiente',

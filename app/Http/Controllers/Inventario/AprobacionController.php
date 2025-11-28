@@ -50,8 +50,6 @@ class AprobacionController extends Controller
         return $this->handleAprobacion(function () use ($detalleOrdenId) {
             $detalleOrden = $this->service->encontrarDetalleConRelaciones($detalleOrdenId);
 
-            // No se requiere abort(404) si el service lanza excepción
-
             $this->service->aprobarDetalle($detalleOrden);
 
             return back()->with(

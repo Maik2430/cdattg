@@ -107,7 +107,7 @@ class ProveedorController extends Controller
     }
 
     /**
-     * Obtener municipios por departamento (API)
+     * Obtener municipios por departamento
      */
     public function getMunicipiosPorDepartamento(int $departamentoId): JsonResponse
     {

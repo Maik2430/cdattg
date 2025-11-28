@@ -15,5 +15,7 @@ interface FormOptionsServiceInterface
     public function obtenerMarcas();
     public function obtenerTiposOrden();
     public function obtenerEstadosOrden();
+    public function obtenerEstadoAgotado(?string $temaEstados = null);
+    public function obtenerEstadoOrdenPorNombre(string $nombreEstado, ?string $temaEstados = null);
 }
 
