@@ -64,9 +64,66 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Eloquent\Inventario\DetalleOrdenRepository::class
         );
 
+        // Bindings de servicios de Inventario (SOLID - DIP)
         $this->app->bind(
-            \App\Repositories\Interfaces\ParametroTemaRepositoryInterface::class,
-            \App\Repositories\Eloquent\ParametroTemaRepository::class
+            \App\Services\Inventario\Interfaces\UserRepositoryInterface::class,
+            \App\Repositories\Eloquent\Inventario\UserRepository::class
+        );
+
+        $this->app->bind(
+            \App\Services\Inventario\Interfaces\NotificationServiceInterface::class,
+            \App\Services\Inventario\NotificationService::class
+        );
+
+        $this->app->bind(
+            \App\Services\Inventario\Interfaces\ImageServiceInterface::class,
+            \App\Services\Inventario\ImageService::class
+        );
+
+        $this->app->bind(
+            \App\Services\Inventario\Interfaces\BarcodeServiceInterface::class,
+            \App\Services\Inventario\BarcodeService::class
+        );
+
+        // Nuevos servicios SOLID
+        $this->app->bind(
+            \App\Services\Inventario\Interfaces\FormOptionsServiceInterface::class,
+            \App\Services\Inventario\FormOptionsService::class
+        );
+
+        $this->app->bind(
+            \App\Services\Inventario\Interfaces\StockValidatorServiceInterface::class,
+            \App\Services\Inventario\StockValidatorService::class
+        );
+
+        $this->app->bind(
+            \App\Services\Inventario\Interfaces\TransactionServiceInterface::class,
+            \App\Services\Inventario\TransactionService::class
+        );
+
+        // Servicio de enriquecimiento de productos (singleton para performance)
+        $this->app->singleton(
+            \App\Services\Inventario\ProductoEnrichmentService::class
+        );
+
+        // Bindings de notificaciones
+        $this->app->bind(
+            \App\Repositories\Interfaces\Notificaciones\NotificationRepositoryInterface::class,
+            \App\Repositories\Eloquent\Notificaciones\NotificationRepository::class
+        );
+
+        $this->app->bind(
+            \App\Services\Notificaciones\UserNotificationService::class
+        );
+
+        // Servicio de devoluciones
+        $this->app->bind(
+            \App\Services\Inventario\DevolucionService::class
+        );
+
+        // Servicio de datos de formularios (ContratoConvenio, Ambiente, Proveedor)
+        $this->app->bind(
+            \App\Services\Inventario\FormDataService::class
         );
     }
 
