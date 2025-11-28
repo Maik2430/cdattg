@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Repositories\Interfaces\Inventario\DevolucionRepositoryInterface;
 use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
-use App\Services\Inventario\DevolucionesServices;
+use App\Services\Inventario\DevolucionService;
 use App\Exceptions\DevolucionException;
 use App\Models\Inventario\Devolucion;
 use Illuminate\Support\Facades\Auth;
@@ -20,18 +20,18 @@ class DevolucionController extends Controller
 {
     protected DevolucionRepositoryInterface $repository;
     protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
-    protected DevolucionesServices $devolucionesService;
+    protected DevolucionService $service;
 
     public function __construct(
         DevolucionRepositoryInterface $repository,
         DetalleOrdenRepositoryInterface $detalleOrdenRepository,
-        DevolucionesServices $devolucionesService
+        DevolucionService $service
     ) {
         $this->middleware('can:DEVOLVER PRESTAMO')->only(['index', 'create', 'store']);
         
         $this->repository = $repository;
         $this->detalleOrdenRepository = $detalleOrdenRepository;
-        $this->devolucionesService = $devolucionesService;
+        $this->service = $service;
     }
 
     // Mostrar lista de préstamos pendientes de devolución
@@ -78,25 +78,15 @@ class DevolucionController extends Controller
         }
 
         try {
-            $devolucion = Devolucion::registrarDevolucion(
+            $resultado = $this->service->registrarDevolucionConMensaje(
                 (int) $validated['detalle_orden_id'],
                 (int) $validated['cantidad_devuelta'],
                 $validated['observaciones'] ?? null
             );
 
-            $mensaje = 'Devolución registrada exitosamente.';
-            
-            if ($devolucion->cierra_sin_stock) {
-                $mensaje .= ' Se registró el consumo total sin restaurar stock.';
-            }
-
-            if ($devolucion->getDiasRetrasoDevolucion() > 0) {
-                $mensaje .= ' NOTA: La devolución se realizó con ' . $devolucion->getDiasRetrasoDevolucion() . ' días de retraso.';
-            }
-
             return redirect()
                 ->route('inventario.devoluciones.index')
-                ->with('success', $mensaje);
+                ->with('success', $resultado['mensaje']);
 
         } catch (DevolucionException $e) {
             return back()
@@ -149,7 +139,7 @@ class DevolucionController extends Controller
 
     private function getEstadoOrdenAprobadaId(): int
     {
-        $estadoAprobada = $this->devolucionesService->obtenerEstadoAprobada();
+        $estadoAprobada = $this->service->obtenerEstadoAprobada();
         return (int) $estadoAprobada->id;
     }
 }

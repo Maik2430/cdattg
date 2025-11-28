@@ -6,14 +6,12 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
-use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
 use App\Services\Inventario\ProductoService;
+use App\Services\Inventario\Interfaces\FormOptionsServiceInterface;
+use App\Services\Inventario\ProductoEnrichmentService;
+use App\Services\Inventario\FormDataService;
+use App\Models\Tema;
 use Illuminate\Http\Request;
-use App\Models\Inventario\Producto;
-use App\Models\Parametro;
-use App\Models\Inventario\ContratoConvenio;
-use App\Models\Ambiente;
-use App\Models\Inventario\Proveedor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -27,18 +25,24 @@ class ProductoController extends Controller
 
     protected ProductoRepositoryInterface $repository;
     protected ProductoService $service;
-    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
+    protected FormOptionsServiceInterface $formOptionsService;
+    protected ProductoEnrichmentService $enrichmentService;
+    protected FormDataService $formDataService;
 
     public function __construct(
         ProductoRepositoryInterface $repository,
         ProductoService $service,
-        ParametroTemaRepositoryInterface $parametroTemaRepository
+        FormOptionsServiceInterface $formOptionsService,
+        ProductoEnrichmentService $enrichmentService,
+        FormDataService $formDataService
     ) {
         $this->middleware('auth');
         
         $this->repository = $repository;
         $this->service = $service;
-        $this->parametroTemaRepository = $parametroTemaRepository;
+        $this->formOptionsService = $formOptionsService;
+        $this->enrichmentService = $enrichmentService;
+        $this->formDataService = $formDataService;
         
         // Middlewares de permisos de inventario
         $this->middleware('can:VER PRODUCTO')->only(['index', 'show']);
@@ -61,15 +65,8 @@ class ProductoController extends Controller
         $productos = $this->repository->obtenerConFiltros($filtros);
         $productos->appends($request->only('search'));
 
-        // Cargar marca y categoria directamente para cada producto
-        foreach ($productos as $producto) {
-            if ($producto->marca_id) {
-                $producto->marca = Parametro::find($producto->marca_id);
-            }
-            if ($producto->categoria_id) {
-                $producto->categoria = Parametro::find($producto->categoria_id);
-            }
-        }
+        // Enriquecer productos con marcas y categorías (SRP)
+        $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
         $tiposProductos = $this->repository->obtenerTiposProductos();
         
@@ -81,11 +78,8 @@ class ProductoController extends Controller
      */
     public function create(): View
     {
-        $opciones = $this->service->obtenerOpcionesFormulario(self::THEME_PRODUCT_STATES);
-        
-        $contratosConvenios = ContratoConvenio::all();
-        $ambientes = Ambiente::all();
-        $proveedores = Proveedor::all();
+        $opciones = $this->formOptionsService->obtenerOpcionesProducto(self::THEME_PRODUCT_STATES);
+        $datosFormulario = $this->formDataService->obtenerDatosFormulario();
 
         $filtros = [
             'per_page' => 12
@@ -93,22 +87,12 @@ class ProductoController extends Controller
         $productos = $this->repository->obtenerParaCatalogo($filtros);
         $tiposProductos = $this->repository->obtenerTiposProductos();
 
-        // Cargar marca y categoria directamente para cada producto
-        foreach ($productos as $producto) {
-            if ($producto->marca_id) {
-                $producto->marca = Parametro::find($producto->marca_id);
-            }
-            if ($producto->categoria_id) {
-                $producto->categoria = Parametro::find($producto->categoria_id);
-            }
-        }
+        // Enriquecer productos con marcas y categorías (SRP)
+        $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
         return view(
             'inventario.productos.create',
-            array_merge($opciones, [
-                'contratosConvenios' => $contratosConvenios,
-                'ambientes' => $ambientes,
-                'proveedores' => $proveedores,
+            array_merge($opciones, $datosFormulario, [
                 'productos' => $productos,
                 'tiposProductos' => $tiposProductos
             ])
@@ -154,17 +138,11 @@ class ProductoController extends Controller
         if (!$producto) {
             abort(404);
         }
-        $opciones = $this->service->obtenerOpcionesFormulario(self::THEME_PRODUCT_STATES);
-        
-        $contratosConvenios = ContratoConvenio::all();
-        $ambientes = Ambiente::all();
-        $proveedores = Proveedor::all();
+        $opciones = $this->formOptionsService->obtenerOpcionesProducto(self::THEME_PRODUCT_STATES);
+        $datosFormulario = $this->formDataService->obtenerDatosFormulario();
     
-        return view('inventario.productos.edit', array_merge($opciones, [
-            'producto' => $producto,
-            'contratosConvenios' => $contratosConvenios,
-            'ambientes' => $ambientes,
-            'proveedores' => $proveedores
+        return view('inventario.productos.edit', array_merge($opciones, $datosFormulario, [
+            'producto' => $producto
         ]));
     }
 
@@ -224,25 +202,18 @@ class ProductoController extends Controller
      */
     public function catalogo(Request $request): View
     {
-        $parametroAgotado = Parametro::find(43);
-        $estadoAgotadoId = null;
-
-        if ($parametroAgotado) {
-            $estadoAgotadoTema = $this->parametroTemaRepository->buscarPorTemaYNombre(
-                self::THEME_PRODUCT_STATES,
-                $parametroAgotado->name
-            );
-            
-            if ($estadoAgotadoTema) {
-                $estadoAgotadoId = $estadoAgotadoTema->id;
-            }
-        }
-
+        // Obtener estado AGOTADO desde parámetros (uso directo de modelo externo)
+        $tema = Tema::where('name', self::THEME_PRODUCT_STATES)->first();
+        $estadoAgotado = $tema?->parametros()
+            ->where('name', 'AGOTADO')
+            ->wherePivot('status', 1)
+            ->first();
+        
         $filtros = [
             'search' => $request->input('search'),
             'tipo_producto_id' => $request->input('tipo_producto_id'),
             'sort_by' => $request->input('sort_by', 'name'),
-            'estado_agotado_id' => $estadoAgotadoId,
+            'estado_agotado_id' => $estadoAgotado?->id,
             'per_page' => 12
         ];
 
@@ -253,15 +224,8 @@ class ProductoController extends Controller
             'sort_by' => $filtros['sort_by']
         ]);
 
-        // Cargar marca y categoria directamente para cada producto
-        foreach ($productos as $producto) {
-            if ($producto->marca_id) {
-                $producto->marca = Parametro::find($producto->marca_id);
-            }
-            if ($producto->categoria_id) {
-                $producto->categoria = Parametro::find($producto->categoria_id);
-            }
-        }
+        // Enriquecer productos con marcas y categorías (SRP)
+        $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
         $tiposProductos = $this->repository->obtenerTiposProductos();
 
@@ -273,35 +237,25 @@ class ProductoController extends Controller
      */
     public function buscar(Request $request): JsonResponse
     {
-        $parametroAgotado = Parametro::find(43);
-        $estadoAgotadoId = null;
-
-        if ($parametroAgotado) {
-            $estadoAgotadoTema = $this->parametroTemaRepository->buscarPorTemaYNombre(
-                self::THEME_PRODUCT_STATES,
-                $parametroAgotado->name
-            );
-
-            if ($estadoAgotadoTema) {
-                $estadoAgotadoId = $estadoAgotadoTema->id;
-            }
-        }
+        // Obtener estado AGOTADO desde parámetros (uso directo de modelo externo)
+        $tema = Tema::where('name', self::THEME_PRODUCT_STATES)->first();
+        $estadoAgotado = $tema?->parametros()
+            ->where('name', 'AGOTADO')
+            ->wherePivot('status', 1)
+            ->first();
 
         $filtros = [
             'search' => $request->input('search'),
             'tipo_producto_id' => $request->input('tipo_producto_id'),
-            'estado_agotado_id' => $estadoAgotadoId
+            'estado_agotado_id' => $estadoAgotado?->id
         ];
 
         $productos = $this->repository->buscarParaAjax($filtros);
 
+        // Enriquecer productos con marcas y categorías (SRP)
+        $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
+
         foreach ($productos as $producto) {
-            if ($producto->marca_id) {
-                $producto->marca = Parametro::find($producto->marca_id);
-            }
-            if ($producto->categoria_id) {
-                $producto->categoria = Parametro::find($producto->categoria_id);
-            }
             $producto->imagen_url = $producto->imagen ? asset($producto->imagen) : null;
         }
 
@@ -347,7 +301,7 @@ class ProductoController extends Controller
     }
 
     /**
-     * Obtener detalles del producto para modal 
+     * Obtener detalles del producto para modal
      */
     public function detalles(string $id): View
     {
@@ -357,13 +311,8 @@ class ProductoController extends Controller
             abort(404);
         }
 
-        // Cargar marca y categoria DIRECTAMENTE desde Parametro sin usar la relación del modelo
-        if ($producto->marca_id) {
-            $producto->setRelation('marca', Parametro::find($producto->marca_id));
-        }
-        if ($producto->categoria_id) {
-            $producto->setRelation('categoria', Parametro::find($producto->categoria_id));
-        }
+        // Enriquecer producto con marca y categoría usando el servicio
+        $this->enrichmentService->enriquecerProducto($producto);
 
         return view('inventario.productos._detalles-modal', compact('producto'));
     }

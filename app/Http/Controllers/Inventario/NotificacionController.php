@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
+use App\Services\Notificaciones\UserNotificationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
@@ -12,9 +13,12 @@ use App\Http\Controllers\Controller;
 
 class NotificacionController extends Controller
 {
-    public function __construct()
+    protected UserNotificationService $service;
+
+    public function __construct(UserNotificationService $service)
     {
         $this->middleware('can:VER NOTIFICACION')->only(['index']);
+        $this->service = $service;
     }
 
     /**
@@ -22,8 +26,7 @@ class NotificacionController extends Controller
      */
     public function index() : View
     {
-        $notificaciones = Auth::user()->notifications()
-            ->paginate(10);
+        $notificaciones = $this->service->obtenerNotificacionesPaginadas(Auth::id());
         
         return view('inventario.notificaciones.index', compact('notificaciones'));
     }
@@ -33,30 +36,19 @@ class NotificacionController extends Controller
      */
     public function getUnread() : JsonResponse
     {
-        $notificaciones = Auth::user()->unreadNotifications()
-            ->take(5)
-            ->get();
+        $datos = $this->service->obtenerDatosDropdown(Auth::id());
         
-        $count = Auth::user()->unreadNotifications()->count();
-        
-        return response()->json([
-            'notificaciones' => $notificaciones,
-            'count' => $count
-        ]);
+        return response()->json($datos);
     }
 
     /**
      * Marcar una notificación como leída
      */
-    public function markAsRead($id) : JsonResponse
+    public function markAsRead(string $id) : JsonResponse
     {
-        $notificacion = Auth::user()->notifications()
-            ->where('id', $id)
-            ->first();
+        $resultado = $this->service->marcarComoLeida(Auth::id(), $id);
         
-        if ($notificacion) {
-            $notificacion->markAsRead();
-            
+        if ($resultado) {
             return response()->json([
                 'success' => true,
                 'message' => 'Notificación marcada como leída'
@@ -74,28 +66,22 @@ class NotificacionController extends Controller
      */
     public function markAllAsRead() : JsonResponse
     {
-        Auth::user()->unreadNotifications->each(function ($notification) {
-            $notification->markAsRead();
-        });
+        $count = $this->service->marcarTodasComoLeidas(Auth::id());
         
         return response()->json([
             'success' => true,
-            'message' => 'Todas las notificaciones marcadas como leídas'
+            'message' => "Todas las notificaciones marcadas como leídas ({$count})"
         ]);
     }
 
     /**
      * Eliminar una notificación
      */
-    public function destroy($id) : RedirectResponse
+    public function destroy(string $id) : RedirectResponse
     {
-        $notificacion = Auth::user()->notifications()
-            ->where('id', $id)
-            ->first();
+        $resultado = $this->service->eliminar(Auth::id(), $id);
         
-        if ($notificacion) {
-            $notificacion->delete();
-            
+        if ($resultado) {
             return back()->with('success', 'Notificación eliminada exitosamente');
         }
         

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Inventario;
 
 use App\Repositories\Interfaces\Inventario\ContratoConvenioRepositoryInterface;
-use App\Repositories\Interfaces\ParametroTemaRepositoryInterface;
+use App\Repositories\Interfaces\Inventario\ProveedorRepositoryInterface;
 use App\Services\Inventario\ContratoConvenioService;
 use App\Models\Inventario\ContratoConvenio;
+use App\Models\Tema;
 use App\Exceptions\ContratoConvenioException;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,12 +21,12 @@ class ContratoConvenioController extends Controller
 {
     protected ContratoConvenioRepositoryInterface $repository;
     protected ContratoConvenioService $service;
-    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
+    protected ProveedorRepositoryInterface $proveedorRepository;
 
     public function __construct(
         ContratoConvenioRepositoryInterface $repository,
         ContratoConvenioService $service,
-        ParametroTemaRepositoryInterface $parametroTemaRepository
+        ProveedorRepositoryInterface $proveedorRepository
     ) {
         $this->middleware('can:VER CONTRATO')->only('index', 'show');
         $this->middleware('can:CREAR CONTRATO')->only('create', 'store');
@@ -34,7 +35,7 @@ class ContratoConvenioController extends Controller
         
         $this->repository = $repository;
         $this->service = $service;
-        $this->parametroTemaRepository = $parametroTemaRepository;
+        $this->proveedorRepository = $proveedorRepository;
     }
 
     public function index(Request $request): View
@@ -47,14 +48,18 @@ class ContratoConvenioController extends Controller
         $contratosConvenios = $this->repository->obtenerConFiltros($filtros);
         $contratosConvenios->appends($request->only('search'));
 
-        $estados = collect($this->parametroTemaRepository->obtenerPorTema('ESTADOS'));
+        // Uso directo del modelo Tema (clase externa, sin SOLID)
+        $tema = Tema::where('name', 'ESTADOS')->first();
+        $estados = $tema ? collect($tema->parametros()->wherePivot('status', 1)->get()) : collect([]);
 
-        return view('inventario.contratos_convenios.index', compact('contratosConvenios', 'estados'));
+        $proveedores = $this->proveedorRepository->obtenerTodos();
+
+        return view('inventario.contratos_convenios.index', compact('contratosConvenios', 'estados', 'proveedores'));
     }
 
     public function create(): View
     {
-        $proveedores = $this->repository->obtenerProveedores();
+        $proveedores = $this->proveedorRepository->obtenerTodos();
         return view('inventario.contratos_convenios.create', compact('proveedores'));
     }
 
@@ -71,7 +76,7 @@ class ContratoConvenioController extends Controller
 
     public function edit(ContratoConvenio $contratoConvenio): View
     {
-        $proveedores = $this->repository->obtenerProveedores();
+        $proveedores = $this->proveedorRepository->obtenerTodos();
         return view('inventario.contratos_convenios.edit', compact('contratoConvenio', 'proveedores'));
     }
 

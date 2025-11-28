@@ -91,7 +91,7 @@ class MarcaController extends Controller
     public function update(MarcaCategoriaRequest $request, Parametro $marca): RedirectResponse
     {
         $validated = $request->validated();
-        $marcaModel = Marca::find($marca->id);
+        $marcaModel = $this->repository->encontrar($marca->id);
         
         if (!$marcaModel) {
             abort(404);
@@ -107,7 +107,7 @@ class MarcaController extends Controller
     public function destroy(Parametro $marca): RedirectResponse
     {
         try {
-            $marcaModel = Marca::find($marca->id);
+            $marcaModel = $this->repository->encontrar($marca->id);
             
             if (!$marcaModel) {
                 abort(404);
@@ -134,7 +134,7 @@ class MarcaController extends Controller
         return view('inventario.marcas.show', [
             'title' => 'Detalle de la marca',
             'icon' => 'fas fa-eye',
-            'marca' => $marca   
+            'marca' => $marca
         ]);
     }
 

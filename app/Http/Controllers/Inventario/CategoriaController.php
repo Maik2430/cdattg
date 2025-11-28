@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Repositories\Interfaces\Inventario\CategoriaRepositoryInterface;
 use App\Services\Inventario\CategoriaService;
-use App\Models\Inventario\Categoria;
 use App\Models\Parametro;
 use App\Exceptions\CategoriaException;
 use Illuminate\Http\Request;
@@ -91,7 +90,7 @@ class CategoriaController extends Controller
     public function update(MarcaCategoriaRequest $request, Parametro $categoria): RedirectResponse
     {
         $validated = $request->validated();
-        $categoriaModel = Categoria::find($categoria->id);
+        $categoriaModel = $this->repository->encontrar($categoria->id);
         
         if (!$categoriaModel) {
             abort(404);
@@ -107,7 +106,7 @@ class CategoriaController extends Controller
     public function destroy(Parametro $categoria): RedirectResponse
     {
         try {
-            $categoriaModel = Categoria::find($categoria->id);
+            $categoriaModel = $this->repository->encontrar($categoria->id);
             
             if (!$categoriaModel) {
                 abort(404);

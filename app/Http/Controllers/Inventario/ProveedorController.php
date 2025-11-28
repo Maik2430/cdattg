@@ -52,7 +52,7 @@ class ProveedorController extends Controller
     public function create() : View
     {
         $departamentos = Departamento::orderBy('departamento')->get();
-        $municipios = Municipio::with('departamento')->orderBy('municipio')->get();
+        $municipios = Municipio::with('departamento')->get();
         return view('inventario.proveedores.create', compact('departamentos', 'municipios'));
     }
 
@@ -70,7 +70,7 @@ class ProveedorController extends Controller
     public function edit(Proveedor $proveedor) : View
     {
         $departamentos = Departamento::orderBy('departamento')->get();
-        $municipios = Municipio::with('departamento')->orderBy('municipio')->get();
+        $municipios = Municipio::with('departamento')->get();
         return view('inventario.proveedores.edit', compact('proveedor', 'departamentos', 'municipios'));
     }
 
@@ -84,9 +84,8 @@ class ProveedorController extends Controller
             ->with('success', 'Proveedor creado exitosamente.');
     }
 
-    public function update(ProveedorRequest $request, string $id): RedirectResponse
+    public function update(ProveedorRequest $request, Proveedor $proveedor): RedirectResponse
     {
-        $proveedor = Proveedor::findOrFail($id);
         $validated = $request->validated();
         $this->service->actualizar($proveedor, $validated, Auth::id());
 
@@ -110,18 +109,11 @@ class ProveedorController extends Controller
     /**
      * Obtener municipios por departamento (API)
      */
-    public function getMunicipiosPorDepartamento($departamentoId) : JsonResponse
+    public function getMunicipiosPorDepartamento(int $departamentoId): JsonResponse
     {
         $municipios = Municipio::where('departamento_id', $departamentoId)
             ->orderBy('municipio')
-            ->get()
-            ->map(function($municipio) {
-                return [
-                    'id' => $municipio->id,
-                    'municipio' => $municipio->municipio,
-                    'departamento' => $municipio->departamento->departamento ?? ''
-                ];
-            });
+            ->get(['id', 'municipio']);
 
         return response()->json($municipios);
     }

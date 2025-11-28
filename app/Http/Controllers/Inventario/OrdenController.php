@@ -6,10 +6,10 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
 use App\Services\Inventario\OrdenService;
+use App\Models\ProgramaFormacion;
 use Illuminate\Http\Request;
 use App\Exceptions\OrdenException;
 use App\Models\Inventario\Orden;
-use App\Models\ProgramaFormacion;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
@@ -161,9 +161,7 @@ class OrdenController extends Controller
             abort(404);
         }
 
-        $tieneDevoluciones = $orden->detalles()->whereHas('devoluciones')->exists();
-        
-        if ($tieneDevoluciones) {
+        if ($this->service->tieneDevoluciones($orden)) {
             return redirect()
                 ->route('inventario.ordenes.index', $orden->id)
                 ->with('error', 'No se puede editar una orden que ya tiene devoluciones registradas.');
@@ -195,9 +193,7 @@ class OrdenController extends Controller
             abort(404);
         }
 
-        $tieneDevoluciones = $orden->detalles()->whereHas('devoluciones')->exists();
-        
-        if ($tieneDevoluciones) {
+        if ($this->service->tieneDevoluciones($orden)) {
             return redirect()
                 ->route('inventario.ordenes.index')
                 ->with('error', 'No se puede eliminar una orden que ya tiene devoluciones registradas.');
