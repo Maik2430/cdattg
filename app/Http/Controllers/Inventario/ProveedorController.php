@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Interfaces\Inventario\ProveedorRepositoryInterface;
-use App\Services\Inventario\ProveedorService;
+use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface;
+use App\Inventario\Services\Proveedor\ProveedorService;
 use App\Models\Inventario\Proveedor;
 use App\Models\Departamento;
 use App\Models\Municipio;

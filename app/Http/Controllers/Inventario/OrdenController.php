@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
-use App\Services\Inventario\OrdenService;
+use App\Inventario\Interfaces\Repositories\Orden\OrdenRepositoryInterface;
+use App\Inventario\Services\Orden\OrdenService;
 use App\Models\ProgramaFormacion;
 use Illuminate\Http\Request;
 use App\Exceptions\OrdenException;
@@ -121,7 +121,7 @@ class OrdenController extends Controller
     public function rechazadas(): View
     {
         // Obtener estado RECHAZADA desde AprobacionService
-        $estadoRechazada = app(\App\Services\Inventario\AprobacionService::class)->obtenerEstadoRechazada();
+        $estadoRechazada = app(\App\Inventario\Services\Aprobacion\AprobacionService::class)->obtenerEstadoRechazada();
         $ordenes = $this->repository->obtenerRechazadas($estadoRechazada->id);
         
         return view('inventario.ordenes.rechazadas', compact('ordenes'));

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Interfaces\Inventario\CategoriaRepositoryInterface;
-use App\Services\Inventario\CategoriaService;
+use App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface;
+use App\Inventario\Services\Categoria\CategoriaService;
 use App\Models\Parametro;
 use App\Exceptions\CategoriaException;
 use Illuminate\Http\Request;

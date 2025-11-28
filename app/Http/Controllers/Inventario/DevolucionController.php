@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Interfaces\Inventario\DevolucionRepositoryInterface;
-use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
-use App\Services\Inventario\DevolucionService;
+use App\Inventario\Interfaces\Repositories\Devolucion\DevolucionRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Orden\DetalleOrdenRepositoryInterface;
+use App\Inventario\Services\Devolucion\DevolucionService;
 use App\Exceptions\DevolucionException;
 use App\Models\Inventario\Devolucion;
 use Illuminate\Support\Facades\Auth;

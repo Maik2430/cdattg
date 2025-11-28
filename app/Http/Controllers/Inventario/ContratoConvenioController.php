@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Interfaces\Inventario\ContratoConvenioRepositoryInterface;
-use App\Repositories\Interfaces\Inventario\ProveedorRepositoryInterface;
-use App\Services\Inventario\ContratoConvenioService;
+use App\Inventario\Interfaces\Repositories\ContratoConvenio\ContratoConvenioRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface;
+use App\Inventario\Services\ContratoConvenio\ContratoConvenioService;
 use App\Models\Inventario\ContratoConvenio;
 use App\Models\Tema;
 use App\Exceptions\ContratoConvenioException;

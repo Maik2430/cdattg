@@ -6,10 +6,10 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
-use App\Services\Inventario\ProductoService;
-use App\Services\Inventario\Interfaces\FormOptionsServiceInterface;
-use App\Services\Inventario\ProductoEnrichmentService;
-use App\Services\Inventario\FormDataService;
+use App\Inventario\Services\Producto\ProductoService;
+use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
+use App\Inventario\Services\ProductoEnrichment\ProductoEnrichmentService;
+use App\Inventario\Services\FormData\FormDataService;
 use App\Models\Tema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

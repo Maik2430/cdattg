@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
-use App\Services\Inventario\CarritoService;
+use App\Inventario\Services\Carrito\CarritoService;
 use App\Exceptions\CarritoException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

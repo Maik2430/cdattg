@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Services\Inventario\AprobacionService;
+use App\Inventario\Services\Aprobacion\AprobacionService;
 use App\Exceptions\AprobacionException;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Interfaces\Inventario\MarcaRepositoryInterface;
-use App\Services\Inventario\MarcaService;
+use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
+use App\Inventario\Services\Marca\MarcaService;
 use App\Models\Inventario\Marca;
 use App\Models\Parametro;
 use App\Exceptions\MarcaException;

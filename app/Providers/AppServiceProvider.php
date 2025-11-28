@@ -25,105 +25,110 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\CategoriaRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\CategoriaRepository::class
+            \App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface::class,
+            \App\Inventario\Repositories\Categoria\CategoriaRepository::class
         );
 
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\ProveedorRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\ProveedorRepository::class
+            \App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface::class,
+            \App\Inventario\Repositories\Proveedor\ProveedorRepository::class
         );
 
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\OrdenRepository::class
+            \App\Inventario\Interfaces\Repositories\Orden\OrdenRepositoryInterface::class,
+            \App\Inventario\Repositories\Orden\OrdenRepository::class
         );
 
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\DevolucionRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\DevolucionRepository::class
+            \App\Inventario\Interfaces\Repositories\Devolucion\DevolucionRepositoryInterface::class,
+            \App\Inventario\Repositories\Devolucion\DevolucionRepository::class
         );
 
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\MarcaRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\MarcaRepository::class
+            \App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface::class,
+            \App\Inventario\Repositories\Marca\MarcaRepository::class
         );
 
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\ContratoConvenioRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\ContratoConvenioRepository::class
+            \App\Inventario\Interfaces\Repositories\ContratoConvenio\ContratoConvenioRepositoryInterface::class,
+            \App\Inventario\Repositories\ContratoConvenio\ContratoConvenioRepository::class
         );
 
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\AprobacionRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\AprobacionRepository::class
+            \App\Inventario\Interfaces\Repositories\Aprobacion\AprobacionRepositoryInterface::class,
+            \App\Inventario\Repositories\Aprobacion\AprobacionRepository::class
         );
 
         $this->app->bind(
-            \App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\DetalleOrdenRepository::class
+            \App\Inventario\Interfaces\Repositories\Orden\DetalleOrdenRepositoryInterface::class,
+            \App\Inventario\Repositories\Orden\DetalleOrdenRepository::class
         );
 
         // Bindings de servicios de Inventario (SOLID - DIP)
         $this->app->bind(
-            \App\Services\Inventario\Interfaces\UserRepositoryInterface::class,
-            \App\Repositories\Eloquent\Inventario\UserRepository::class
+            \App\Inventario\Interfaces\Services\UserRepositoryInterface::class,
+            \App\Inventario\Repositories\User\UserRepository::class
         );
 
         $this->app->bind(
-            \App\Services\Inventario\Interfaces\NotificationServiceInterface::class,
-            \App\Services\Inventario\NotificationService::class
+            \App\Inventario\Interfaces\Services\NotificationServiceInterface::class,
+            \App\Inventario\Services\Notification\NotificationService::class
         );
 
         $this->app->bind(
-            \App\Services\Inventario\Interfaces\ImageServiceInterface::class,
-            \App\Services\Inventario\ImageService::class
+            \App\Inventario\Interfaces\Services\ImageServiceInterface::class,
+            \App\Inventario\Services\Image\ImageService::class
         );
 
         $this->app->bind(
-            \App\Services\Inventario\Interfaces\BarcodeServiceInterface::class,
-            \App\Services\Inventario\BarcodeService::class
+            \App\Inventario\Interfaces\Services\BarcodeServiceInterface::class,
+            \App\Inventario\Services\Barcode\BarcodeService::class
         );
 
         // Nuevos servicios SOLID
         $this->app->bind(
-            \App\Services\Inventario\Interfaces\FormOptionsServiceInterface::class,
-            \App\Services\Inventario\FormOptionsService::class
+            \App\Inventario\Interfaces\Services\FormOptionsServiceInterface::class,
+            \App\Inventario\Services\FormOptions\FormOptionsService::class
         );
 
         $this->app->bind(
-            \App\Services\Inventario\Interfaces\StockValidatorServiceInterface::class,
-            \App\Services\Inventario\StockValidatorService::class
+            \App\Inventario\Interfaces\Services\StockValidatorServiceInterface::class,
+            \App\Inventario\Services\StockValidator\StockValidatorService::class
         );
 
         $this->app->bind(
-            \App\Services\Inventario\Interfaces\TransactionServiceInterface::class,
-            \App\Services\Inventario\TransactionService::class
+            \App\Inventario\Interfaces\Services\TransactionServiceInterface::class,
+            \App\Inventario\Services\Transaction\TransactionService::class
         );
 
         // Servicio de enriquecimiento de productos (singleton para performance)
         $this->app->singleton(
-            \App\Services\Inventario\ProductoEnrichmentService::class
+            \App\Inventario\Services\ProductoEnrichment\ProductoEnrichmentService::class
         );
 
         // Bindings de notificaciones
         $this->app->bind(
-            \App\Repositories\Interfaces\Notificaciones\NotificationRepositoryInterface::class,
-            \App\Repositories\Eloquent\Notificaciones\NotificationRepository::class
+            \App\Inventario\Interfaces\Repositories\Notification\NotificationRepositoryInterface::class,
+            \App\Inventario\Repositories\Notification\NotificationRepository::class
         );
 
         $this->app->bind(
-            \App\Services\Notificaciones\UserNotificationService::class
+            \App\Inventario\Services\Notification\UserNotificationService::class
         );
 
         // Servicio de devoluciones
         $this->app->bind(
-            \App\Services\Inventario\DevolucionService::class
+            \App\Inventario\Services\Devolucion\DevolucionService::class
         );
 
         // Servicio de datos de formularios (ContratoConvenio, Ambiente, Proveedor)
         $this->app->bind(
-            \App\Services\Inventario\FormDataService::class
+            \App\Inventario\Services\FormData\FormDataService::class
+        );
+
+        // Servicio de productos
+        $this->app->bind(
+            \App\Inventario\Services\Producto\ProductoService::class
         );
     }
 
