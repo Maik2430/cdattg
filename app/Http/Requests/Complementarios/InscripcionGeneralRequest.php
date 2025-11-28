@@ -43,10 +43,10 @@ class InscripcionGeneralRequest extends FormRequest
             'telefono' => 'nullable|string|max:191',
             'celular' => 'required|string|max:191',
             'email' => 'required|email|max:191|unique:personas,email',
-            'pais_id' => 'required|integer|exists:paises,id',
+            'pais_id' => 'required|integer|exists:pais,id',
             'departamento_id' => 'required|integer|exists:departamentos,id',
             'municipio_id' => 'required|integer|exists:municipios,id',
-            'direccion' => 'required|string|max:191',
+            'direccion' => 'nullable|string|max:191',
             'observaciones' => 'nullable|string',
             'parametro_id' => 'nullable|exists:parametros,id',
         ];
@@ -78,7 +78,6 @@ class InscripcionGeneralRequest extends FormRequest
             'departamento_id.exists' => 'El departamento seleccionado no es válido.',
             'municipio_id.required' => 'El municipio es obligatorio.',
             'municipio_id.exists' => 'El municipio seleccionado no es válido.',
-            'direccion.required' => 'La dirección es obligatoria.',
         ];
     }
 }
