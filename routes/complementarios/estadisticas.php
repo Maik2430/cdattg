@@ -12,5 +12,8 @@ Route::middleware('auth')
 
         Route::get('/estadisticas/api', [EstadisticaComplementarioController::class, 'apiEstadisticas'])
             ->name('estadisticas.api');
+
+        Route::get('/estadisticas/exportar-excel', [EstadisticaComplementarioController::class, 'exportarProgramasDemandaExcel'])
+            ->name('estadisticas.exportar-excel');
     });
 
