@@ -6,13 +6,12 @@ namespace App\Services\Inventario;
 
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Orden;
-use App\Repositories\Interfaces\Inventario\AprobacionRepositoryInterface;
-use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
-use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
-use App\Repositories\Interfaces\Inventario\ProductoRepositoryInterface;
-use App\Services\Inventario\Interfaces\TransactionServiceInterface;
-use App\Services\Inventario\Interfaces\NotificationServiceInterface;
-use App\Services\Inventario\Interfaces\StockValidatorServiceInterface;
+use App\Repositories\Eloquent\Inventario\AprobacionRepository;
+use App\Repositories\Eloquent\Inventario\DetalleOrdenRepository;
+use App\Repositories\Eloquent\Inventario\OrdenRepository;
+use App\Repositories\Eloquent\Inventario\ProductoRepository;
+use App\Services\Inventario\TransactionService;
+use App\Services\Inventario\StockValidatorService;
 use App\Models\Tema;
 use App\Models\Parametro;
 use App\Exceptions\AprobacionException;
@@ -22,20 +21,20 @@ use App\Notifications\OrdenRechazadaNotification;
 
 class AprobacionService
 {
-    protected AprobacionRepositoryInterface $repository;
-    protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
-    protected OrdenRepositoryInterface $ordenRepository;
-    protected ProductoRepositoryInterface $productoRepository;
-    protected TransactionServiceInterface $transactionService;
-    protected StockValidatorServiceInterface $stockValidator;
+    protected AprobacionRepository $repository;
+    protected DetalleOrdenRepository $detalleOrdenRepository;
+    protected OrdenRepository $ordenRepository;
+    protected ProductoRepository $productoRepository;
+    protected TransactionService $transactionService;
+    protected StockValidatorService $stockValidator;
 
     public function __construct(
-        AprobacionRepositoryInterface $repository,
-        DetalleOrdenRepositoryInterface $detalleOrdenRepository,
-        OrdenRepositoryInterface $ordenRepository,
-        ProductoRepositoryInterface $productoRepository,
-        TransactionServiceInterface $transactionService,
-        StockValidatorServiceInterface $stockValidator
+        AprobacionRepository $repository,
+        DetalleOrdenRepository $detalleOrdenRepository,
+        OrdenRepository $ordenRepository,
+        ProductoRepository $productoRepository,
+        TransactionService $transactionService,
+        StockValidatorService $stockValidator
     ) {
         $this->repository = $repository;
         $this->detalleOrdenRepository = $detalleOrdenRepository;
@@ -94,13 +93,6 @@ class AprobacionService
         return $estado;
     }
 
-    /**
-     * Obtiene estado RECHAZADA
-     * Uso directo del modelo Tema/Parametro (clase externa, sin SOLID)
-     *
-     * @return Parametro
-     * @throws AprobacionException
-     */
     public function obtenerEstadoRechazada()
     {
         $tema = Tema::where('name', self::ORDER_STATUS_THEME)->first();
@@ -400,6 +392,44 @@ class AprobacionService
             $this->transactionService->rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Obtiene detalles pendientes de aprobación
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function obtenerDetallesPendientes()
+    {
+        $estadoEnEspera = $this->obtenerEstadoEnEspera();
+
+        if (!$estadoEnEspera) {
+            return collect([]);
+        }
+
+        return $this->ordenRepository->obtenerDetallesPendientes($estadoEnEspera->id);
+    }
+
+    /**
+     * Encuentra un detalle de orden con sus relaciones
+     *
+     * @param int $detalleOrdenId
+     * @return DetalleOrden|null
+     */
+    public function encontrarDetalleConRelaciones(int $detalleOrdenId): ?DetalleOrden
+    {
+        return $this->detalleOrdenRepository->encontrarConRelaciones($detalleOrdenId);
+    }
+
+    /**
+     * Encuentra una orden con detalles y devoluciones
+     *
+     * @param int $ordenId
+     * @return Orden|null
+     */
+    public function encontrarOrdenConDetallesYDevoluciones(int $ordenId): ?Orden
+    {
+        return $this->ordenRepository->encontrarConDetallesYDevoluciones($ordenId);
     }
 }
 

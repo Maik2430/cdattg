@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Repositories\Interfaces\Inventario\OrdenRepositoryInterface;
-use App\Repositories\Interfaces\Inventario\DetalleOrdenRepositoryInterface;
 use App\Services\Inventario\AprobacionService;
 use App\Exceptions\AprobacionException;
 use Illuminate\Http\Request;
@@ -16,19 +14,12 @@ use App\Http\Controllers\Controller;
 
 class AprobacionController extends Controller
 {
-    protected OrdenRepositoryInterface $repository;
-    protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
     protected AprobacionService $service;
 
-    public function __construct(
-        OrdenRepositoryInterface $repository,
-        DetalleOrdenRepositoryInterface $detalleOrdenRepository,
-        AprobacionService $service
-    ) {
+    public function __construct(AprobacionService $service)
+    {
         $this->middleware('can:APROBAR ORDEN')->only(['aprobar', 'rechazar', 'pendientes']);
         
-        $this->repository = $repository;
-        $this->detalleOrdenRepository = $detalleOrdenRepository;
         $this->service = $service;
     }
 
@@ -37,13 +28,7 @@ class AprobacionController extends Controller
      */
     public function pendientes(): View
     {
-        $estadoEnEspera = $this->service->obtenerEstadoEnEspera();
-
-        if (!$estadoEnEspera) {
-            return view('inventario.aprobaciones.pendientes', ['detalles' => collect()]);
-        }
-
-        $detalles = $this->repository->obtenerDetallesPendientes($estadoEnEspera->id);
+        $detalles = $this->service->obtenerDetallesPendientes();
 
         return view('inventario.aprobaciones.pendientes', compact('detalles'));
     }
@@ -51,14 +36,15 @@ class AprobacionController extends Controller
     /**
      * Aprobar una solicitud
      */
-    public function aprobar(Request $request, int $detalleOrdenId): RedirectResponse
+    public function aprobar(int $detalleOrdenId): RedirectResponse
     {
         try {
-            $detalleOrden = $this->detalleOrdenRepository->encontrarConRelaciones($detalleOrdenId);
+            $detalleOrden = $this->service->encontrarDetalleConRelaciones($detalleOrdenId);
             
             if (!$detalleOrden) {
                 abort(404);
             }
+            
             $this->service->aprobarDetalle($detalleOrden);
 
             $producto = $detalleOrden->producto;
@@ -83,7 +69,7 @@ class AprobacionController extends Controller
     {
         try {
             $validated = $request->validated();
-            $detalleOrden = $this->detalleOrdenRepository->encontrarConRelaciones($detalleOrdenId);
+            $detalleOrden = $this->service->encontrarDetalleConRelaciones($detalleOrdenId);
             
             if (!$detalleOrden) {
                 abort(404);
@@ -104,14 +90,15 @@ class AprobacionController extends Controller
     /**
      * Aprobar toda una orden completa
      */
-    public function aprobarOrden(Request $request, int $ordenId): RedirectResponse
+    public function aprobarOrden(int $ordenId): RedirectResponse
     {
         try {
-            $orden = $this->repository->encontrarConDetallesYDevoluciones($ordenId);
+            $orden = $this->service->encontrarOrdenConDetallesYDevoluciones($ordenId);
             
             if (!$orden) {
                 abort(404);
             }
+            
             $this->service->aprobarOrdenCompleta($orden);
 
             return redirect()
@@ -134,7 +121,7 @@ class AprobacionController extends Controller
     {
         try {
             $validated = $request->validated();
-            $orden = $this->repository->encontrarConDetallesYDevoluciones($ordenId);
+            $orden = $this->service->encontrarOrdenConDetallesYDevoluciones($ordenId);
             
             if (!$orden) {
                 abort(404);
