@@ -7,7 +7,6 @@ use App\Http\Controllers\Inventario\AprobacionController;
 // Rutas para órdenes del inventario (préstamos y salidas)
 Route::prefix('inventario')
     ->name('inventario.')
-    ->middleware(['auth'])
     ->group(function () {
         // Vista de préstamos y salidas (GET) - Formulario de solicitud
         Route::get('ordenes/prestamos-salidas', [OrdenController::class, 'prestamosSalidas'])
@@ -52,9 +51,5 @@ Route::prefix('inventario')
                 ->name('aprobaciones.aprobar-orden');
             Route::post('aprobaciones/orden/{orden}/rechazar', [AprobacionController::class, 'rechazarOrden'])
                 ->name('aprobaciones.rechazar-orden');
-
-            // Historial de aprobaciones
-            Route::get('aprobaciones/historial', [AprobacionController::class, 'historial'])
-                ->name('aprobaciones.historial');
         });
     });

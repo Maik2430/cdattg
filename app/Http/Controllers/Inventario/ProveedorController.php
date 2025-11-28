@@ -1,161 +1,119 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
+use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface;
+use App\Inventario\Services\Proveedor\ProveedorService;
 use App\Models\Inventario\Proveedor;
 use App\Models\Departamento;
 use App\Models\Municipio;
+use App\Http\Requests\Inventario\ProveedorRequest;
+use App\Exceptions\ProveedorException;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
-class ProveedorController extends InventarioController
+class ProveedorController extends Controller
 {
-    public function __construct()
-    {
-        parent::__construct();
+    protected ProveedorRepositoryInterface $repository;
+    protected ProveedorService $service;
+
+    public function __construct(
+        ProveedorRepositoryInterface $repository,
+        ProveedorService $service
+    ) {
         $this->middleware('can:VER PROVEEDOR')->only('index', 'show');
         $this->middleware('can:CREAR PROVEEDOR')->only('create', 'store');
         $this->middleware('can:EDITAR PROVEEDOR')->only('edit', 'update');
         $this->middleware('can:ELIMINAR PROVEEDOR')->only('destroy');
+        
+        $this->repository = $repository;
+        $this->service = $service;
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $search = $request->input('search');
+        $filtros = [
+            'search' => $request->input('search'),
+            'per_page' => 10
+        ];
 
-        $proveedoresQuery = Proveedor::with([
-                'userCreate.persona',
-                'userUpdate.persona',
-                'estado.parametro',
-                'departamento',
-                'municipio'
-            ])
-            ->withCount('contratosConvenios')
-            ->latest();
-
-        if (!empty($search)) {
-            $proveedoresQuery->where(function ($query) use ($search) {
-                $query->where('proveedor', 'LIKE', "%{$search}%")
-                    ->orWhere('nit', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%")
-                    ->orWhere('telefono', 'LIKE', "%{$search}%")
-                    ->orWhere('contacto', 'LIKE', "%{$search}%")
-                    ->orWhereHas('departamento', function ($departamentoQuery) use ($search) {
-                        $departamentoQuery->where('departamento', 'LIKE', "%{$search}%");
-                    })
-                    ->orWhereHas('municipio', function ($municipioQuery) use ($search) {
-                        $municipioQuery->where('municipio', 'LIKE', "%{$search}%");
-                    });
-            });
-        }
-
-        $proveedores = $proveedoresQuery
-            ->paginate(10)
-            ->appends($request->only('search'));
-
-        $proveedores->withPath(route('inventario.proveedores.index'));
+        $proveedores = $this->repository->obtenerConFiltros($filtros);
+        $proveedores->appends($request->only('search'));
 
         return view('inventario.proveedores.index', compact('proveedores'));
     }
 
-    public function create()
+    public function create() : View
     {
         $departamentos = Departamento::orderBy('departamento')->get();
-        $municipios = Municipio::with('departamento')->orderBy('municipio')->get();
+        $municipios = Municipio::with('departamento')->get();
         return view('inventario.proveedores.create', compact('departamentos', 'municipios'));
     }
 
-    public function show(Proveedor $proveedor)
+    public function show(Proveedor $proveedor): View
     {
-        $proveedor->load([
-            'contratosConvenios',
-            'userCreate.persona',
-            'userUpdate.persona',
-            'estado.parametro',
-            'departamento',
-            'municipio'
-        ]);
+        $proveedor = $this->repository->encontrarConRelaciones($proveedor->id);
+        
+        if (!$proveedor) {
+            abort(404);
+        }
+
         return view('inventario.proveedores.show', compact('proveedor'));
     }
 
-    public function edit(Proveedor $proveedor)
+    public function edit(Proveedor $proveedor) : View
     {
         $departamentos = Departamento::orderBy('departamento')->get();
-        $municipios = Municipio::with('departamento')->orderBy('municipio')->get();
+        $municipios = Municipio::with('departamento')->get();
         return view('inventario.proveedores.edit', compact('proveedor', 'departamentos', 'municipios'));
     }
 
-    public function store(Request $request)
+    public function store(ProveedorRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'proveedor' => 'required|unique:proveedores,proveedor',
-            'nit' => 'nullable|string|max:50',
-            'email' => 'nullable|email|max:255',
-            'telefono' => 'nullable|string|max:10',
-            'direccion' => 'nullable|string|max:255',
-            'departamento_id' => 'nullable|exists:departamentos,id',
-            'municipio_id' => 'nullable|exists:municipios,id',
-            'contacto' => 'nullable|string|max:100',
-            'estado_id' => 'nullable|exists:parametros_temas,id'
-        ]);
+        $validated = $request->validated();
+        $this->service->crear($validated, Auth::id());
 
-        $proveedor = new Proveedor($validated);
-        $this->setUserIds($proveedor);
-        $proveedor->save();
-
-        return redirect()->route('inventario.proveedores.index')
+        return redirect()
+            ->route('inventario.proveedores.index')
             ->with('success', 'Proveedor creado exitosamente.');
     }
 
-    public function update(Request $request, string $id)
+    public function update(ProveedorRequest $request, Proveedor $proveedor): RedirectResponse
     {
-        $proveedor = Proveedor::findOrFail($id);
+        $validated = $request->validated();
+        $this->service->actualizar($proveedor, $validated, Auth::id());
 
-        $validated = $request->validate([
-            'proveedor' => 'required|unique:proveedores,proveedor,' . $proveedor->id,
-            'nit' => 'nullable|string|max:50|unique:proveedores,nit,' . $proveedor->id,
-            'email' => 'nullable|email|max:255|unique:proveedores,email,' . $proveedor->id,
-            'telefono' => 'nullable|string|max:10',
-            'direccion' => 'nullable|string|max:255',
-            'departamento_id' => 'nullable|exists:departamentos,id',
-            'municipio_id' => 'nullable|exists:municipios,id',
-            'contacto' => 'nullable|string|max:100',
-            'estado_id' => 'nullable|exists:parametros_temas,id'
-        ]);
-
-        $proveedor->fill($validated);
-        $this->setUserIds($proveedor, true);
-        $proveedor->save();
-
-        return redirect()->route('inventario.proveedores.index')
+        return redirect()
+            ->route('inventario.proveedores.index')
             ->with('success', 'Proveedor actualizado exitosamente.');
     }
 
-    public function destroy(Proveedor $proveedor)
+    public function destroy(Proveedor $proveedor): RedirectResponse
     {
         try {
-            $proveedor->delete();
-            return redirect()->route('inventario.proveedores.index')
+            $this->service->eliminar($proveedor);
+            return redirect()
+                ->route('inventario.proveedores.index')
                 ->with('success', 'Proveedor eliminado exitosamente.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'No se puede eliminar el proveedor porque está en uso.');
+        } catch (ProveedorException $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 
     /**
      * Obtener municipios por departamento (API)
      */
-    public function getMunicipiosPorDepartamento($departamentoId)
+    public function getMunicipiosPorDepartamento(int $departamentoId): JsonResponse
     {
         $municipios = Municipio::where('departamento_id', $departamentoId)
             ->orderBy('municipio')
-            ->get()
-            ->map(function($municipio) {
-                return [
-                    'id' => $municipio->id,
-                    'municipio' => $municipio->municipio,
-                    'departamento' => $municipio->departamento->departamento ?? ''
-                ];
-            });
+            ->get(['id', 'municipio']);
 
         return response()->json($municipios);
     }

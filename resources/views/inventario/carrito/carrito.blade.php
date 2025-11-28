@@ -247,7 +247,7 @@
 
 @section('footer')
     {{-- Footer SENA --}}
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 @push('css')

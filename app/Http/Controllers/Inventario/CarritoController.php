@@ -1,48 +1,57 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
-use App\Models\Inventario\Producto;
+use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
+use App\Inventario\Services\Carrito\CarritoService;
+use App\Exceptions\CarritoException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Http\Requests\Inventario\CarritoRequest;
 
 class CarritoController extends Controller
 {
+    protected CarritoService $service;
+    protected ProductoRepositoryInterface $productoRepository;
 
-    public function __construct()
-    {
-        $this->middleware('auth');
-        
+    public function __construct(
+        CarritoService $service,
+        ProductoRepositoryInterface $productoRepository
+    ) {
         // Middlewares de permisos de carrito
         $this->middleware('can:VER CARRITO')->only(['index']);
         $this->middleware('can:AGREGAR CARRITO')->only(['agregar', 'store']);
         $this->middleware('can:ACTUALIZAR CARRITO')->only(['actualizar', 'update']);
         $this->middleware('can:ELIMINAR CARRITO')->only(['eliminar', 'destroy']);
         $this->middleware('can:VACIAR CARRITO')->only(['vaciar']);
+        
+        $this->service = $service;
+        $this->productoRepository = $productoRepository;
     }
 
     // Vista del carrito
-    public function index()
+    public function index() : View
     {
         return view('inventario.carrito.carrito');
     }
 
     // Agregar productos al carrito (crear orden)
-    public function agregar(Request $request): JsonResponse
+    public function agregar(CarritoRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'items' => 'required|array|min:1',
-            'items.*.producto_id' => 'required|exists:productos,id',
-            'items.*.cantidad' => 'required|integer|min:1',
-            'notas' => 'nullable|string|max:1000'
-        ]);
-
         try {
-            $availabilityResponse = $this->checkItemsAvailability($validated['items']);
+            $validated = $request->validated();
+            $erroresStock = $this->service->verificarDisponibilidad($validated['items']);
 
-            if ($availabilityResponse) {
-                return $availabilityResponse;
+            if (!empty($erroresStock)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stock insuficiente para algunos productos',
+                    'errores' => $erroresStock
+                ], 400);
             }
 
             // La creación de la orden se completa en el formulario de préstamos/salidas.
@@ -52,6 +61,11 @@ class CarritoController extends Controller
                 'orden_id' => null
             ]);
 
+        } catch (CarritoException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -61,34 +75,23 @@ class CarritoController extends Controller
     }
 
     // Actualizar cantidad de un producto en el carrito
-     
-    public function actualizar(Request $request, $id)
+    public function actualizar(CarritoRequest $request, int $id): JsonResponse
     {
-        $validated = $request->validate([
-            'cantidad' => 'required|integer|min:1'
-        ]);
-
         try {
-            $producto = Producto::findOrFail($id);
+            $validated = $request->validated();
+            $resultado = $this->service->validarItem($id, (int)$validated['cantidad']);
 
-            if ($producto->cantidad < $validated['cantidad']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Stock insuficiente',
-                    'stock_disponible' => $producto->cantidad
-                ], 400);
+            if (!$resultado['success']) {
+                return response()->json($resultado, 400);
             }
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Cantidad actualizada',
-                'producto' => [
-                    'id' => $producto->id,
-                    'nombre' => $producto->producto,
-                    'stock' => $producto->cantidad
-                ]
-            ]);
+            return response()->json($resultado);
 
+        } catch (CarritoException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -97,14 +100,20 @@ class CarritoController extends Controller
         }
     }
 
-    //Eliminar producto del carrito
-     
-    public function eliminar($id)
+    // Eliminar producto del carrito
+    public function eliminar(int $id): JsonResponse
     {
         try {
             // Esta es una operación del lado del cliente (localStorage)
             // Solo validamos que el producto existe
-            Producto::findOrFail($id);
+            $producto = $this->productoRepository->encontrar($id);
+
+            if (!$producto) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Producto no encontrado'
+                ], 404);
+            }
 
             return response()->json([
                 'success' => true,
@@ -120,7 +129,7 @@ class CarritoController extends Controller
     }
 
 
-    public function vaciar()
+    public function vaciar(): JsonResponse
     {
         // Esta es una operación del lado del cliente (localStorage)
         return response()->json([
@@ -130,36 +139,15 @@ class CarritoController extends Controller
     }
 
     // Obtener contenido del carrito
-    public function contenido(Request $request)
+    public function contenido(Request $request): JsonResponse
     {
         try {
             $items = $request->input('items', []);
-            $productos = [];
-
-            foreach ($items as $item) {
-                $producto = Producto::with([
-                    'categoria',
-                    'marca',
-                    'estado.parametro'
-                ])->find($item['id']);
-
-                if ($producto) {
-                    $productos[] = [
-                        'id' => $producto->id,
-                        'nombre' => $producto->producto,
-                        'codigo' => $producto->codigo_barras,
-                        'imagen' => $producto->imagen,
-                        'stock' => $producto->cantidad,
-                        'categoria' => $producto->categoria->name ?? 'Sin categoría',
-                        'marca' => $producto->marca->name ?? 'Sin marca',
-                        'descripcion' => $producto->descripcion
-                    ];
-                }
-            }
+            $productos = $this->service->obtenerProductosParaCarrito($items);
 
             return response()->json([
                 'success' => true,
-                'productos' => $productos
+                'productos' => $productos->values()->all()
             ]);
 
         } catch (\Exception $e) {
@@ -168,40 +156,6 @@ class CarritoController extends Controller
                 'message' => 'Error al obtener contenido: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    private function checkItemsAvailability(array $items): ?JsonResponse
-    {
-        $erroresStock = [];
-
-        foreach ($items as $item) {
-            $producto = Producto::find($item['producto_id']);
-
-            if (!$producto) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Producto no encontrado'
-                ], 404);
-            }
-
-            if ($producto->cantidad < $item['cantidad']) {
-                $erroresStock[] = [
-                    'producto' => $producto->producto,
-                    'solicitado' => $item['cantidad'],
-                    'disponible' => $producto->cantidad
-                ];
-            }
-        }
-
-        if (!empty($erroresStock)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Stock insuficiente para algunos productos',
-                'errores' => $erroresStock
-            ], 400);
-        }
-
-        return null;
     }
 }
 

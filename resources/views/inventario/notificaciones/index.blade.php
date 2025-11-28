@@ -16,7 +16,6 @@
         subtitle="Administra tus notificaciones del sistema"
         :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
-            ['label' => 'Inventario', 'active' => true],
             ['label' => 'Notificaciones', 'active' => true]
         ]"
     />
@@ -35,24 +34,26 @@
                                     <span class="badge badge-primary">{{ $notificaciones->total() }}</span>
                                 @endif
                             </h3>
-                            <div class="card-tools">
-                                <button 
-                                    type="button" 
-                                    class="btn btn-sm btn-primary mr-1" 
-                                    id="marcar-todas-leidas" 
-                                    title="Marcar todas como leídas"
-                                >
-                                    <i class="fas fa-check-double"></i> Marcar leídas
-                                </button>
-                                <button 
-                                    type="button" 
-                                    class="btn btn-sm btn-danger" 
-                                    id="vaciar-notificaciones" 
-                                    title="Eliminar todas las notificaciones"
-                                >
-                                    <i class="fas fa-trash-alt"></i> Vaciar todo
-                                </button>
-                            </div>
+                            @if($notificaciones->count() > 0)
+                                <div class="card-tools">
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-primary mr-1"
+                                        id="marcar-todas-leidas"
+                                        title="Marcar todas como leídas"
+                                    >
+                                        <i class="fas fa-check-double"></i> Marcar leídas
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-danger"
+                                        id="vaciar-notificaciones"
+                                        title="Eliminar todas las notificaciones"
+                                    >
+                                        <i class="fas fa-trash-alt"></i> Vaciar todo
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                         <div class="card-body p-0">
                             @if($notificaciones->count() > 0)
@@ -78,8 +79,8 @@
                                             }
                                             
                                             // Decodificar datos si es string
-                                            $datos = is_string($notificacion->datos) 
-                                                ? json_decode($notificacion->datos, true) 
+                                            $datos = is_string($notificacion->datos)
+                                                ? json_decode($notificacion->datos, true)
                                                 : $notificacion->datos;
                                             $datosTipo = $datos['tipo'] ?? null;
                                             $accionUrl = null;
@@ -125,44 +126,44 @@
                                                                 <strong>
                                                                     {{ $datos['producto_nombre'] ?? ($datos['producto']['producto'] ?? 'N/A') }}
                                                                 </strong>
-                                                                - Stock: 
+                                                                - Stock:
                                                                 <span class="badge badge-{{ ($datos['stock_actual'] ?? 0) == 0 ? 'danger' : 'warning' }}">
                                                                     {{ $datos['stock_actual'] ?? 0 }}
                                                                 </span>
                                                             @elseif(str_contains($tipo, 'Aprobada'))
-                                                                Tu solicitud de 
+                                                                Tu solicitud de
                                                                 <strong>
-                                                                    {{ $datos['cantidad'] ?? 0 }} 
+                                                                    {{ $datos['cantidad'] ?? 0 }}
                                                                     {{ ($datos['cantidad'] ?? 0) > 1 ? 'unidades' : 'unidad' }}
                                                                 </strong>
-                                                                de 
-                                                                <strong>{{ $datos['producto']['producto'] ?? 'N/A' }}</strong> 
+                                                                de
+                                                                <strong>{{ $datos['producto']['producto'] ?? 'N/A' }}</strong>
                                                                 ha sido aprobada.
                                                                 <br>
                                                                 <small class="text-muted">
-                                                                    <i class="fas fa-user-check"></i> 
-                                                                    Aprobado por: 
+                                                                    <i class="fas fa-user-check"></i>
+                                                                    Aprobado por:
                                                                     <strong>{{ $datos['aprobador']['name'] ?? 'N/A' }}</strong>
                                                                     |
-                                                                    <i class="fas fa-shopping-cart"></i> 
+                                                                    <i class="fas fa-shopping-cart"></i>
                                                                     Orden #{{ $datos['orden_id'] ?? 'N/A' }}
                                                                 </small>
                                                             @elseif(str_contains($tipo, 'Rechazada'))
-                                                                Tu solicitud de 
+                                                                Tu solicitud de
                                                                 <strong>
-                                                                    {{ $datos['cantidad'] ?? 0 }} 
+                                                                    {{ $datos['cantidad'] ?? 0 }}
                                                                     {{ ($datos['cantidad'] ?? 0) > 1 ? 'unidades' : 'unidad' }}
                                                                 </strong>
-                                                                de 
-                                                                <strong>{{ $datos['producto']['producto'] ?? 'N/A' }}</strong> 
+                                                                de
+                                                                <strong>{{ $datos['producto']['producto'] ?? 'N/A' }}</strong>
                                                                 ha sido rechazada.
                                                                 <br>
                                                                 <small class="text-muted">
-                                                                    <i class="fas fa-user-times"></i> 
-                                                                    Rechazado por: 
+                                                                    <i class="fas fa-user-times"></i>
+                                                                    Rechazado por:
                                                                     <strong>{{ $datos['aprobador']['name'] ?? 'N/A' }}</strong>
                                                                     |
-                                                                    <i class="fas fa-shopping-cart"></i> 
+                                                                    <i class="fas fa-shopping-cart"></i>
                                                                     Orden #{{ $datos['orden_id'] ?? 'N/A' }}
                                                                 </small>
                                                                 @if(isset($datos['motivo_rechazo']) && !empty(trim($datos['motivo_rechazo'])))
@@ -172,7 +173,7 @@
                                                                     </div>
                                                                 @endif
                                                             @elseif(str_contains($tipo, 'NuevaOrden'))
-                                                                <strong>Orden #{{ $datos['orden_id'] ?? 'N/A' }}</strong> 
+                                                                <strong>Orden #{{ $datos['orden_id'] ?? 'N/A' }}</strong>
                                                                 - {{ $datos['tipo_orden'] ?? 'N/A' }}
                                                                 <br>{{ $datos['solicitante']['name'] ?? 'N/A' }}
                                                                 <span class="badge badge-info">{{ $datos['solicitante']['rol'] ?? 'N/A' }}</span>
@@ -193,9 +194,9 @@
                                                         </button>
                                                     @endif
                                                     @if(is_null($notificacion->leida_en))
-                                                        <button 
-                                                            class="btn btn-sm btn-outline-primary mark-read mb-1" 
-                                                            data-id="{{ $notificacion->id }}" 
+                                                        <button
+                                                            class="btn btn-sm btn-outline-primary mark-read mb-1"
+                                                            data-id="{{ $notificacion->id }}"
                                                             title="Marcar como leída"
                                                         >
                                                             <i class="fas fa-check"></i>
@@ -205,9 +206,9 @@
                                                             <i class="fas fa-check"></i>
                                                         </span>
                                                     @endif
-                                                    <button 
-                                                        class="btn btn-sm btn-outline-danger delete-notification d-block" 
-                                                        data-id="{{ $notificacion->id }}" 
+                                                    <button
+                                                        class="btn btn-sm btn-outline-danger delete-notification d-block"
+                                                        data-id="{{ $notificacion->id }}"
                                                         title="Eliminar"
                                                     >
                                                         <i class="fas fa-trash"></i>
@@ -224,7 +225,7 @@
                                     </div>
                                     <div class="float-left pt-2">
                                         <small class="text-muted">
-                                            Mostrando {{ $notificaciones->firstItem() ?? 0 }} a {{ $notificaciones->lastItem() ?? 0 }} 
+                                            Mostrando {{ $notificaciones->firstItem() ?? 0 }} a {{ $notificaciones->lastItem() ?? 0 }}
                                             de {{ $notificaciones->total() }} notificaciones
                                         </small>
                                     </div>
@@ -244,11 +245,7 @@
   {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
 @endsection
 
-@section('footer')
-    {{-- Footer SENA --}}
-    @include('layouts.footer')
-@endsection
-
+@include('inventario._components.common-footer')
 
 @section('js')
 <!-- SweetAlert2 -->

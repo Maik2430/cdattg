@@ -1,77 +1,54 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
+use App\Inventario\Interfaces\Repositories\Orden\OrdenRepositoryInterface;
+use App\Inventario\Services\Orden\OrdenService;
+use App\Models\ProgramaFormacion;
 use Illuminate\Http\Request;
 use App\Exceptions\OrdenException;
 use App\Models\Inventario\Orden;
-use App\Models\Inventario\DetalleOrden;
-use App\Models\Inventario\Producto;
-use App\Models\ProgramaFormacion;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
-use App\Models\ParametroTema;
-use App\Notifications\NuevaOrdenNotification;
-use App\Notifications\StockBajoNotification;
+use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Inventario\OrdenRequest;
+use App\Http\Controllers\Controller;
 
-class OrdenController extends InventarioController
+class OrdenController extends Controller
 {
-    private const RULE_REQUIRED_STRING = 'required|string';
-    private const RULE_REQUIRED_ORDER_STATUS = 'required|exists:parametros_temas,id';
-    private const THEME_ORDER_STATES = 'ESTADOS DE ORDEN';
+    protected OrdenRepositoryInterface $repository;
+    protected OrdenService $service;
 
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        OrdenRepositoryInterface $repository,
+        OrdenService $service
+    ) {
         $this->middleware('can:VER ORDEN')->only(['index', 'show', 'prestamosSalidas']);
         $this->middleware('can:CREAR ORDEN')->only(['store', 'storePrestamos']);
         $this->middleware('can:EDITAR ORDEN')->only(['update']);
         $this->middleware('can:ELIMINAR ORDEN')->only(['destroy']);
         $this->middleware('can:APROBAR ORDEN')->only(['aprobar']);
         $this->middleware('can:COMPLETAR ORDEN')->only(['completar']);
+        
+        $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $search = $request->input('search');
+        $filtros = [
+            'search' => $request->input('search'),
+            'per_page' => 15
+        ];
 
-        $ordenesQuery = Orden::with([
-            'tipoOrden.parametro',
-            'userCreate',
-            'detalles.producto',
-            'detalles.estadoOrden.parametro'
-        ])->latest();
-
-        if (!empty($search)) {
-            $ordenesQuery->where(function ($query) use ($search) {
-                $query->where('descripcion_orden', 'LIKE', "%{$search}%")
-                    ->orWhereHas('userCreate', function ($userQuery) use ($search) {
-                        $userQuery->where('name', 'LIKE', "%{$search}%");
-                    })
-                    ->orWhereHas('tipoOrden.parametro', function ($tipoQuery) use ($search) {
-                        $tipoQuery->where('name', 'LIKE', "%{$search}%");
-                    })
-                    ->orWhereHas('detalles.producto', function ($productoQuery) use ($search) {
-                        $productoQuery->where('producto', 'LIKE', "%{$search}%")
-                            ->orWhere('codigo_barras', 'LIKE', "%{$search}%");
-                    });
-
-                if (is_numeric($search)) {
-                    $query->orWhere('id', (int) $search);
-                }
-            });
-        }
-
-        $ordenes = $ordenesQuery
-            ->paginate(15)
-            ->appends($request->only('search'));
-
-        $ordenes->withPath(route('inventario.ordenes.index'));
+        $ordenes = $this->repository->obtenerConFiltros($filtros);
+        $ordenes->appends($request->only('search'));
         
         return view('inventario.ordenes.index', compact('ordenes'));
     }
@@ -79,63 +56,17 @@ class OrdenController extends InventarioController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OrdenRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'descripcion_orden' => self::RULE_REQUIRED_STRING,
-            'tipo_orden_id' => self::RULE_REQUIRED_ORDER_STATUS,
-            'fecha_devolucion' => 'nullable|date|after:today',
-            'productos' => 'required|array|min:1',
-            'productos.*.producto_id' => 'required|exists:productos,id',
-            'productos.*.cantidad' => 'required|integer|min:1',
-            'productos.*.estado_orden_id' => self::RULE_REQUIRED_ORDER_STATUS
-        ]);
-
         try {
-            DB::beginTransaction();
+            $validated = $request->validated();
+            $this->service->crear($validated, Auth::id());
 
-            // Crear la orden
-            $orden = new Orden([
-                'descripcion_orden' => $validated['descripcion_orden'],
-                'tipo_orden_id' => $validated['tipo_orden_id'],
-                'fecha_devolucion' => $validated['fecha_devolucion'] ?? null
-            ]);
-            $this->setUserIds($orden);
-            $orden->save();
-
-            // Procesar cada producto
-            foreach ($validated['productos'] as $productoData) {
-                $producto = Producto::findOrFail($productoData['producto_id']);
-
-                // Validar stock disponible
-                if (!$producto->tieneStockDisponible($productoData['cantidad'])) {
-                    throw new OrdenException(
-                        "Stock insuficiente para el producto '{$producto->producto}'. " .
-                        "Disponible: {$producto->cantidad}, Solicitado: {$productoData['cantidad']}"
-                    );
-                }
-
-                // Crear detalle de orden
-                $detalle = new DetalleOrden([
-                    'orden_id' => $orden->id,
-                    'producto_id' => $producto->id,
-                    'cantidad' => $productoData['cantidad'],
-                    'estado_orden_id' => $productoData['estado_orden_id']
-                ]);
-                $this->setUserIds($detalle);
-                $detalle->save();
-
-                // Descontar stock
-                $producto->descontarStock($productoData['cantidad']);
-            }
-
-            DB::commit();
-
-            return redirect()->route('inventario.ordenes.index')
+            return redirect()
+                ->route('inventario.ordenes.index')
                 ->with('success', 'Orden creada exitosamente. Stock actualizado.');
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (OrdenException $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error al crear la orden: ' . $e->getMessage());
@@ -145,107 +76,53 @@ class OrdenController extends InventarioController
     /**
      * Mostrar formulario de solicitud de préstamo/salida
      */
-    public function prestamosSalidas()
+    public function prestamosSalidas() : View
     {
         $programas = ProgramaFormacion::where('status', true)
             ->orderBy('nombre', 'asc')
             ->get(['id', 'nombre', 'codigo']);
-            
+
         return view('inventario.ordenes.prestamos_salidas', compact('programas'));
     }
 
     /**
      * Mostrar órdenes pendientes (EN ESPERA)
      */
-    public function pendientes()
+    public function pendientes(): View
     {
-        $estadoEnEspera = ParametroTema::whereHas('parametro', function($q) {
-            $q->where('name', 'EN ESPERA');
-        })
-        ->whereHas('tema', function($q) {
-            $q->where('name', self::THEME_ORDER_STATES);
-        })
-        ->first();
-
-        $ordenes = collect();
-        
-        if ($estadoEnEspera) {
-            $ordenes = Orden::with([
-                'tipoOrden.parametro',
-                'userCreate',
-                'detalles.producto',
-                'detalles.estadoOrden.parametro'
-            ])
-            ->whereHas('detalles', function($q) use ($estadoEnEspera) {
-                $q->where('estado_orden_id', $estadoEnEspera->id);
-            })
-            ->latest()
-            ->paginate(15);
+        try {
+            $estadoEnEspera = $this->service->obtenerEstadoEnEspera();
+            $ordenes = $this->repository->obtenerPendientes($estadoEnEspera->id);
+        } catch (OrdenException $e) {
+            $ordenes = collect();
         }
-        
+
         return view('inventario.ordenes.pendientes', compact('ordenes'));
     }
 
     /**
      * Mostrar órdenes completadas (APROBADA)
      */
-    public function completadas()
+    public function completadas(): View
     {
-        $estadoAprobada = ParametroTema::whereHas('parametro', function($q) {
-            $q->where('name', 'APROBADA');
-        })
-        ->whereHas('tema', function($q) {
-            $q->where('name', self::THEME_ORDER_STATES);
-        })
-        ->first();
-
-        $ordenes = collect();
-        
-        if ($estadoAprobada) {
-            $ordenes = Orden::with([
-                'tipoOrden.parametro',
-                'userCreate',
-                'detalles.producto',
-                'detalles.estadoOrden.parametro'
-            ])
-            ->whereHas('detalles', function($q) use ($estadoAprobada) {
-                $q->where('estado_orden_id', $estadoAprobada->id);
-            })
-            ->latest()
-            ->paginate(15);
+        try {
+            $estadoAprobada = $this->service->obtenerEstadoAprobada();
+            $ordenes = $this->repository->obtenerCompletadas($estadoAprobada->id);
+        } catch (OrdenException $e) {
+            $ordenes = collect();
         }
-        
+
         return view('inventario.ordenes.completadas', compact('ordenes'));
     }
 
     /**
      * Mostrar órdenes rechazadas (RECHAZADA)
      */
-    public function rechazadas()
+    public function rechazadas(): View
     {
-        $estadoRechazada = ParametroTema::whereHas('parametro', function($q) {
-            $q->where('name', 'RECHAZADA');
-        })
-        ->whereHas('tema', function($q) {
-            $q->where('name', self::THEME_ORDER_STATES);
-        })
-        ->first();
-
-        $ordenes = collect();
-        
-        if ($estadoRechazada) {
-            $ordenes = Orden::with([
-                'tipoOrden.parametro',
-                'userCreate',
-                'detalles.producto',
-                'detalles.estadoOrden.parametro'
-            ])
-            ->whereHas('detalles', function($q) use ($estadoRechazada) {
-                $q->where('estado_orden_id', $estadoRechazada->id);
-            })
-            ->latest()
-            ->paginate(15);
-        }
+        // Obtener estado RECHAZADA desde AprobacionService
+        $estadoRechazada = app(\App\Inventario\Services\Aprobacion\AprobacionService::class)->obtenerEstadoRechazada();
+        $ordenes = $this->repository->obtenerRechazadas($estadoRechazada->id);
         
         return view('inventario.ordenes.rechazadas', compact('ordenes'));
     }
@@ -253,254 +130,52 @@ class OrdenController extends InventarioController
     /**
      * Store a newly created resource in storage (Préstamos y Salidas).
      */
-    public function storePrestamos(Request $request)
+    public function storePrestamos(OrdenRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'rol' => 'required|string|max:100',
-            'programa_formacion' => 'required|string|max:255',
-            'tipo' => 'required|in:prestamo,salida',
-            'fecha_devolucion' => 'required_if:tipo,prestamo|nullable|date|after:today',
-            'descripcion' => self::RULE_REQUIRED_STRING,
-            'carrito' => 'required|json' // El carrito viene como JSON desde el frontend
-        ]);
-
         try {
-            DB::beginTransaction();
+            $validated = $request->validated();
+            $this->service->crearDesdeCarrito($validated, Auth::id());
 
-            // Decodificar el carrito
-            $carrito = json_decode($validated['carrito'], true);
-            
-            if (empty($carrito) || !is_array($carrito)) {
-                throw new OrdenException('El carrito está vacío. Agregue productos antes de crear la solicitud.');
-            }
+            Session::forget('carrito_data');
 
-            // Determinar el tipo de orden (PRÉSTAMO o SALIDA)
-            $tipoMap = [
-                'prestamo' => 'PRÉSTAMO',
-                'salida' => 'SALIDA'
-            ];
-            
-            $codigoTipoOrden = $tipoMap[$validated['tipo']] ?? strtoupper($validated['tipo']);
-
-            // Buscar el parámetro de tipo de orden (tema: TIPOS DE ORDEN)
-            $parametroTipoOrden = $this->findParametroTipoOrden($codigoTipoOrden);
-
-            // Buscar parámetro de estado 'EN ESPERA' (tema: ESTADOS DE ORDEN)
-            $estadoEnEspera = $this->findEstadoEnEspera();
-
-
-            // Obtener datos del usuario
-            $usuario = Auth::user();
-            $solicitante = $usuario->name ?? 'Usuario';
-            $email = $usuario->email ?? '';
-
-            // Crear descripción detallada
-            $descripcionDetallada = sprintf(
-                "SOLICITUD DE %s\n\n" .
-                "SOLICITANTE:\n" .
-                "Nombre: %s\n" .
-                "Email: %s\n" .
-                "Rol: %s\n" .
-                "Programa de Formación: %s\n\n" .
-                "DETALLES:\n" .
-                "Tipo: %s\n" .
-                "%s\n" .
-                "MOTIVO:\n%s",
-                strtoupper($validated['tipo']),
-                $solicitante,
-                $email,
-                $validated['rol'],
-                $validated['programa_formacion'],
-                ucfirst($validated['tipo']),
-                $validated['tipo'] === 'prestamo' && !empty($validated['fecha_devolucion']) 
-                    ? "Fecha de Devolución: {$validated['fecha_devolucion']}\n" 
-                    : "Sin fecha de devolución\n",
-                $validated['descripcion']
-            );
-
-            // Crear la orden
-            $orden = new Orden([
-                'descripcion_orden' => $descripcionDetallada,
-                'tipo_orden_id' => $parametroTipoOrden->id,
-                'fecha_devolucion' => $validated['tipo'] === 'prestamo' ? $validated['fecha_devolucion'] : null
-            ]);
-            
-            $this->setUserIds($orden);
-            $orden->save();
-
-            // Procesar productos del carrito
-            foreach ($carrito as $item) {
-                $productoId = $item['id'] ?? $item['producto_id'] ?? null;
-                $cantidad = (int)($item['quantity'] ?? $item['cantidad'] ?? 1);
-
-                if (!$productoId) {
-                    continue;
-                }
-
-                $producto = Producto::find($productoId);
-                
-                if (!$producto) {
-                    throw new OrdenException("Producto con ID {$productoId} no encontrado.");
-                }
-
-                // Validar stock disponible
-                if ($producto->cantidad < $cantidad) {
-                    throw new OrdenException(
-                        "Stock insuficiente para '{$producto->producto}'. " .
-                        "Disponible: {$producto->cantidad}, Solicitado: {$cantidad}"
-                    );
-                }
-
-                // Crear detalle en estado EN ESPERA (no descontar stock aún)
-                $detalle = new DetalleOrden([
-                    'orden_id' => $orden->id,
-                    'producto_id' => $producto->id,
-                    'cantidad' => $cantidad,
-                    'estado_orden_id' => $estadoEnEspera->id
-                ]);
-                $this->setUserIds($detalle);
-                $detalle->save();
-            }
-
-            DB::commit();
-
-            // Limpiar el carrito después de crear la orden exitosamente
-            session()->forget('carrito_data');
-            // Notificar a superadministradores sobre la nueva orden
-            $superadmins = User::role('SUPER ADMINISTRADOR')->get();
-            if ($superadmins->isNotEmpty()) {
-                Notification::send($superadmins, new NuevaOrdenNotification($orden));
-            }
-
-            return redirect()->route('inventario.productos.catalogo')
+            return redirect()
+                ->route('inventario.productos.catalogo')
                 ->with('success', 'Solicitud creada exitosamente. Está pendiente de aprobación por el administrador.')
                 ->with('clear_cart', true);
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (OrdenException $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error al crear la solicitud: ' . $e->getMessage());
         }
     }
 
-    private function findParametroTipoOrden(string $codigoTipoOrden): ParametroTema
-    {
-        $parametroTipoOrden = ParametroTema::whereHas('tema', function ($q) {
-                $q->whereRaw('UPPER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(name, "Á", "A"), "É", "E"), "Í", "I"), "Ó", "O"), "Ú", "U")) = ?', ['TIPOS DE ORDEN']);
-            })
-            ->whereHas('parametro', function ($q) use ($codigoTipoOrden) {
-                $nombreNormalizado = str_replace(
-                    ['Á', 'É', 'Í', 'Ó', 'Ú'],
-                    ['A', 'E', 'I', 'O', 'U'],
-                    strtoupper($codigoTipoOrden)
-                );
-                $q->whereRaw('UPPER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(name, "Á", "A"), "É", "E"), "Í", "I"), "Ó", "O"), "Ú", "U")) = ?', [$nombreNormalizado]);
-            })
-            ->first();
-
-        if (!$parametroTipoOrden) {
-                throw new OrdenException("Tipo de orden '{$codigoTipoOrden}' no encontrado. Verifique los parámetros del sistema.");
-        }
-
-        return $parametroTipoOrden;
-    }
-
-    private function findEstadoEnEspera(): ParametroTema
-    {
-        $estadoEnEspera = ParametroTema::whereHas('tema', function ($q) {
-                $q->whereRaw('UPPER(name) = ?', [self::THEME_ORDER_STATES]);
-            })
-            ->whereHas('parametro', function ($q) {
-                $q->whereRaw('UPPER(name) = ?', ['EN ESPERA']);
-            })
-            ->first();
-
-        if (!$estadoEnEspera) {
-                throw new OrdenException("Estado 'EN ESPERA' no encontrado. Verifique los parámetros del sistema.");
-        }
-
-        return $estadoEnEspera;
-    }
-
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(OrdenRequest $request, string $id): RedirectResponse
     {
-        $orden = Orden::with(['detalles.producto'])->findOrFail($id);
-
-        // Verificar si la orden ya tiene devoluciones
-        $tieneDevoluciones = $orden->detalles()->whereHas('devoluciones')->exists();
+        $orden = $this->repository->encontrarConDetallesYDevoluciones((int) $id);
         
-        if ($tieneDevoluciones) {
-            return redirect()->route('inventario.ordenes.index', $orden->id)
+        if (!$orden) {
+            abort(404);
+        }
+
+        if ($this->service->tieneDevoluciones($orden)) {
+            return redirect()
+                ->route('inventario.ordenes.index', $orden->id)
                 ->with('error', 'No se puede editar una orden que ya tiene devoluciones registradas.');
         }
 
-        $validated = $request->validate([
-            'descripcion_orden' => self::RULE_REQUIRED_STRING,
-            'tipo_orden_id' => self::RULE_REQUIRED_ORDER_STATUS,
-            'fecha_devolucion' => 'nullable|date|after:today',
-            'productos' => 'required|array|min:1',
-            'productos.*.producto_id' => 'required|exists:productos,id',
-            'productos.*.cantidad' => 'required|integer|min:1',
-            'productos.*.estado_orden_id' => self::RULE_REQUIRED_ORDER_STATUS
-        ]);
-
         try {
-            DB::beginTransaction();
+            $validated = $request->validated();
+            $this->service->actualizar($orden, $validated, Auth::id());
 
-            // Primero devolver el stock de los productos anteriores
-            foreach ($orden->detalles as $detalle) {
-                $detalle->producto->devolverStock($detalle->cantidad);
-            }
-
-            // Eliminar detalles anteriores
-            $orden->detalles()->delete();
-
-            // Actualizar la orden
-            $orden->fill([
-                'descripcion_orden' => $validated['descripcion_orden'],
-                'tipo_orden_id' => $validated['tipo_orden_id'],
-                'fecha_devolucion' => $validated['fecha_devolucion'] ?? null
-            ]);
-            $this->setUserIds($orden, true);
-            $orden->save();
-
-            // Procesar nuevos productos
-            foreach ($validated['productos'] as $productoData) {
-                $producto = Producto::findOrFail($productoData['producto_id']);
-
-                // Validar stock disponible
-                if (!$producto->tieneStockDisponible($productoData['cantidad'])) {
-                    throw new OrdenException(
-                        "Stock insuficiente para el producto '{$producto->producto}'. " .
-                        "Disponible: {$producto->cantidad}, Solicitado: {$productoData['cantidad']}"
-                    );
-                }
-
-                // Crear nuevo detalle de orden
-                $detalle = new DetalleOrden([
-                    'orden_id' => $orden->id,
-                    'producto_id' => $producto->id,
-                    'cantidad' => $productoData['cantidad'],
-                    'estado_orden_id' => $productoData['estado_orden_id']
-                ]);
-                $this->setUserIds($detalle);
-                $detalle->save();
-
-                // Descontar stock
-                $producto->descontarStock($productoData['cantidad']);
-            }
-
-            DB::commit();
-
-            return redirect()->route('inventario.ordenes.index', $orden->id)
+            return redirect()
+                ->route('inventario.ordenes.index', $orden->id)
                 ->with('success', 'Orden actualizada exitosamente. Stock actualizado.');
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (OrdenException $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error al actualizar la orden: ' . $e->getMessage());
@@ -510,40 +185,30 @@ class OrdenController extends InventarioController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): RedirectResponse
     {
-        $orden = Orden::with(['detalles.producto', 'detalles.devoluciones'])->findOrFail($id);
-
-        // Verificar si la orden ya tiene devoluciones
-        $tieneDevoluciones = $orden->detalles()->whereHas('devoluciones')->exists();
+        $orden = $this->repository->encontrarConDetallesYDevoluciones((int) $id);
         
-        if ($tieneDevoluciones) {
-            return redirect()->route('inventario.ordenes.index')
+        if (!$orden) {
+            abort(404);
+        }
+
+        if ($this->service->tieneDevoluciones($orden)) {
+            return redirect()
+                ->route('inventario.ordenes.index')
                 ->with('error', 'No se puede eliminar una orden que ya tiene devoluciones registradas.');
         }
 
         try {
-            DB::beginTransaction();
+            $this->service->eliminar($orden);
 
-            // Devolver el stock de todos los productos
-            foreach ($orden->detalles as $detalle) {
-                $detalle->producto->devolverStock($detalle->cantidad);
-            }
-
-            // Eliminar detalles
-            $orden->detalles()->delete();
-
-            // Eliminar orden
-            $orden->delete();
-
-            DB::commit();
-
-            return redirect()->route('inventario.ordenes.index')
+            return redirect()
+                ->route('inventario.ordenes.index')
                 ->with('success', 'Orden eliminada exitosamente. Stock restaurado.');
 
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('inventario.ordenes.index')
+        } catch (OrdenException $e) {
+            return redirect()
+                ->route('inventario.ordenes.index')
                 ->with('error', 'Error al eliminar la orden: ' . $e->getMessage());
         }
     }
@@ -551,15 +216,13 @@ class OrdenController extends InventarioController
     /**
      * Display the specified resource.
      */
-    public function show(Orden $orden)
+    public function show(Orden $orden): View
     {
-        $orden->load([
-            'tipoOrden.parametro',
-            'userCreate',
-            'detalles.producto',
-            'detalles.estadoOrden.parametro',
-            'detalles.aprobacion.aprobador'
-        ]);
+        $orden = $this->repository->encontrarConRelaciones($orden->id);
+        
+        if (!$orden) {
+            abort(404);
+        }
 
         return view('inventario.ordenes.show', compact('orden'));
     }

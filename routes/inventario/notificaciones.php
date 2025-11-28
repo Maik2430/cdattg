@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventario\NotificacionController;
 
 // Rutas de notificaciones del módulo de inventario
-Route::prefix('inventario')->middleware(['auth'])->group(function () {
+Route::prefix('inventario')->group(function () {
     Route::prefix('notificaciones')->name('inventario.notificaciones.')->group(function () {
         Route::get('/', [NotificacionController::class, 'index'])->name('index');
         Route::get('/unread', [NotificacionController::class, 'getUnread'])->name('unread');

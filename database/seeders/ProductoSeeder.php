@@ -9,6 +9,84 @@ use App\Models\Inventario\Producto;
 class ProductoSeeder extends Seeder
 {
     private const DEFAULT_IMAGE_PATH = 'img/inventario/producto-default.png';
+    
+    // Constantes para productos duplicados
+    private const PRODUCTO_GRADILLA_PARA_TUBOS_DE_ENSAYO = 'GRADILLA PARA TUBOS DE ENSAYO';
+    private const PRODUCTO_TAPA_PL_STICA_CON_ENRROSQUE = 'TAPA PLÁSTICA CON ENRROSQUE';
+    private const PRODUCTO_BOLSA_PARA_EMPACAR_AL_VAC_O = 'BOLSA PARA EMPACAR AL VACÍO';
+    private const PRODUCTO_BATA_DE_LABORATORIO_VERDE = 'BATA DE LABORATORIO (VERDE)';
+    private const PRODUCTO_BATA_DE_LABORATORIO_AZUL = 'BATA DE LABORATORIO (AZUL)';
+    private const PRODUCTO_ENVASE_PL_STICO_DE_YOGURT = 'ENVASE PLÁSTICO DE YOGURT';
+    private const PRODUCTO_BLANQUEADOR_DESINFECTANTE = 'BLANQUEADOR DESINFECTANTE';
+    private const PRODUCTO_HIPOCLORITO_DE_SODIO_15 = 'HIPOCLORITO DE SODIO 15%';
+    private const PRODUCTO_ALCOHOL_ETILICO_AL_96 = 'ALCOHOL ETILICO AL 96%';
+    private const PRODUCTO_MATRAZ_AFORADO_100_ML = 'MATRAZ AFORADO 100 ML';
+    private const PRODUCTO_MATRAZ_AFORADO_250_ML = 'MATRAZ AFORADO 250 ML';
+    private const PRODUCTO_PIPETA_GRADUADA_10_ML = 'PIPETA GRADUADA 10 ML';
+    private const PRODUCTO_PIPETA_GRADUADA_20_ML = 'PIPETA GRADUADA 20 ML';
+    private const PRODUCTO_PIPETA_GRADUADA_25_ML = 'PIPETA GRADUADA 25 ML';
+    private const PRODUCTO_PROBETA_VIDRIO_100_ML = 'PROBETA VIDRIO 100 ML';
+    private const PRODUCTO_PROBETA_VIDRIO_500_ML = 'PROBETA VIDRIO 500 ML';
+    private const PRODUCTO_MATRAZ_AFORADO_500_ML = 'MATRAZ AFORADO 500 ML';
+    private const PRODUCTO_PIPETA_GRADUADA_1_ML = 'PIPETA GRADUADA 1 ML';
+    private const PRODUCTO_PIPETA_GRADUADA_5_ML = 'PIPETA GRADUADA 5 ML';
+    private const PRODUCTO_PIPETA_AFORADA_10_ML = 'PIPETA AFORADA 10 ML';
+    private const PRODUCTO_ALCOHOL_ISOPROPILICO = 'ALCOHOL ISOPROPILICO';
+    private const PRODUCTO_WATER_WORKS_PEROXIDE = 'WATER WORKS PEROXIDE';
+    private const PRODUCTO_FRASCO_SCHOT_500_ML = 'FRASCO SCHOT 500 ML';
+    private const PRODUCTO_FRASCO_SCHOT_250_ML = 'FRASCO SCHOT 250 ML';
+    private const PRODUCTO_SULFATO_DE_ALUMINIO = 'SULFATO DE ALUMINIO';
+    private const PRODUCTO_CLORURO_DE_MAGNESIO = 'CLORURO DE MAGNESIO';
+    private const PRODUCTO_PINZAS_PARA_CRISOL = 'PINZAS PARA CRISOL';
+    private const PRODUCTO_REJILLA_DE_ASBESTO = 'REJILLA DE ASBESTO';
+    private const PRODUCTO_ALCOHOL_INDUSTRIAL = 'ALCOHOL INDUSTRIAL';
+    private const PRODUCTO_GUANTES_DE_NITRILO = 'GUANTES DE NITRILO';
+    private const PRODUCTO_JARRA_PARA_ESPUMAR = 'JARRA PARA ESPUMAR';
+    private const PRODUCTO_GUANTES_INDUSTRIAL = 'GUANTES INDUSTRIAL';
+    private const PRODUCTO_BOLSA_PARA_EMPAQUE = 'BOLSA PARA EMPAQUE';
+    private const PRODUCTO_TERMOMETRO_TH_310 = 'TERMOMETRO TH 310';
+    private const PRODUCTO_HIPOCLORITO_5_25 = 'HIPOCLORITO 5,25%';
+    private const PRODUCTO_ERLENMEYER_500_ML = 'ERLENMEYER 500 ML';
+    private const PRODUCTO_BOLSA_PARA_BASURA = 'BOLSA PARA BASURA';
+    private const PRODUCTO_PAPEL_ABSORBENTE = 'PAPEL ABSORBENTE';
+    private const PRODUCTO_AZUL_DE_METILENO = 'AZUL DE METILENO';
+    private const PRODUCTO_FRASCO_DE_VIDRIO = 'FRASCO DE VIDRIO';
+    private const PRODUCTO_PROBETA_GRADUADA = 'PROBETA GRADUADA';
+    private const PRODUCTO_BOLSA_DE_BASURA = 'BOLSA DE BASURA';
+    private const PRODUCTO_BEAKERS_1000_ML = 'BEAKERS 1000 ML';
+    private const PRODUCTO_ALMIDON_DE_YUCA = 'ALMIDON DE YUCA';
+    private const PRODUCTO_PIPETEADOR_PUMP = 'PIPETEADOR PUMP';
+    private const PRODUCTO_CARBON_ACTIVADO = 'CARBON ACTIVADO';
+    private const PRODUCTO_ACIDO_SULFURICO = 'ACIDO SULFURICO';
+    private const PRODUCTO_PAPEL_ALUMINIO = 'PAPEL ALUMINIO';
+    private const PRODUCTO_MECHERO_BUNSEN = 'MECHERO BUNSEN';
+    private const PRODUCTO_BEAKERS_600_ML = 'BEAKERS 600 ML';
+    private const PRODUCTO_BEAKERS_100_ML = 'BEAKERS 100 ML';
+    private const PRODUCTO_VINAGRE_BLANCO = 'VINAGRE BLANCO';
+    private const PRODUCTO_TRIETANOLAMINA = 'TRIETANOLAMINA';
+    private const PRODUCTO_TUBO_DE_ENSAYO = 'TUBO DE ENSAYO';
+    private const PRODUCTO_TABLA_DE_PICAR = 'TABLA DE PICAR';
+    private const PRODUCTO_TAPA_MET_LICA = 'TAPA METÁLICA';
+    private const PRODUCTO_PISETA_500_ML = 'PISETA 500 ML';
+    private const PRODUCTO_FENOLFTALEINA = 'FENOLFTALEINA';
+    private const PRODUCTO_BOLSA_DOYPACK = 'BOLSA DOYPACK';
+    private const PRODUCTO_PAPEL_FILTRO = 'PAPEL FILTRO';
+    private const PRODUCTO_MYO_INOSITOL = 'MYO-INOSITOL';
+    private const PRODUCTO_BURETA_50_ML = 'BURETA 50 ML';
+    private const PRODUCTO_COPA_MARTINI = 'COPA MARTINI';
+    private const PRODUCTO_LECHE_ENTERA = 'LECHE ENTERA';
+    private const PRODUCTO_SPEED_CLEAN = 'SPEED-CLEAN';
+    private const PRODUCTO_ACIDIMETRO = 'ACIDIMETRO';
+    private const PRODUCTO_CAJA_PETRI = 'CAJA PETRI';
+    private const PRODUCTO_TAPABOCAS = 'TAPABOCAS';
+    private const PRODUCTO_ESPATULA = 'ESPATULA';
+    private const PRODUCTO_AGITADOR = 'AGITADOR';
+    private const PRODUCTO_GRADILLA = 'GRADILLA';
+    private const PRODUCTO_PARAFILM = 'PARAFILM';
+    private const PRODUCTO_ACETONA = 'ACETONA';
+    private const PRODUCTO_EMBUDO = 'EMBUDO';
+    private const PRODUCTO_PISETA = 'PISETA';
+
 
     /**
      * Run the database seeds.
@@ -23,7 +101,7 @@ class ProductoSeeder extends Seeder
     {
         return [
              [
-                'producto' => 'PAPEL ABSORBENTE',
+                'producto' => self::PRODUCTO_PAPEL_ABSORBENTE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -42,7 +120,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL FILTRO',
+                'producto' => self::PRODUCTO_PAPEL_FILTRO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'X 100 PIEZAS',
                 'peso' => 0,
@@ -137,7 +215,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL ALUMINIO',
+                'producto' => self::PRODUCTO_PAPEL_ALUMINIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -251,7 +329,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PISETA 500 ML',
+                'producto' => self::PRODUCTO_PISETA_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -289,7 +367,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FRASCO SCHOT 500 ML',
+                'producto' => self::PRODUCTO_FRASCO_SCHOT_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -308,7 +386,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FRASCO SCHOT 250 ML',
+                'producto' => self::PRODUCTO_FRASCO_SCHOT_250_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -441,7 +519,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'EMBUDO',
+                'producto' => self::PRODUCTO_EMBUDO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'EMBUDO PEQUEÑO DE PLASTICO',
                 'peso' => 0,
@@ -479,7 +557,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ESPATULA',
+                'producto' => self::PRODUCTO_ESPATULA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -498,7 +576,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'AGITADOR',
+                'producto' => self::PRODUCTO_AGITADOR,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'Varillas en vidrio.',
                 'peso' => 0,
@@ -992,7 +1070,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BATA DE LABORATORIO (AZUL)',
+                'producto' => self::PRODUCTO_BATA_DE_LABORATORIO_AZUL,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1011,7 +1089,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BATA DE LABORATORIO (VERDE)',
+                'producto' => self::PRODUCTO_BATA_DE_LABORATORIO_VERDE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1030,7 +1108,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPABOCAS',
+                'producto' => self::PRODUCTO_TAPABOCAS,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'CUENTA CON 3 UNIDADES',
                 'peso' => 0,
@@ -1049,7 +1127,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL ABSORBENTE',
+                'producto' => self::PRODUCTO_PAPEL_ABSORBENTE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1068,7 +1146,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL FILTRO',
+                'producto' => self::PRODUCTO_PAPEL_FILTRO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'Cajas x 100 unidades',
                 'peso' => 0,
@@ -1144,7 +1222,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BLANQUEADOR DESINFECTANTE',
+                'producto' => self::PRODUCTO_BLANQUEADOR_DESINFECTANTE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1239,7 +1317,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA DE BASURA',
+                'producto' => self::PRODUCTO_BOLSA_DE_BASURA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1467,7 +1545,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ACIDIMETRO',
+                'producto' => self::PRODUCTO_ACIDIMETRO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1562,7 +1640,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MECHERO BUNSEN',
+                'producto' => self::PRODUCTO_MECHERO_BUNSEN,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1581,7 +1659,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PINZAS PARA CRISOL',
+                'producto' => self::PRODUCTO_PINZAS_PARA_CRISOL,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1600,7 +1678,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'REJILLA DE ASBESTO',
+                'producto' => self::PRODUCTO_REJILLA_DE_ASBESTO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1638,7 +1716,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ESPATULA',
+                'producto' => self::PRODUCTO_ESPATULA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1657,7 +1735,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PISETA 500 ML',
+                'producto' => self::PRODUCTO_PISETA_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'SE ENCUENTRAN DISTRIBUIDAS EN LOS OTROS LABORATORIOS',
                 'peso' => 0,
@@ -1733,7 +1811,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TERMOMETRO TH 310',
+                'producto' => self::PRODUCTO_TERMOMETRO_TH_310,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1866,7 +1944,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GRADILLA',
+                'producto' => self::PRODUCTO_GRADILLA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1923,7 +2001,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
               [
-                'producto' => 'BEAKERS 1000 ML',
+                'producto' => self::PRODUCTO_BEAKERS_1000_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '2 QUEBRADOR 1 EN LA PARTE SUPERIOR
                  Y EL OTRO EN LA PARTE INFERIOR - 1 POR REPONER SENNOVA MORICHE',
@@ -1962,7 +2040,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BEAKERS 600 ML',
+                'producto' => self::PRODUCTO_BEAKERS_600_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -1981,7 +2059,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BEAKERS 100 ML',
+                'producto' => self::PRODUCTO_BEAKERS_100_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2190,7 +2268,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MATRAZ AFORADO 100 ML',
+                'producto' => self::PRODUCTO_MATRAZ_AFORADO_100_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2209,7 +2287,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MATRAZ AFORADO 250 ML',
+                'producto' => self::PRODUCTO_MATRAZ_AFORADO_250_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2285,7 +2363,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FRASCO SCHOT 250 ML',
+                'producto' => self::PRODUCTO_FRASCO_SCHOT_250_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2304,7 +2382,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FRASCO SCHOT 500 ML',
+                'producto' => self::PRODUCTO_FRASCO_SCHOT_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2342,7 +2420,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 1 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_1_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2361,7 +2439,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 5 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_5_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2380,7 +2458,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 10 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_10_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2399,7 +2477,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA AFORADA 10 ML',
+                'producto' => self::PRODUCTO_PIPETA_AFORADA_10_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2418,7 +2496,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 20 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_20_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2589,7 +2667,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'HIPOCLORITO 5,25%',
+                'producto' => self::PRODUCTO_HIPOCLORITO_5_25,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2646,7 +2724,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALCOHOL ISOPROPILICO',
+                'producto' => self::PRODUCTO_ALCOHOL_ISOPROPILICO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2760,7 +2838,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'WATER WORKS PEROXIDE',
+                'producto' => self::PRODUCTO_WATER_WORKS_PEROXIDE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '50 TEST',
                 'peso' => 0,
@@ -2779,7 +2857,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'AZUL DE METILENO',
+                'producto' => self::PRODUCTO_AZUL_DE_METILENO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '4 UNIDADES',
                 'peso' => 0,
@@ -2893,7 +2971,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALMIDON DE YUCA',
+                'producto' => self::PRODUCTO_ALMIDON_DE_YUCA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '6 UNIDADES DE 1000 KILOS',
                 'peso' => 0,
@@ -2931,7 +3009,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPABOCAS',
+                'producto' => self::PRODUCTO_TAPABOCAS,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -2988,7 +3066,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL ABSORBENTE',
+                'producto' => self::PRODUCTO_PAPEL_ABSORBENTE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3007,7 +3085,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL FILTRO',
+                'producto' => self::PRODUCTO_PAPEL_FILTRO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'X 100 unidades',
                 'peso' => 0,
@@ -3083,7 +3161,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL ALUMINIO',
+                'producto' => self::PRODUCTO_PAPEL_ALUMINIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3235,7 +3313,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ESPATULA',
+                'producto' => self::PRODUCTO_ESPATULA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3254,7 +3332,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETEADOR PUMP',
+                'producto' => self::PRODUCTO_PIPETEADOR_PUMP,
                 'tipo_producto_id' => 28,
                 'descripcion' => '25ML-10ML',
                 'peso' => 0,
@@ -3292,7 +3370,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GRADILLA',
+                'producto' => self::PRODUCTO_GRADILLA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3330,7 +3408,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PISETA',
+                'producto' => self::PRODUCTO_PISETA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '100ML-25ML',
                 'peso' => 0,
@@ -3349,7 +3427,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 5 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_5_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3368,7 +3446,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 25 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_25_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3387,7 +3465,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 10 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_10_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3425,7 +3503,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA VIDRIO 100 ML',
+                'producto' => self::PRODUCTO_PROBETA_VIDRIO_100_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3444,7 +3522,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA VIDRIO 500 ML',
+                'producto' => self::PRODUCTO_PROBETA_VIDRIO_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3672,7 +3750,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ERLENMEYER 500 ML',
+                'producto' => self::PRODUCTO_ERLENMEYER_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3729,7 +3807,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'CAJA PETRI',
+                'producto' => self::PRODUCTO_CAJA_PETRI,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3786,7 +3864,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TERMOMETRO TH 310',
+                'producto' => self::PRODUCTO_TERMOMETRO_TH_310,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3862,7 +3940,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BEAKERS 100 ML',
+                'producto' => self::PRODUCTO_BEAKERS_100_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -3995,7 +4073,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALCOHOL ETILICO AL 96%',
+                'producto' => self::PRODUCTO_ALCOHOL_ETILICO_AL_96,
                 'tipo_producto_id' => 28,
                 'descripcion' => '9 UNIDADES',
                 'peso' => 0,
@@ -4014,7 +4092,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALCOHOL INDUSTRIAL',
+                'producto' => self::PRODUCTO_ALCOHOL_INDUSTRIAL,
                 'tipo_producto_id' => 28,
                 'descripcion' => '8 UNIDADES',
                 'peso' => 0,
@@ -4033,7 +4111,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALCOHOL ISOPROPILICO',
+                'producto' => self::PRODUCTO_ALCOHOL_ISOPROPILICO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '5 UNIDADES',
                 'peso' => 0,
@@ -4128,7 +4206,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'AZUL DE METILENO',
+                'producto' => self::PRODUCTO_AZUL_DE_METILENO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -4394,7 +4472,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'CARBON ACTIVADO',
+                'producto' => self::PRODUCTO_CARBON_ACTIVADO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -4432,7 +4510,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'SPEED-CLEAN',
+                'producto' => self::PRODUCTO_SPEED_CLEAN,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -4470,7 +4548,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MYO-INOSITOL',
+                'producto' => self::PRODUCTO_MYO_INOSITOL,
                 'tipo_producto_id' => 28,
                 'descripcion' => '4 UNIDADS',
                 'peso' => 0,
@@ -4527,7 +4605,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BLANQUEADOR DESINFECTANTE',
+                'producto' => self::PRODUCTO_BLANQUEADOR_DESINFECTANTE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -4584,7 +4662,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GUANTES DE NITRILO',
+                'producto' => self::PRODUCTO_GUANTES_DE_NITRILO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'CAJA X 100 UND',
                 'peso' => 0,
@@ -4774,7 +4852,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
              [
-                'producto' => 'PAPEL FILTRO',
+                'producto' => self::PRODUCTO_PAPEL_FILTRO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'Caja x 100 unidades',
                 'peso' => 0,
@@ -5116,7 +5194,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'EMBUDO',
+                'producto' => self::PRODUCTO_EMBUDO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5154,7 +5232,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 1 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_1_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5192,7 +5270,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 5 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_5_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5211,7 +5289,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 10 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_10_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '1 PLASTICA',
                 'peso' => 0,
@@ -5230,7 +5308,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA AFORADA 10 ML',
+                'producto' => self::PRODUCTO_PIPETA_AFORADA_10_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5249,7 +5327,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 20 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_20_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5268,7 +5346,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETA GRADUADA 25 ML',
+                'producto' => self::PRODUCTO_PIPETA_GRADUADA_25_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5306,7 +5384,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BEAKERS 1000 ML',
+                'producto' => self::PRODUCTO_BEAKERS_1000_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '2 fondo quebrado. 1 presenta una ruptura en la parte superior.',
                 'peso' => 0,
@@ -5325,7 +5403,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BEAKERS 600 ML',
+                'producto' => self::PRODUCTO_BEAKERS_600_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'Reposición aprendiz Eddy Vivas, Ficha 2500567,  Tgo. Prevención y control',
                 'peso' => 0,
@@ -5363,7 +5441,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BEAKERS 100 ML',
+                'producto' => self::PRODUCTO_BEAKERS_100_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5477,7 +5555,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MATRAZ AFORADO 500 ML',
+                'producto' => self::PRODUCTO_MATRAZ_AFORADO_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5496,7 +5574,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MATRAZ AFORADO 250 ML',
+                'producto' => self::PRODUCTO_MATRAZ_AFORADO_250_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5534,7 +5612,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA VIDRIO 500 ML',
+                'producto' => self::PRODUCTO_PROBETA_VIDRIO_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'PENDIENTE',
                 'peso' => 0,
@@ -5572,7 +5650,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA VIDRIO 100 ML',
+                'producto' => self::PRODUCTO_PROBETA_VIDRIO_100_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -5933,7 +6011,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PIPETEADOR PUMP',
+                'producto' => self::PRODUCTO_PIPETEADOR_PUMP,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'Volumen de 25 mililitros.',
                 'peso' => 0,
@@ -6009,7 +6087,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'REJILLA DE ASBESTO',
+                'producto' => self::PRODUCTO_REJILLA_DE_ASBESTO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '1 La tiene la estufa eléctrica.',
                 'peso' => 0,
@@ -6028,7 +6106,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MECHERO BUNSEN',
+                'producto' => self::PRODUCTO_MECHERO_BUNSEN,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -6066,7 +6144,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PINZAS PARA CRISOL',
+                'producto' => self::PRODUCTO_PINZAS_PARA_CRISOL,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -6313,7 +6391,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ESPATULA',
+                'producto' => self::PRODUCTO_ESPATULA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -6332,7 +6410,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PISETA',
+                'producto' => self::PRODUCTO_PISETA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '3 De 100 mililitros  -  1 500 mililitros  -  1 de 250 mililitros',
                 'peso' => 0,
@@ -6503,7 +6581,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ERLENMEYER 500 ML',
+                'producto' => self::PRODUCTO_ERLENMEYER_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '1 Fisura en la parte superior',
                 'peso' => 0,
@@ -6598,7 +6676,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BURETA 50 ML',
+                'producto' => self::PRODUCTO_BURETA_50_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -6902,7 +6980,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MATRAZ AFORADO 100 ML',
+                'producto' => self::PRODUCTO_MATRAZ_AFORADO_100_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'No cuenta con tapa',
                 'peso' => 0,
@@ -6921,7 +6999,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MATRAZ AFORADO 500 ML',
+                'producto' => self::PRODUCTO_MATRAZ_AFORADO_500_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7035,7 +7113,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'HIPOCLORITO 5,25%',
+                'producto' => self::PRODUCTO_HIPOCLORITO_5_25,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7092,7 +7170,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'HIPOCLORITO DE SODIO 15%',
+                'producto' => self::PRODUCTO_HIPOCLORITO_DE_SODIO_15,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7130,7 +7208,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALCOHOL ETILICO AL 96%',
+                'producto' => self::PRODUCTO_ALCOHOL_ETILICO_AL_96,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7149,7 +7227,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALCOHOL ISOPROPILICO',
+                'producto' => self::PRODUCTO_ALCOHOL_ISOPROPILICO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7168,7 +7246,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'SPEED-CLEAN',
+                'producto' => self::PRODUCTO_SPEED_CLEAN,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7263,7 +7341,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'SULFATO DE ALUMINIO',
+                'producto' => self::PRODUCTO_SULFATO_DE_ALUMINIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7320,7 +7398,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'CLORURO DE MAGNESIO',
+                'producto' => self::PRODUCTO_CLORURO_DE_MAGNESIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'SE ENCUENTRA DERRETIDO',
                 'peso' => 0,
@@ -7548,7 +7626,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'VINAGRE BLANCO',
+                'producto' => self::PRODUCTO_VINAGRE_BLANCO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '3 UNIDADES X 1000',
                 'peso' => 0,
@@ -7643,7 +7721,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALCOHOL INDUSTRIAL',
+                'producto' => self::PRODUCTO_ALCOHOL_INDUSTRIAL,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7795,7 +7873,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TRIETANOLAMINA',
+                'producto' => self::PRODUCTO_TRIETANOLAMINA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -7814,7 +7892,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TRIETANOLAMINA',
+                'producto' => self::PRODUCTO_TRIETANOLAMINA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -8004,7 +8082,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ALMIDON DE YUCA',
+                'producto' => self::PRODUCTO_ALMIDON_DE_YUCA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -8290,7 +8368,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'SULFATO DE ALUMINIO',
+                'producto' => self::PRODUCTO_SULFATO_DE_ALUMINIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -8537,7 +8615,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'WATER WORKS PEROXIDE',
+                'producto' => self::PRODUCTO_WATER_WORKS_PEROXIDE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -8575,7 +8653,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
               [
-                'producto' => 'ACETONA',
+                'producto' => self::PRODUCTO_ACETONA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -8746,7 +8824,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'CLORURO DE MAGNESIO',
+                'producto' => self::PRODUCTO_CLORURO_DE_MAGNESIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -9981,7 +10059,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BATA DE LABORATORIO (AZUL)',
+                'producto' => self::PRODUCTO_BATA_DE_LABORATORIO_AZUL,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -10000,7 +10078,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BATA DE LABORATORIO (VERDE)',
+                'producto' => self::PRODUCTO_BATA_DE_LABORATORIO_VERDE,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -10190,7 +10268,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'MYO-INOSITOL',
+                'producto' => self::PRODUCTO_MYO_INOSITOL,
                 'tipo_producto_id' => 28,
                 'descripcion' => '4 UNIDADES',
                 'peso' => 0,
@@ -10268,7 +10346,7 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PARAFINA LIQUIDA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'SIN ETIQUETA ORIGINAL',
+                'descripcion' => 'SIN ETIQUETA ORIGINAL DEL FABRICANTE',
                 'peso' => 0,
                 'unidad_medida_id' => 36,
                 'cantidad' => 45.0,
@@ -10418,7 +10496,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ACETONA',
+                'producto' => self::PRODUCTO_ACETONA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'NO CUENTA CON ETIQUETA ORIGINAL',
                 'peso' => 0,
@@ -10570,7 +10648,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ACIDO SULFURICO',
+                'producto' => self::PRODUCTO_ACIDO_SULFURICO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'NO CUENTA CON ETIQUETA ORIGINAL',
                 'peso' => 0,
@@ -11083,7 +11161,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'CARBON ACTIVADO',
+                'producto' => self::PRODUCTO_CARBON_ACTIVADO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'NO CUENTA CON ETIQUETA ORIGINAL',
                 'peso' => 0,
@@ -11444,7 +11522,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FENOLFTALEINA',
+                'producto' => self::PRODUCTO_FENOLFTALEINA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -11577,7 +11655,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL ALUMINIO',
+                'producto' => self::PRODUCTO_PAPEL_ALUMINIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'X 18 METROS',
                 'peso' => 0,
@@ -11634,7 +11712,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PARAFILM',
+                'producto' => self::PRODUCTO_PARAFILM,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -11653,7 +11731,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PAPEL FILTRO',
+                'producto' => self::PRODUCTO_PAPEL_FILTRO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'X 102 UNIDADES',
                 'peso' => 0,
@@ -11672,7 +11750,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GRADILLA',
+                'producto' => self::PRODUCTO_GRADILLA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -11691,7 +11769,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ESPATULA',
+                'producto' => self::PRODUCTO_ESPATULA,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -11805,7 +11883,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TUBO DE ENSAYO',
+                'producto' => self::PRODUCTO_TUBO_DE_ENSAYO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '100 UNIDADES- PARTIERON 2 UNIDADES UNIAMAZONIA  (TAPA ROSCA)',
                 'peso' => 0,
@@ -11900,7 +11978,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'AGITADOR',
+                'producto' => self::PRODUCTO_AGITADOR,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'AGITADORES DE VIDRIO',
                 'peso' => 0,
@@ -12033,7 +12111,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'CAJA PETRI',
+                'producto' => self::PRODUCTO_CAJA_PETRI,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -12052,7 +12130,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PARAFILM',
+                'producto' => self::PRODUCTO_PARAFILM,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -12109,7 +12187,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'HIPOCLORITO DE SODIO 15%',
+                'producto' => self::PRODUCTO_HIPOCLORITO_DE_SODIO_15,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -12508,7 +12586,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ACIDO SULFURICO',
+                'producto' => self::PRODUCTO_ACIDO_SULFURICO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -12546,7 +12624,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'VINAGRE BLANCO',
+                'producto' => self::PRODUCTO_VINAGRE_BLANCO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '1 LITRO CADA UNO',
                 'peso' => 0,
@@ -12584,7 +12662,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BURETA 50 ML',
+                'producto' => self::PRODUCTO_BURETA_50_ML,
                 'tipo_producto_id' => 28,
                 'descripcion' => '',
                 'peso' => 0,
@@ -12641,7 +12719,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'COPA MARTINI',
+                'producto' => self::PRODUCTO_COPA_MARTINI,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'VIDRIO TRANSPARENTE DE 150 - 250 ML',
                 'peso' => 0,
@@ -12660,7 +12738,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'COPA MARTINI',
+                'producto' => self::PRODUCTO_COPA_MARTINI,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'VIDRIO TRASNPARENTE CON CAPACIDAD DE 250 ML',
                 'peso' => 0,
@@ -12698,7 +12776,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FRASCO DE VIDRIO',
+                'producto' => self::PRODUCTO_FRASCO_DE_VIDRIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'VIDRIO TRANSPARENTE RECICLABLE, TAPA COLOR DORODO CON ENROSQUE, CON UNA CAPACIDAD DE 30 ML',
                 'peso' => 0,
@@ -12717,7 +12795,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FRASCO DE VIDRIO',
+                'producto' => self::PRODUCTO_FRASCO_DE_VIDRIO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'VIDRIO TRANSPARENTE (INCOLORO) TIPO ROSCA CON TAPA AZUL Y UNA CAPACIDAD DE 22 ML',
                 'peso' => 0,
@@ -12890,7 +12968,9 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'COPA MEDIDORA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'COPA MEDIDORA DE ONZAS EN CÓCTELES Y BEBIDAS CON UNA CAPACIDAD DE 30 ML (1 OZ) POR LA PARTE MAS GRANDE- 20 ML (0,68 OZ) POR LA PARTE MAS PEQUEÑA',
+                'descripcion' => 'COPA MEDIDORA DE ONZAS EN CÓCTELES Y
+                 BEBIDAS CON UNA CAPACIDAD DE 30 ML (1 OZ) POR LA PARTE MAS
+                  GRANDE- 20 ML (0,68 OZ) POR LA PARTE MAS PEQUEÑA',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -12909,7 +12989,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'ESPOLVOREADOR',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ESPOLVOREADOR  DE ACERO INOXIDABLE PARA CACAO, AZÚCAR, GLASS O CANELA CON UNA CAPACIDAD DE 10 OZ (APROX 295 ML)',
+                'descripcion' => 'ESPOLVOREADOR  DE ACERO INOXIDABLE PARA CACAO, AZÚCAR,
+                 GLASS O CANELA CON UNA CAPACIDAD DE 10 OZ (APROX 295 ML)',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -12926,7 +13007,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'JARRA PARA ESPUMAR',
+                'producto' => self::PRODUCTO_JARRA_PARA_ESPUMAR,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'MATERIAL DE ACERO INOXIDABLE CON UNA CAPACIDAD DE 600 ML (20 OZ)',
                 'peso' => 0,
@@ -12945,7 +13026,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'JARRA PARA ESPUMAR',
+                'producto' => self::PRODUCTO_JARRA_PARA_ESPUMAR,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'MATERIAL DE ACERO INOXIDABLE CON UNA CAPACIDAD DE 350 ML (12 OZ)',
                 'peso' => 0,
@@ -12966,7 +13047,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BROCHA DE COCINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BROCHA DE COCINA CON UNA ESTRUCTURA QUE CONSTA DE MANGO, CABEZA Y CERDAS DE PLASTICO RESISTENTE Y FIBRAS DE SILICONA O MATERIAL SINTÉTICO',
+                'descripcion' => 'BROCHA DE COCINA CON UNA ESTRUCTURA QUE CONSTA DE MANGO,
+                 CABEZA Y CERDAS DE PLASTICO RESISTENTE Y FIBRAS DE SILICONA O MATERIAL SINTÉTICO',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 3.0,
@@ -12985,7 +13067,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'MAZO METÁLICO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL EN ACERO INOXIDABLE O TEMPLADO, COMPACTADOR DE CAFÉ MOLIDO CON UN DIAMETRO DE 57 MM',
+                'descripcion' => 'MATERIAL EN ACERO INOXIDABLE O TEMPLADO,
+                 COMPACTADOR DE CAFÉ MOLIDO CON UN DIAMETRO DE 57 MM',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -13004,7 +13087,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'AZAFATE',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ACERO INOXIDABLE CUADRADO, BARRA DE GOMA EN EL CENTRO, DIMENCIONES APROPIADAS PARA LA BARRA DE CAFÉ, BARRA 10 CM CON CAPACIDAD DE 1-2 LT',
+                'descripcion' => 'ACERO INOXIDABLE CUADRADO, BARRA DE GOMA EN EL CENTRO,
+                 DIMENCIONES APROPIADAS PARA LA BARRA DE CAFÉ, BARRA 10 CM CON CAPACIDAD DE 1-2 LT',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -13023,7 +13107,9 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PINCEL LATTE ART',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HERRAMIENTA MANUAL COMPUESTA POR UN MANGO ROJO, CON UN EXTREMO ESFÉRICO METÁLICO Y OTOR EXTREMO PUNTIAGUDO UTILIZADO PARA LA LECHE, CON UNA LONGITUD DE 10 A 15 CM',
+                'descripcion' => 'HERRAMIENTA MANUAL COMPUESTA POR UN MANGO ROJO,
+                 CON UN EXTREMO ESFÉRICO METÁLICO Y OTOR EXTREMO PUNTIAGUDO UTILIZADO PARA LA LECHE,
+                 CON UNA LONGITUD DE 10 A 15 CM',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -13080,7 +13166,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PRENSADORA CON TAPA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE ACORO INOXIDABLE CON ORIFICIOS DISTRIBUIDOS EN LA FUPERFICIE Y EN EL FONDO CON SU RESPECTIVA TAPA DE BASE CIRCULAR',
+                'descripcion' => 'MATERIAL DE ACORO INOXIDABLE CON ORIFICIOS DISTRIBUIDOS EN LA FUPERFICIE
+                 Y EN EL FONDO CON SU RESPECTIVA TAPA DE BASE CIRCULAR',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 5.0,
@@ -13118,7 +13205,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'FILTRO PARA LECHERÍA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'FILTRO DE ALUMINIO CON DOS MALLAS (TAMIZ) REEMPLAZABLE, ARO DE SUJETACIÓN Y PAPEL FILTRO.',
+                'descripcion' => 'FILTRO DE ALUMINIO CON DOS MALLAS (TAMIZ) REEMPLAZABLE,
+                 ARO DE SUJETACIÓN Y PAPEL FILTRO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13135,9 +13223,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GUANTES INDUSTRIAL',
+                'producto' => self::PRODUCTO_GUANTES_INDUSTRIAL,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 10.',
+                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS,
+                 CALIBRE 35, TALLA 10.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 36.0,
@@ -13154,9 +13243,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GUANTES INDUSTRIAL',
+                'producto' => self::PRODUCTO_GUANTES_INDUSTRIAL,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 9.',
+                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL
+                 CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 9.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 25.0,
@@ -13173,9 +13263,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GUANTES INDUSTRIAL',
+                'producto' => self::PRODUCTO_GUANTES_INDUSTRIAL,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 8 1/2.',
+                'descripcion' => 'GUANTES DE MATERIAL DE LATEX NATURAL
+                 CON ANTIBACTERIAL Y ANTIALÉRGICOS, CALIBRE 35, TALLA 8 1/2.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 16.0,
@@ -13192,9 +13283,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA BASURA',
+                'producto' => self::PRODUCTO_BOLSA_PARA_BASURA,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA OXO-BIODEGRADABLE TAMAÑO GRANDE CON MEDIDAS DE 65X90 CM, 9 ROLLO X 10 UNIDADES CADA UNO.',
+                'descripcion' => 'BOLSA OXO-BIODEGRADABLE TAMAÑO GRANDE
+                 CON MEDIDAS DE 65X90 CM, 9 ROLLO X 10 UNIDADES CADA UNO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 90.0,
@@ -13211,7 +13303,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA DE BASURA',
+                'producto' => self::PRODUCTO_BOLSA_DE_BASURA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA DE COLOR GRIS, DIVIDA EN DOS ROLLOS DE 50 MAS 27 UNIDAD',
                 'peso' => 0,
@@ -13268,7 +13360,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA DE BASURA',
+                'producto' => self::PRODUCTO_BOLSA_DE_BASURA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA COLOR NEGRA, 8 PAQUETES x 6 UNIDADES MAS 26 UNIDADES',
                 'peso' => 0,
@@ -13384,7 +13476,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PAÑOS DE LIMPIEZA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ROLLO DE 36 METROS, DEL CUAL SE OBTIENEN 88 PAÑOS, CADA UNO CON MEDIDAS DE 27,8 CM X 41 CM',
+                'descripcion' => 'ROLLO DE 36 METROS, DEL CUAL SE OBTIENEN 88 PAÑOS,
+                 CADA UNO CON MEDIDAS DE 27,8 CM X 41 CM',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 19.0,
@@ -13403,7 +13496,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'TOALLAS MULTIUSO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'TOLLAS COLOR NATURAL DE 150 METROS; CADA PAQUETE CONSTA DE DOS ROLLOS DE HOJA DOBLE, CON UN ANCHO DE ROLLO DE 18,8 CM.',
+                'descripcion' => 'TOLLAS COLOR NATURAL DE 150 METROS;
+                 CADA PAQUETE CONSTA DE DOS ROLLOS DE HOJA DOBLE, CON UN ANCHO DE ROLLO DE 18,8 CM.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 7.0,
@@ -13479,7 +13573,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PALA DE COCINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE ACERO INOXIDABLE, SE USA PARA SERVIR, TRASLADAR O DICIFICAR INGREDIENTES SÓLIDOS',
+                'descripcion' => 'MATERIAL DE ACERO INOXIDABLE, SE USA PARA SERVIR,
+                 TRASLADAR O DICIFICAR INGREDIENTES SÓLIDOS',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13517,7 +13612,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'TERMÓMETRO DE COCINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'FABRICADO EN ACERO INOXIDABLE, COMPUESTO POR UNA CARCASA, VARILLA, BORDE Y CARÁTULA DE VIDRIO',
+                'descripcion' => 'FABRICADO EN ACERO INOXIDABLE,
+                 COMPUESTO POR UNA CARCASA, VARILLA, BORDE Y CARÁTULA DE VIDRIO',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13536,7 +13632,9 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO DE COCINA PROFECIONAL',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'LA HOJA ES DE MATERIAL DE ACERO INOXIDABLE Y EL MANGO ES DE PLÁSTICO RESISTENTE DE COLOR BLANCO Y NEGRO, SE USA PARA CORTAR, TROCEAR, PICAR Y FILETEAR',
+                'descripcion' => 'LA HOJA ES DE MATERIAL DE ACERO INOXIDABLE Y
+                 EL MANGO ES DE PLÁSTICO RESISTENTE DE COLOR BLANCO Y NEGRO, SE USA PARA CORTAR,
+                 TROCEAR, PICAR Y FILETEAR',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13555,7 +13653,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'PELADOR DE COCINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'LA CUCHILLA ESTA FABRICADA EN ACERO INOXIDABLE, EL MANGO ES DE PLÁSTICO RESISTENTE, SE UTILIZA PARA OELAR LA PIEL DE LAS VERDURAS Y FRUTAS',
+                'descripcion' => 'LA CUCHILLA ESTA FABRICADA EN ACERO INOXIDABLE,
+                 EL MANGO ES DE PLÁSTICO RESISTENTE, SE UTILIZA PARA OELAR LA PIEL DE LAS VERDURAS Y FRUTAS',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -13574,7 +13673,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO DE SIERRA GRANDE',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HOJA DE ACERO INOXIDABLE, MANGO DE PLÁSTICO COLOR NEGRO, USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS',
+                'descripcion' => 'HOJA DE ACERO INOXIDABLE, MANGO DE PLÁSTICO COLOR NEGRO,
+                 USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -13593,7 +13693,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO CARNICERO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HOJA DE ACERO INOXIDABLE, MANGO DE POLIPROPILENO, SIRVE PARA CORTAR, DESHUESAR Y FILETEAR GRANDES PUEZAS DE CARNE',
+                'descripcion' => 'HOJA DE ACERO INOXIDABLE, MANGO DE POLIPROPILENO,
+                 SIRVE PARA CORTAR, DESHUESAR Y FILETEAR GRANDES PUEZAS DE CARNE',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -13631,7 +13732,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'ESPÁTULA GRANDE',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ESPÁTULA CON CABEZA COLOR BLANCA, FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.',
+                'descripcion' => 'ESPÁTULA CON CABEZA COLOR BLANCA,
+                 FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13650,7 +13752,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'ESPÁTULA PEQUEÑA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ESPÁTULA CON CABEZA COLOR BLANCA, FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.',
+                'descripcion' => 'ESPÁTULA CON CABEZA COLOR BLANCA,
+                 FABRICADA EN SILICONA FLEXIBLE, Y MANGO DE PLÁSTICO COLOR ROJO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -13669,7 +13772,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO PARA DESHUESAR',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HOJA DE ACERO INOXIDABLE, Y MANGO DE POLIPROPILENO BLANCO, SU USO PRINCIPALMENTE PARA SEPARAR LA CARNE DEL HUESO.',
+                'descripcion' => 'HOJA DE ACERO INOXIDABLE,
+                 Y MANGO DE POLIPROPILENO BLANCO, SU USO PRINCIPALMENTE PARA SEPARAR LA CARNE DEL HUESO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 3.0,
@@ -13707,7 +13811,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO DE SIERRA PEQUEÑO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'HOJA DE ACERO INOXIDABLE, Y MANGO DE PLÁSTICO COLOR NEGRO, USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS',
+                'descripcion' => 'HOJA DE ACERO INOXIDABLE, Y MANGO DE PLÁSTICO COLOR NEGRO,
+                 USO PARA CORTAR CORTEZAS DURAS Y CENTROS BLANDOS',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -13726,7 +13831,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CUCHILLO PUNTILLA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE LA HOJA EN ACERO INOXIDABLE, Y EL MANGO EN POLIPROPILENO, DOS EN COLOR NEGRO Y UNO EN COLOR BLANCO.',
+                'descripcion' => 'MATERIAL DE LA HOJA EN ACERO INOXIDABLE,
+                 Y EL MANGO EN POLIPROPILENO, DOS EN COLOR NEGRO Y UNO EN COLOR BLANCO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 3.0,
@@ -13819,7 +13925,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TABLA DE PICAR',
+                'producto' => self::PRODUCTO_TABLA_DE_PICAR,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'MATERIAL DE POLIPROPILENO BLANCO',
                 'peso' => 0,
@@ -13838,7 +13944,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TABLA DE PICAR',
+                'producto' => self::PRODUCTO_TABLA_DE_PICAR,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'MATERIAL DE POLIPROPILENO ROJO',
                 'peso' => 0,
@@ -13897,7 +14003,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOTELLA PLÁSTICA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ENVASE COMÚN PARA CONTENER LÍQUIDOS COMO LECHE, JUGOS, AGUA, Y PRODUCTOS SIMILARES, CON UNA CAPACIDAD DE 250 ML.',
+                'descripcion' => 'ENVASE COMÚN PARA CONTENER LÍQUIDOS COMO LECHE,
+                 JUGOS, AGUA, Y PRODUCTOS SIMILARES, CON UNA CAPACIDAD DE 250 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 54.0,
@@ -13914,9 +14021,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ENVASE PLÁSTICO DE YOGURT',
+                'producto' => self::PRODUCTO_ENVASE_PL_STICO_DE_YOGURT,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'ENVASE PLÁSTICO CON TAPA DE ROSCA Y ASA, PARA ENVASAR BEBIDAS LÁCTEAS, CON CAPACIDAD DE 250 ML.',
+                'descripcion' => 'ENVASE PLÁSTICO CON TAPA DE ROSCA Y ASA,
+                 PARA ENVASAR BEBIDAS LÁCTEAS, CON CAPACIDAD DE 250 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 110.0,
@@ -13953,7 +14061,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ENVASE PLÁSTICO DE YOGURT',
+                'producto' => self::PRODUCTO_ENVASE_PL_STICO_DE_YOGURT,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'ENVASE PLÁSTICO DE DISEÑO
                   CUADRADO CON ASA Y TAPA DE ENRROSQUE, CAPACIDAD DE 1 LITRO.',
@@ -13973,7 +14081,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA DOYPACK',
+                'producto' => self::PRODUCTO_BOLSA_DOYPACK,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'MATERIAL DE AULIMINIO METALIZADO, Y UNA TAPA EN ROSCA, CON UNA CAPACIDAD DE 200 ML.',
                 'peso' => 0,
@@ -14015,7 +14123,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'BOMBA DE PIPETA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE PLÁSTICO ROJO, CAPACIDAD DE 25 ML, SE UA PARA SUCCIONAR Y DIPENSAR LÍQUIDOS CON PRECISÓN.',
+                'descripcion' => 'MATERIAL DE PLÁSTICO ROJO, CAPACIDAD DE 25 ML,
+                 SE UA PARA SUCCIONAR Y DIPENSAR LÍQUIDOS CON PRECISÓN.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 2.0,
@@ -14034,7 +14143,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'TERMOMETRO DE BARILLA PARA BARBACOA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'LA VARILLA (SONDA) ESTA HECHA DE ACERO INOXIDABLE, EL CUERPO Y EL MANGO SON DE MATERIAL PLÁSTICO, RANGO DE TEMPERATURA DESDE -50°C HASTA 300°C.',
+                'descripcion' => 'LA VARILLA (SONDA) ESTA HECHA DE ACERO INOXIDABLE,
+                 EL CUERPO Y EL MANGO SON DE MATERIAL PLÁSTICO, RANGO DE TEMPERATURA DESDE -50°C HASTA 300°C.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 4.0,
@@ -14051,9 +14161,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'ACIDIMETRO',
+                'producto' => self::PRODUCTO_ACIDIMETRO,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'LA BURETA ESTA FABRICADA DE VIDRIO BORORSILICATO, EL FRASCO ES DE PLÁSTICO, CON UNA CAPACIDAD DE 10 ML.',
+                'descripcion' => 'LA BURETA ESTA FABRICADA DE VIDRIO BORORSILICATO,
+                 EL FRASCO ES DE PLÁSTICO, CON UNA CAPACIDAD DE 10 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 6.0,
@@ -14070,7 +14181,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA GRADUADA',
+                'producto' => self::PRODUCTO_PROBETA_GRADUADA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'MATERIAL EN VIDRIO SODA-CÁLCICO, CON CAPACIDAD DE 25 ML.',
                 'peso' => 0,
@@ -14089,7 +14200,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA GRADUADA',
+                'producto' => self::PRODUCTO_PROBETA_GRADUADA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 10 ML (0,1 ML).',
                 'peso' => 0,
@@ -14108,7 +14219,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA GRADUADA',
+                'producto' => self::PRODUCTO_PROBETA_GRADUADA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 1 ML.',
                 'peso' => 0,
@@ -14127,7 +14238,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA GRADUADA',
+                'producto' => self::PRODUCTO_PROBETA_GRADUADA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 10 ML.',
                 'peso' => 0,
@@ -14146,7 +14257,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA GRADUADA',
+                'producto' => self::PRODUCTO_PROBETA_GRADUADA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 5 ML.',
                 'peso' => 0,
@@ -14165,7 +14276,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA GRADUADA',
+                'producto' => self::PRODUCTO_PROBETA_GRADUADA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'FABRICADA EN VIDRIO BOROSILICATO 3.3, CON UNA CAPACIDAD DE 250 ML.',
                 'peso' => 0,
@@ -14184,7 +14295,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GRADILLA PARA TUBOS DE ENSAYO',
+                'producto' => self::PRODUCTO_GRADILLA_PARA_TUBOS_DE_ENSAYO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'MATERIAL DE PLÁSTICO RESISTENTE, CON CAPACIDAD PARA 30 TUBOS DE ENSAYO',
                 'peso' => 0,
@@ -14203,7 +14314,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GRADILLA PARA TUBOS DE ENSAYO',
+                'producto' => self::PRODUCTO_GRADILLA_PARA_TUBOS_DE_ENSAYO,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'MATERIAL DE PLÁSTICO, CON CAPACIDAD DE 6 TUBOS DE ENSAYO.',
                 'peso' => 0,
@@ -14222,9 +14333,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TUBO DE ENSAYO',
+                'producto' => self::PRODUCTO_TUBO_DE_ENSAYO,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'FABRICADO EN VIDRIO BOROSILICATO, SE USA PARA CONTENER O MEZCLAR SUSTANCIAS QUÍMICAS, CON UNA CAPACIDAD DE 6-8 ML.',
+                'descripcion' => 'FABRICADO EN VIDRIO BOROSILICATO,
+                 SE USA PARA CONTENER O MEZCLAR SUSTANCIAS QUÍMICAS, CON UNA CAPACIDAD DE 6-8 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 13.0,
@@ -14260,7 +14372,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FENOLFTALEINA',
+                'producto' => self::PRODUCTO_FENOLFTALEINA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'CAPACIDAD DE 60 ML.',
                 'peso' => 0,
@@ -14279,7 +14391,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
               [
-                'producto' => 'FENOLFTALEINA',
+                'producto' => self::PRODUCTO_FENOLFTALEINA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'CAPACIDAD DE 60 ML, SOLO PARA USO PRÁCTICO.',
                 'peso' => 0,
@@ -14377,7 +14489,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'PROBETA GRADUADA',
+                'producto' => self::PRODUCTO_PROBETA_GRADUADA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'FABRICADO EN BOROSILICATO, CON CAPACIDAD DE 1000 ML.',
                 'peso' => 0,
@@ -14453,7 +14565,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'LECHE ENTERA',
+                'producto' => self::PRODUCTO_LECHE_ENTERA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'CANTIDAD 1100 ML, APROX 6 PORCIONES, INGRESO EL DIA 24/09/2025.',
                 'peso' => 0,
@@ -14493,7 +14605,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'AZUCAR EXTRAFINA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BULTO DE 25 KG DIVIDIDO EN UNIDADES DE 1 KG DE APROX 20 PORCIONES, INGRESO EL DÍA 24/09/2025.',
+                'descripcion' => 'BULTO DE 25 KG DIVIDIDO EN UNIDADES DE 1 KG DE APROX 20 PORCIONES,
+                 INGRESO EL DÍA 24/09/2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 25.0,
@@ -14549,7 +14662,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'GUANTES DE NITRILO',
+                'producto' => self::PRODUCTO_GUANTES_DE_NITRILO,
                 'tipo_producto_id' => 28,
                 'descripcion' => '20 CAJAS DE 100 UNIDADES',
                 'peso' => 0,
@@ -14682,7 +14795,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPA PLÁSTICA CON ENRROSQUE',
+                'producto' => self::PRODUCTO_TAPA_PL_STICA_CON_ENRROSQUE,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'TAPA DE POLIETILENO COLOR VERDE, CON ENRROSQUE.',
                 'peso' => 0,
@@ -14701,7 +14814,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPA PLÁSTICA CON ENRROSQUE',
+                'producto' => self::PRODUCTO_TAPA_PL_STICA_CON_ENRROSQUE,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'TAPA EN POLIETILENO DE COLOR MORADO, CON ENRROSQUE.',
                 'peso' => 0,
@@ -14720,7 +14833,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPA PLÁSTICA CON ENRROSQUE',
+                'producto' => self::PRODUCTO_TAPA_PL_STICA_CON_ENRROSQUE,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'TAPA DE POLIETILENO COLOR NARANJADO, CON ENRROSQUE.',
                 'peso' => 0,
@@ -14739,7 +14852,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPA METÁLICA',
+                'producto' => self::PRODUCTO_TAPA_MET_LICA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'TAPA METÁLICA COLOR DORADO, TAMAÑO PEQUEÑO',
                 'peso' => 0,
@@ -14758,7 +14871,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPA METÁLICA',
+                'producto' => self::PRODUCTO_TAPA_MET_LICA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'TAPA METÁLICA COLOR DORADO, TAMAÑO MEDIANO PARA ENRROSCAR.',
                 'peso' => 0,
@@ -14815,7 +14928,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPA METÁLICA',
+                'producto' => self::PRODUCTO_TAPA_MET_LICA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'TAPA METÁLICA DORADA, MATERIAL EN ALUMINIO, TAMAÑO MEDIANO.',
                 'peso' => 0,
@@ -14834,7 +14947,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'TAPA METÁLICA',
+                'producto' => self::PRODUCTO_TAPA_MET_LICA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'TAPA METÁLICA DORADA TAMAÑO GRANDE, MATERIAL DE ALUMINIO.',
                 'peso' => 0,
@@ -14874,7 +14987,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'FUENTE DE CHOCOLATE EN CASCADA',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'FABRICADO EN ACERO INOXIDABLE Y PLÁSTICO RESISTENTE AL CALOR, CAPACIDAD DE 32 ONZAS, (APROX 900 ML), HASTA DOS LIBRAS CHOCOLATE.',
+                'descripcion' => 'FABRICADO EN ACERO INOXIDABLE Y PLÁSTICO RESISTENTE AL CALOR,
+                 CAPACIDAD DE 32 ONZAS, (APROX 900 ML), HASTA DOS LIBRAS CHOCOLATE.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -14910,9 +15024,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'FRASCO DE VIDRIO',
+                'producto' => self::PRODUCTO_FRASCO_DE_VIDRIO,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'MATERIAL DE VIDRIO TRANSPARENTE CON TAPA DORADA DE METAL, CAPACIDAD DE 180 ML, USO COMÚN PARA MERMELADAS, MIEL O DULCES.',
+                'descripcion' => 'MATERIAL DE VIDRIO TRANSPARENTE CON TAPA DORADA DE METAL,
+                 CAPACIDAD DE 180 ML, USO COMÚN PARA MERMELADAS, MIEL O DULCES.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 8.0,
@@ -14929,7 +15044,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'LECHE ENTERA',
+                'producto' => self::PRODUCTO_LECHE_ENTERA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'CAPACIDAD DE 1100 ML CON 5.5 PORCIONES APROX, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
@@ -14950,7 +15065,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'GRINDSTED PECTIN RS 461 (RAPIDA)',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'INSUMO PARA LA INDUSTRIA ALIMENTARIA, CON UNA CANTIDAD DE 1 KG, DEBE CONSERVARSE EN UN LUGAR FRESCO Y SECO, LLEGO EN OCTUBRE DEL 2025.',
+                'descripcion' => 'INSUMO PARA LA INDUSTRIA ALIMENTARIA, CON UNA CANTIDAD DE 1 KG,
+                 DEBE CONSERVARSE EN UN LUGAR FRESCO Y SECO, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
@@ -14967,7 +15083,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA BASURA',
+                'producto' => self::PRODUCTO_BOLSA_PARA_BASURA,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA BIODEGRADABLES, CONTENIDO 5 ROLLOS DE 10 UNIDADES, DE TAMAÑO 70 X 90 CMS.',
                 'peso' => 0,
@@ -14986,9 +15102,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPACAR_AL_VAC_O,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 15 X 16 CM, DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.',
+                'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 15 X 16 CM,
+                 DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 300.0,
@@ -15005,9 +15122,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPACAR_AL_VAC_O,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 18 X 25 CM, DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.',
+                'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 18 X 25 CM,
+                DOS PAQUETES LLEGARON EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 300.0,
@@ -15024,9 +15142,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPAQUE',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPAQUE,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE EN PLÁSTICO PARA VER SU CONTENIDO, TAMAÑO GRANDE, LLEGO EN OCTUBRE DEL 2025.',
+                'descripcion' => 'BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE EN PLÁSTICO PARA VER SU CONTENIDO,
+                 TAMAÑO GRANDE, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 200.0,
@@ -15043,9 +15162,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPAQUE',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPAQUE,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE PARA OBSERVAR SU CONTENIDO, DE TAMAÑO PEQUEÑO, LLEGO EN OCTUBRE DEL 2025.',
+                'descripcion' => 'BOLSA DE PAPEL KRAFT, CON UNA PARTE VISIBLE PARA OBSERVAR SU CONTENIDO,
+                 DE TAMAÑO PEQUEÑO, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 100.0,
@@ -15064,7 +15184,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'CIRUELAS DESIDRATADAS',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'CIRUELA DESIDRATADA CON UN CONTENIDO DE 0,625 KG CADA BOLSITA, PARA UN TOTAL DE 10 KG, LLEGO EN OCTUBRE DEL 2025.',
+                'descripcion' => 'CIRUELA DESIDRATADA CON UN CONTENIDO DE 0,625 KG CADA BOLSITA,
+                 PARA UN TOTAL DE 10 KG, LLEGO EN OCTUBRE DEL 2025.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 16.0,
@@ -15100,7 +15221,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPACAR_AL_VAC_O,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA TRANSPARENTE, CON UN TAMAÑO DE 15 X 25 CM, PAQUETES DE 100.',
                 'peso' => 0,
@@ -15119,7 +15240,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPACAR_AL_VAC_O,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 20 X 30 CM.',
                 'peso' => 0,
@@ -15138,7 +15259,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA DOYPACK',
+                'producto' => self::PRODUCTO_BOLSA_DOYPACK,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA METALIZADA CON BOQUILLA DE 250 GRAMOS.',
                 'peso' => 0,
@@ -15235,7 +15356,8 @@ class ProductoSeeder extends Seeder
             [
                 'producto' => 'FRASCO PLÁSTICO',
                 'tipo_producto_id' => 28,
-                'descripcion' => 'BOTELLAS PLÁSTICA CON TAPA VERDE, USADA COMÚNMENTE PARA MUESTRAS, CON CAPACIDAD DE 250 ML.',
+                'descripcion' => 'BOTELLAS PLÁSTICA CON TAPA VERDE,
+                 USADA COMÚNMENTE PARA MUESTRAS, CON CAPACIDAD DE 250 ML.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 107.0,
@@ -15252,7 +15374,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPACAR_AL_VAC_O,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA TRANSPARENTE CON UN TAMAÑO DE 15X18.',
                 'peso' => 0,
@@ -15271,7 +15393,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPACAR_AL_VAC_O,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA TRANSPARENTE CON TAMAÑO 15 X 19 CM.',
                 'peso' => 0,
@@ -15290,7 +15412,7 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'BOLSA PARA EMPACAR AL VACÍO',
+                'producto' => self::PRODUCTO_BOLSA_PARA_EMPACAR_AL_VAC_O,
                 'tipo_producto_id' => 28,
                 'descripcion' => 'BOLSA TRANSPARENTE CON TAMAÑO DE 18 X 25 CM.',
                 'peso' => 0,
@@ -15366,9 +15488,10 @@ class ProductoSeeder extends Seeder
                 'user_update_id' => 1,
             ],
             [
-                'producto' => 'VINAGRE BLANCO',
+                'producto' => self::PRODUCTO_VINAGRE_BLANCO,
                 'tipo_producto_id' => 28,
-                'descripcion' => 'VINAGRE BLANCO PARA PREPARACIONES GASTRONÓMICAS, CON UN CONTENIDO DE 3800 ML, PRODUCTO VENCIDO.',
+                'descripcion' => 'VINAGRE BLANCO PARA PREPARACIONES GASTRONÓMICAS,
+                 CON UN CONTENIDO DE 3800 ML, PRODUCTO VENCIDO.',
                 'peso' => 0,
                 'unidad_medida_id' => 41,
                 'cantidad' => 1.0,
