@@ -60,3 +60,4 @@ class PerfilComplementarioController extends Controller
         ]);
     }
 }
+

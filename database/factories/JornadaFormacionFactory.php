@@ -15,18 +15,14 @@ class JornadaFormacionFactory extends Factory
     public function definition(): array
     {
         $jornadas = [
-            'Mañana' => ['inicio' => '06:00:00', 'fin' => '13:10:00'],
-            'Tarde' => ['inicio' => '13:00:00', 'fin' => '18:10:00'],
-            'Noche' => ['inicio' => '17:50:00', 'fin' => '23:10:00'],
+            'MAÑANA',
+            'TARDE',
+            'NOCHE',
+            'FINES DE SEMANA',
         ];
         
-        $jornada = $this->faker->randomElement(array_keys($jornadas));
-        $horarios = $jornadas[$jornada];
-        
         return [
-            'jornada' => $jornada,
-            'hora_inicio' => $horarios['inicio'],
-            'hora_fin' => $horarios['fin'],
+            'jornada' => $this->faker->randomElement($jornadas),
         ];
     }
 }

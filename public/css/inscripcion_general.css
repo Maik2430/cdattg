@@ -15,7 +15,7 @@ body, html {
     margin-bottom: 2rem;
 }
 .section-title {
-    color: #007bff;
+    color: #0056b3;
     font-weight: 600;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
@@ -63,7 +63,7 @@ body, html {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d;
+    color: #495057;
     z-index: 5;
 }
 .input-wrapper {
@@ -92,12 +92,13 @@ body, html {
     overflow-wrap: break-word;
     hyphens: auto;
     cursor: pointer;
+    color: #212529;
 }
 .submit-btn {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    color: white;
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    color: #ffffff;
     border: none;
     border-radius: 0.5rem;
     font-size: 1.1rem;

@@ -96,6 +96,7 @@ Documentación sobre funcionalidades específicas del sistema.
 
 | Documento | Descripción |
 |-----------|-------------|
+| [📚 Módulo de Complementarios](modulo-complementarios.md) | Documentación completa del módulo de programas complementarios |
 | [📦 Sistema de Inventario](guides/sistema-inventario.md) | Sistema híbrido de inventario |
 | [📅 Días de Formación](guides/dias-formacion.md) | Gestión de días de formación |
 | [👨‍🏫 Instructor - Días](guides/instructor-dias.md) | Asignación de días a instructores |

@@ -14,7 +14,8 @@ class ComplementarioOfertado extends Model
     protected $fillable = [
         'codigo',
         'nombre',
-        'descripcion',
+        'justificacion',
+        'requisitos_ingreso',
         'duracion',
         'cupos',
         'estado',
@@ -47,6 +48,48 @@ class ComplementarioOfertado extends Model
     public function aspirantes()
     {
         return $this->hasMany(AspiranteComplementario::class, 'complementario_id');
+    }
+
+    /**
+     * Relación muchos a muchos con Competencias
+     */
+    public function competencias()
+    {
+        return $this->belongsToMany(
+            Competencia::class,
+            'competencia_complementario',
+            'complementario_id',
+            'competencia_id'
+        )->withTimestamps()
+         ->withPivot('user_create_id', 'user_edit_id');
+    }
+
+    /**
+     * Relación muchos a muchos con Resultados de Aprendizaje
+     */
+    public function raps()
+    {
+        return $this->belongsToMany(
+            ResultadosAprendizaje::class,
+            'resultado_aprendizaje_complementario',
+            'complementario_id',
+            'rap_id'
+        )->withTimestamps()
+         ->withPivot('user_create_id', 'user_edit_id');
+    }
+
+    /**
+     * Relación muchos a muchos con Guías de Aprendizaje
+     */
+    public function guiasAprendizaje()
+    {
+        return $this->belongsToMany(
+            GuiasAprendizaje::class,
+            'guia_aprendizaje_complementario',
+            'complementario_id',
+            'guia_aprendizaje_id'
+        )->withTimestamps()
+         ->withPivot('user_create_id', 'user_edit_id');
     }
 
     public function getEstadoLabelAttribute()

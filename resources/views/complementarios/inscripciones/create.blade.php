@@ -11,12 +11,51 @@
      <div class="container-fluid mt-4" style="background-color: #ebf1f4; min-height: 100vh;">
          @if(session('user_data'))
              <div class="alert alert-info alert-dismissible">
-                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                 </button>
                  <h5><i class="icon fas fa-info"></i> Información Pre-llenada</h5>
                  Hemos completado algunos campos con la información de su cuenta.
                  Por favor, complete los campos faltantes y revise que toda la información sea correcta.
              </div>
          @endif
+
+         <!-- Mensajes de sesión -->
+         @if(session('success'))
+             <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 20px;">
+                 <i class="fas fa-check-circle mr-2"></i>
+                 <strong>¡Éxito!</strong> {{ session('success') }}
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                 </button>
+             </div>
+         @endif
+
+         @if(session('error'))
+             <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 20px;">
+                 <i class="fas fa-exclamation-circle mr-2"></i>
+                 <strong>Error:</strong> {{ session('error') }}
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                 </button>
+             </div>
+         @endif
+
+         @if($errors->any())
+             <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 20px;">
+                 <i class="fas fa-exclamation-triangle mr-2"></i>
+                 <strong>Por favor, corrige los siguientes errores:</strong>
+                 <ul class="mb-0 mt-2">
+                     @foreach($errors->all() as $error)
+                         <li>{{ $error }}</li>
+                     @endforeach
+                 </ul>
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                 </button>
+             </div>
+         @endif
+
         <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-8">
                 <div class="text-center mb-4">
@@ -40,19 +79,20 @@
                         </div>
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12 col-lg-12">
                     <div class="card" style="background-color: #ffffff; border-color: #dee2e6;">
                         <div class="card-header card-header-primary">
                             <h5 class="mb-0"><i class="fas fa-user mr-2"></i>Información Personal</h5>
                         </div>
                         <div class="card-body">
                             <form id="formInscripcion" method="POST"
-                                action="{{ route('programas-complementarios.procesar-inscripcion', ['programa' => $programa->id]) }}">
+                                action="{{ route('programas-complementarios.procesar-inscripcion', ['programa' => $programa->id]) }}"
+                                enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="programa_id" value="{{ $programa->id }}">
 
                                 @include('personas.partials.form', [
-                                    'persona' => null,
+                                    'persona' => $personaAutenticada ?? null,
                                     'documentos' => $documentos,
                                     'generos' => $generos,
                                     'caracterizaciones' => $caracterizaciones,
@@ -62,46 +102,10 @@
                                     'vias' => $vias,
                                     'letras' => $letras,
                                     'cardinales' => $cardinales,
-                                    'showCaracterizacion' => false,
+                                    'showCaracterizacion' => true,
                                 ])
 
                                 <hr class="my-5" style="border-color: #dee2e6;">
-
-                                <div class="card mb-4" style="background-color: #ffffff; border-color: #dee2e6;">
-                                    <div class="card-header card-header-primary">
-                                        <h5 class="mb-0"><i class="fas fa-tags mr-2"></i>Caracterización</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="text-muted mb-3">
-                                            Seleccione una categoría que corresponda a su situación:
-                                        </p>
-
-                                        @foreach ($temasCaracterizacion as $tema)
-                                            <div class="card card-outline mb-3" style="border-color: #dee2e6;">
-                                                <div class="card-header card-header-secondary">
-                                                    
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        @foreach ($tema->parametros as $parametro)
-                                                            <div class="col-12 mb-2">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="radio"
-                                                                        name="parametro_id" value="{{ $parametro->id }}"
-                                                                        id="parametro_{{ $parametro->id }}">
-                                                                    <label class="form-check-label"
-                                                                        for="categoria_{{ $hijo->id }}">
-                                                                        {{ $hijo->nombre }}
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
                                  <div class="card mb-4" style="background-color: #ffffff; border-color: #dee2e6;">
                                      <div class="card-header card-header-primary">
                                          <h5 class="mb-0"><i class="fas fa-id-card mr-2"></i>Documento de Identidad</h5>
@@ -237,64 +241,8 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-4">
-                    <div class="card card-widget widget-user">
-                        <div class="widget-user-header card-header-primary">
-                            <h3 class="widget-user-username">Información del Programa</h3>
-                            <h5 class="widget-user-desc">{{ $programa->nombre }}</h5>
-                        </div>
-                        <div class="card-footer" style="background-color: #ffffff;">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="description-block">
-                                        <span class="description-text">DESCRIPCIÓN</span>
-                                        <p class="text-muted mb-3">{{ $programa->descripcion }}</p>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="description-block">
-                                                    <span class="description-text">DURACIÓN</span>
-                                                    <h5 class="description-header text-primary">
-                                                        {{ formatear_horas($programa->duracion) }} horas
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="description-block">
-                                                    <span class="description-text">MODALIDAD</span>
-                                                    <h5 class="description-header text-primary">
-                                                        {{ $programa->modalidad->parametro->name ?? 'N/A' }}
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="description-block">
-                                                    <span class="description-text">JORNADA</span>
-                                                    <h5 class="description-header text-primary">
-                                                        {{ $programa->jornada->jornada ?? 'N/A' }}
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="description-block">
-                                                    <span class="description-text">CUPO</span>
-                                                    <h5 class="description-header text-primary">
-                                                        {{ $programa->cupos }}
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 @include('components.modal-terminos')
 @endsection
-

@@ -23,8 +23,7 @@
     @section('preloader')
         <img src="{{ asset('img/sena-logo.png') }}" alt="SENA Logo"
              class="img-circle animation__shake"
-             width="80" height="80"
-             style="animation-iteration-count:infinite;">
+             style="width: 80px; height: 80px; animation-iteration-count:infinite;">
         <p class="mt-3">Cargando...</p>
     @endsection
 

@@ -24,6 +24,7 @@ class AspiranteComplementarioService
     {
         return AspiranteComplementario::with(['persona.tipoDocumento'])
             ->where('complementario_id', $complementarioId)
+            ->where('estado', '!=', 2) // Excluir rechazados
             ->whereHas('persona', function ($query) {
                 $query->where('condocumento', 1);
             })
@@ -31,6 +32,62 @@ class AspiranteComplementarioService
             ->sortBy(function ($aspirante) {
                 return $aspirante->persona->numero_documento;
             });
+    }
+
+    /**
+     * Obtener aspirantes válidos para exportación (excluye rechazados y sin documento)
+     */
+    public function getAspirantesParaExportacion($complementarioId)
+    {
+        return AspiranteComplementario::with(['persona.tipoDocumento', 'persona.parametroCaracterizacion'])
+            ->where('complementario_id', $complementarioId)
+            ->where('estado', '!=', 2) // Excluir rechazados
+            ->whereHas('persona', function ($query) {
+                $query->where('condocumento', 1)
+                      ->where('estado_sofia', '!=', 0); // Excluir no registrados en SenasofiaPlus
+            })
+            ->get()
+            ->sortBy(function ($aspirante) {
+                return $aspirante->persona->numero_documento;
+            });
+    }
+
+    /**
+     * Obtener estadísticas de exclusión para mostrar en modal
+     */
+    public function getEstadisticasExclusion($complementarioId)
+    {
+        $totalAspirantes = AspiranteComplementario::where('complementario_id', $complementarioId)->count();
+        $rechazados = AspiranteComplementario::where('complementario_id', $complementarioId)
+            ->where('estado', 2)
+            ->count();
+        $sinDocumento = AspiranteComplementario::where('complementario_id', $complementarioId)
+            ->where('estado', '!=', 2)
+            ->whereHas('persona', function ($query) {
+                $query->where('condocumento', 0);
+            })
+            ->count();
+        $noRegistradosSofia = AspiranteComplementario::where('complementario_id', $complementarioId)
+            ->where('estado', '!=', 2)
+            ->whereHas('persona', function ($query) {
+                $query->where('estado_sofia', 0);
+            })
+            ->count();
+        $validos = AspiranteComplementario::where('complementario_id', $complementarioId)
+            ->where('estado', '!=', 2)
+            ->whereHas('persona', function ($query) {
+                $query->where('condocumento', 1)
+                      ->where('estado_sofia', '!=', 0);
+            })
+            ->count();
+
+        return [
+            'total' => $totalAspirantes,
+            'rechazados' => $rechazados,
+            'sin_documento' => $sinDocumento,
+            'no_registrados_sofia' => $noRegistradosSofia,
+            'validos' => $validos
+        ];
     }
 
     /**

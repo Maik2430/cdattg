@@ -16,7 +16,7 @@
     </style>
 @endsection
 @section('content')
-    
+
 
     <div class="container-fluid mt-4 px-2 px-md-4" style="background-color: #ebf1f4; min-height: 100vh;">
         <div class="row justify-content-center">
@@ -35,9 +35,12 @@
     </div>
 
     <!-- Modal de Inscripción -->
+    {{-- SonarQube S6819: Se usa div con role="dialog" en lugar de <dialog> porque Bootstrap 4 modals
+         no son compatibles con el elemento <dialog> nativo de HTML5. Bootstrap modals requieren
+         elementos div con clases específicas para funcionar correctamente. --}}
     <div class="modal fade" id="inscripcionModal" tabindex="-1" role="dialog"
         aria-labelledby="inscripcionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #ffffff; color: #343a40;
                     border-left: 4px solid #007bff;">

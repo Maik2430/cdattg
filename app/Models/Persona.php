@@ -325,7 +325,7 @@ class Persona extends Model
      */
     public function parametroCaracterizacion(): BelongsTo
     {
-        return $this->belongsTo(Parametro::class, 'caracterizacion_id');
+        return $this->belongsTo(Parametro::class, 'parametro_id');
     }
 
     public function caracterizacionesComplementarias(): BelongsToMany

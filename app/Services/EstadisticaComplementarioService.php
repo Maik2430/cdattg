@@ -1,74 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
+use App\Repositories\AspiranteComplementarioRepository;
+use App\Repositories\ComplementarioOfertadoRepository;
+use App\Repositories\PersonaRepository;
+use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EstadisticaComplementarioService
 {
+    public function __construct(
+        private readonly AspiranteComplementarioRepository $aspiranteRepository,
+        private readonly ComplementarioOfertadoRepository $programaRepository,
+        private readonly PersonaRepository $personaRepository
+    ) {}
     /**
      * Obtener estadísticas reales de la base de datos
      */
-    public function obtenerEstadisticasReales($filtros = [])
+    public function obtenerEstadisticasReales(): array
     {
-        // Total de aspirantes
-        $totalAspirantes = AspiranteComplementario::count();
-
-        // Aspirantes aceptados (estado 3 = Aceptado)
-        $aspirantesAceptados = AspiranteComplementario::where('estado', 3)->count();
-
-        // Aspirantes pendientes (estado 1 = En proceso, 2 = Documento subido)
+        $estadisticas = $this->aspiranteRepository->getEstadisticas();
+        $totalAspirantes = $estadisticas['total'];
+        $aspirantesAceptados = $estadisticas['aceptados'];
+        
         $aspirantesPendientes = AspiranteComplementario::whereIn('estado', [1, 2])->count();
+        $programasActivos = $this->programaRepository->countActivos();
+        $tendenciaInscripciones = $this->aspiranteRepository->getTendenciaInscripciones(6);
+        $distribucionProgramas = $this->aspiranteRepository->getDistribucionPorProgramas();
 
-        // Programas activos
-        $programasActivos = ComplementarioOfertado::where('estado', 1)->count();
-
-        // Tendencia de inscripciones por mes (últimos 6 meses)
-        $tendenciaInscripciones = AspiranteComplementario::selectRaw('
-                YEAR(created_at) as year,
-                MONTH(created_at) as month,
-                COUNT(*) as total
-            ')
-            ->where('created_at', '>=', now()->subMonths(6))
-            ->groupBy('year', 'month')
-            ->orderBy('year', 'asc')
-            ->orderBy('month', 'asc')
-            ->get();
-
-        // Distribución por programas
-        $distribucionProgramas = AspiranteComplementario::selectRaw('
-                complementarios_ofertados.nombre as programa,
-                COUNT(*) as total
-            ')
-            ->join('complementarios_ofertados', 'aspirantes_complementarios.complementario_id', '=', 'complementarios_ofertados.id')
-            ->groupBy('complementarios_ofertados.nombre')
-            ->orderBy('total', 'desc')
-            ->get();
-
-        // Programas con mayor demanda
-        $programasDemanda = AspiranteComplementario::selectRaw('
-                complementarios_ofertados.nombre as programa,
-                COUNT(*) as total_aspirantes,
-                SUM(CASE WHEN aspirantes_complementarios.estado = 3 THEN 1 ELSE 0 END) as aceptados,
-                SUM(CASE WHEN aspirantes_complementarios.estado IN (1, 2) THEN 1 ELSE 0 END) as pendientes
-            ')
-            ->join('complementarios_ofertados', 'aspirantes_complementarios.complementario_id', '=', 'complementarios_ofertados.id')
-            ->groupBy('complementarios_ofertados.nombre', 'complementarios_ofertados.id')
-            ->orderBy('total_aspirantes', 'desc')
-            ->limit(10)
-            ->get()
+        $programasDemanda = $this->programaRepository->getProgramasConMayorDemanda(10)
             ->map(function($programa) {
-                $tasaAceptacion = $programa->total_aspirantes > 0
-                    ? round(($programa->aceptados / $programa->total_aspirantes) * 100, 1)
-                    : 0;
-
                 return [
-                    'programa' => $programa->programa,
+                    'programa' => $programa->nombre,
                     'total_aspirantes' => $programa->total_aspirantes,
                     'aceptados' => $programa->aceptados,
                     'pendientes' => $programa->pendientes,
-                    'tasa_aceptacion' => $tasaAceptacion
+                    'tasa_aceptacion' => $programa->tasa_aceptacion
                 ];
             });
 
@@ -86,30 +63,26 @@ class EstadisticaComplementarioService
     /**
      * Obtener estadísticas filtradas por criterios específicos
      */
-    public function obtenerEstadisticasFiltradas($filtros)
+    public function obtenerEstadisticasFiltradas(array $filtros): array
     {
         $query = AspiranteComplementario::with(['persona', 'complementario']);
 
-        // Aplicar filtros de fecha
         if (isset($filtros['fecha_inicio']) && isset($filtros['fecha_fin'])) {
             $query->whereBetween('created_at', [$filtros['fecha_inicio'], $filtros['fecha_fin']]);
         }
 
-        // Aplicar filtros de departamento
         if (isset($filtros['departamento_id'])) {
             $query->whereHas('persona', function($q) use ($filtros) {
                 $q->where('departamento_id', $filtros['departamento_id']);
             });
         }
 
-        // Aplicar filtros de municipio
         if (isset($filtros['municipio_id'])) {
             $query->whereHas('persona', function($q) use ($filtros) {
                 $q->where('municipio_id', $filtros['municipio_id']);
             });
         }
 
-        // Aplicar filtros de programa
         if (isset($filtros['programa_id'])) {
             $query->where('complementario_id', $filtros['programa_id']);
         }
@@ -125,7 +98,7 @@ class EstadisticaComplementarioService
     /**
      * Generar reporte de tendencias mensuales
      */
-    public function generarReporteTendencias($meses = 12)
+    public function generarReporteTendencias(int $meses = 12)
     {
         return AspiranteComplementario::selectRaw('
                 YEAR(created_at) as year,
@@ -146,15 +119,7 @@ class EstadisticaComplementarioService
      */
     public function obtenerEstadisticasPorGenero()
     {
-        return AspiranteComplementario::selectRaw('
-                parametros.name as genero,
-                COUNT(*) as total
-            ')
-            ->join('personas', 'aspirantes_complementarios.persona_id', '=', 'personas.id')
-            ->join('parametros', 'personas.genero', '=', 'parametros.id')
-            ->groupBy('personas.genero', 'parametros.name')
-            ->orderBy('total', 'desc')
-            ->get();
+        return $this->personaRepository->getEstadisticasPorGenero();
     }
 
     /**
@@ -162,27 +127,143 @@ class EstadisticaComplementarioService
      */
     public function obtenerEstadisticasPorEdad()
     {
-        return AspiranteComplementario::selectRaw('
-                CASE
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) < 18 THEN "Menor de 18"
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 18 AND 25 THEN "18-25 años"
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 26 AND 35 THEN "26-35 años"
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 36 AND 45 THEN "36-45 años"
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 46 AND 55 THEN "46-55 años"
-                    ELSE "Mayor de 55"
-                END as rango_edad,
-                COUNT(*) as total
-            ')
-            ->join('personas', 'aspirantes_complementarios.persona_id', '=', 'personas.id')
-            ->groupByRaw('CASE
-                WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) < 18 THEN "Menor de 18"
-                WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 18 AND 25 THEN "18-25 años"
-                WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 26 AND 35 THEN "26-35 años"
-                WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 36 AND 45 THEN "36-45 años"
-                WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 46 AND 55 THEN "46-55 años"
-                ELSE "Mayor de 55"
-            END')
-            ->orderBy('total', 'desc')
-            ->get();
+        return $this->personaRepository->getEstadisticasPorEdad();
+    }
+
+    /**
+     * Exportar programas con mayor demanda a Excel
+     */
+    public function exportarProgramasDemandaExcel(): StreamedResponse
+    {
+        try {
+            $estadisticas = $this->obtenerEstadisticasReales();
+            $programasDemanda = $estadisticas['programas_demanda'];
+
+            // Crear hoja de cálculo
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Configurar título
+            $sheet->setCellValue('A1', 'PROGRAMAS CON MAYOR DEMANDA');
+            $sheet->mergeCells('A1:E1');
+            $sheet->getStyle('A1')->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 16,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '007BFF'],
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+            // Fecha de generación
+            $sheet->setCellValue('A2', 'Fecha de generación: ' . now()->format('d/m/Y H:i:s'));
+            $sheet->mergeCells('A2:E2');
+            $sheet->getStyle('A2')->applyFromArray([
+                'font' => ['size' => 10, 'italic' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+            ]);
+
+            // Encabezados de columnas
+            $encabezados = [
+                'A4' => 'Nombre del Programa',
+                'B4' => 'Total Aspirantes',
+                'C4' => 'Aceptados',
+                'D4' => 'Pendientes',
+                'E4' => 'Tasa de Aceptación (%)',
+            ];
+
+            foreach ($encabezados as $celda => $titulo) {
+                $sheet->setCellValue($celda, $titulo);
+            }
+
+            // Estilo para encabezados
+            $sheet->getStyle('A4:E4')->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '6C757D'],
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+            // Llenar datos
+            $fila = 5;
+            foreach ($programasDemanda as $programa) {
+                $sheet->setCellValue('A' . $fila, $programa['programa']);
+                $sheet->setCellValue('B' . $fila, $programa['total_aspirantes']);
+                $sheet->setCellValue('C' . $fila, $programa['aceptados']);
+                $sheet->setCellValue('D' . $fila, $programa['pendientes']);
+                $sheet->setCellValue('E' . $fila, $programa['tasa_aceptacion']);
+
+                // Alinear números a la derecha
+                $sheet->getStyle('B' . $fila . ':E' . $fila)->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_RIGHT],
+                ]);
+
+                $fila++;
+            }
+
+            // Auto-ajustar anchos de columnas
+            foreach (range('A', 'E') as $columna) {
+                $sheet->getColumnDimension($columna)->setAutoSize(true);
+            }
+
+            // Agregar bordes a los datos
+            $ultimaFila = $fila - 1;
+            $sheet->getStyle('A4:E' . $ultimaFila)->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => 'CCCCCC'],
+                    ],
+                ],
+            ]);
+
+            // Crear nombre del archivo
+            $fileName = 'programas_mayor_demanda_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+
+            // Crear respuesta de descarga
+            $response = new StreamedResponse(function () use ($spreadsheet) {
+                $writer = new Xlsx($spreadsheet);
+                $writer->save('php://output');
+            });
+
+            $response->headers->set(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            );
+            $response->headers->set('Content-Disposition', 'attachment;filename="' . $fileName . '"');
+            $response->headers->set('Cache-Control', 'max-age=0');
+
+            Log::info('Archivo Excel de programas con mayor demanda generado', [
+                'archivo' => $fileName,
+                'registros' => count($programasDemanda),
+                'user_id' => auth()->id(),
+            ]);
+
+            return $response;
+
+        } catch (\Exception $e) {
+            Log::error('Error exportando programas con mayor demanda a Excel', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+                'exception' => $e->getTraceAsString(),
+            ]);
+
+            throw $e;
+        }
     }
 }

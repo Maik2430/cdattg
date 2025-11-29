@@ -30,21 +30,107 @@ class AspiranteDocumentoService
      */
     public function buscarDocumentoEnGoogleDrive(array $files, string $patron): bool
     {
+        // Crear variantes del patrón para manejar diferentes formatos
+        $patrones = [$patron];
+        
+        // Si el patrón tiene guiones bajos, crear versión con espacios
+        if (strpos($patron, '_') !== false) {
+            $patronConEspacios = str_replace('_', ' ', $patron);
+            $patrones[] = $patronConEspacios;
+        }
+        
+        // Si el patrón tiene espacios, crear versión con guiones bajos
+        if (strpos($patron, ' ') !== false) {
+            $patronConGuiones = str_replace(' ', '_', $patron);
+            $patrones[] = $patronConGuiones;
+        }
+
+        // Crear patrón alternativo sin nombres (solo tipo_documento + numero_documento)
+        // Esto para manejar archivos subidos desde procesar-documentos
+        $patronSinNombres = $this->crearPatronSinNombres($patron);
+        if ($patronSinNombres) {
+            $patrones[] = $patronSinNombres;
+            
+            // También crear versión con espacios
+            $patronSinNombresConEspacios = str_replace('_', ' ', $patronSinNombres);
+            $patrones[] = $patronSinNombresConEspacios;
+        }
+
         foreach ($files as $file) {
             $fileName = basename($file);
-            if (strpos($fileName, $patron) === 0) {
-                try {
-                    if (Storage::disk('google')->exists($file)) {
-                        return true;
+            
+            // Buscar archivos que contengan cualquiera de los patrones
+            foreach ($patrones as $patronActual) {
+                if (strpos($fileName, $patronActual) !== false) {
+                    try {
+                        if (Storage::disk('google')->exists($file)) {
+                            Log::info("Documento encontrado en Google Drive", [
+                                'archivo' => $fileName,
+                                'patron_usado' => $patronActual,
+                                'patron_original' => $patron
+                            ]);
+                            return true;
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning("Error verificando existencia de archivo: {$fileName}", [
+                            'error' => $e->getMessage()
+                        ]);
                     }
-                } catch (\Exception $e) {
-                    Log::warning("Error verificando existencia de archivo: {$fileName}", [
-                        'error' => $e->getMessage()
-                    ]);
                 }
             }
         }
+        
+        Log::warning("Documento no encontrado en Google Drive", [
+            'patron' => $patron,
+            'patrones_buscados' => $patrones,
+            'total_archivos' => count($files)
+        ]);
         return false;
+    }
+
+    /**
+     * Crear patrón sin nombres para buscar archivos subidos desde procesar-documentos
+     * Extrae solo tipo_documento + numero_documento del patrón completo
+     */
+    private function crearPatronSinNombres(string $patron): ?string
+    {
+        // El patrón completo es: tipo_documento_numero_documento_primer_nombre_primer_apellido_
+        // Queremos extraer: tipo_documento_numero_documento_
+        
+        // Dividir por guiones bajos
+        $partes = explode('_', $patron);
+        
+        // Necesitamos al menos tipo_documento, numero_documento y nombres
+        if (count($partes) < 4) {
+            return null;
+        }
+        
+        // El tipo de documento puede tener múltiples partes (ej: CÉDULA_DE_CIUDADANÍA)
+        // Buscamos el número de documento (debe ser numérico)
+        $numeroDocumentoIndex = null;
+        for ($i = 0; $i < count($partes); $i++) {
+            if (is_numeric($partes[$i])) {
+                $numeroDocumentoIndex = $i;
+                break;
+            }
+        }
+        
+        if ($numeroDocumentoIndex === null) {
+            return null;
+        }
+        
+        // Reconstruir desde el inicio hasta el número de documento
+        $patronSinNombres = '';
+        for ($i = 0; $i <= $numeroDocumentoIndex; $i++) {
+            $patronSinNombres .= $partes[$i] . '_';
+        }
+        
+        Log::info("Patrón sin nombres creado", [
+            'patron_original' => $patron,
+            'patron_sin_nombres' => $patronSinNombres
+        ]);
+        
+        return $patronSinNombres;
     }
 
     /**
@@ -69,13 +155,53 @@ class AspiranteDocumentoService
     {
         $files = Storage::disk('google')->files('documentos_aspirantes');
 
+        // Crear variantes del patrón para manejar diferentes formatos
+        $patrones = [$patron];
+        
+        // Si el patrón tiene guiones bajos, crear versión con espacios
+        if (strpos($patron, '_') !== false) {
+            $patronConEspacios = str_replace('_', ' ', $patron);
+            $patrones[] = $patronConEspacios;
+        }
+        
+        // Si el patrón tiene espacios, crear versión con guiones bajos
+        if (strpos($patron, ' ') !== false) {
+            $patronConGuiones = str_replace(' ', '_', $patron);
+            $patrones[] = $patronConGuiones;
+        }
+
+        // Crear patrón alternativo sin nombres (solo tipo_documento + numero_documento)
+        // Esto para manejar archivos subidos desde procesar-documentos
+        $patronSinNombres = $this->crearPatronSinNombres($patron);
+        if ($patronSinNombres) {
+            $patrones[] = $patronSinNombres;
+            
+            // También crear versión con espacios
+            $patronSinNombresConEspacios = str_replace('_', ' ', $patronSinNombres);
+            $patrones[] = $patronSinNombresConEspacios;
+        }
+
         foreach ($files as $file) {
             $fileName = basename($file);
-            if (strpos($fileName, $patron) === 0) {
-                return $file;
+            
+            // Buscar archivos que contengan cualquiera de los patrones
+            foreach ($patrones as $patronActual) {
+                if (strpos($fileName, $patronActual) !== false) {
+                    Log::info("Archivo encontrado para descarga", [
+                        'archivo' => $fileName,
+                        'patron_usado' => $patronActual,
+                        'patron_original' => $patron
+                    ]);
+                    return $file;
+                }
             }
         }
 
+        Log::warning("Archivo no encontrado para descarga", [
+            'patron' => $patron,
+            'patrones_buscados' => $patrones,
+            'total_archivos' => count($files)
+        ]);
         return null;
     }
 

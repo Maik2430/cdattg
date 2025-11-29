@@ -89,7 +89,8 @@ class ProgramaComplementarioController extends Controller
         $programaData = [
             'id' => $programa->id,
             'nombre' => $programa->nombre,
-            'descripcion' => $programa->descripcion,
+            'justificacion' => $programa->justificacion,
+            'requisitos_ingreso' => $programa->requisitos_ingreso,
             'duracion' => $programa->duracion . ' horas',
             'icono' => $programa->icono,
             'modalidad' => $programa->modalidad_nombre ?? 'N/A',
@@ -105,9 +106,58 @@ class ProgramaComplementarioController extends Controller
     }
 
     /**
-     * API: Obtener datos de programa para edición
+     * Mostrar detalles del programa (Vista)
      */
-    public function edit(ComplementarioOfertado $programa): JsonResponse
+    public function show(ComplementarioOfertado $programa): View
+    {
+        $programa->load(['modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente.piso', 'competencias', 'raps']);
+        $programa = $this->complementarioService->enriquecerPrograma($programa);
+
+        return view(
+            'complementarios.programas.admin.show',
+            array_merge(
+                ['programa' => $programa],
+                $this->complementarioService->obtenerDatosFormulario()
+            )
+        );
+    }
+
+    /**
+     * Mostrar formulario de edición (Vista)
+     */
+    public function edit(ComplementarioOfertado $programa): View
+    {
+        $programa->load(['modalidad', 'jornada', 'diasFormacion', 'ambiente', 'competencias', 'raps', 'guiasAprendizaje']);
+        
+        $dias = $programa->diasFormacion->map(static function ($dia) {
+            return [
+                'dia_id' => $dia->id,
+                'hora_inicio' => $dia->pivot->hora_inicio,
+                'hora_fin' => $dia->pivot->hora_fin,
+            ];
+        });
+
+        $datosFormulario = $this->complementarioService->obtenerDatosFormulario();
+        
+        return view(
+            'complementarios.programas.admin.edit',
+            array_merge(
+                [
+                    'programa' => $programa,
+                    'diasSeleccionados' => $dias,
+                    'competenciasSeleccionadas' => $programa->competencias->pluck('id')->toArray(),
+                    'rapsSeleccionados' => $programa->raps->pluck('id')->toArray(),
+                    'guiasSeleccionadas' => $programa->guiasAprendizaje->pluck('id')->toArray(),
+                ],
+                $datosFormulario
+            )
+        );
+    }
+
+    /**
+     * API: Obtener datos de programa para edición (AJAX)
+     */
+    public function editApi(ComplementarioOfertado $programa): JsonResponse
     {
         $programa->load(['modalidad', 'jornada', 'diasFormacion', 'ambiente']);
 
@@ -123,7 +173,8 @@ class ProgramaComplementarioController extends Controller
             'id' => $programa->id,
             'codigo' => $programa->codigo,
             'nombre' => $programa->nombre,
-            'descripcion' => $programa->descripcion,
+            'justificacion' => $programa->justificacion,
+            'requisitos_ingreso' => $programa->requisitos_ingreso,
             'duracion' => $programa->duracion,
             'cupos' => $programa->cupos,
             'estado' => $programa->estado,
@@ -144,7 +195,11 @@ class ProgramaComplementarioController extends Controller
         DB::transaction(function () use ($payload) {
             $programa = ComplementarioOfertado::create($this->extractProgramaAtributos($payload));
 
+            // Sincronizar días de formación
             $this->complementarioService->sincronizarDiasFormacion($programa, $payload['dias'] ?? null);
+            
+            // Sincronizar estructura académica
+            $this->sincronizarEstructuraAcademica($programa, $payload);
         });
 
         return redirect()
@@ -158,19 +213,21 @@ class ProgramaComplementarioController extends Controller
     public function update(
         UpdateProgramaComplementarioRequest $request,
         ComplementarioOfertado $programa
-    ): JsonResponse {
+    ): RedirectResponse {
         $payload = $request->validated();
 
         DB::transaction(function () use ($programa, $payload) {
             $programa->update($this->extractProgramaAtributos($payload));
 
             $this->complementarioService->sincronizarDiasFormacion($programa, $payload['dias'] ?? null);
+            
+            // Sincronizar estructura académica
+            $this->sincronizarEstructuraAcademica($programa, $payload);
         });
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Programa actualizado exitosamente.',
-        ]);
+        return redirect()
+            ->route('complementarios-ofertados.show', $programa->id)
+            ->with('success', 'Programa actualizado exitosamente.');
     }
 
     /**
@@ -194,7 +251,8 @@ class ProgramaComplementarioController extends Controller
         return collect($payload)->only([
             'codigo',
             'nombre',
-            'descripcion',
+            'justificacion',
+            'requisitos_ingreso',
             'duracion',
             'cupos',
             'estado',
@@ -202,5 +260,26 @@ class ProgramaComplementarioController extends Controller
             'jornada_id',
             'ambiente_id',
         ])->toArray();
+    }
+
+    /**
+     * Sincroniza la estructura académica del programa complementario.
+     */
+    private function sincronizarEstructuraAcademica(ComplementarioOfertado $programa, array $payload): void
+    {
+        // Sincronizar competencias
+        if (isset($payload['competencias'])) {
+            $programa->competencias()->sync($payload['competencias']);
+        }
+        
+        // Sincronizar resultados de aprendizaje (RAPs)
+        if (isset($payload['raps'])) {
+            $programa->raps()->sync($payload['raps']);
+        }
+        
+        // Sincronizar guías de aprendizaje
+        if (isset($payload['guias'])) {
+            $programa->guiasAprendizaje()->sync($payload['guias']);
+        }
     }
 }

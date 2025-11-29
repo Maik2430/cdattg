@@ -13,7 +13,7 @@ class AddCaracterizacionIdToPersonasTable extends Migration
     {
         // Esta columna ya no se usa, ahora se maneja con la tabla persona_caracterizacion
         // Se mantiene la migración por compatibilidad pero no modifica la tabla
-        return;
+        
     }
 
     /**

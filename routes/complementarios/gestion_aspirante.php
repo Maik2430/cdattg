@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Complementarios\AspiranteComplementarioController;
 
+// Mantener compatibilidad con rutas existentes - funcionalidad refactorizada
 Route::get('/gestion-aspirantes', [AspiranteComplementarioController::class, 'gestionAspirantes'])
     ->name('gestion-aspirantes')
     ->middleware('auth');
@@ -38,3 +39,11 @@ Route::get(
 )
     ->name('programas-complementarios.descargar-cedulas')
     ->middleware('auth');
+
+Route::post(
+    '/programas-complementarios/{complementarioId}/validar-documentos',
+    [AspiranteComplementarioController::class, 'validarDocumentos']
+)
+    ->name('programas-complementarios.validar-documentos')
+    ->middleware('auth');
+

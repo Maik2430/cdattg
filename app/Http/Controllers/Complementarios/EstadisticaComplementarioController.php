@@ -9,6 +9,8 @@ use App\Models\ComplementarioOfertado;
 use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Services\EstadisticaComplementarioService;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\Log;
 
 class EstadisticaComplementarioController extends Controller
 {
@@ -40,8 +42,31 @@ class EstadisticaComplementarioController extends Controller
     {
         $filtros = $request->only(['fecha_inicio', 'fecha_fin', 'departamento_id', 'municipio_id', 'programa_id']);
 
-        $estadisticas = $this->estadisticaService->obtenerEstadisticasReales($filtros);
+        // Si hay filtros, usar el método filtrado; si no, usar el método general
+        if (!empty(array_filter($filtros))) {
+            $estadisticas = $this->estadisticaService->obtenerEstadisticasFiltradas($filtros);
+        } else {
+            $estadisticas = $this->estadisticaService->obtenerEstadisticasReales();
+        }
 
         return response()->json($estadisticas);
     }
+
+    /**
+     * Exportar programas con mayor demanda a Excel
+     */
+    public function exportarProgramasDemandaExcel(): StreamedResponse
+    {
+        try {
+            return $this->estadisticaService->exportarProgramasDemandaExcel();
+        } catch (\Exception $e) {
+            Log::error('Error en controlador al exportar programas con mayor demanda', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+            ]);
+
+            abort(500, 'Error al generar el archivo Excel. Por favor intente nuevamente.');
+        }
+    }
 }
+
