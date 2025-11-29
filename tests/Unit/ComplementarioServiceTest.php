@@ -25,7 +25,9 @@ class ComplementarioServiceTest extends TestCase
         ]);
 
         $this->service = new ComplementarioService(
-            app(TemaRepository::class)
+            app(TemaRepository::class),
+            app(\App\Repositories\ComplementarioOfertadoRepository::class),
+            app(\App\Repositories\AspiranteComplementarioRepository::class)
         );
     }
 

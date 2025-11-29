@@ -34,10 +34,27 @@ class ComplementarioOfertadoFactory extends Factory
         
         $nombre = $this->faker->unique()->randomElement($nombres);
         
-        // Obtener IDs reales o usar valores por defecto
-        $modalidadId = ParametroTema::where('tema_id', 5)->inRandomOrder()->value('id') ?? 18;
-        $jornadaId = JornadaFormacion::inRandomOrder()->value('id') ?? 1;
-        $ambienteId = Ambiente::where('status', 1)->inRandomOrder()->value('id') ?? 1;
+        // Obtener IDs reales o crear registros si no existen
+        $modalidadId = ParametroTema::where('tema_id', 5)->inRandomOrder()->value('id');
+        if (!$modalidadId) {
+            // Crear un ParametroTema si no existe
+            $parametro = \App\Models\Parametro::first();
+            $tema = \App\Models\Tema::firstOrCreate(['name' => 'MODALIDAD']);
+            $modalidad = ParametroTema::firstOrCreate([
+                'tema_id' => $tema->id,
+                'parametro_id' => $parametro ? $parametro->id : \App\Models\Parametro::factory()->create()->id,
+            ]);
+            $modalidadId = $modalidad->id;
+        }
+        
+        $jornadaId = JornadaFormacion::inRandomOrder()->value('id');
+        if (!$jornadaId) {
+            $jornada = JornadaFormacion::factory()->create();
+            $jornadaId = $jornada->id;
+        }
+        
+        $ambienteId = Ambiente::where('status', 1)->inRandomOrder()->value('id');
+        // Si no hay ambientes, usar null (permitir que sea nullable si la migración lo permite)
 
         return [
             'codigo' => 'COMP' . str_pad($this->faker->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
@@ -49,7 +66,7 @@ class ComplementarioOfertadoFactory extends Factory
             'estado' => $this->faker->randomElement([0, 1, 2]),
             'modalidad_id' => $modalidadId,
             'jornada_id' => $jornadaId,
-            'ambiente_id' => $ambienteId,
+            'ambiente_id' => $ambienteId, // nullable según la migración
         ];
     }
 
