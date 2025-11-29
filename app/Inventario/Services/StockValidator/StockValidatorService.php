@@ -81,12 +81,10 @@ class StockValidatorService implements StockValidatorServiceInterface
     {
         $debeNotificar = false;
 
-        if ($cantidadAnterior !== $producto->cantidad) {
-            if (config('inventario.stock.notificar_stock_bajo', true)) {
-                $umbralMinimo = $this->getUmbralMinimo();
-                if ($cantidadAnterior > $umbralMinimo) {
-                    $debeNotificar = $this->estaBajoUmbralMinimo($producto);
-                }
+        if ($cantidadAnterior !== $producto->cantidad && config('inventario.stock.notificar_stock_bajo', true)) {
+            $umbralMinimo = $this->getUmbralMinimo();
+            if ($cantidadAnterior > $umbralMinimo) {
+                $debeNotificar = $this->estaBajoUmbralMinimo($producto);
             }
         }
 
@@ -137,20 +135,20 @@ class StockValidatorService implements StockValidatorServiceInterface
      */
     public function obtenerNivelStock(Producto $producto): string
     {
+        $nivel = 'alto';
+
         if ($this->estaNivelCritico($producto)) {
-            return 'critico';
+            $nivel = 'critico';
+        } elseif ($this->estaBajoUmbralMinimo($producto)) {
+            $nivel = 'bajo';
+        } else {
+            $umbralMinimo = $this->getUmbralMinimo();
+            if ($producto->cantidad <= ($umbralMinimo * 2)) {
+                $nivel = 'normal';
+            }
         }
 
-        if ($this->estaBajoUmbralMinimo($producto)) {
-            return 'bajo';
-        }
-
-        $umbralMinimo = $this->getUmbralMinimo();
-        if ($producto->cantidad <= ($umbralMinimo * 2)) {
-            return 'normal';
-        }
-
-        return 'alto';
+        return $nivel;
     }
 
     /**
