@@ -75,23 +75,23 @@ class AspiranteComplementarioRepository
     public function getEstadisticasExclusion(int $programaId): array
     {
         $totalAspirantes = $this->countByPrograma($programaId);
-        
+
         $rechazados = $this->countByEstado($programaId, 2);
-        
+
         $sinDocumento = AspiranteComplementario::where('complementario_id', $programaId)
             ->where('estado', '!=', 2)
             ->whereHas('persona', function ($query) {
                 $query->where('condocumento', 0);
             })
             ->count();
-        
+
         $noRegistradosSofia = AspiranteComplementario::where('complementario_id', $programaId)
             ->where('estado', '!=', 2)
             ->whereHas('persona', function ($query) {
                 $query->where('estado_sofia', 0);
             })
             ->count();
-        
+
         $validos = AspiranteComplementario::where('complementario_id', $programaId)
             ->where('estado', '!=', 2)
             ->whereHas('persona', function ($query) {
