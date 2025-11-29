@@ -9,6 +9,10 @@ use App\Repositories\ComplementarioOfertadoRepository;
 use App\Repositories\AspiranteComplementarioRepository;
 use App\Models\ComplementarioOfertado;
 use App\Models\AspiranteComplementario;
+use App\Models\ParametroTema;
+use App\Models\JornadaFormacion;
+use App\Models\Ambiente;
+use App\Models\Parametro;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 
@@ -72,16 +76,29 @@ class ComplementarioServiceTest extends TestCase
     /** @test */
     public function puede_enriquecer_programa()
     {
+        $this->seed([
+            \Database\Seeders\ParametroSeeder::class,
+        ]);
+
+        $modalidad = ParametroTema::where('tema_id', 5)->first();
+        $jornada = JornadaFormacion::factory()->create();
+
         $programa = ComplementarioOfertado::factory()->create([
             'nombre' => 'Auxiliar de Cocina',
             'estado' => 1,
+            'modalidad_id' => $modalidad->id,
+            'jornada_id' => $jornada->id,
         ]);
+
+        $programa->load(['modalidad.parametro', 'jornada']);
 
         $enriquecido = $this->service->enriquecerPrograma($programa);
 
         $this->assertEquals('fas fa-utensils', $enriquecido->icono);
         $this->assertEquals('bg-success', $enriquecido->badge_class);
         $this->assertEquals('Con Oferta', $enriquecido->estado_label);
+        $this->assertNotNull($enriquecido->modalidad_nombre);
+        $this->assertNotNull($enriquecido->jornada_nombre);
     }
 
     /** @test */
@@ -156,5 +173,126 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals(5, $estadisticas['aspirantes_activos']);
         $this->assertEquals(3, $estadisticas['aspirantes_aceptados']);
         $this->assertEquals(22, $estadisticas['cupos_disponibles']);
+    }
+
+    /** @test */
+    public function puede_obtener_datos_formulario()
+    {
+        $this->seed([
+            \Database\Seeders\ParametroSeeder::class,
+        ]);
+
+        ParametroTema::where('tema_id', 5)->first() ?? ParametroTema::factory()->create(['tema_id' => 5]);
+        JornadaFormacion::factory()->create();
+        Ambiente::factory()->create(['status' => 1]);
+
+        $datos = $this->service->obtenerDatosFormulario();
+
+        $this->assertArrayHasKey('modalidades', $datos);
+        $this->assertArrayHasKey('jornadas', $datos);
+        $this->assertArrayHasKey('ambientes', $datos);
+        $this->assertArrayHasKey('competencias', $datos);
+        $this->assertArrayHasKey('guias', $datos);
+    }
+
+    /** @test */
+    public function puede_sincronizar_dias_formacion()
+    {
+        $programa = ComplementarioOfertado::factory()->create();
+        $dia1 = Parametro::factory()->create();
+        $dia2 = Parametro::factory()->create();
+
+        $dias = [
+            [
+                'dia_id' => $dia1->id,
+                'hora_inicio' => '08:00:00',
+                'hora_fin' => '12:00:00',
+            ],
+            [
+                'dia_id' => $dia2->id,
+                'hora_inicio' => '14:00:00',
+                'hora_fin' => '18:00:00',
+            ],
+        ];
+
+        $this->service->sincronizarDiasFormacion($programa, $dias);
+
+        $programa->refresh();
+        $this->assertCount(2, $programa->diasFormacion);
+        $this->assertTrue($programa->diasFormacion->contains($dia1->id));
+        $this->assertTrue($programa->diasFormacion->contains($dia2->id));
+
+        $dia1Pivot = $programa->diasFormacion->firstWhere('id', $dia1->id)->pivot;
+        $this->assertEquals('08:00:00', $dia1Pivot->hora_inicio);
+        $this->assertEquals('12:00:00', $dia1Pivot->hora_fin);
+    }
+
+    /** @test */
+    public function puede_eliminar_dias_formacion()
+    {
+        $programa = ComplementarioOfertado::factory()->create();
+        $dia = Parametro::factory()->create();
+
+        $programa->diasFormacion()->attach($dia->id, [
+            'hora_inicio' => '08:00:00',
+            'hora_fin' => '12:00:00',
+        ]);
+
+        $this->service->sincronizarDiasFormacion($programa, null);
+
+        $programa->refresh();
+        $this->assertCount(0, $programa->diasFormacion);
+    }
+
+    /** @test */
+    public function puede_obtener_tipos_documento()
+    {
+        $temaRepository = Mockery::mock(TemaRepository::class);
+        $temaMock = (object) [
+            'id' => 1,
+            'parametros' => collect([
+                (object) ['id' => 1, 'name' => 'Cédula'],
+                (object) ['id' => 2, 'name' => 'Tarjeta de Identidad'],
+            ]),
+        ];
+
+        $temaRepository->shouldReceive('obtenerTiposDocumento')
+            ->andReturn($temaMock);
+
+        $service = new ComplementarioService(
+            $temaRepository,
+            new ComplementarioOfertadoRepository(),
+            new AspiranteComplementarioRepository()
+        );
+
+        $tiposDocumento = $service->getTiposDocumento();
+
+        $this->assertGreaterThanOrEqual(0, $tiposDocumento->count());
+    }
+
+    /** @test */
+    public function puede_obtener_generos()
+    {
+        $temaRepository = Mockery::mock(TemaRepository::class);
+        $temaMock = (object) [
+            'id' => 1,
+            'parametros' => collect([
+                (object) ['id' => 9, 'name' => 'Masculino'],
+                (object) ['id' => 10, 'name' => 'Femenino'],
+            ]),
+        ];
+
+        $temaRepository->shouldReceive('obtenerGeneros')
+            ->andReturn($temaMock);
+
+        $service = new ComplementarioService(
+            $temaRepository,
+            new ComplementarioOfertadoRepository(),
+            new AspiranteComplementarioRepository()
+        );
+
+        $generos = $service->getGeneros();
+
+        $this->assertGreaterThanOrEqual(0, $generos->count());
     }
 }
