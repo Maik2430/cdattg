@@ -3,13 +3,14 @@
 namespace Tests\Complementarios\Unit\Services\Sofia;
 
 use Tests\TestCase;
-use App\Services\Sofia\SofiaValidationService;
-use App\Services\Sofia\SofiaHttpClient;
-use App\Services\Sofia\SofiaStateMapper;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
+use App\Services\Complementarios\Sofia\SofiaHttpClient;
+use App\Services\Complementarios\Sofia\SofiaStateMapper;
 use App\Services\AuditoriaService;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Mockery;
@@ -17,6 +18,8 @@ use Mockery;
 class SofiaValidationServiceTest extends TestCase
 {
     use RefreshDatabase;
+
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
 
     private SofiaValidationService $service;
     private $httpClientMock;
@@ -57,7 +60,7 @@ class SofiaValidationServiceTest extends TestCase
     public function puede_validar_aspirante_exitosamente(): void
     {
         $persona = Persona::factory()->create([
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'estado_sofia' => 0,
         ]);
 
@@ -67,7 +70,7 @@ class SofiaValidationServiceTest extends TestCase
 
         $this->httpClientMock->shouldReceive('validate')
             ->once()
-            ->with('1234567890')
+            ->with(self::TEST_NUMERO_DOCUMENTO)
             ->andReturn('YA_EXISTE');
 
         $this->stateMapperMock->shouldReceive('mapToState')
@@ -92,7 +95,7 @@ class SofiaValidationServiceTest extends TestCase
         $resultado = $this->service->validateAspirante($aspirante, 1);
 
         $this->assertTrue($resultado['success']);
-        $this->assertEquals('1234567890', $resultado['cedula']);
+        $this->assertEquals(self::TEST_NUMERO_DOCUMENTO, $resultado['cedula']);
         $this->assertEquals('YA_EXISTE', $resultado['resultado']);
         $this->assertEquals(1, $resultado['estado']);
         $this->assertArrayHasKey('duration', $resultado);
@@ -105,7 +108,7 @@ class SofiaValidationServiceTest extends TestCase
     public function actualiza_estado_sofia_de_persona(): void
     {
         $persona = Persona::factory()->create([
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'estado_sofia' => 0,
         ]);
 
@@ -134,7 +137,7 @@ class SofiaValidationServiceTest extends TestCase
     public function maneja_error_de_validacion(): void
     {
         $persona = Persona::factory()->create([
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'estado_sofia' => 0,
         ]);
 
@@ -158,7 +161,7 @@ class SofiaValidationServiceTest extends TestCase
         $resultado = $this->service->validateAspirante($aspirante, 1);
 
         $this->assertFalse($resultado['success']);
-        $this->assertEquals('1234567890', $resultado['cedula']);
+        $this->assertEquals(self::TEST_NUMERO_DOCUMENTO, $resultado['cedula']);
         $this->assertArrayHasKey('error', $resultado);
     }
 
@@ -166,7 +169,7 @@ class SofiaValidationServiceTest extends TestCase
     public function actualiza_progreso_cuando_se_proporciona(): void
     {
         $persona = Persona::factory()->create([
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'estado_sofia' => 0,
         ]);
 
@@ -200,7 +203,7 @@ class SofiaValidationServiceTest extends TestCase
     #[Test]
     public function obtiene_aspirantes_que_necesitan_validacion(): void
     {
-        $programa = \App\Models\ComplementarioOfertado::factory()->create();
+        $programa = ComplementarioOfertado::factory()->create();
 
         $persona1 = Persona::factory()->create(['estado_sofia' => 0]);
         $persona2 = Persona::factory()->create(['estado_sofia' => 2]);
@@ -233,7 +236,7 @@ class SofiaValidationServiceTest extends TestCase
     public function registra_auditoria_con_datos_correctos(): void
     {
         $persona = Persona::factory()->create([
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'estado_sofia' => 0,
         ]);
 
@@ -263,7 +266,7 @@ class SofiaValidationServiceTest extends TestCase
                            isset($data['resultado_api']) &&
                            isset($data['estado_anterior']) &&
                            isset($data['estado_nuevo']) &&
-                           $data['cedula'] === '1234567890' &&
+                           $data['cedula'] === self::TEST_NUMERO_DOCUMENTO &&
                            $data['resultado_api'] === 'YA_EXISTE';
                 })
             );
@@ -275,7 +278,7 @@ class SofiaValidationServiceTest extends TestCase
     public function incrementa_progreso_con_error_cuando_falla_validacion(): void
     {
         $persona = Persona::factory()->create([
-            'numero_documento' => '1234567890',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
             'estado_sofia' => 0,
         ]);
 

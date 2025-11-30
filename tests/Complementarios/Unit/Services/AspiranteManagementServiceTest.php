@@ -3,20 +3,23 @@
 namespace Tests\Complementarios\Unit\Services;
 
 use Tests\TestCase;
-use App\Services\AspiranteManagementService;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Repositories\ComplementarioOfertadoRepository;
+use App\Services\Complementarios\AspiranteManagementService;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
-use App\Models\AspiranteComplementario;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Mockery;
 
 class AspiranteManagementServiceTest extends TestCase
 {
+    private const TEST_PROGRAMA_NOMBRE = 'Programa Test';
+    private const TEST_NUMERO_DOCUMENTO = '1234567890';
+
     protected AspiranteManagementService $service;
     protected $aspiranteRepositoryMock;
     protected $programaRepositoryMock;
@@ -126,7 +129,7 @@ class AspiranteManagementServiceTest extends TestCase
     {
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
-        $programa->setAttribute('nombre', 'Programa Test');
+        $programa->setAttribute('nombre', self::TEST_PROGRAMA_NOMBRE);
         
         $aspirantes = new Collection([
             new AspiranteComplementario(['id' => 1]),
@@ -172,11 +175,11 @@ class AspiranteManagementServiceTest extends TestCase
     {
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
-        $programa->setAttribute('nombre', 'Programa Test');
+        $programa->setAttribute('nombre', self::TEST_PROGRAMA_NOMBRE);
         
         $persona = new Persona();
         $persona->setAttribute('id', 1);
-        $persona->setAttribute('numero_documento', '1234567890');
+        $persona->setAttribute('numero_documento', self::TEST_NUMERO_DOCUMENTO);
         $persona->setAttribute('primer_nombre', 'Juan');
         $persona->setAttribute('primer_apellido', 'Pérez');
         
@@ -189,7 +192,7 @@ class AspiranteManagementServiceTest extends TestCase
 
         $this->personaRepositoryMock->shouldReceive('findByNumeroDocumento')
             ->twice()
-            ->with('1234567890')
+            ->with(self::TEST_NUMERO_DOCUMENTO)
             ->andReturn($persona);
 
         $this->aspiranteRepositoryMock->shouldReceive('existeInscripcion')
@@ -206,7 +209,7 @@ class AspiranteManagementServiceTest extends TestCase
             }))
             ->andReturn($aspirante);
 
-        $resultado = $this->service->agregarAspirante(1, '1234567890');
+        $resultado = $this->service->agregarAspirante(1, self::TEST_NUMERO_DOCUMENTO);
 
         $this->assertTrue($resultado['success']);
         $this->assertStringContainsString('Juan', $resultado['message']);
@@ -217,7 +220,7 @@ class AspiranteManagementServiceTest extends TestCase
     {
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
-        $programa->setAttribute('nombre', 'Programa Test');
+        $programa->setAttribute('nombre', self::TEST_PROGRAMA_NOMBRE);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
@@ -240,11 +243,11 @@ class AspiranteManagementServiceTest extends TestCase
     {
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
-        $programa->setAttribute('nombre', 'Programa Test');
+        $programa->setAttribute('nombre', self::TEST_PROGRAMA_NOMBRE);
         
         $persona = new Persona();
         $persona->setAttribute('id', 1);
-        $persona->setAttribute('numero_documento', '1234567890');
+        $persona->setAttribute('numero_documento', self::TEST_NUMERO_DOCUMENTO);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
@@ -253,7 +256,7 @@ class AspiranteManagementServiceTest extends TestCase
 
         $this->personaRepositoryMock->shouldReceive('findByNumeroDocumento')
             ->once()
-            ->with('1234567890')
+            ->with(self::TEST_NUMERO_DOCUMENTO)
             ->andReturn($persona);
 
         $this->aspiranteRepositoryMock->shouldReceive('existeInscripcion')
@@ -261,7 +264,7 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(1, 1)
             ->andReturn(true);
 
-        $resultado = $this->service->agregarAspirante(1, '1234567890');
+        $resultado = $this->service->agregarAspirante(1, self::TEST_NUMERO_DOCUMENTO);
 
         $this->assertFalse($resultado['success']);
         $this->assertStringContainsString('ya se encuentra inscrita', $resultado['message']);

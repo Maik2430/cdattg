@@ -3,9 +3,9 @@
 namespace Tests\Complementarios\Unit\Repositories;
 
 use Tests\TestCase;
-use App\Repositories\ComplementarioOfertadoRepository;
-use App\Models\ComplementarioOfertado;
-use App\Models\AspiranteComplementario;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\ParametroTema;
 use App\Models\JornadaFormacion;
 use App\Models\Ambiente;
@@ -14,6 +14,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class ComplementarioOfertadoRepositoryTest extends TestCase
 {
     use RefreshDatabase;
+
+    private const TEST_PROGRAMA_NOMBRE = 'Test Programa';
 
     protected ComplementarioOfertadoRepository $repository;
 
@@ -132,7 +134,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
 
         $data = [
             'codigo' => 'COMP0001',
-            'nombre' => 'Test Programa',
+            'nombre' => self::TEST_PROGRAMA_NOMBRE,
             'justificacion' => 'Justificación de prueba',
             'requisitos_ingreso' => 'Requisitos de prueba',
             'duracion' => 60,
@@ -147,9 +149,9 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
 
         $this->assertDatabaseHas('complementarios_ofertados', [
             'codigo' => 'COMP0001',
-            'nombre' => 'Test Programa',
+            'nombre' => self::TEST_PROGRAMA_NOMBRE,
         ]);
-        $this->assertEquals('Test Programa', $programa->nombre);
+        $this->assertEquals(self::TEST_PROGRAMA_NOMBRE, $programa->nombre);
     }
 
     /** @test */
