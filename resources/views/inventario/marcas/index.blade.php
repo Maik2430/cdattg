@@ -103,13 +103,11 @@
 @endsection
 
 @push('css')
-    @vite([
-        'resources/css/inventario/shared/base.css',
-    ])
+    {{-- base.css se carga desde common-css.blade.php --}}
 @endpush
 
 @push('scripts')
-    @vite(['resources/js/pages/formularios-generico.js'])
+    {{-- @vite(['resources/js/pages/formularios-generico.js']) --}}
 @endpush
 
 

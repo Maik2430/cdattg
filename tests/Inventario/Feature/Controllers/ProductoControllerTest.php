@@ -46,13 +46,14 @@ class ProductoControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // Seeders base para datos realistas
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-        ]);
+        
+        // Ejecutar migraciones y seeders de todos los módulos
+        $this->migrateDatabases();
+        
+        // Asegurar que los seeders se ejecuten después de RefreshDatabase
+        if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
+            $this->artisan('db:seed', ['--force' => true]);
+        }
 
         // Crear permisos necesarios
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_PRODUCTO]);
@@ -125,6 +126,47 @@ class ProductoControllerTest extends TestCase
             $q->where('name', 'ESTADOS DE PRODUCTO');
         })->first();
 
+        // Obtener o crear categoría
+        $categoria = \App\Models\Parametro::whereHas('temas', function ($q) {
+            $q->where('name', 'CATEGORIAS');
+        })->first();
+        
+        if (!$categoria) {
+            $temaCategorias = \App\Models\Tema::firstOrCreate(['name' => 'CATEGORIAS'], ['status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
+            $categoria = \App\Models\Parametro::factory()->create(['name' => 'CATEGORIA TEST', 'status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
+            \App\Models\ParametroTema::firstOrCreate(['parametro_id' => $categoria->id, 'tema_id' => $temaCategorias->id], ['status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
+        }
+
+        // Obtener o crear marca
+        $marca = \App\Models\Parametro::whereHas('temas', function ($q) {
+            $q->where('name', 'MARCAS');
+        })->first();
+        
+        if (!$marca) {
+            $temaMarcas = \App\Models\Tema::firstOrCreate(['name' => 'MARCAS'], ['status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
+            $marca = \App\Models\Parametro::factory()->create(['name' => 'MARCA TEST', 'status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
+            \App\Models\ParametroTema::firstOrCreate(['parametro_id' => $marca->id, 'tema_id' => $temaMarcas->id], ['status' => true, 'user_create_id' => 1, 'user_edit_id' => 1]);
+        }
+
+        // Crear contrato convenio
+        $contratoConvenio = \App\Models\Inventario\ContratoConvenio::factory()->create();
+
+        // Obtener o crear ambiente (usar existente si hay)
+        $ambiente = \App\Models\Ambiente::inRandomOrder()->first();
+        if (!$ambiente) {
+            // Crear ambiente con dependencias (Sede -> Bloque -> Piso -> Ambiente)
+            $sede = \App\Models\Sede::inRandomOrder()->first();
+            if (!$sede) {
+                $sede = \App\Models\Sede::factory()->create();
+            }
+            $bloque = \App\Models\Bloque::factory()->create(['sede_id' => $sede->id]);
+            $piso = \App\Models\Piso::factory()->create(['bloque_id' => $bloque->id]);
+            $ambiente = \App\Models\Ambiente::factory()->create(['piso_id' => $piso->id]);
+        }
+
+        // Crear proveedor
+        $proveedor = \App\Models\Inventario\Proveedor::factory()->create();
+
         if (! $tipoProducto || ! $unidadMedida || ! $estado) {
             $this->markTestSkipped('Faltan parámetros necesarios');
         }
@@ -137,6 +179,11 @@ class ProductoControllerTest extends TestCase
             'unidad_medida_id' => $unidadMedida->id,
             'cantidad' => $this->faker->numberBetween(1, 100),
             'estado_producto_id' => $estado->id,
+            'categoria_id' => $categoria->id,
+            'marca_id' => $marca->id,
+            'contrato_convenio_id' => $contratoConvenio->id,
+            'ambiente_id' => $ambiente->id,
+            'proveedor_id' => $proveedor->id,
         ]);
 
         $response->assertRedirect();
@@ -196,12 +243,16 @@ class ProductoControllerTest extends TestCase
             'unidad_medida_id' => $producto->unidad_medida_id,
             'cantidad' => $producto->cantidad,
             'estado_producto_id' => $producto->estado_producto_id,
+            'categoria_id' => $producto->categoria_id,
+            'marca_id' => $producto->marca_id,
+            'contrato_convenio_id' => $producto->contrato_convenio_id,
+            'ambiente_id' => $producto->ambiente_id,
         ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('productos', [
             'id' => $producto->id,
-            'producto' => self::PRODUCTO_ACTUALIZADO,
+            'producto' => strtoupper(self::PRODUCTO_ACTUALIZADO),
         ]);
     }
 
