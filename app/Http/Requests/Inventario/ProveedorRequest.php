@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Inventario;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProveedorRequest extends FormRequest
 {
@@ -23,11 +26,26 @@ class ProveedorRequest extends FormRequest
     {
         // Update
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $proveedorId = $this->route('proveedor');
+            $proveedor = $this->route('proveedor');
+            $proveedorId = is_object($proveedor) ? $proveedor->id : $proveedor;
+            
             return [
-                'proveedor' => 'required|unique:proveedores,proveedor,' . $proveedorId,
-                'nit' => 'nullable|string|max:50|unique:proveedores,nit,' . $proveedorId,
-                'email' => 'nullable|email|max:255|unique:proveedores,email,' . $proveedorId,
+                'proveedor' => [
+                    'required',
+                    Rule::unique('proveedores', 'proveedor')->ignore($proveedorId),
+                ],
+                'nit' => [
+                    'nullable',
+                    'string',
+                    'max:50',
+                    Rule::unique('proveedores', 'nit')->ignore($proveedorId),
+                ],
+                'email' => [
+                    'nullable',
+                    'email',
+                    'max:255',
+                    Rule::unique('proveedores', 'email')->ignore($proveedorId),
+                ],
                 'telefono' => 'nullable|string|max:10',
                 'direccion' => 'nullable|string|max:255',
                 'departamento_id' => 'nullable|exists:departamentos,id',
@@ -40,8 +58,8 @@ class ProveedorRequest extends FormRequest
         // Store
         return [
             'proveedor' => 'required|unique:proveedores,proveedor',
-            'nit' => 'nullable|string|max:50',
-            'email' => 'nullable|email|max:255',
+            'nit' => 'nullable|string|max:50|unique:proveedores,nit',
+            'email' => 'nullable|email|max:255|unique:proveedores,email',
             'telefono' => 'nullable|string|max:10',
             'direccion' => 'nullable|string|max:255',
             'departamento_id' => 'nullable|exists:departamentos,id',
