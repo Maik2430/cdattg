@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 

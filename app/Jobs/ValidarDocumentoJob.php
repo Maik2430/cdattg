@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;

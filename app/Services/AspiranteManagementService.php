@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App\Exceptions\ProgramaNoEncontradoException;
-use App\Models\AspiranteComplementario;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
-use App\Repositories\AspiranteComplementarioRepository;
-use App\Repositories\ComplementarioOfertadoRepository;
+use App\Repositories\Complementarios\AspiranteComplementarioRepository;
+use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
