@@ -21,6 +21,22 @@ class ContratoConvenioRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -38,7 +54,7 @@ class ContratoConvenioRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_name_en_store(): void
     {
-        $this->markTestSkipped('Requiere Personas porque ContratoConvenio::factory() crea usuarios que necesitan persona_id');
+        $contrato = ContratoConvenio::factory()->create(['name' => 'CONTRATO TEST']);
 
         $request = new ContratoConvenioRequest();
         $rules = $request->rules();
@@ -54,7 +70,7 @@ class ContratoConvenioRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_codigo_en_store(): void
     {
-        $this->markTestSkipped('Requiere Personas porque ContratoConvenio::factory() crea usuarios que necesitan persona_id');
+        $contrato = ContratoConvenio::factory()->create(['codigo' => 'COD-001']);
 
         $request = new ContratoConvenioRequest();
         $rules = $request->rules();
@@ -160,7 +176,8 @@ class ContratoConvenioRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_store(): void
     {
-        $this->markTestSkipped('Requiere Personas y ParametroTema porque usa múltiples factories que requieren datos que no existen aún');
+        $proveedor = Proveedor::factory()->create();
+        $estado = ParametroTema::query()->inRandomOrder()->first();
 
         $request = new ContratoConvenioRequest();
         $rules = $request->rules();

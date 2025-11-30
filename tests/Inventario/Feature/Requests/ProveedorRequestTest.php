@@ -22,6 +22,22 @@ class ProveedorRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -39,7 +55,7 @@ class ProveedorRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_proveedor_en_store(): void
     {
-        $this->markTestSkipped('Requiere Personas porque Proveedor::factory() crea usuarios que necesitan persona_id');
+        $proveedor = Proveedor::factory()->create(['proveedor' => 'PROVEEDOR TEST']);
 
         $request = new ProveedorRequest();
         $rules = $request->rules();
@@ -55,7 +71,8 @@ class ProveedorRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_nit_en_update(): void
     {
-        $this->markTestSkipped('Requiere Personas porque Proveedor::factory() crea usuarios que necesitan persona_id');
+        $proveedor1 = Proveedor::factory()->create(['nit' => '123456789']);
+        $proveedor2 = Proveedor::factory()->create();
 
         $request = new ProveedorRequest();
         $request->setMethod('PUT');
@@ -69,7 +86,7 @@ class ProveedorRequestTest extends TestCase
                 
                 public function parameter($name) {
                     if ($name === 'proveedor') {
-                        return $this->proveedor;
+                        return $this->proveedor->id;
                     }
                     return null;
                 }
@@ -90,7 +107,8 @@ class ProveedorRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_email_en_update(): void
     {
-        $this->markTestSkipped('Requiere Personas porque Proveedor::factory() crea usuarios que necesitan persona_id');
+        $proveedor1 = Proveedor::factory()->create(['email' => 'test1@example.com']);
+        $proveedor2 = Proveedor::factory()->create();
 
         $request = new ProveedorRequest();
         $request->setMethod('PUT');
@@ -104,7 +122,7 @@ class ProveedorRequestTest extends TestCase
                 
                 public function parameter($name) {
                     if ($name === 'proveedor') {
-                        return $this->proveedor;
+                        return $this->proveedor->id;
                     }
                     return null;
                 }
@@ -185,7 +203,9 @@ class ProveedorRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_store(): void
     {
-        $this->markTestSkipped('Requiere Personas y ParametroTema porque usa múltiples factories que requieren datos que no existen aún');
+        $departamento = Departamento::query()->inRandomOrder()->first();
+        $municipio = Municipio::query()->where('departamento_id', $departamento->id)->inRandomOrder()->first();
+        $estado = ParametroTema::query()->inRandomOrder()->first();
 
         $request = new ProveedorRequest();
         $rules = $request->rules();
