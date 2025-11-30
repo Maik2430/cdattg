@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Complementarios;
+namespace App\Complementarios\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\ComplementarioOfertado;
-use App\Models\AspiranteComplementario;
-use App\Models\SofiaValidationProgress;
-use App\Jobs\ValidarSofiaJob;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\Complementarios\SofiaValidationProgress;
+use App\Jobs\Complementarios\ValidarSofiaJob;
 use Illuminate\Support\Facades\Log;
 
 class ValidacionSofiaController extends Controller

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Complementarios;
+namespace App\Complementarios\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complementarios\AspiranteRequest;

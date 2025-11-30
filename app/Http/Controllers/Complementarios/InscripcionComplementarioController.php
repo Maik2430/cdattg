@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Complementarios;
+namespace App\Complementarios\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complementarios\InscripcionComplementarioRequest;
 use App\Http\Requests\Complementarios\InscripcionGeneralRequest;
-use App\Services\InscripcionComplementarioService;
+use App\Services\Complementarios\InscripcionComplementarioService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
