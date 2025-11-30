@@ -19,6 +19,23 @@ class DevolucionRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        // DetalleOrden necesita: Orden, Producto → Ambiente → Piso → Bloque → Sede → Regional
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -93,7 +110,7 @@ class DevolucionRequestTest extends TestCase
     #[Test]
     public function valida_cantidad_devuelta_minima(): void
     {
-        $this->markTestSkipped('Requiere Personas porque DetalleOrden::factory() requiere datos relacionados que necesitan Personas');
+        $detalleOrden = DetalleOrden::factory()->create();
 
         $request = new DevolucionRequest();
         $rules = $request->rules();
@@ -110,7 +127,7 @@ class DevolucionRequestTest extends TestCase
     #[Test]
     public function valida_longitud_maxima_de_observaciones(): void
     {
-        $this->markTestSkipped('Requiere Personas porque DetalleOrden::factory() requiere datos relacionados que necesitan Personas');
+        $detalleOrden = DetalleOrden::factory()->create();
 
         $request = new DevolucionRequest();
         $rules = $request->rules();
@@ -128,7 +145,7 @@ class DevolucionRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos(): void
     {
-        $this->markTestSkipped('Requiere Personas porque DetalleOrden::factory() requiere datos relacionados que necesitan Personas');
+        $detalleOrden = DetalleOrden::factory()->create();
 
         $request = new DevolucionRequest();
         $rules = $request->rules();
@@ -145,7 +162,7 @@ class DevolucionRequestTest extends TestCase
     #[Test]
     public function acepta_observaciones_nulas(): void
     {
-        $this->markTestSkipped('Requiere Personas porque DetalleOrden::factory() requiere datos relacionados que necesitan Personas');
+        $detalleOrden = DetalleOrden::factory()->create();
 
         $request = new DevolucionRequest();
         $rules = $request->rules();
