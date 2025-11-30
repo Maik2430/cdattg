@@ -8,6 +8,8 @@ use App\Exceptions\ProgramaNoEncontradoException;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
+use App\Services\AspiranteDocumentoService;
+use App\Services\Complementarios\AspiranteComplementarioService;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
