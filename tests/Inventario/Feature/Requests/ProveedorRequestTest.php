@@ -17,7 +17,8 @@ use PHPUnit\Framework\Attributes\Test;
 class ProveedorRequestTest extends TestCase
 {
     use RefreshDatabase;
-
+    
+    private const PROVEEDOR_TEST = 'PROVEEDOR TEST';
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,19 +48,20 @@ class ProveedorRequestTest extends TestCase
     }
 
     private function obtenerRulesParaUpdate(Proveedor $proveedor): array
-    {
-        $request = new ProveedorRequest();
-        $request->setMethod('PUT');
-        $request->setRouteResolver(function () use ($proveedor) {
-            return $this->crearRouteResolver($proveedor);
-        });
-        return $request->rules();
-    }
+{
+    $request = new ProveedorRequest();
+    $request->setMethod('PUT');
+
+    $resolver = $this->crearRouteResolver($proveedor);
+    $request->setRouteResolver(fn() => $resolver);
+
+    return $request->rules();
+}
 
     private function crearRouteResolver(Proveedor $proveedor): object
     {
         return new class($proveedor) {
-            private $proveedor;
+            private Proveedor $proveedor;
             
             public function __construct($proveedor) {
                 $this->proveedor = $proveedor;
@@ -94,12 +96,12 @@ class ProveedorRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_proveedor_en_store(): void
     {
-        Proveedor::factory()->create(['proveedor' => 'PROVEEDOR TEST']);
+        Proveedor::factory()->create(['proveedor' => self::PROVEEDOR_TEST]);
 
         $rules = $this->obtenerRules();
 
         $this->validarYVerificarError(
-            ['proveedor' => 'PROVEEDOR TEST'],
+            ['proveedor' => self::PROVEEDOR_TEST],
             $rules,
             'proveedor'
         );
@@ -148,7 +150,7 @@ class ProveedorRequestTest extends TestCase
 
         $this->validarYVerificarError(
             [
-                'proveedor' => 'PROVEEDOR TEST',
+                'proveedor' => self::PROVEEDOR_TEST,
                 'email' => 'email-invalido',
             ],
             $rules,
@@ -163,7 +165,7 @@ class ProveedorRequestTest extends TestCase
 
         $this->validarYVerificarError(
             [
-                'proveedor' => 'PROVEEDOR TEST',
+                'proveedor' => self::PROVEEDOR_TEST,
                 'telefono' => '12345678901',
             ],
             $rules,
@@ -178,7 +180,7 @@ class ProveedorRequestTest extends TestCase
 
         $this->validarYVerificarError(
             [
-                'proveedor' => 'PROVEEDOR TEST',
+                'proveedor' => self::PROVEEDOR_TEST,
                 'departamento_id' => 99999,
             ],
             $rules,
@@ -193,7 +195,7 @@ class ProveedorRequestTest extends TestCase
 
         $this->validarYVerificarError(
             [
-                'proveedor' => 'PROVEEDOR TEST',
+                'proveedor' => self::PROVEEDOR_TEST,
                 'municipio_id' => 99999,
             ],
             $rules,
@@ -205,7 +207,7 @@ class ProveedorRequestTest extends TestCase
     public function acepta_datos_validos_para_store(): void
     {
         $departamento = Departamento::query()->inRandomOrder()->first();
-        $municipio = Municipio::query()->where('departamento_id', $departamento->id)->inRandomOrder()->first();
+        $municipio = Municipio::query()->where('departamento_id', $departamento->id)->inRandomOrder()->firstOrFail();
         $estado = ParametroTema::query()->inRandomOrder()->first();
 
         $rules = $this->obtenerRules();
