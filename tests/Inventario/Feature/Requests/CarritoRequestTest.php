@@ -19,6 +19,23 @@ class CarritoRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        // Producto necesita: Ambiente → Piso → Bloque → Sede → Regional
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -149,13 +166,42 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function valida_items_debe_tener_cantidad(): void
     {
-        $this->markTestSkipped('Requiere Personas porque Producto::factory() crea usuarios que necesitan persona_id');
+        $request = new CarritoRequest();
+        $rules = $request->rules();
+
+        $producto = Producto::factory()->create();
+
+        $validator = Validator::make([
+            'items' => [
+                [
+                    'producto_id' => $producto->id,
+                ],
+            ],
+        ], $rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('items.0.cantidad', $validator->errors()->toArray());
     }
 
     #[Test]
     public function valida_cantidad_minima_en_items(): void
     {
-        $this->markTestSkipped('Requiere Personas porque Producto::factory() crea usuarios que necesitan persona_id');
+        $request = new CarritoRequest();
+        $rules = $request->rules();
+
+        $producto = Producto::factory()->create();
+
+        $validator = Validator::make([
+            'items' => [
+                [
+                    'producto_id' => $producto->id,
+                    'cantidad' => 0,
+                ],
+            ],
+        ], $rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('items.0.cantidad', $validator->errors()->toArray());
     }
 
     #[Test]
@@ -182,7 +228,21 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_agregar(): void
     {
-        $this->markTestSkipped('Requiere Personas porque Producto::factory() crea usuarios que necesitan persona_id');
+        $request = new CarritoRequest();
+        $rules = $request->rules();
+
+        $producto = Producto::factory()->create();
+
+        $validator = Validator::make([
+            'items' => [
+                [
+                    'producto_id' => $producto->id,
+                    'cantidad' => 5,
+                ],
+            ],
+        ], $rules);
+
+        $this->assertFalse($validator->fails());
     }
 }
 

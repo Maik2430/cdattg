@@ -20,6 +20,23 @@ class OrdenRequestTest extends TestCase
     {
         parent::setUp();
         $this->migrateDatabases();
+
+        // Producto necesita: Ambiente → Piso → Bloque → Sede → Regional
+        $this->seed([
+            \Database\Seeders\RolePermissionSeeder::class,
+            \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
+            \Database\Seeders\PaisSeeder::class,
+            \Database\Seeders\DepartamentoSeeder::class,
+            \Database\Seeders\MunicipioSeeder::class,
+            \Database\Seeders\PersonaSeeder::class,
+            \Database\Seeders\UsersSeeder::class,
+            \Database\Seeders\RegionalSeeder::class,
+            \Database\Seeders\SedeSeeder::class,
+            \Database\Seeders\BloqueSeeder::class,
+            \Database\Seeders\PisoSeeder::class,
+            \Database\Seeders\AmbienteSeeder::class,
+        ]);
     }
 
     #[Test]
@@ -202,7 +219,22 @@ class OrdenRequestTest extends TestCase
     #[Test]
     public function valida_cantidad_minima_en_productos(): void
     {
-        $this->markTestSkipped('Requiere Personas y ParametroTema porque Producto::factory() y ParametroTema::factory() requieren datos que no existen aún');
+        $producto = Producto::factory()->create();
+
+        $request = new OrdenRequest();
+        $rules = $request->rules();
+
+        $validator = Validator::make([
+            'productos' => [
+                [
+                    'producto_id' => $producto->id,
+                    'cantidad' => 0,
+                ],
+            ],
+        ], $rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('productos.0.cantidad', $validator->errors()->toArray());
     }
 
     #[Test]
