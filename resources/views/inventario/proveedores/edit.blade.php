@@ -223,7 +223,6 @@
 @endsection
 
 @include('inventario._components.common-footer')
-@endsection
 
 @push('scripts')
     @vite(['resources/js/inventario/filtro-departamento.js'])
