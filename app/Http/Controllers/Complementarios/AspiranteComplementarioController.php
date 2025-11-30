@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Complementarios\Controllers;
+namespace App\Http\Controllers\Complementarios;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complementarios\AspiranteRequest;
-use App\Services\AspiranteManagementService;
-use App\Services\AspiranteExportService;
-use App\Services\AspiranteDocumentoService;
+use App\Services\Complementarios\AspiranteManagementService;
+use App\Services\Complementarios\AspiranteExportService;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;

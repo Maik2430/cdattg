@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\ComplementarioOfertado;
-use App\Models\SofiaValidationProgress;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\SofiaValidationProgress;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SofiaValidationProgress>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Complementarios\SofiaValidationProgress>
  */
 class SofiaValidationProgressFactory extends Factory
 {

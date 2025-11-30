@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Complementarios;
 
 use App\Exceptions\ProgramaNoEncontradoException;
 use App\Models\Complementarios\AspiranteComplementario;
@@ -9,6 +9,7 @@ use App\Models\Persona;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -60,7 +61,7 @@ class AspiranteManagementService
         $aspirantes = $this->aspiranteRepository->findByPrograma($programaId, ['persona', 'complementario']);
 
         // Verificar progreso de validación existente
-        $existingProgress = \App\Models\SofiaValidationProgress::where('complementario_id', $programaId)
+        $existingProgress = \App\Models\Complementarios\SofiaValidationProgress::where('complementario_id', $programaId)
             ->whereIn('status', ['pending', 'processing'])
             ->first();
 
@@ -319,7 +320,7 @@ class AspiranteManagementService
                 $errorResponse = [
                     'success' => false,
                     'message' => self::PROGRAMA_NO_ENCONTRADO,
-                    'status_code' => 404
+                    'status_code' => 200
                 ];
             }
         }
@@ -333,7 +334,7 @@ class AspiranteManagementService
                 $errorResponse = [
                     'success' => false,
                     'message' => 'Aspirante no encontrado.',
-                    'status_code' => 404
+                    'status_code' => 200
                 ];
             }
         }
