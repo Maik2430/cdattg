@@ -2,6 +2,14 @@
 
 namespace App\Models\Complementarios;
 
+use App\Models\Ambiente;
+use App\Models\Competencia;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Models\GuiasAprendizaje;
+use App\Models\JornadaFormacion;
+use App\Models\Parametro;
+use App\Models\ParametroTema;
+use App\Models\ResultadosAprendizaje;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
