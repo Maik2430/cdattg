@@ -283,7 +283,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'status' => 'pending',
         ]);
 
-        $response = $this->post(route('validar-sofia', $programa->id));
+        $response = $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -376,7 +376,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'complementario_id' => $programa->id,
         ]);
 
-        $response = $this->post(route('validar-sofia', $programa->id));
+        $response = $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -394,7 +394,7 @@ class ValidacionSofiaControllerTest extends TestCase
         // En este caso, el ModelNotFoundException ya está cubierto, pero podemos
         // verificar que otros errores se manejan correctamente
         
-        $response = $this->post(route('validar-sofia', 'invalid-id'));
+        $response = $this->post(route('programas-complementarios.validar-sofia', 'invalid-id'));
 
         // Debe manejar el error y retornar respuesta JSON
         $this->assertContains($response->status(), [404, 500]);
@@ -427,7 +427,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'complementario_id' => $programa->id,
         ]);
 
-        $this->post(route('validar-sofia', $programa->id));
+        $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         $this->assertDatabaseHas('sofia_validation_progress', [
             'complementario_id' => $programa->id,
@@ -453,7 +453,7 @@ class ValidacionSofiaControllerTest extends TestCase
             'complementario_id' => $programa->id,
         ]);
 
-        $this->post(route('validar-sofia', $programa->id));
+        $this->post(route('programas-complementarios.validar-sofia', $programa->id));
 
         Queue::assertPushed(ValidarSofiaJob::class, function ($job) {
             return $job->queue === 'sofia-validation';

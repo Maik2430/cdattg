@@ -13,6 +13,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class SofiaValidationProgressFactory extends Factory
 {
     /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = SofiaValidationProgress::class;
+
+    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>

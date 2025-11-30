@@ -349,8 +349,33 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        $dia1 = Parametro::factory()->create();
-        $dia2 = Parametro::factory()->create();
+        
+        // Obtener días de la semana del seeder (tema_id 4 es DIAS)
+        $dias = \App\Models\ParametroTema::where('tema_id', 4)
+            ->whereIn('parametro_id', [12, 13, 14, 15, 16, 17, 18])
+            ->take(2)
+            ->get();
+        
+        if ($dias->count() < 2) {
+            // Si no hay suficientes días, crear parámetros y ParametroTema
+            $parametro1 = Parametro::create(['name' => uniqid('Dia1_'), 'status' => 1]);
+            $parametro2 = Parametro::create(['name' => uniqid('Dia2_'), 'status' => 1]);
+            $dia1Tema = \App\Models\ParametroTema::create([
+                'tema_id' => 4,
+                'parametro_id' => $parametro1->id,
+                'status' => 1,
+            ]);
+            $dia2Tema = \App\Models\ParametroTema::create([
+                'tema_id' => 4,
+                'parametro_id' => $parametro2->id,
+                'status' => 1,
+            ]);
+            $dia1 = $parametro1;
+            $dia2 = $parametro2;
+        } else {
+            $dia1 = $dias->first()->parametro;
+            $dia2 = $dias->last()->parametro;
+        }
 
         $data = [
             'codigo' => $programa->codigo,
@@ -366,13 +391,13 @@ class ProgramaComplementarioControllerTest extends TestCase
             'dias' => [
                 [
                     'dia_id' => $dia1->id,
-                    'hora_inicio' => '09:00:00',
-                    'hora_fin' => '13:00:00',
+                    'hora_inicio' => '09:00',
+                    'hora_fin' => '13:00',
                 ],
                 [
                     'dia_id' => $dia2->id,
-                    'hora_inicio' => '14:00:00',
-                    'hora_fin' => '18:00:00',
+                    'hora_inicio' => '14:00',
+                    'hora_fin' => '18:00',
                 ],
             ],
         ];
@@ -391,9 +416,37 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        $competencia = Competencia::factory()->create();
-        $rap = ResultadosAprendizaje::factory()->create();
-        $guia = GuiasAprendizaje::factory()->create();
+        
+        // Crear competencia con todos los campos requeridos
+        $competencia = Competencia::create([
+            'codigo' => 'COMP-' . uniqid(),
+            'nombre' => 'Competencia Test',
+            'descripcion' => 'Descripción de prueba',
+            'duracion' => 40,
+            'fecha_inicio' => now()->format('Y-m-d'),
+            'fecha_fin' => now()->addMonths(6)->format('Y-m-d'),
+            'status' => true,
+            'user_create_id' => $this->user->id,
+        ]);
+
+        // Crear ResultadosAprendizaje con todos los campos requeridos
+        $rap = ResultadosAprendizaje::create([
+            'codigo' => 'RAP-' . uniqid(),
+            'nombre' => 'Resultado de Aprendizaje Test',
+            'duracion' => 20,
+            'fecha_inicio' => now()->format('Y-m-d'),
+            'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
+            'status' => true,
+            'user_create_id' => $this->user->id,
+        ]);
+
+        // Crear GuiasAprendizaje con todos los campos requeridos
+        $guia = GuiasAprendizaje::create([
+            'codigo' => 'GUIA-' . uniqid(),
+            'nombre' => 'Guía de Aprendizaje Test',
+            'status' => true,
+            'user_create_id' => $this->user->id,
+        ]);
 
         $data = [
             'codigo' => $programa->codigo,
@@ -455,8 +508,29 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        $competencia = Competencia::factory()->create();
-        $rap = ResultadosAprendizaje::factory()->create();
+        
+        // Crear competencia con todos los campos requeridos
+        $competencia = Competencia::create([
+            'codigo' => 'COMP-' . uniqid(),
+            'nombre' => 'Competencia Test',
+            'descripcion' => 'Descripción de prueba',
+            'duracion' => 40,
+            'fecha_inicio' => now()->format('Y-m-d'),
+            'fecha_fin' => now()->addMonths(6)->format('Y-m-d'),
+            'status' => true,
+            'user_create_id' => $this->user->id,
+        ]);
+
+        // Crear ResultadosAprendizaje con todos los campos requeridos
+        $rap = ResultadosAprendizaje::create([
+            'codigo' => 'RAP-' . uniqid(),
+            'nombre' => 'Resultado de Aprendizaje Test',
+            'duracion' => 20,
+            'fecha_inicio' => now()->format('Y-m-d'),
+            'fecha_fin' => now()->addMonths(3)->format('Y-m-d'),
+            'status' => true,
+            'user_create_id' => $this->user->id,
+        ]);
         
         $programa->competencias()->attach($competencia->id);
         $programa->raps()->attach($rap->id);
