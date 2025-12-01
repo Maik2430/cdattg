@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Inventario;
 
+use App\Exceptions\ProductoFactoryException;
 use App\Models\Ambiente;
 use App\Models\Inventario\ContratoConvenio;
 use App\Models\Inventario\Producto;
@@ -172,9 +173,9 @@ class ProductoFactory extends Factory
             if ($parametroTema) {
                 return $parametroTema->id;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Si falla la creación, lanzar excepción con más detalles
-            throw new \RuntimeException(
+            throw new ProductoFactoryException(
                 'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
                 'Error: ' . $e->getMessage() . '. ' .
                 'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).',
@@ -183,7 +184,7 @@ class ProductoFactory extends Factory
             );
         }
 
-        throw new \RuntimeException(
+        throw new ProductoFactoryException(
             'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
             'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).'
         );

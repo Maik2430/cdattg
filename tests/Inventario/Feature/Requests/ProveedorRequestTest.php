@@ -19,6 +19,7 @@ class ProveedorRequestTest extends TestCase
     use RefreshDatabase;
     
     private const PROVEEDOR_TEST = 'PROVEEDOR TEST';
+    private const NIT_TEST = '123456789';
     protected function setUp(): void
     {
         parent::setUp();
@@ -110,7 +111,7 @@ class ProveedorRequestTest extends TestCase
     #[Test]
     public function valida_unicidad_de_nit_en_update(): void
     {
-        Proveedor::factory()->create(['nit' => '123456789']);
+        Proveedor::factory()->create(['nit' => self::NIT_TEST]);
         $proveedor2 = Proveedor::factory()->create();
 
         $rules = $this->obtenerRulesParaUpdate($proveedor2);
@@ -118,7 +119,7 @@ class ProveedorRequestTest extends TestCase
         $this->validarYVerificarError(
             [
                 'proveedor' => 'OTRO PROVEEDOR',
-                'nit' => '123456789',
+                'nit' => self::NIT_TEST,
             ],
             $rules,
             'nit'
@@ -214,7 +215,7 @@ class ProveedorRequestTest extends TestCase
 
         $validator = Validator::make([
             'proveedor' => 'PROVEEDOR VALIDO',
-            'nit' => '123456789',
+            'nit' => self::NIT_TEST,
             'email' => 'proveedor@example.com',
             'telefono' => '1234567890',
             'direccion' => 'Dirección del proveedor',

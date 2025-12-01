@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Inventario;
 
+use App\Exceptions\InventarioFactoryException;
 use App\Models\Inventario\Aprobacion;
 use App\Models\Inventario\DetalleOrden;
 use Database\Factories\Concerns\HasUserId;
@@ -29,8 +30,8 @@ class AprobacionFactory extends Factory
         if (!$detalleOrdenId) {
             try {
                 $detalleOrdenId = DetalleOrden::factory()->create()->id;
-            } catch (\Exception $e) {
-                throw new \RuntimeException(
+            } catch (\Throwable $e) {
+                throw new InventarioFactoryException(
                     'No se pudo crear un DetalleOrden para la Aprobacion. Error: ' . $e->getMessage(),
                     0,
                     $e
@@ -102,8 +103,8 @@ class AprobacionFactory extends Factory
             if ($parametroTema) {
                 return $parametroTema->id;
             }
-        } catch (\Exception $e) {
-            throw new \RuntimeException(
+        } catch (\Throwable $e) {
+            throw new InventarioFactoryException(
                 'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
                 'Error: ' . $e->getMessage() . '. ' .
                 'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).',
@@ -112,7 +113,7 @@ class AprobacionFactory extends Factory
             );
         }
 
-        throw new \RuntimeException(
+        throw new InventarioFactoryException(
             'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
             'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).'
         );

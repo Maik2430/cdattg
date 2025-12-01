@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Inventario;
 
+use App\Exceptions\InventarioFactoryException;
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Devolucion;
 use App\Models\User;
@@ -106,8 +107,8 @@ class DevolucionFactory extends Factory
             if ($parametroTema) {
                 return $parametroTema->id;
             }
-        } catch (\Exception $e) {
-            throw new \RuntimeException(
+        } catch (\Throwable $e) {
+            throw new InventarioFactoryException(
                 'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
                 'Error: ' . $e->getMessage() . '. ' .
                 'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).',
@@ -116,7 +117,7 @@ class DevolucionFactory extends Factory
             );
         }
 
-        throw new \RuntimeException(
+        throw new InventarioFactoryException(
             'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
             'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).'
         );

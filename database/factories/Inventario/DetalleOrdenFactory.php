@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Inventario;
 
+use App\Exceptions\InventarioFactoryException;
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Orden;
 use App\Models\Inventario\Producto;
@@ -30,8 +31,8 @@ class DetalleOrdenFactory extends Factory
         if (!$ordenId) {
             try {
                 $ordenId = Orden::factory()->create()->id;
-            } catch (\Exception $e) {
-                throw new \RuntimeException(
+            } catch (\Throwable $e) {
+                throw new InventarioFactoryException(
                     'No se pudo crear una Orden para el DetalleOrden. Error: ' . $e->getMessage(),
                     0,
                     $e
@@ -50,8 +51,8 @@ class DetalleOrdenFactory extends Factory
         if (!$productoId) {
             try {
                 $productoId = Producto::factory()->create()->id;
-            } catch (\Exception $e) {
-                throw new \RuntimeException(
+            } catch (\Throwable $e) {
+                throw new InventarioFactoryException(
                     'No se pudo crear un Producto para el DetalleOrden. Error: ' . $e->getMessage(),
                     0,
                     $e
@@ -125,8 +126,8 @@ class DetalleOrdenFactory extends Factory
             if ($parametroTema) {
                 return $parametroTema->id;
             }
-        } catch (\Exception $e) {
-            throw new \RuntimeException(
+        } catch (\Throwable $e) {
+            throw new InventarioFactoryException(
                 'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
                 'Error: ' . $e->getMessage() . '. ' .
                 'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).',
@@ -135,7 +136,7 @@ class DetalleOrdenFactory extends Factory
             );
         }
 
-        throw new \RuntimeException(
+        throw new InventarioFactoryException(
             'No se encontró ningún parametro_tema y no se pudo crear uno. ' .
             'Ejecuta los seeders necesarios (TemaSeeder, ParametroSeeder).'
         );
