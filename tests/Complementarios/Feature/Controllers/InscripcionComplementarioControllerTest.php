@@ -11,6 +11,7 @@ use App\Models\Municipio;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 
 class InscripcionComplementarioControllerTest extends TestCase
 {
@@ -50,7 +51,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         Storage::fake('google');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_formulario_inscripcion_general()
     {
         $response = $this->get(route('inscripcion.general'));
@@ -59,7 +60,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $response->assertViewIs('complementarios.inscripciones.general');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_formulario_inscripcion_programa()
     {
         $programa = ComplementarioOfertado::factory()->create();
@@ -71,7 +72,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $response->assertViewHas('programa');
     }
 
-    /** @test */
+    #[Test]
     public function puede_procesar_inscripcion_general()
     {
         // Obtener datos del seeder
@@ -140,7 +141,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function no_procesa_inscripcion_general_si_persona_ya_existe()
     {
         // Obtener datos del seeder
@@ -176,7 +177,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $response->assertSessionHasErrors(['numero_documento', 'email']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_procesar_inscripcion_a_programa()
     {
         // Obtener datos del seeder

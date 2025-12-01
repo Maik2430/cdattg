@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class InscripcionComplementarioServiceTest extends TestCase
 {
@@ -66,7 +67,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function puede_preparar_formulario_general()
     {
         // NOTA: Este test requiere BD porque el servicio usa directamente Pais::all() y Departamento::all()
@@ -99,7 +100,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->assertArrayHasKey('generos', $data);
     }
 
-    /** @test */
+    #[Test]
     public function puede_procesar_inscripcion_general()
     {
         $data = [
@@ -138,7 +139,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->assertTrue($response->getSession()->has('success'));
     }
 
-    /** @test */
+    #[Test]
     public function no_procesa_inscripcion_general_si_persona_ya_existe()
     {
         $data = [
@@ -167,7 +168,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->assertTrue($response->getSession()->has('error'));
     }
 
-    /** @test */
+    #[Test]
     public function puede_preparar_formulario_inscripcion()
     {
         $programa = new ComplementarioOfertado();
@@ -229,7 +230,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->assertArrayHasKey('departamentos', $data);
     }
 
-    /** @test */
+    #[Test]
     public function lanza_excepcion_si_programa_no_existe()
     {
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
@@ -242,7 +243,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->service->prepararFormularioInscripcion(99999);
     }
 
-    /** @test */
+    #[Test]
     public function puede_procesar_inscripcion_a_programa()
     {
         $this->seed([
@@ -362,7 +363,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->assertTrue($response->getSession()->has('success'));
     }
 
-    /** @test */
+    #[Test]
     public function no_procesa_inscripcion_si_usuario_ya_esta_inscrito()
     {
         $programaId = 1;

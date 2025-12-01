@@ -13,6 +13,7 @@ use App\Models\Complementarios\AspiranteComplementario;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class AspiranteManagementServiceTest extends TestCase
 {
@@ -45,7 +46,7 @@ class AspiranteManagementServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_programas_para_gestion()
     {
         $programa1 = new ComplementarioOfertado();
@@ -73,7 +74,7 @@ class AspiranteManagementServiceTest extends TestCase
         $this->assertEquals(5, $programaEncontrado->aspirantes_count);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_aspirantes_por_programa_por_nombre()
     {
         $programa = new ComplementarioOfertado();
@@ -110,7 +111,7 @@ class AspiranteManagementServiceTest extends TestCase
         $this->assertCount(3, $data['aspirantes']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_aspirantes_por_programa_por_id()
     {
         $programa = new ComplementarioOfertado();
@@ -143,7 +144,7 @@ class AspiranteManagementServiceTest extends TestCase
         $this->assertCount(4, $data['aspirantes']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_agregar_aspirante_existente()
     {
         $programa = new ComplementarioOfertado();
@@ -188,7 +189,7 @@ class AspiranteManagementServiceTest extends TestCase
         $this->assertStringContainsString('Juan', $resultado['message']);
     }
 
-    /** @test */
+    #[Test]
     public function no_agrega_aspirante_si_no_existe_persona()
     {
         $programa = new ComplementarioOfertado();
@@ -211,7 +212,7 @@ class AspiranteManagementServiceTest extends TestCase
         $this->assertStringContainsString('No se encontró', $resultado['message']);
     }
 
-    /** @test */
+    #[Test]
     public function no_agrega_aspirante_si_ya_esta_inscrito()
     {
         $programa = new ComplementarioOfertado();
@@ -243,7 +244,7 @@ class AspiranteManagementServiceTest extends TestCase
         $this->assertStringContainsString('ya se encuentra inscrita', $resultado['message']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas_programa()
     {
         $programa = new ComplementarioOfertado();

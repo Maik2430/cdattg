@@ -10,6 +10,7 @@ use App\Models\Departamento;
 use App\Models\Municipio;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
+use PHPUnit\Framework\Attributes\Test;
 
 class InscripcionComplementarioRequestTest extends TestCase
 {
@@ -23,7 +24,7 @@ class InscripcionComplementarioRequestTest extends TestCase
     private const TEST_DIRECCION = 'Calle 123';
     private const TEST_FECHA_NACIMIENTO = '1990-01-01';
 
-    /** @test */
+    #[Test]
     public function valida_campos_requeridos()
     {
         $request = new InscripcionComplementarioRequest();
@@ -40,7 +41,7 @@ class InscripcionComplementarioRequestTest extends TestCase
         $this->assertArrayHasKey('documento_identidad', $rules);
     }
 
-    /** @test */
+    #[Test]
     public function valida_edad_minima_14_anios()
     {
         $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
@@ -71,7 +72,7 @@ class InscripcionComplementarioRequestTest extends TestCase
         $this->assertStringContainsString('14 años', $validator->errors()->first('fecha_nacimiento'));
     }
 
-    /** @test */
+    #[Test]
     public function valida_formato_documento_identidad()
     {
         $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
@@ -103,7 +104,7 @@ class InscripcionComplementarioRequestTest extends TestCase
         $this->assertStringContainsString('PDF', $validator->errors()->first('documento_identidad'));
     }
 
-    /** @test */
+    #[Test]
     public function valida_tamano_maximo_documento()
     {
         $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);
@@ -133,7 +134,7 @@ class InscripcionComplementarioRequestTest extends TestCase
         $this->assertTrue($validator->fails());
     }
 
-    /** @test */
+    #[Test]
     public function valida_aceptacion_terminos_y_privacidad()
     {
         $pais = Pais::create(['pais' => 'Colombia', 'status' => 1]);

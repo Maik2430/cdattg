@@ -10,6 +10,7 @@ use App\Models\ParametroTema;
 use App\Models\JornadaFormacion;
 use App\Models\Ambiente;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ComplementarioOfertadoRepositoryTest extends TestCase
 {
@@ -44,7 +45,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->repository = new ComplementarioOfertadoRepository();
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_todos_los_programas()
     {
         ComplementarioOfertado::factory()->count(5)->create();
@@ -54,7 +55,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertCount(5, $programas);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_programas_por_estado()
     {
         ComplementarioOfertado::factory()->count(3)->conOferta()->create();
@@ -67,7 +68,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertCount(2, $sinOferta);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_programas_activos()
     {
         ComplementarioOfertado::factory()->count(4)->conOferta()->create();
@@ -81,7 +82,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function puede_buscar_programa_por_id()
     {
         $programa = ComplementarioOfertado::factory()->create();
@@ -92,7 +93,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertEquals($programa->id, $encontrado->id);
     }
 
-    /** @test */
+    #[Test]
     public function puede_buscar_programa_por_nombre()
     {
         $programa = ComplementarioOfertado::factory()->create(['nombre' => 'Auxiliar de Cocina']);
@@ -103,7 +104,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertEquals($programa->id, $encontrado->id);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_programas_con_conteo_de_aspirantes()
     {
         $programa1 = ComplementarioOfertado::factory()->create();
@@ -121,7 +122,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertEquals(3, $programa2Data->aspirantes_count);
     }
 
-    /** @test */
+    #[Test]
     public function puede_crear_programa()
     {
         // Obtener IDs válidos de las tablas relacionadas
@@ -154,7 +155,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertEquals(self::TEST_PROGRAMA_NOMBRE, $programa->nombre);
     }
 
-    /** @test */
+    #[Test]
     public function puede_actualizar_programa()
     {
         $programa = ComplementarioOfertado::factory()->create();
@@ -168,7 +169,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_eliminar_programa()
     {
         $programa = ComplementarioOfertado::factory()->create();
@@ -181,7 +182,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_contar_programas_activos()
     {
         ComplementarioOfertado::factory()->count(5)->conOferta()->create();
@@ -192,7 +193,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertEquals(5, $count);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas()
     {
         ComplementarioOfertado::factory()->count(3)->conOferta()->create();
@@ -207,7 +208,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $this->assertEquals(1, $estadisticas['cupos_llenos']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_programas_con_mayor_demanda()
     {
         $programa1 = ComplementarioOfertado::factory()->create();

@@ -8,6 +8,7 @@ use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 class AspiranteComplementarioRepositoryTest extends TestCase
 {
@@ -42,7 +43,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         $this->repository = new AspiranteComplementarioRepository();
     }
 
-    /** @test */
+    #[Test]
     public function puede_encontrar_aspirantes_por_programa()
     {
         $programa = ComplementarioOfertado::factory()->create();
@@ -57,7 +58,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function puede_encontrar_aspirantes_con_documentos()
     {
         $programa = ComplementarioOfertado::factory()->create();
@@ -73,7 +74,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         $this->assertEquals($personaConDoc->id, $aspirantes->first()->persona_id);
     }
 
-    /** @test */
+    #[Test]
     public function puede_contar_aspirantes_por_estado()
     {
         $programa = ComplementarioOfertado::factory()->create();
@@ -87,7 +88,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         $this->assertEquals(2, $admitidos);
     }
 
-    /** @test */
+    #[Test]
     public function puede_verificar_si_existe_inscripcion()
     {
         $persona = Persona::factory()->create();
@@ -101,7 +102,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         $this->assertFalse($noExiste);
     }
 
-    /** @test */
+    #[Test]
     public function puede_crear_nuevo_aspirante()
     {
         $persona = Persona::factory()->create();
@@ -122,7 +123,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         $this->assertEquals($persona->id, $aspirante->persona_id);
     }
 
-    /** @test */
+    #[Test]
     public function puede_actualizar_aspirante()
     {
         $aspirante = AspiranteComplementario::factory()->enProceso()->create();
@@ -136,7 +137,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_eliminar_aspirante_cambiando_estado()
     {
         $aspirante = AspiranteComplementario::factory()->create(['estado' => 1]);
@@ -150,7 +151,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas()
     {
         AspiranteComplementario::factory()->count(5)->enProceso()->create();
@@ -165,7 +166,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         $this->assertEquals(2, $estadisticas['rechazados']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_tendencia_inscripciones()
     {
         // Crear aspirantes en diferentes meses
@@ -181,7 +182,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
         $this->assertGreaterThan(0, $tendencia->count());
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_distribucion_por_programas()
     {
         $programa1 = ComplementarioOfertado::factory()->create();

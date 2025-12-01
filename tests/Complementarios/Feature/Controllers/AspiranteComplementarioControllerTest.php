@@ -9,6 +9,7 @@ use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
+use PHPUnit\Framework\Attributes\Test;
 
 class AspiranteComplementarioControllerTest extends TestCase
 {
@@ -48,7 +49,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->user->givePermissionTo('ELIMINAR ASPIRANTE COMPLEMENTARIO');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_gestion_aspirantes()
     {
         $this->actingAs($this->user);
@@ -61,7 +62,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertViewHas('programas');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_aspirantes_de_programa_por_nombre()
     {
         $this->actingAs($this->user);
@@ -127,7 +128,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertViewHas('aspirantes');
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_aspirantes_de_programa_por_id()
     {
         $this->actingAs($this->user);
@@ -142,7 +143,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertViewHas('aspirantes');
     }
 
-    /** @test */
+    #[Test]
     public function puede_agregar_aspirante_existente()
     {
         $this->actingAs($this->user);
@@ -161,7 +162,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function no_agrega_aspirante_si_no_existe_persona()
     {
         $this->actingAs($this->user);
@@ -177,7 +178,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJsonFragment(['message' => 'No se encontró ninguna persona registrada con el número de documento "9999999999".']);
     }
 
-    /** @test */
+    #[Test]
     public function no_agrega_aspirante_si_ya_esta_inscrito()
     {
         $this->actingAs($this->user);
@@ -193,7 +194,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => false]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_rechazar_aspirante()
     {
         $this->actingAs($this->user);
@@ -213,7 +214,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_exportar_aspirantes_a_excel()
     {
         $this->actingAs($this->user);
@@ -226,7 +227,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }
 
-    /** @test */
+    #[Test]
     public function puede_descargar_cedulas_de_aspirantes()
     {
         $this->actingAs($this->user);
@@ -239,7 +240,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertContains($response->status(), [200, 302, 500]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_validar_documentos_de_aspirantes()
     {
         $this->actingAs($this->user);
@@ -255,7 +256,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function retorna_error_si_no_hay_aspirantes_para_validar_documentos()
     {
         $this->actingAs($this->user);
@@ -269,7 +270,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function no_agrega_aspirante_si_programa_no_existe()
     {
         $this->actingAs($this->user);
@@ -283,7 +284,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => false]);
     }
 
-    /** @test */
+    #[Test]
     public function no_rechaza_aspirante_si_no_existe()
     {
         $this->actingAs($this->user);
@@ -298,7 +299,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => false]);
     }
 
-    /** @test */
+    #[Test]
     public function no_rechaza_aspirante_si_programa_no_existe()
     {
         $this->actingAs($this->user);
@@ -313,7 +314,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $response->assertJson(['success' => false]);
     }
 
-    /** @test */
+    #[Test]
     public function exportar_excel_retorna_error_si_no_hay_aspirantes()
     {
         $this->actingAs($this->user);
@@ -329,7 +330,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertContains($statusCode, [200, 500]);
     }
 
-    /** @test */
+    #[Test]
     public function descargar_cedulas_retorna_error_si_no_hay_aspirantes()
     {
         $this->actingAs($this->user);
@@ -341,7 +342,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertContains($response->status(), [200, 302, 500]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_aspirantes_con_filtros()
     {
         $this->actingAs($this->user);
@@ -359,7 +360,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertGreaterThan(0, $aspirantes->count());
     }
 
-    /** @test */
+    #[Test]
     public function validar_documentos_retorna_resultado_correcto()
     {
         $this->actingAs($this->user);
@@ -375,7 +376,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_gestion_aspirantes_con_programas_vacios()
     {
         $this->actingAs($this->user);
@@ -389,7 +390,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->assertNotNull($programas);
     }
 
-    /** @test */
+    #[Test]
     public function puede_ver_aspirantes_por_nombre_con_programa_inexistente()
     {
         $this->actingAs($this->user);

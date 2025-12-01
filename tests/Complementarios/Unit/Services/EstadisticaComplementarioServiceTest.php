@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class EstadisticaComplementarioServiceTest extends TestCase
 {
@@ -41,7 +42,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas_reales()
     {
         // NOTA: Este test requiere BD porque el servicio usa directamente AspiranteComplementario::whereIn()
@@ -121,7 +122,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $this->assertEquals(3, $estadisticas['programas_activos']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas_por_genero()
     {
         $estadisticasMock = new EloquentCollection([
@@ -139,7 +140,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $this->assertEquals(2, $estadisticas->count());
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas_por_edad()
     {
         $estadisticasMock = new EloquentCollection([

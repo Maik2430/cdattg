@@ -15,6 +15,7 @@ use App\Models\Ambiente;
 use App\Models\Parametro;
 use Illuminate\Database\Eloquent\Collection;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class ComplementarioServiceTest extends TestCase
 {
@@ -48,7 +49,7 @@ class ComplementarioServiceTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_icono_para_programa()
     {
         $icono = $this->service->getIconoForPrograma('Auxiliar de Cocina');
@@ -56,7 +57,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals('fas fa-utensils', $icono);
     }
 
-    /** @test */
+    #[Test]
     public function retorna_icono_por_defecto_si_no_existe()
     {
         $icono = $this->service->getIconoForPrograma('Programa Desconocido');
@@ -64,7 +65,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals('fas fa-graduation-cap', $icono);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_clase_badge_por_estado()
     {
         $clase0 = $this->service->getBadgeClassForEstado(0);
@@ -76,7 +77,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals('bg-warning', $clase2);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_label_estado()
     {
         $label0 = $this->service->getEstadoLabel(0);
@@ -88,7 +89,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals('Cupos Llenos', $label2);
     }
 
-    /** @test */
+    #[Test]
     public function puede_enriquecer_programa()
     {
         $modalidad = new ParametroTema(['id' => 1, 'tema_id' => 5]);
@@ -119,7 +120,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals('Diurna', $enriquecido->jornada_nombre);
     }
 
-    /** @test */
+    #[Test]
     public function puede_enriquecer_coleccion_programas()
     {
         $programa1 = new ComplementarioOfertado(['id' => 1, 'nombre' => 'Programa 1', 'estado' => 1]);
@@ -143,7 +144,7 @@ class ComplementarioServiceTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_programas_con_filtro_estado()
     {
         $activos = new Collection([
@@ -174,7 +175,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertCount(2, $sinOfertaObtenidos);
     }
 
-    /** @test */
+    #[Test]
     public function puede_verificar_inscripcion_existente()
     {
         $this->aspiranteRepositoryMock->shouldReceive('existeInscripcion')
@@ -194,7 +195,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertFalse($noExiste);
     }
 
-    /** @test */
+    #[Test]
     public function puede_crear_aspirante()
     {
         $aspirante = new AspiranteComplementario([
@@ -220,7 +221,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals($aspirante, $resultado);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_estadisticas_programa()
     {
         $programa = new ComplementarioOfertado(['id' => 1, 'cupos' => 30]);
@@ -253,7 +254,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals(22, $estadisticas['cupos_disponibles']);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_datos_formulario()
     {
         $this->seed([
@@ -283,7 +284,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertArrayHasKey('guias', $datos);
     }
 
-    /** @test */
+    #[Test]
     public function puede_sincronizar_dias_formacion()
     {
         $this->seed([
@@ -335,7 +336,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals(self::TEST_HORA_FIN, $dia1Pivot->hora_fin);
     }
 
-    /** @test */
+    #[Test]
     public function puede_eliminar_dias_formacion()
     {
         $this->seed([
@@ -372,7 +373,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertCount(0, $programa->diasFormacion);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_tipos_documento()
     {
         $parametrosCollection = collect([
@@ -412,7 +413,7 @@ class ComplementarioServiceTest extends TestCase
         $this->assertEquals('Cédula', $tiposDocumento->first()->name);
     }
 
-    /** @test */
+    #[Test]
     public function puede_obtener_generos()
     {
         $parametrosCollection = collect([
