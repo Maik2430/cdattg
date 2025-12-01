@@ -12,6 +12,8 @@ class ProductoRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const CODIGO_BARRAS_TEST = '1234567890123';
+
     protected ProductoRepository $repository;
 
     protected function setUp(): void
@@ -98,10 +100,9 @@ class ProductoRepositoryTest extends TestCase
     #[Test]
     public function puede_buscar_producto_por_codigo_barras()
     {
-        $codigoBarras = '1234567890123';
-        $producto = Producto::factory()->create(['codigo_barras' => $codigoBarras]);
+        $producto = Producto::factory()->create(['codigo_barras' => self::CODIGO_BARRAS_TEST]);
 
-        $resultado = $this->repository->buscarPorCodigoBarras($codigoBarras);
+        $resultado = $this->repository->buscarPorCodigoBarras(self::CODIGO_BARRAS_TEST);
 
         $this->assertNotNull($resultado);
         $this->assertEquals($producto->id, $resultado->id);
@@ -154,7 +155,7 @@ class ProductoRepositoryTest extends TestCase
             'marca_id' => 60,
             'descripcion' => 'Descripción del producto test',
             'peso' => 10.5,
-            'codigo_barras' => '1234567890123',
+            'codigo_barras' => self::CODIGO_BARRAS_TEST,
             'user_create_id' => 1,
             'user_update_id' => 1,
         ];
@@ -212,10 +213,9 @@ class ProductoRepositoryTest extends TestCase
     #[Test]
     public function puede_verificar_si_existe_codigo_barras()
     {
-        $codigoBarras = '1234567890123';
-        Producto::factory()->create(['codigo_barras' => $codigoBarras]);
+        Producto::factory()->create(['codigo_barras' => self::CODIGO_BARRAS_TEST]);
 
-        $resultado = $this->repository->existeCodigoBarras($codigoBarras);
+        $resultado = $this->repository->existeCodigoBarras(self::CODIGO_BARRAS_TEST);
 
         $this->assertTrue($resultado);
     }
