@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Schema;
  * Trait para optimizar el seeding de la base de datos en tests de Complementarios.
  * Solo ejecuta los seeders si los datos base no existen, mejorando significativamente
  * el rendimiento de los tests.
- * 
  * IMPORTANTE: Este trait funciona con RefreshDatabase. Verifica si las tablas existen
  * y tienen datos antes de ejecutar los seeders, evitando ejecuciones innecesarias.
  */
