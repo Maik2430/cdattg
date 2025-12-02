@@ -184,13 +184,16 @@ class CarritoRequestTest extends TestCase
         $this->validarYVerificarError([$campo => $valorInvalido], $rules, $campo);
     }
 
-    /**
-     * Validate field in update context.
-     */
     private function validarCampoEnActualizar(string $campo, mixed $valorInvalido): void
     {
         $rules = $this->obtenerRulesParaActualizar();
-        $this->validarYVerificarError([$campo => $valorInvalido], $rules, $campo);
+        $data = [$campo => $valorInvalido];
+        $validator = Validator::make($data, $rules);
+        
+        $this->assertTrue($validator->fails(), "Validation should fail for field {$campo}");
+        
+        $errorArray = $validator->errors()->toArray();
+        $this->assertArrayHasKey($campo, $errorArray, "Field {$campo} must have validation errors");
     }
 
     /**
