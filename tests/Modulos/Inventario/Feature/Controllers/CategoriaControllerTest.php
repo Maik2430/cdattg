@@ -41,7 +41,6 @@ class CategoriaControllerTest extends TestCase
     private const VIEW_EDIT = 'inventario.categorias.edit';
 
     // Constantes para datos
-    private const TEMA_CATEGORIAS = 'CATEGORIAS';
     private const CATEGORIA_TEST = 'CATEGORIA TEST';
     private const CATEGORIA_ACTUALIZADA = 'CATEGORIA ACTUALIZADA';
 
