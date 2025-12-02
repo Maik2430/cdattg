@@ -38,6 +38,9 @@ class SofiaHttpClient
      */
     public function validate(string $cedula): string
     {
+        // Verificar health check antes de validar (no bloquea si falla)
+        $this->checkHealth();
+
         $validateUrl = $this->baseUrl . '/validate';
 
         Log::info('Enviando peticion HTTP al servicio Playwright', [
