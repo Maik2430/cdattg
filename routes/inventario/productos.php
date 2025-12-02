@@ -10,6 +10,9 @@ Route::prefix('inventario')
         // Rutas específicas ANTES del resource (sin parámetros dinámicos que puedan entrar en conflicto)
         Route::get('productos/catalogo', [ProductoController::class, 'catalogo'])
             ->name('productos.catalogo');
+
+        Route::get('productos/index', [ProductoController::class, 'index'])
+            ->name('productos.index');
         
         Route::get('productos/buscar', [ProductoController::class, 'buscar'])
             ->name('productos.buscar');
@@ -19,15 +22,7 @@ Route::prefix('inventario')
             ->name('productos.agregar-carrito');
         
         // Rutas administrativas - resource (debe ir antes de rutas con parámetros dinámicos)
-        Route::resource('productos', ProductoController::class)->names([
-            'index' => 'productos.index',
-            'create' => 'productos.create',
-            'store' => 'productos.store',
-            'show' => 'productos.show',
-            'edit' => 'productos.edit',
-            'update' => 'productos.update',
-            'destroy' => 'productos.destroy',
-        ]);
+        Route::resource('productos', ProductoController::class);
         
         // Rutas con parámetros dinámicos DESPUÉS del resource
         Route::get('productos/detalles/{id}', [ProductoController::class, 'detalles'])
