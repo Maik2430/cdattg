@@ -10,7 +10,9 @@ use App\Repositories\PersonaRepository;
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
-use Database\Factories\AspiranteComplementarioFactory;
+use App\Models\Departamento;
+use App\Models\Municipio;
+use App\Models\Pais;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
@@ -178,6 +180,9 @@ class EstadisticaComplementarioServiceTest extends TestCase
     public function puede_obtener_estadisticas_filtradas_por_fecha(): void
     {
         // Este test usa BD real porque el servicio usa clone en el query builder
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -186,7 +191,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create();
-        AspiranteComplementarioFactory::new()->create([
+        AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 3,
@@ -210,23 +215,33 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_por_departamento(): void
     {
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
             new PersonaRepository()
         );
 
+        // Create valid location data
+        $pais = Pais::firstOrCreate(['id' => 1], ['pais' => 'COLOMBIA']);
+        $departamento = Departamento::firstOrCreate(
+            ['id' => 95],
+            ['departamento' => 'GUAVIARE', 'pais_id' => $pais->id, 'status' => 1]
+        );
+
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create([
-            'departamento_id' => 1,
+            'departamento_id' => $departamento->id,
         ]);
-        AspiranteComplementarioFactory::new()->create([
+        AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 1,
         ]);
 
-        $filtros = ['departamento_id' => 1];
+        $filtros = ['departamento_id' => $departamento->id];
 
         $resultado = $service->obtenerEstadisticasFiltradas($filtros);
 
@@ -237,23 +252,37 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_por_municipio(): void
     {
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
             new PersonaRepository()
         );
 
+        // Create valid location data
+        $pais = Pais::firstOrCreate(['id' => 1], ['pais' => 'COLOMBIA']);
+        $departamento = Departamento::firstOrCreate(
+            ['id' => 95],
+            ['departamento' => 'GUAVIARE', 'pais_id' => $pais->id, 'status' => 1]
+        );
+        $municipio = Municipio::firstOrCreate(
+            ['municipio' => 'San José del Guaviare', 'departamento_id' => $departamento->id],
+            ['status' => 1]
+        );
+
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create([
-            'municipio_id' => 1,
+            'municipio_id' => $municipio->id,
         ]);
-        AspiranteComplementarioFactory::new()->create([
+        AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 1, // En proceso
         ]);
 
-        $filtros = ['municipio_id' => 1];
+        $filtros = ['municipio_id' => $municipio->id];
 
         $resultado = $service->obtenerEstadisticasFiltradas($filtros);
 
@@ -264,6 +293,9 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_por_programa(): void
     {
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -272,7 +304,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
 
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create();
-        AspiranteComplementarioFactory::new()->count(3)->create([
+        AspiranteComplementario::factory()->count(3)->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 1,
@@ -348,10 +380,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
             ->andReturn(['total' => 10, 'aceptados' => 5]);
 
         $builderMock = Mockery::mock(Builder::class);
+        $builderMock->shouldReceive('where')->with('estado', 1)->andReturnSelf();
         $builderMock->shouldReceive('whereIn')->andReturnSelf();
         $builderMock->shouldReceive('count')->andReturn(3);
 
         $modelMock = Mockery::mock('alias:' . AspiranteComplementario::class);
+        $modelMock->shouldReceive('where')->with('estado', 1)->andReturn($builderMock);
         $modelMock->shouldReceive('whereIn')->andReturn($builderMock);
 
         $this->programaRepositoryMock->shouldReceive('countActivos')->andReturn(2);
@@ -382,6 +416,9 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_sin_filtros(): void
     {
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -401,17 +438,27 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_con_multiples_filtros(): void
     {
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
             new PersonaRepository()
         );
 
+        // Create valid location data
+        $pais = Pais::firstOrCreate(['id' => 1], ['pais' => 'COLOMBIA']);
+        $departamento = Departamento::firstOrCreate(
+            ['id' => 95],
+            ['departamento' => 'GUAVIARE', 'pais_id' => $pais->id, 'status' => 1]
+        );
+
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create([
-            'departamento_id' => 1,
+            'departamento_id' => $departamento->id,
         ]);
-        AspiranteComplementarioFactory::new()->create([
+        AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 3,
@@ -421,7 +468,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $filtros = [
             'fecha_inicio' => self::TEST_FECHA_INICIO,
             'fecha_fin' => self::TEST_FECHA_FIN,
-            'departamento_id' => 1,
+            'departamento_id' => $departamento->id,
             'programa_id' => $programa->id,
         ];
 
@@ -434,6 +481,9 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_solo_fecha_inicio(): void
     {
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -456,10 +506,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
             ->andReturn(['total' => 0, 'aceptados' => 0]);
 
         $builderMock = Mockery::mock(Builder::class);
+        $builderMock->shouldReceive('where')->with('estado', 1)->andReturnSelf();
         $builderMock->shouldReceive('whereIn')->andReturnSelf();
         $builderMock->shouldReceive('count')->andReturn(0);
 
         $modelMock = Mockery::mock('alias:' . AspiranteComplementario::class);
+        $modelMock->shouldReceive('where')->with('estado', 1)->andReturn($builderMock);
         $modelMock->shouldReceive('whereIn')->andReturn($builderMock);
 
         $this->programaRepositoryMock->shouldReceive('countActivos')->andReturn(0);
@@ -485,10 +537,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
             ->andReturn(['total' => 50, 'aceptados' => 20]);
 
         $builderMock = Mockery::mock(Builder::class);
+        $builderMock->shouldReceive('where')->with('estado', 1)->andReturnSelf();
         $builderMock->shouldReceive('whereIn')->andReturnSelf();
         $builderMock->shouldReceive('count')->andReturn(30);
 
         $modelMock = Mockery::mock('alias:' . AspiranteComplementario::class);
+        $modelMock->shouldReceive('where')->with('estado', 1)->andReturn($builderMock);
         $modelMock->shouldReceive('whereIn')->andReturn($builderMock);
 
         $this->programaRepositoryMock->shouldReceive('countActivos')->andReturn(5);
@@ -558,17 +612,31 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_por_fecha_y_municipio(): void
     {
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
             new PersonaRepository()
         );
 
+        // Create valid location data
+        $pais = Pais::firstOrCreate(['id' => 1], ['pais' => 'COLOMBIA']);
+        $departamento = Departamento::firstOrCreate(
+            ['id' => 95],
+            ['departamento' => 'GUAVIARE', 'pais_id' => $pais->id, 'status' => 1]
+        );
+        $municipio = Municipio::firstOrCreate(
+            ['municipio' => 'San José del Guaviare', 'departamento_id' => $departamento->id],
+            ['status' => 1]
+        );
+
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create([
-            'municipio_id' => 1,
+            'municipio_id' => $municipio->id,
         ]);
-        AspiranteComplementarioFactory::new()->create([
+        AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 1,
@@ -578,7 +646,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $filtros = [
             'fecha_inicio' => self::TEST_FECHA_INICIO,
             'fecha_fin' => self::TEST_FECHA_FIN,
-            'municipio_id' => 1,
+            'municipio_id' => $municipio->id,
         ];
 
         $resultado = $service->obtenerEstadisticasFiltradas($filtros);
@@ -590,6 +658,9 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_con_datos(): void
     {
+        // Clean any existing mocks before creating real service
+        Mockery::close();
+        
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -600,12 +671,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $persona1 = Persona::factory()->create();
         $persona2 = Persona::factory()->create();
         
-        AspiranteComplementarioFactory::new()->create([
+        AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
             'complementario_id' => $programa->id,
             'estado' => 3,
         ]);
-        AspiranteComplementarioFactory::new()->create([
+        AspiranteComplementario::factory()->create([
             'persona_id' => $persona2->id,
             'complementario_id' => $programa->id,
             'estado' => 1,
@@ -661,10 +732,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
             ]);
 
         $builderMock = Mockery::mock(Builder::class);
+        $builderMock->shouldReceive('where')->with('estado', 1)->andReturnSelf();
         $builderMock->shouldReceive('whereIn')->andReturnSelf();
         $builderMock->shouldReceive('count')->andReturn(0);
 
         $modelMock = Mockery::mock('alias:' . AspiranteComplementario::class);
+        $modelMock->shouldReceive('where')->with('estado', 1)->andReturn($builderMock);
         $modelMock->shouldReceive('whereIn')->andReturn($builderMock);
 
         $this->programaRepositoryMock->shouldReceive('countActivos')->andReturn(0);
@@ -693,10 +766,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
             ]);
 
         $builderMock = Mockery::mock(Builder::class);
+        $builderMock->shouldReceive('where')->with('estado', 1)->andReturnSelf();
         $builderMock->shouldReceive('whereIn')->andReturnSelf();
         $builderMock->shouldReceive('count')->andReturn(30);
 
         $modelMock = Mockery::mock('alias:' . AspiranteComplementario::class);
+        $modelMock->shouldReceive('where')->with('estado', 1)->andReturn($builderMock);
         $modelMock->shouldReceive('whereIn')->andReturn($builderMock);
 
         $this->programaRepositoryMock->shouldReceive('countActivos')->andReturn(5);
