@@ -59,6 +59,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         parent::tearDown();
     }
 
+
     #[Test]
     public function puede_obtener_estadisticas_reales()
     {
@@ -180,8 +181,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     public function puede_obtener_estadisticas_filtradas_por_fecha(): void
     {
         // Este test usa BD real porque el servicio usa clone en el query builder
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
@@ -215,8 +215,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_por_departamento(): void
     {
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
@@ -224,7 +223,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
             new PersonaRepository()
         );
 
-        // Create valid location data
+        // Crear datos de ubicación válidos
         $pais = Pais::firstOrCreate(['id' => 1], ['pais' => 'COLOMBIA']);
         $departamento = Departamento::firstOrCreate(
             ['id' => 95],
@@ -252,8 +251,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_por_municipio(): void
     {
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
@@ -261,16 +259,21 @@ class EstadisticaComplementarioServiceTest extends TestCase
             new PersonaRepository()
         );
 
-        // Create valid location data
+        // Crear datos de ubicación válidos
         $pais = Pais::firstOrCreate(['id' => 1], ['pais' => 'COLOMBIA']);
         $departamento = Departamento::firstOrCreate(
             ['id' => 95],
             ['departamento' => 'GUAVIARE', 'pais_id' => $pais->id, 'status' => 1]
         );
-        $municipio = Municipio::firstOrCreate(
-            ['municipio' => 'San José del Guaviare', 'departamento_id' => $departamento->id],
-            ['status' => 1]
-        );
+        // Obtener municipio existente o crear uno nuevo con un nombre único
+        $municipio = Municipio::where('departamento_id', $departamento->id)->first();
+        if (!$municipio) {
+            $municipio = Municipio::create([
+                'municipio' => 'Test Municipio ' . uniqid(),
+                'departamento_id' => $departamento->id,
+                'status' => 1,
+            ]);
+        }
 
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create([
@@ -293,8 +296,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_por_programa(): void
     {
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
@@ -416,8 +418,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_sin_filtros(): void
     {
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
@@ -438,8 +439,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_con_multiples_filtros(): void
     {
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
@@ -447,7 +447,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
             new PersonaRepository()
         );
 
-        // Create valid location data
+        // Crear datos de ubicación válidos
         $pais = Pais::firstOrCreate(['id' => 1], ['pais' => 'COLOMBIA']);
         $departamento = Departamento::firstOrCreate(
             ['id' => 95],
@@ -481,8 +481,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_solo_fecha_inicio(): void
     {
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
@@ -612,8 +611,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_por_fecha_y_municipio(): void
     {
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
@@ -621,16 +619,21 @@ class EstadisticaComplementarioServiceTest extends TestCase
             new PersonaRepository()
         );
 
-        // Create valid location data
+        // Crear datos de ubicación válidos
         $pais = Pais::firstOrCreate(['id' => 1], ['pais' => 'COLOMBIA']);
         $departamento = Departamento::firstOrCreate(
             ['id' => 95],
             ['departamento' => 'GUAVIARE', 'pais_id' => $pais->id, 'status' => 1]
         );
-        $municipio = Municipio::firstOrCreate(
-            ['municipio' => 'San José del Guaviare', 'departamento_id' => $departamento->id],
-            ['status' => 1]
-        );
+        // Obtener municipio existente o crear uno nuevo con un nombre único
+        $municipio = Municipio::where('departamento_id', $departamento->id)->first();
+        if (!$municipio) {
+            $municipio = Municipio::create([
+                'municipio' => 'Test Municipio ' . uniqid(),
+                'departamento_id' => $departamento->id,
+                'status' => 1,
+            ]);
+        }
 
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create([
@@ -658,8 +661,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
     #[Test]
     public function puede_obtener_estadisticas_filtradas_con_datos(): void
     {
-        // Clean any existing mocks before creating real service
-        Mockery::close();
+        // Nota: Este test usa base de datos real, por lo que no usamos mocks
         
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
