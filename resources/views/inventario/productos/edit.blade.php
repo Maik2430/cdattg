@@ -473,9 +473,13 @@
 @endsection
 
 @push('js')
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"
+            integrity="sha384-2wCJ6wnJxI6f2MTNL7kFXCW6nwHEVzjLVRGXwjLJPFQkWdYZG6df0tq6HJk7B4KP"
+            crossorigin="anonymous"></script>
     @vite('resources/js/inventario/imagen.js')
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"
+            integrity="sha256-rbZdMyM71gayXqX8XvL0qxKJMQqiEm5YqPnmXqq5W3Y="
+            crossorigin="anonymous"></script>
     <script>
         // Preview de imagen
         document.getElementById('imagen').addEventListener('change', function(e) {

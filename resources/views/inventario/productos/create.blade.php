@@ -476,7 +476,9 @@
 @endpush
 
 @push('js')
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"
+            integrity="sha384-2wCJ6wnJxI6f2MTNL7kFXCW6nwHEVzjLVRGXwjLJPFQkWdYZG6df0tq6HJk7B4KP"
+            crossorigin="anonymous"></script>
     @vite('resources/js/inventario/imagen.js')
     <script>
         // Preview de imagen

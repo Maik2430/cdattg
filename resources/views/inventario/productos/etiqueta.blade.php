@@ -12,7 +12,9 @@
         .barcode { width: 100%; }
         .code { font-size: 11px; text-align: center; margin-top: 4px; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"
+            integrity="sha256-rbZdMyM71gayXqX8XvL0qxKJMQqiEm5YqPnmXqq5W3Y="
+            crossorigin="anonymous"></script>
 </head>
 <body onload="renderAndPrint()">
     <div class="label">

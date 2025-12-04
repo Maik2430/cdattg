@@ -112,7 +112,6 @@ async function loadCartItems() {
         }
         await Promise.all(productPromises);
 
-        // Renderizar items
         renderCartItems();
     } catch (error) {
         console.error('Error al cargar productos:', error);
@@ -130,8 +129,10 @@ async function loadProductDetails(productId) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/productos/${productId}`);
-        if (!response.ok) throw new Error('Producto no encontrado');
+        const response = await fetch(`${API_BASE_URL}/productos/detalles/${productId}`);
+        if (!response.ok) {
+            throw new Error('Producto no encontrado');
+        }
         
         const html = await response.text();
         const parser = new DOMParser();
@@ -143,7 +144,7 @@ async function loadProductDetails(productId) {
             name: doc.querySelector('h3')?.textContent.trim() || 'Producto',
             image: doc.querySelector('.product-image-wrapper img')?.src || 
                    doc.querySelector('img[alt]')?.src || 
-                   '/img/no-image.png',
+                   '/img/inventario/producto-default.png',
             stock: Number.parseInt(doc.querySelector('.stat-card-value')?.textContent, 10) || 
                    Number.parseInt(Array.from(doc.querySelectorAll('.badge')).find(el => el.textContent.includes('unidades'))?.textContent, 10) || 0,
             code: doc.querySelector('.badge-secondary')?.textContent.trim() || '',
@@ -154,7 +155,7 @@ async function loadProductDetails(productId) {
         return productData;
     } catch (error) {
         console.error(`Error al cargar producto ${productId}:`, error);
-        return null;
+        throw error;
     }
 }
 
@@ -172,7 +173,7 @@ function renderCartItems() {
         const productName = item.name || (productsDetails[item.id]?.name || 'Producto desconocido');
         const product = productsDetails[item.id] || {};
         const displayName = productName;
-        const displayImage = product.image || '/img/no-image.png';
+        const displayImage = product.image || '/img/inventario/producto-default.png';
         const displayCode = product.code || '';
         const displayStock = product.stock || item.maxStock || 0;
 
@@ -183,7 +184,7 @@ function renderCartItems() {
                      alt="${displayName}" 
                      class="img-thumbnail" 
                      style="max-width: 60px; max-height: 60px; object-fit: cover;"
-                     onerror="this.src='/img/no-image.png'">
+                     onerror="this.src='/img/inventario/producto-default.png'">
             </td>
             <td>
                 <strong>${displayName}</strong>
@@ -199,7 +200,7 @@ function renderCartItems() {
                 <div class="input-group input-group-sm" style="max-width: 150px; margin: 0 auto;">
                     <div class="input-group-prepend">
                         <button class="btn btn-outline-secondary btn-decrease" 
-                                data-index="${index}" 
+                               data-index="${index}" 
                                 type="button"
                                 ${item.quantity <= 1 ? 'disabled' : ''}>
                             <i class="fas fa-minus"></i>
