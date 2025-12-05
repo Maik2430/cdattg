@@ -128,7 +128,7 @@ class OrdenService
                     continue;
                 }
 
-                $producto = $this->productoRepository->encontrar($productoId);
+                $producto = $this->productoRepository->encontrar((int) $productoId);
 
                 if (!$producto) {
                     throw new OrdenException("Producto con ID {$productoId} no encontrado.");

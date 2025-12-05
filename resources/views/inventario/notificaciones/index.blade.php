@@ -4,9 +4,9 @@
 
 @section('css')
 <!-- Estilos personalizados para notificaciones -->
-{{-- @vite([
+@vite([
         'resources/css/inventario/notificaciones.css'
-    ]) --}}
+    ]) 
 @endsection
 
 @section('content_header')
@@ -27,11 +27,11 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <i class="fas fa-bell mr-1"></i> Mis Notificaciones
+                        <div class="card-header bg-light">
+                            <h3 class="card-title text-dark font-weight-bold">
+                                <i class="fas fa-bell mr-2 text-primary"></i> Mis Notificaciones
                                 @if($notificaciones->total() > 0)
-                                    <span class="badge badge-primary">{{ $notificaciones->total() }}</span>
+                                    <span class="badge badge-primary ml-2">{{ $notificaciones->total() }}</span>
                                 @endif
                             </h3>
                             @if($notificaciones->count() > 0)
@@ -101,14 +101,16 @@
                                             }
                                         @endphp
                                         
-                                        <div class="list-group-item {{ is_null($notificacion->leida_en) ? 'list-group-item-light' : '' }}">
+                                        <div class="list-group-item {{ is_null($notificacion->leida_en) ? 'list-group-item-light border-left border-primary border-3' : 'bg-white' }}">
                                             <div class="d-flex w-100 justify-content-between align-items-start">
                                                 <div class="d-flex">
-                                                    <div class="mr-3">
-                                                        <i class="fas {{ $icon }} text-{{ $color }} fa-lg"></i>
+                                                    <div class="mr-3 mt-1">
+                                                        <div class="bg-{{ $color }} rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="fas {{ $icon }} text-white fa-lg"></i>
+                                                        </div>
                                                     </div>
                                                     <div class="flex-grow-1">
-                                                        <h6 class="mb-1">
+                                                        <h6 class="mb-1 font-weight-bold text-dark">
                                                             @if(str_contains($tipo, 'StockBajo'))
                                                                 Stock Bajo
                                                             @elseif(str_contains($tipo, 'Aprobada'))
@@ -118,10 +120,10 @@
                                                             @elseif(str_contains($tipo, 'NuevaOrden'))
                                                                 Nueva Orden
                                                             @endif
-                                                            <small class="text-muted">• {{ $notificacion->created_at->diffForHumans() }}</small>
+                                                            <small class="text-muted font-weight-normal">• {{ $notificacion->created_at->diffForHumans() }}</small>
                                                         </h6>
 
-                                                        <p class="mb-1 small">
+                                                        <p class="mb-1 text-dark">
                                                             @if(str_contains($tipo, 'StockBajo'))
                                                                 <strong>
                                                                     {{ $datos['producto_nombre'] ?? ($datos['producto']['producto'] ?? 'N/A') }}
@@ -181,10 +183,10 @@
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div class="ml-2">
+                                                <div class="ml-2 d-flex flex-column">
                                                     @if($accionUrl)
                                                         <button
-                                                            class="btn btn-sm btn-outline-info open-notification mb-1"
+                                                            class="btn btn-sm btn-info mb-1 text-white"
                                                             data-id="{{ $notificacion->id }}"
                                                             data-url="{{ $accionUrl }}"
                                                             data-unread="{{ is_null($notificacion->leida_en) ? 'true' : 'false' }}"
@@ -195,23 +197,23 @@
                                                     @endif
                                                     @if(is_null($notificacion->leida_en))
                                                         <button
-                                                            class="btn btn-sm btn-outline-primary mark-read mb-1"
+                                                            class="btn btn-sm btn-success mb-1 mark-read"
                                                             data-id="{{ $notificacion->id }}"
                                                             title="Marcar como leída"
                                                         >
-                                                            <i class="fas fa-check"></i>
+                                                            <i class="fas fa-check text-white"></i>
                                                         </button>
                                                     @else
-                                                        <span class="badge badge-success mb-1" title="Leída">
-                                                            <i class="fas fa-check"></i>
+                                                        <span class="badge badge-success mb-1 p-2" title="Leída">
+                                                            <i class="fas fa-check text-white"></i>
                                                         </span>
                                                     @endif
                                                     <button
-                                                        class="btn btn-sm btn-outline-danger delete-notification d-block"
+                                                        class="btn btn-sm btn-danger delete-notification"
                                                         data-id="{{ $notificacion->id }}"
                                                         title="Eliminar"
                                                     >
-                                                        <i class="fas fa-trash"></i>
+                                                        <i class="fas fa-trash text-white"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -248,9 +250,8 @@
 @include('inventario._components.common-footer')
 
 @section('js')
-<!-- SweetAlert2 -->
-<!-- Script de notificaciones -->
-{{-- @vite(['resources/js/inventario/notificaciones.js']) --}}
+
+@vite(['resources/js/inventario/notificaciones.js'])
 @endsection
 
 

@@ -281,11 +281,6 @@
 
     @vite(['resources/js/inventario/solicitud.js'])
     <script>
-        document.getElementById('form-solicitud').addEventListener('submit', function() {
-            const carrito = JSON.parse(sessionStorage.getItem('carrito')) || [];
-            document.getElementById('carrito').value = JSON.stringify(carrito);
-        });
-
         const tipoSelect = document.getElementById('tipo');
         const grupoFecha = document.getElementById('grupo-fecha-devolucion');
 
