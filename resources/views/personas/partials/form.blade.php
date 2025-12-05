@@ -125,7 +125,7 @@
                         </label>
                         <input type="text" id="numero_documento" name="numero_documento"
                             class="form-control @error('numero_documento') is-invalid @enderror"
-                            value="{{ old('numero_documento', $isEdit ? $persona->numero_documento : '') }}" required>
+                            value="{{ old('numero_documento', $isEdit ? $persona->numero_documento : (isset($numeroDocumentoPrellenado) ? $numeroDocumentoPrellenado : '')) }}" required>
                         @error('numero_documento')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

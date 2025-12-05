@@ -12,6 +12,7 @@ use App\Repositories\PersonaRepository;
 use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 
 class AspiranteManagementService
@@ -74,8 +75,13 @@ class AspiranteManagementService
 
     /**
      * Agregar aspirante existente a un programa
+     *
+     * @param int $complementarioId ID del programa complementario
+     * @param string $numeroDocumento Número de documento de la persona
+     * @param string|null $observaciones Observaciones opcionales
+     * @return array Resultado de la operación
      */
-    public function agregarAspirante(int $complementarioId, string $numeroDocumento): array
+    public function agregarAspirante(int $complementarioId, string $numeroDocumento, ?string $observaciones = null): array
     {
         try {
             $errorResponse = $this->validarAgregarAspirante($complementarioId, $numeroDocumento);
@@ -84,11 +90,22 @@ class AspiranteManagementService
             }
 
             $persona = $this->personaRepository->findByNumeroDocumento($numeroDocumento);
+
+            // Usar observaciones proporcionadas o valor por defecto
+            $observacionesFinal = $observaciones ?? 'Agregado manualmente desde gestión de aspirantes';
+
             $this->aspiranteRepository->create([
                 'persona_id' => $persona->id,
                 'complementario_id' => $complementarioId,
                 'estado' => 1,
-                'observaciones' => 'Agregado manualmente desde gestión de aspirantes'
+                'observaciones' => $observacionesFinal
+            ]);
+
+            Log::info('Aspirante agregado exitosamente', [
+                'complementario_id' => $complementarioId,
+                'persona_id' => $persona->id,
+                'numero_documento' => $numeroDocumento,
+                'user_id' => Auth::id()
             ]);
 
             return $this->createSuccessResponse(
@@ -109,8 +126,14 @@ class AspiranteManagementService
 
     /**
      * Rechazar aspirante (cambiar estado a rechazado)
+     *
+     * @param int $complementarioId ID del programa complementario
+     * @param int $aspiranteId ID del aspirante a rechazar
+     * @param string|null $motivoRechazo Motivo del rechazo (opcional)
+     * @param string|null $observaciones Observaciones adicionales (opcional)
+     * @return array Resultado de la operación
      */
-    public function rechazarAspirante(int $complementarioId, int $aspiranteId): array
+    public function rechazarAspirante(int $complementarioId, int $aspiranteId, ?string $motivoRechazo = null, ?string $observaciones = null): array
     {
         try {
             $errorResponse = $this->validarRechazarAspirante($complementarioId, $aspiranteId);
@@ -126,7 +149,16 @@ class AspiranteManagementService
             $personaNombre = $aspirante->persona->primer_nombre . ' ' . $aspirante->persona->primer_apellido;
             $numeroDocumento = $aspirante->persona->numero_documento;
 
-            $this->aspiranteRepository->update($aspirante, ['estado' => 4]);
+            // Construir observaciones finales
+            $observacionesFinal = $observaciones ?? $aspirante->observaciones;
+            if ($motivoRechazo !== null) {
+                $observacionesFinal = ($observacionesFinal ? $observacionesFinal . ' | ' : '') . 'Motivo rechazo: ' . $motivoRechazo;
+            }
+
+            $this->aspiranteRepository->update($aspirante, [
+                'estado' => 4,
+                'observaciones' => $observacionesFinal
+            ]);
 
             Log::info('Aspirante rechazado exitosamente', [
                 'aspirante_id' => $aspiranteId,
@@ -306,7 +338,7 @@ class AspiranteManagementService
     {
         $errorResponse = null;
 
-        if (!Auth::user()->can('ELIMINAR ASPIRANTE COMPLEMENTARIO')) {
+        if (!Gate::allows('ELIMINAR ASPIRANTE COMPLEMENTARIO')) {
             $errorResponse = [
                 'success' => false,
                 'message' => 'No tiene permisos para rechazar aspirantes.',

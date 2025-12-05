@@ -70,8 +70,13 @@
             </h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('aspirantes.store', ['programa' => $programa->id]) }}" autocomplete="off">
+            <form method="POST" action="{{ route('aspirantes.store-new', ['programa' => $programa->id]) }}" autocomplete="off">
                 @csrf
+
+                @php
+                    // Pre-llenar número de documento si viene en la URL
+                    $numeroDocumentoPrellenado = old('numero_documento', request('numero_documento'));
+                @endphp
 
                 @include('personas.partials.form', [
                     'persona' => null,
@@ -85,6 +90,7 @@
                     'letras' => $letras,
                     'cardinales' => $cardinales,
                     'showCaracterizacion' => false,
+                    'numeroDocumentoPrellenado' => $numeroDocumentoPrellenado,
                 ])
 
                 <div class="card shadow-sm border-0 mb-4">

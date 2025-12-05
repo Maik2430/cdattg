@@ -1,0 +1,234 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests\Complementarios;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Carbon\Carbon;
+
+class CreateAspiranteRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * Este Form Request valida los datos para crear una nueva persona
+     * y agregarla como aspirante a un programa complementario.
+     * Implementa el caso de uso RF-ASP-006: Crear Nuevo Aspirante.
+     */
+    public function rules(): array
+    {
+        return [
+            // Datos de identificación
+            // Aceptar tanto 'tipo_documento' (del formulario) como 'tipo_documento_id' (para compatibilidad)
+            'tipo_documento' => [
+                'required_without:tipo_documento_id',
+                'integer',
+                Rule::exists('parametros', 'id'),
+            ],
+            'tipo_documento_id' => [
+                'required_without:tipo_documento',
+                'integer',
+                Rule::exists('parametros', 'id'),
+            ],
+            'numero_documento' => [
+                'required',
+                'string',
+                'max:191',
+                Rule::unique('personas', 'numero_documento'),
+            ],
+            
+            // Datos personales
+            'primer_nombre' => [
+                'required',
+                'string',
+                'max:191',
+            ],
+            'segundo_nombre' => [
+                'nullable',
+                'string',
+                'max:191',
+            ],
+            'primer_apellido' => [
+                'required',
+                'string',
+                'max:191',
+            ],
+            'segundo_apellido' => [
+                'nullable',
+                'string',
+                'max:191',
+            ],
+            'fecha_nacimiento' => [
+                'nullable',
+                'date',
+                'before:today',
+            ],
+            
+            // Datos de género
+            'genero_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('parametros', 'id'),
+            ],
+            
+            // Datos de contacto
+            'telefono' => [
+                'nullable',
+                'string',
+                'max:191',
+            ],
+            'celular' => [
+                'nullable',
+                'string',
+                'max:191',
+            ],
+            'email' => [
+                'nullable',
+                'email',
+                'max:191',
+                Rule::unique('personas', 'email'),
+            ],
+            
+            // Datos de ubicación
+            'pais_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('pais', 'id'),
+            ],
+            'departamento_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('departamentos', 'id'),
+            ],
+            'municipio_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('municipios', 'id'),
+            ],
+            'direccion' => [
+                'nullable',
+                'string',
+                'max:191',
+            ],
+            
+            // Caracterizaciones complementarias
+            'caracterizaciones' => [
+                'nullable',
+                'array',
+            ],
+            'caracterizaciones.*' => [
+                'integer',
+                Rule::exists('parametros', 'id'),
+            ],
+            
+            // Observaciones del aspirante
+            'observaciones' => [
+                'nullable',
+                'string',
+                'max:500',
+            ],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            // Tipo de documento
+            'tipo_documento.required_without' => 'El tipo de documento es obligatorio.',
+            'tipo_documento.exists' => 'El tipo de documento seleccionado no es válido.',
+            'tipo_documento_id.required_without' => 'El tipo de documento es obligatorio.',
+            'tipo_documento_id.exists' => 'El tipo de documento seleccionado no es válido.',
+            
+            // Número de documento
+            'numero_documento.required' => 'El número de documento es obligatorio.',
+            'numero_documento.unique' => 'Ya existe una persona registrada con este número de documento.',
+            'numero_documento.max' => 'El número de documento no puede exceder los 191 caracteres.',
+            
+            // Nombres
+            'primer_nombre.required' => 'El primer nombre es obligatorio.',
+            'primer_nombre.max' => 'El primer nombre no puede exceder los 191 caracteres.',
+            'segundo_nombre.max' => 'El segundo nombre no puede exceder los 191 caracteres.',
+            'primer_apellido.required' => 'El primer apellido es obligatorio.',
+            'primer_apellido.max' => 'El primer apellido no puede exceder los 191 caracteres.',
+            'segundo_apellido.max' => 'El segundo apellido no puede exceder los 191 caracteres.',
+            
+            // Fecha de nacimiento
+            'fecha_nacimiento.date' => 'La fecha de nacimiento debe ser una fecha válida.',
+            'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a la fecha actual.',
+            
+            // Género
+            'genero_id.exists' => 'El género seleccionado no es válido.',
+            
+            // Contacto
+            'celular.max' => 'El número de celular no puede exceder los 191 caracteres.',
+            'telefono.max' => 'El número de teléfono no puede exceder los 191 caracteres.',
+            'email.email' => 'El correo electrónico debe tener un formato válido.',
+            'email.unique' => 'Ya existe una persona registrada con este correo electrónico.',
+            'email.max' => 'El correo electrónico no puede exceder los 191 caracteres.',
+            
+            // Ubicación
+            'pais_id.exists' => 'El país seleccionado no es válido.',
+            'departamento_id.exists' => 'El departamento seleccionado no es válido.',
+            'municipio_id.exists' => 'El municipio seleccionado no es válido.',
+            'direccion.max' => 'La dirección no puede exceder los 191 caracteres.',
+            
+            // Caracterizaciones
+            'caracterizaciones.array' => 'Las caracterizaciones deben ser una lista válida.',
+            'caracterizaciones.*.exists' => 'Una o más caracterizaciones seleccionadas no existen.',
+            
+            // Observaciones
+            'observaciones.max' => 'Las observaciones no pueden exceder los 500 caracteres.',
+        ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // Mapear 'tipo_documento' a 'tipo_documento_id' si viene del formulario
+        if ($this->has('tipo_documento') && !$this->has('tipo_documento_id')) {
+            $this->merge(['tipo_documento_id' => $this->tipo_documento]);
+        }
+
+        // Sanitizar campos de texto
+        if ($this->has('numero_documento')) {
+            $this->merge(['numero_documento' => trim($this->numero_documento)]);
+        }
+        if ($this->has('primer_nombre')) {
+            $this->merge(['primer_nombre' => trim($this->primer_nombre)]);
+        }
+        if ($this->has('segundo_nombre') && $this->segundo_nombre !== null) {
+            $this->merge(['segundo_nombre' => trim($this->segundo_nombre)]);
+        }
+        if ($this->has('primer_apellido')) {
+            $this->merge(['primer_apellido' => trim($this->primer_apellido)]);
+        }
+        if ($this->has('segundo_apellido') && $this->segundo_apellido !== null) {
+            $this->merge(['segundo_apellido' => trim($this->segundo_apellido)]);
+        }
+        if ($this->has('email') && $this->email !== null) {
+            $this->merge(['email' => strtolower(trim($this->email))]);
+        }
+        if ($this->has('direccion') && $this->direccion !== null) {
+            $this->merge(['direccion' => trim($this->direccion)]);
+        }
+        if ($this->has('observaciones') && $this->observaciones !== null) {
+            $this->merge(['observaciones' => trim($this->observaciones)]);
+        }
+    }
+}
+

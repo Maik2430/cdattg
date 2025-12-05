@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Requests\Complementarios;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class AspiranteRequest extends FormRequest
+class RechazarAspiranteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,15 +18,21 @@ class AspiranteRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     * 
+     * Este Form Request valida los datos para rechazar un aspirante.
+     * Implementa el caso de uso RF-ASP-004: Rechazar Aspirante.
+     * 
+     * Nota: Actualmente el rechazo no requiere datos del request,
+     * pero este Form Request está preparado para futuras mejoras
+     * como agregar motivo de rechazo o comentarios.
      */
     public function rules(): array
     {
         return [
-            'numero_documento' => [
-                'required',
+            'motivo_rechazo' => [
+                'nullable',
                 'string',
-                'max:191',
-                Rule::exists('personas', 'numero_documento'),
+                'max:500',
             ],
             'observaciones' => [
                 'nullable',
@@ -43,11 +48,7 @@ class AspiranteRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'numero_documento.required' => 'El número de documento es obligatorio.',
-            'numero_documento.string' => 'El número de documento debe ser una cadena de texto.',
-            'numero_documento.max' => 'El número de documento no puede exceder los 191 caracteres.',
-            'numero_documento.exists' => 'No se encontró ninguna persona registrada con este número de documento.',
-            'observaciones.string' => 'Las observaciones deben ser una cadena de texto.',
+            'motivo_rechazo.max' => 'El motivo de rechazo no puede exceder los 500 caracteres.',
             'observaciones.max' => 'Las observaciones no pueden exceder los 500 caracteres.',
         ];
     }
@@ -57,10 +58,12 @@ class AspiranteRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->has('numero_documento')) {
-            $this->merge([
-                'numero_documento' => trim($this->numero_documento),
-            ]);
+        if ($this->has('motivo_rechazo') && $this->motivo_rechazo !== null) {
+            $this->merge(['motivo_rechazo' => trim($this->motivo_rechazo)]);
+        }
+        if ($this->has('observaciones') && $this->observaciones !== null) {
+            $this->merge(['observaciones' => trim($this->observaciones)]);
         }
     }
 }
+

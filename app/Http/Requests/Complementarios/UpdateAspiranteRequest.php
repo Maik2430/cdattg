@@ -7,7 +7,7 @@ namespace App\Http\Requests\Complementarios;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class AspiranteRequest extends FormRequest
+class UpdateAspiranteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,14 +22,17 @@ class AspiranteRequest extends FormRequest
      */
     public function rules(): array
     {
+        $aspiranteId = $this->route('aspirante') ?? $this->route('aspiranteId');
+
         return [
-            'numero_documento' => [
+            'estado' => [
+                'sometimes',
                 'required',
-                'string',
-                'max:191',
-                Rule::exists('personas', 'numero_documento'),
+                'integer',
+                Rule::in([1, 3, 4]), // 1=En proceso, 3=Admitido, 4=Rechazado
             ],
             'observaciones' => [
+                'sometimes',
                 'nullable',
                 'string',
                 'max:500',
@@ -43,10 +46,9 @@ class AspiranteRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'numero_documento.required' => 'El número de documento es obligatorio.',
-            'numero_documento.string' => 'El número de documento debe ser una cadena de texto.',
-            'numero_documento.max' => 'El número de documento no puede exceder los 191 caracteres.',
-            'numero_documento.exists' => 'No se encontró ninguna persona registrada con este número de documento.',
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.integer' => 'El estado debe ser un número entero.',
+            'estado.in' => 'El estado debe ser: 1 (En proceso), 3 (Admitido) o 4 (Rechazado).',
             'observaciones.string' => 'Las observaciones deben ser una cadena de texto.',
             'observaciones.max' => 'Las observaciones no pueden exceder los 500 caracteres.',
         ];
@@ -57,10 +59,11 @@ class AspiranteRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->has('numero_documento')) {
+        if ($this->has('observaciones')) {
             $this->merge([
-                'numero_documento' => trim($this->numero_documento),
+                'observaciones' => $this->observaciones ? trim($this->observaciones) : null,
             ]);
         }
     }
 }
+

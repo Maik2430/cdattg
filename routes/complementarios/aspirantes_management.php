@@ -22,12 +22,12 @@ Route::middleware('auth')
             ->name('ver-por-programa');
         
         // Gestión de aspirantes individuales
-        Route::post('programa/{complementarioId}/agregar', [AspiranteComplementarioController::class, 'agregarAspirante'])
-            ->name('agregar')
+        Route::post('programa/{complementarioId}/agregar', [AspiranteComplementarioController::class, 'store'])
+            ->name('agregar-existente')
             ->where('complementarioId', ROUTE_PATTERN_NUMERIC);
         
         Route::delete('programa/{complementarioId}/aspirante/{aspiranteId}', [AspiranteComplementarioController::class, 'eliminarAspirante'])
-            ->name('eliminar')
+            ->name('destroy')
             ->where(['complementarioId' => ROUTE_PATTERN_NUMERIC, 'aspiranteId' => ROUTE_PATTERN_NUMERIC]);
         
         // Exportaciones
@@ -37,6 +37,11 @@ Route::middleware('auth')
         
         Route::get('programa/{complementarioId}/descargar-cedulas', [AspiranteComplementarioController::class, 'descargarCedulas'])
             ->name('descargar-cedulas')
+            ->where('complementarioId', ROUTE_PATTERN_NUMERIC);
+        
+        // Estadísticas
+        Route::get('programa/{complementarioId}/estadisticas-exclusion', [AspiranteComplementarioController::class, 'getEstadisticasExclusion'])
+            ->name('estadisticas-exclusion')
             ->where('complementarioId', ROUTE_PATTERN_NUMERIC);
         
         // Validaciones

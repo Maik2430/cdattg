@@ -448,7 +448,7 @@
                 "buscarPersona": "{{ route("aspirantes.buscar-persona") }}",
                 "create": "{{ route("aspirantes.create", ["programa" => $programa->id]) }}",
                 "agregarExistente": "{{ route("aspirantes.agregar-existente", ["complementarioId" => $programa->id]) }}",
-                "destroy": "{{ route("aspirantes.eliminar", ["complementarioId" => $programa->id, "aspiranteId" => "__ID__"]) }}",
+                "destroy": "{{ route("aspirantes.destroy", ["complementarioId" => $programa->id, "aspiranteId" => "__ID__"]) }}",
                 "validarDocumento": "{{ route("programas-complementarios.validar-documento", ["programa" => $programa->id]) }}",
                 "validarSofia": "{{ route("programas-complementarios.validar-sofia", ["programa" => $programa->id]) }}",
                 "exportarExcel": "{{ route("aspirantes.exportar-excel", ["complementarioId" => $programa->id]) }}",

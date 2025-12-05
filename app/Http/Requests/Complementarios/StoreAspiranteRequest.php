@@ -7,7 +7,7 @@ namespace App\Http\Requests\Complementarios;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class AspiranteRequest extends FormRequest
+class StoreAspiranteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -64,3 +64,4 @@ class AspiranteRequest extends FormRequest
         }
     }
 }
+

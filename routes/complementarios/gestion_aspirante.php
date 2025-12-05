@@ -15,11 +15,28 @@ Route::get('/programas-complementarios/{curso}', [AspiranteComplementarioControl
     ->where('curso', '[^0-9]+.*') // Acepta cualquier string que no sea solo números
     ->middleware('auth');
 
+// Ruta mantenida por compatibilidad - usa store() con parámetro renombrado
 Route::post(
-    '/programas-complementarios/{complementarioId}/agregar-aspirante',
-    [AspiranteComplementarioController::class, 'agregarAspirante']
+    '/programas-complementarios/{programa}/agregar-aspirante',
+    [AspiranteComplementarioController::class, 'store']
 )
     ->name('programas-complementarios.agregar-aspirante')
+    ->middleware('auth');
+
+// Ruta estándar de Laravel Resource Controller
+Route::post(
+    '/programas-complementarios/{programa}/aspirantes',
+    [AspiranteComplementarioController::class, 'store']
+)
+    ->name('programas-complementarios.aspirantes.store')
+    ->middleware('auth');
+
+// Ruta estándar de Laravel Resource Controller para actualizar
+Route::put(
+    '/programas-complementarios/{programa}/aspirantes/{aspirante}',
+    [AspiranteComplementarioController::class, 'update']
+)
+    ->name('programas-complementarios.aspirantes.update')
     ->middleware('auth');
 
 Route::delete(
