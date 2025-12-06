@@ -21,49 +21,50 @@
         {{-- Alertas --}}
         @include('components.session-alerts')
 
-        <div class="row">
-            {{-- Columna de Imagen --}}
-            <div class="col-lg-4 col-md-5">
-                <div class="image-preview-container slide-in">
-                    <div class="image-preview-box">
-                        <img
-                            id="preview"
-                            src="{{ asset('img/no-image.png') }}"
-                            alt="Vista previa"
-                        >
-                    </div>
-                    <div class="image-upload-area">
-                        <label class="image-upload-btn">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Seleccionar Imagen</span>
+        <form action="{{ route('inventario.productos.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            
+            <div class="row">
+                {{-- Columna de Imagen --}}
+                <div class="col-lg-4 col-md-5">
+                    <div class="image-preview-container slide-in">
+                        <div class="image-preview-box">
+                            <img
+                                id="preview"
+                                src="{{ asset('img/no-image.png') }}"
+                                alt="Vista previa"
+                            >
+                        </div>
+                        <div class="image-upload-area">
+                            <label class="image-upload-btn" for="imagen">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Seleccionar Imagen</span>
+                            </label>
                             <input
                                 type="file"
                                 name="imagen"
                                 id="imagen"
                                 accept="image/*"
+                                style="display: none;"
                             >
-                        </label>
-                        <p class="text-muted mt-2 mb-0" style="font-size: 0.85rem;">
-                            <i class="fas fa-info-circle"></i> JPG, PNG (máx. 2MB)
-                        </p>
+                            <p class="text-muted mt-2 mb-0" style="font-size: 0.85rem;">
+                                <i class="fas fa-info-circle"></i> JPG, PNG (máx. 2MB)
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Columna de Formulario --}}
-            <div class="col-lg-8 col-md-7">
-                <div class="producto-form-card slide-in">
-                    <div class="form-header-gradient">
-                        <h3>
-                            <span class="header-icon">
-                                <i class="fas fa-box-open"></i>
-                            </span>
-                            Información del Producto
-                        </h3>
-                    </div>
-
-                    <form action="{{ route('inventario.productos.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                {{-- Columna de Formulario --}}
+                <div class="col-lg-8 col-md-7">
+                    <div class="producto-form-card slide-in">
+                        <div class="form-header-gradient">
+                            <h3>
+                                <span class="header-icon">
+                                    <i class="fas fa-box-open"></i>
+                                </span>
+                                Información del Producto
+                            </h3>
+                        </div>
                         
                         <div class="form-content-container" id="form">
                             {{-- Sección: Información Básica --}}
@@ -453,10 +454,10 @@
                                 Guardar Producto
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 
     {{-- Modal para scanner --}}

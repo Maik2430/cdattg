@@ -7,6 +7,8 @@ namespace App\Inventario\Services\Image;
 use App\Inventario\Interfaces\Services\ImageServiceInterface;
 use App\Models\Inventario\Producto;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ImageService implements ImageServiceInterface
 {
@@ -36,11 +38,17 @@ class ImageService implements ImageServiceInterface
             return $this->getDefaultImage();
         }
 
-        $directory = $this->getImageDirectory();
-        $nombreArchivo = time() . '.' . $imagen->extension();
-        $imagen->move(public_path($directory), $nombreArchivo);
-
-        return $directory . '/' . $nombreArchivo;
+        try {
+            $directory = $this->getImageDirectory();
+            $nombreArchivo = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+            
+            $rutaStorage = Storage::disk('public')->putFileAs($directory, $imagen, $nombreArchivo);
+            
+            return 'storage/' . $rutaStorage;
+        } catch (\Exception $e) {
+            Log::error('Error al procesar imagen de producto: ' . $e->getMessage());
+            return $this->getDefaultImage();
+        }
     }
 
     public function procesarImagenParaActualizacion(
@@ -60,10 +68,20 @@ class ImageService implements ImageServiceInterface
     {
         $defaultImage = $this->getDefaultImage();
 
-        if ($producto->imagen &&
-            $producto->imagen !== $defaultImage &&
-            file_exists(public_path($producto->imagen))) {
-            unlink(public_path($producto->imagen));
+        if ($producto->imagen && $producto->imagen !== $defaultImage) {
+            // Si la imagen está en formato storage/..., convertir a ruta de storage
+            // Ejemplo: storage/imagenes_productos/nombre.jpg -> imagenes_productos/nombre.jpg
+            $rutaStorage = str_replace('storage/', '', $producto->imagen);
+            
+            // Intentar eliminar desde storage usando disco 'public'
+            if (Storage::disk('public')->exists($rutaStorage)) {
+                Storage::disk('public')->delete($rutaStorage);
+            }
+            
+            // También intentar eliminar desde public_path por compatibilidad (legacy)
+            if (file_exists(public_path($producto->imagen))) {
+                unlink(public_path($producto->imagen));
+            }
         }
     }
 }
