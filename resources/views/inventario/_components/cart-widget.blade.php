@@ -184,6 +184,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Actualizar contador del carrito
     function updateCartCount() {
+        // Usar la función global si está disponible
+        if (typeof globalThis.updateCartCountFromStorage === 'function') {
+            globalThis.updateCartCountFromStorage();
+            return;
+        }
+
+        // Fallback local
         const countBadge = document.getElementById('cart-count');
         if (countBadge) {
             const cart = JSON.parse(localStorage.getItem('inventario_carrito')) || [];

@@ -73,26 +73,157 @@ function agregarAlCarritoDesdeModal(productId, productName, productStock) {
     }
 }
 
-/**
- * Inicialización cuando el DOM está listo
- */
-document.addEventListener('DOMContentLoaded', function() {
-    initializeCardView();
-    updateCartCount();
-    setupModalDismissHandlers();
-    initializeSelect2();
-});
+// Función para verificar si estamos en la página del catálogo
+function isCatalogPage() {
+    const pathname = window.location.pathname;
+    return pathname.includes('productos') && 
+           (pathname.includes('catalogo') || 
+            document.getElementById('products-grid') !== null);
+}
 
 /**
  * Inicializa la vista de catálogo
  */
 function initializeCardView() {
+    // Resetear acciones antes de inicializar para evitar duplicados
+    resetProductActions();
+    
     setupSearchFilter();
     setupTypeFilter();
     setupSortFilter();
     setupProductActions();
     updateCartCount();
 }
+
+/**
+ * Inicialización cuando el DOM está listo
+ */
+function setupCardInitialization() {
+    // Verificar que estamos en la página del catálogo
+    const productsGrid = document.getElementById('products-grid');
+    if (!productsGrid) {
+        return; // No estamos en la página del catálogo
+    }
+
+    // Pequeño delay para asegurar que el DOM esté completamente renderizado
+    setTimeout(() => {
+        initializeCardView();
+        updateCartCount();
+        setupModalDismissHandlers();
+        initializeSelect2();
+    }, 50);
+}
+
+// Ejecutar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupCardInitialization);
+} else {
+    // DOM ya está listo
+    setupCardInitialization();
+}
+
+// También ejecutar inmediatamente si detectamos que estamos en la página del catálogo
+// Esto es útil cuando el script se carga después de la navegación
+if (isCatalogPage()) {
+    // Pequeño delay para asegurar que el DOM esté listo
+    setTimeout(setupCardInitialization, 100);
+}
+
+// Escuchar eventos de navegación de Livewire
+function setupNavigationListener() {
+    let navigationTimeout = null;
+    
+    const handleNavigation = () => {
+        if (navigationTimeout) {
+            clearTimeout(navigationTimeout);
+        }
+        
+        navigationTimeout = setTimeout(() => {
+            if (isCatalogPage()) {
+                setupCardInitialization();
+            }
+        }, 200);
+    };
+
+    // Escuchar cuando Livewire navega (wire:navigate)
+    if (typeof Livewire !== 'undefined') {
+        // Livewire 3
+        if (typeof Livewire.on === 'function') {
+            Livewire.on('navigate', handleNavigation);
+        }
+
+        // También escuchar eventos de hook
+        if (typeof Livewire.hook === 'function') {
+            Livewire.hook('morph', {
+                updated: handleNavigation
+            });
+        }
+    }
+
+    // Escuchar clics en enlaces con wire:navigate
+    document.addEventListener('click', function(event) {
+        const link = event.target.closest('a[wire\\:navigate], a[data-wire-navigate]');
+        if (link && link.href) {
+            const href = link.href.toLowerCase();
+            if (href.includes('productos') && href.includes('catalogo')) {
+                handleNavigation();
+            }
+        }
+    }, true);
+
+    // Escuchar cambios en la URL usando popstate
+    window.addEventListener('popstate', handleNavigation);
+
+    // Observar cambios en la URL directamente
+    let lastUrl = location.href;
+    const urlCheckInterval = setInterval(() => {
+        const currentUrl = location.href;
+        if (currentUrl !== lastUrl) {
+            lastUrl = currentUrl;
+            if (isCatalogPage()) {
+                handleNavigation();
+            }
+        }
+    }, 500);
+
+    // Observar cambios en el DOM que puedan indicar navegación
+    const domObserver = new MutationObserver((mutations) => {
+        const hasSignificantChanges = mutations.some(mutation => {
+            return mutation.addedNodes.length > 0 || 
+                   mutation.removedNodes.length > 0;
+        });
+
+        if (hasSignificantChanges && isCatalogPage()) {
+            // Verificar si el grid de productos está presente
+            const productsGrid = document.getElementById('products-grid');
+            if (productsGrid) {
+                handleNavigation();
+            }
+        }
+    });
+
+    // Observar cambios en el body
+    domObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Limpiar intervalo cuando se descargue la página
+    window.addEventListener('beforeunload', () => {
+        clearInterval(urlCheckInterval);
+        domObserver.disconnect();
+    });
+}
+
+// Configurar listener de navegación
+setupNavigationListener();
+
+// Exportar función para uso externo (desde script global)
+globalThis.initializeCatalogPage = function() {
+    if (isCatalogPage()) {
+        setupCardInitialization();
+    }
+};
 
 /**
  * Configura los métodos para cerrar el modal de detalles
@@ -552,27 +683,106 @@ function setPaginationVisibility(show) {
     pagination.style.display = show ? '' : 'none';
 }
 
+// Variable para almacenar el handler de event delegation
+let productActionsHandler = null;
+let productActionsInitialized = false;
+
 /**
- * Configurar acciones de productos
+ * Configurar acciones de productos usando event delegation
+ * Esto evita problemas con listeners duplicados y funciona con contenido dinámico
  */
 function setupProductActions() {
-    // Botones de ver detalles
-    for (const btn of document.querySelectorAll('.btn-view-details')) {
-        btn.addEventListener('click', function() {
-            const productId = this.dataset.id;
-            showProductDetails(productId);
-        });
+    // Usar event delegation en el contenedor de productos
+    const productsGrid = document.getElementById('products-grid');
+    if (!productsGrid) {
+        return;
     }
 
-    // Botones de agregar al carrito
-    for (const btn of document.querySelectorAll('.btn-add-to-cart')) {
-        btn.addEventListener('click', function() {
-            const productId = this.dataset.id;
-            const productName = this.dataset.name;
-            const productStock = Number.parseInt(this.dataset.stock);
-            addToCart(productId, productName, productStock);
-        });
+    // Si ya está inicializado, no hacer nada más
+    if (productActionsInitialized && productActionsHandler) {
+        return;
     }
+
+    // Remover listener anterior si existe (por si acaso)
+    if (productActionsHandler) {
+        productsGrid.removeEventListener('click', productActionsHandler, true);
+        productActionsHandler = null;
+    }
+
+    // Crear nuevo handler
+    productActionsHandler = function(event) {
+        // Prevenir múltiples ejecuciones del mismo evento
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        // Buscar el botón más cercano (puede ser el botón mismo o un elemento dentro)
+        let target = event.target;
+        
+        // Si el clic fue en un icono o texto dentro del botón, buscar el botón padre
+        while (target && target !== productsGrid) {
+            if (target.classList && 
+                (target.classList.contains('btn-view-details') || 
+                 target.classList.contains('btn-add-to-cart'))) {
+                break;
+            }
+            target = target.parentElement;
+        }
+
+        // Si no encontramos un botón válido, salir
+        if (!target || target === productsGrid || !target.classList) {
+            return;
+        }
+
+        // Prevenir comportamiento por defecto y propagación
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        // Verificar si es botón de detalles
+        if (target.classList.contains('btn-view-details')) {
+            const productId = target.dataset.id || target.getAttribute('data-id');
+            if (productId) {
+                showProductDetails(productId);
+            } else {
+                console.error('No se encontró productId en el botón de detalles');
+            }
+        } 
+        // Verificar si es botón de agregar al carrito
+        else if (target.classList.contains('btn-add-to-cart')) {
+            const productId = target.dataset.id || target.getAttribute('data-id');
+            const productName = target.dataset.name || target.getAttribute('data-name');
+            const productStockStr = target.dataset.stock || target.getAttribute('data-stock');
+            const productStock = Number.parseInt(productStockStr, 10);
+            
+            if (productId && productName && !isNaN(productStock)) {
+                addToCart(productId, productName, productStock);
+            } else {
+                console.error('Datos incompletos del producto:', { 
+                    productId, 
+                    productName, 
+                    productStock,
+                    element: target
+                });
+            }
+        }
+    };
+
+    // Agregar listener usando event delegation (solo una vez)
+    productsGrid.addEventListener('click', productActionsHandler, true); // Usar capture phase
+    productActionsInitialized = true;
+}
+
+/**
+ * Resetear la inicialización de acciones (útil cuando se navega a otra página)
+ */
+function resetProductActions() {
+    const productsGrid = document.getElementById('products-grid');
+    if (productsGrid && productActionsHandler) {
+        productsGrid.removeEventListener('click', productActionsHandler, true);
+    }
+    productActionsHandler = null;
+    productActionsInitialized = false;
 }
 
 /**
@@ -662,6 +872,13 @@ function addToCart(productId, productName, productStock) {
  * Actualizar contador del carrito
  */
 function updateCartCount() {
+    // Usar la función global si está disponible
+    if (typeof globalThis.updateCartCountFromStorage === 'function') {
+        globalThis.updateCartCountFromStorage();
+        return;
+    }
+
+    // Fallback local
     const countBadge = document.getElementById('cart-count');
     if (!countBadge) return;
 
