@@ -73,23 +73,158 @@ function hideModal(elementId) {
 /**
  * Inicialización cuando el DOM está listo
  */
-document.addEventListener('DOMContentLoaded', function() {
+function setupCartInitialization() {
+    // Verificar que estamos en la página del carrito
+    if (!isCartPage()) {
+        return;
+    }
+
+    // Verificar que los elementos del DOM estén presentes
+    const cartContainer = document.getElementById('cart-items-container');
+    if (!cartContainer) {
+        // Esperar un poco más si los elementos no están listos
+        setTimeout(setupCartInitialization, 100);
+        return;
+    }
+
+    // Recargar el carrito desde localStorage antes de inicializar
+    cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    
     initializeCart();
-});
+}
 
 /**
  * Inicializa el carrito
  */
 async function initializeCart() {
+    // Recargar el carrito desde localStorage para asegurar datos actualizados
+    cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    
     await loadCartItems();
     setupCartActions();
     updateCartSummary();
 }
 
+// Ejecutar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupCartInitialization);
+} else {
+    // DOM ya está listo
+    setupCartInitialization();
+}
+
+// Función para verificar si estamos en la página del carrito
+function isCartPage() {
+    const pathname = window.location.pathname;
+    const hasCartContainer = document.getElementById('cart-items-container') !== null;
+    return pathname.includes('carrito-sena') || 
+           pathname.includes('carrito') ||
+           hasCartContainer;
+}
+
+// Exportar función para uso externo (desde script global)
+globalThis.initializeCartPage = function() {
+    if (isCartPage()) {
+        setupCartInitialization();
+    }
+};
+
+// Escuchar eventos de navegación de Livewire
+function setupNavigationListener() {
+    let navigationTimeout = null;
+    
+    const handleNavigation = () => {
+        if (navigationTimeout) {
+            clearTimeout(navigationTimeout);
+        }
+        
+        navigationTimeout = setTimeout(() => {
+            if (isCartPage()) {
+                setupCartInitialization();
+            }
+        }, 300);
+    };
+
+    // Escuchar cuando Livewire navega (wire:navigate)
+    if (typeof Livewire !== 'undefined') {
+        // Livewire 3
+        if (typeof Livewire.on === 'function') {
+            Livewire.on('navigate', handleNavigation);
+        }
+
+        // También escuchar eventos de hook
+        if (typeof Livewire.hook === 'function') {
+            Livewire.hook('morph', {
+                updated: handleNavigation
+            });
+        }
+    }
+
+    // Escuchar clics en enlaces con wire:navigate
+    document.addEventListener('click', function(event) {
+        const link = event.target.closest('a[wire\\:navigate], a[data-wire-navigate]');
+        if (link && link.href) {
+            const href = link.href.toLowerCase();
+            if (href.includes('carrito-sena') || href.includes('carrito')) {
+                handleNavigation();
+            }
+        }
+    }, true);
+
+    // Escuchar cambios en la URL usando popstate
+    window.addEventListener('popstate', handleNavigation);
+
+    // Observar cambios en la URL directamente
+    let lastUrl = location.href;
+    const urlCheckInterval = setInterval(() => {
+        const currentUrl = location.href;
+        if (currentUrl !== lastUrl) {
+            lastUrl = currentUrl;
+            if (isCartPage()) {
+                handleNavigation();
+            }
+        }
+    }, 500);
+
+    // Observar cambios en el DOM que puedan indicar navegación
+    const domObserver = new MutationObserver((mutations) => {
+        const hasSignificantChanges = mutations.some(mutation => {
+            return mutation.addedNodes.length > 0 || 
+                   mutation.removedNodes.length > 0;
+        });
+
+        if (hasSignificantChanges && isCartPage()) {
+            // Verificar si el contenedor del carrito está presente
+            const cartContainer = document.getElementById('cart-items-container');
+            if (cartContainer) {
+                handleNavigation();
+            }
+        }
+    });
+
+    // Observar cambios en el body
+    domObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Limpiar intervalo cuando se descargue la página
+    window.addEventListener('beforeunload', () => {
+        clearInterval(urlCheckInterval);
+        domObserver.disconnect();
+    });
+}
+
+// Configurar listener de navegación
+setupNavigationListener();
+
 /**
  * Cargar items del carrito y sus detalles
  */
 async function loadCartItems() {
+    // Recargar el carrito desde localStorage para asegurar datos actualizados
+    cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    
     if (cart.length === 0) {
         showEmptyCart();
         return;

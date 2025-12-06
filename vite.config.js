@@ -47,6 +47,7 @@ export default defineConfig({
                 'inventario_carrito': 'resources/js/inventario/carrito.js',
                 'inventario_escaner': 'resources/js/inventario/escaner.js',
                 'inventario_filtro_departamento': 'resources/js/inventario/filtro-departamento.js',
+                'inventario_global': 'resources/js/inventario/global.js',
                 'inventario_imagen': 'resources/js/inventario/imagen.js',
                 'inventario_notificaciones': 'resources/js/inventario/notificaciones.js',
                 'inventario_solicitud': 'resources/js/inventario/solicitud.js',

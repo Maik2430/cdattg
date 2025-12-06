@@ -7,3 +7,7 @@
     @vite(['resources/css/inventario/shared/base.css'])
 @endpush
 
+@push('js')
+    @vite('resources/js/inventario/global.js')
+@endpush
+
