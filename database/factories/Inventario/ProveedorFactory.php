@@ -53,10 +53,6 @@ class ProveedorFactory extends Factory
         } while (in_array($nit, $usedNits));
         $usedNits[] = $nit;
 
-        $nombres = ['Carlos', 'Ana', 'Luis', 'María', 'Jorge', 'Sofía', 'Pedro', 'Laura'];
-        $apellidos = ['García', 'López', 'Martínez', 'Rodríguez', 'González'];
-        $contacto = strtoupper($nombres[array_rand($nombres)] . ' ' . $apellidos[array_rand($apellidos)]);
-
         // Obtener estado_id válido o usar null (es nullable)
         $estadoId = null;
         try {
@@ -72,6 +68,26 @@ class ProveedorFactory extends Factory
             // Ignorar error, usar null (campo es nullable)
         }
 
+        // Obtener persona_id con rol PROVEEDOR o usar null (es nullable)
+        $personaId = null;
+        try {
+            $persona = \App\Models\Persona::query()
+                ->where('status', 1)
+                ->whereHas('user', function ($query) {
+                    $query->whereHas('roles', function ($roleQuery) {
+                        $roleQuery->where('name', 'PROVEEDOR');
+                    });
+                })
+                ->inRandomOrder()
+                ->first();
+            
+            if ($persona) {
+                $personaId = $persona->id;
+            }
+        } catch (\Exception $e) {
+            // Ignorar error, usar null (campo es nullable)
+        }
+
         return [
             'proveedor' => $proveedor,
             'nit' => $nit,
@@ -80,7 +96,7 @@ class ProveedorFactory extends Factory
             'direccion' => 'Calle ' . rand(1, 100) . ' #' . rand(1, 50) . '-' . rand(1, 99),
             'departamento_id' => $departamentoId,
             'municipio_id' => $municipioId,
-            'contacto' => $contacto,
+            'persona_id' => $personaId,
             'estado_id' => $estadoId,
             'user_create_id' => $this->getUserId(),
             'user_update_id' => $this->getUserId(),

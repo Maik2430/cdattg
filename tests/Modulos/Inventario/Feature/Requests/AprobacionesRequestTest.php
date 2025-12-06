@@ -12,20 +12,17 @@ use PHPUnit\Framework\Attributes\Test;
 
 class AprobacionesRequestTest extends TestCase
 {
-    use RefreshDatabase;
+    // No necesitamos RefreshDatabase para validar reglas de FormRequest
+    // use RefreshDatabase;
 
     private const LONGITUD_MAX_MOTIVO = 1000;
     private const LONGITUD_INVALIDA_MOTIVO = 1001;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->migrateDatabases();
-    }
-
     private function obtenerRules(): array
     {
+        // Crear una instancia del request con un Request mock
         $request = new AprobacionesRequest();
+        // Los FormRequest pueden necesitar el Request actual, pero para obtener solo las reglas esto debería funcionar
         return $request->rules();
     }
 

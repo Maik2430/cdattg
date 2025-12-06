@@ -25,8 +25,8 @@
 
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
+            <div class="card">
+                <div class="card-header">
                             <h5 class="card-title mb-0">Historial Completo de Devoluciones</h5>
                         </div>
                         <div class="card-body">
@@ -102,7 +102,7 @@
                                                             >
                                                                 <i class="fas fa-file-invoice"></i>
                                                             </a>
-                                                        @endif
+                            @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -113,7 +113,7 @@
                                 @if($devoluciones instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
                                     <div class="d-flex justify-content-center mt-3">
                                         {{ $devoluciones->links() }}
-                                    </div>
+                            </div>
                                 @endif
                             @else
                                 <div class="text-center py-5">
@@ -122,12 +122,12 @@
                                     <p class="text-muted">Aún no se han registrado devoluciones en el sistema.</p>
                                 </div>
                             @endif
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
+        </div>
     </section>
 @endsection
-
+    
 @include('inventario._components.common-footer')

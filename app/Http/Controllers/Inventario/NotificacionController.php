@@ -101,6 +101,12 @@ class NotificacionController extends Controller
             }
 
             abort(404, 'Notificación no encontrada');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Si el usuario no existe, también es 404
+            abort(404, 'Notificación no encontrada');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            // Re-lanzar excepciones HTTP (como abort(404)) sin capturarlas
+            throw $e;
         } catch (\Exception $e) {
             return back()->with('error', 'Error al eliminar notificación: ' . $e->getMessage());
         }

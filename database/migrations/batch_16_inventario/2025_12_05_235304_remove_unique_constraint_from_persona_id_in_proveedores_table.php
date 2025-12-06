@@ -15,22 +15,36 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('proveedores', function (Blueprint $table) {
-            // Primero eliminar la foreign key
-            $table->dropForeign(['persona_id']);
-        });
+        // Eliminar la foreign key si existe
+        try {
+            Schema::table('proveedores', function (Blueprint $table) {
+                $table->dropForeign(['persona_id']);
+            });
+        } catch (\Exception $e) {
+            // La foreign key no existe, continuar
+        }
 
-        Schema::table('proveedores', function (Blueprint $table) {
-            // Luego eliminar el índice único
-            $table->dropUnique(['persona_id']);
-        });
+        // Intentar eliminar el índice único si existe
+        // Usar try-catch porque el índice puede no existir o tener diferentes nombres
+        try {
+            Schema::table('proveedores', function (Blueprint $table) {
+                $table->dropUnique(['persona_id']);
+            });
+        } catch (\Exception $e) {
+            // El índice no existe o ya fue eliminado, continuar
+            // Esto es normal si la migración anterior no creó un índice único
+        }
 
+        // Recrear la foreign key sin unique
         Schema::table('proveedores', function (Blueprint $table) {
-            // Finalmente recrear la foreign key sin unique
-            $table->foreign('persona_id')
-                ->references('id')
-                ->on('personas')
-                ->onDelete('set null');
+            try {
+                $table->foreign('persona_id')
+                    ->references('id')
+                    ->on('personas')
+                    ->onDelete('set null');
+            } catch (\Exception $e) {
+                // La foreign key ya existe, continuar
+            }
         });
     }
 
@@ -39,22 +53,36 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('proveedores', function (Blueprint $table) {
-            // Eliminar la foreign key
-            $table->dropForeign(['persona_id']);
-        });
+        // Eliminar la foreign key si existe
+        try {
+            Schema::table('proveedores', function (Blueprint $table) {
+                $table->dropForeign(['persona_id']);
+            });
+        } catch (\Exception $e) {
+            // La foreign key no existe, continuar
+        }
 
-        Schema::table('proveedores', function (Blueprint $table) {
-            // Restaurar el constraint unique
-            $table->unique('persona_id');
-        });
+        // Crear el índice único si no existe
+        // Usar try-catch para evitar errores si ya existe
+        try {
+            Schema::table('proveedores', function (Blueprint $table) {
+                $table->unique('persona_id');
+            });
+        } catch (\Exception $e) {
+            // El índice ya existe, continuar
+        }
 
+        // Recrear la foreign key con unique
         Schema::table('proveedores', function (Blueprint $table) {
-            // Recrear la foreign key con unique
-            $table->foreign('persona_id')
-                ->references('id')
-                ->on('personas')
-                ->onDelete('set null');
+            try {
+                $table->foreign('persona_id')
+                    ->references('id')
+                    ->on('personas')
+                    ->onDelete('set null');
+            } catch (\Exception $e) {
+                // La foreign key ya existe, continuar
+            }
         });
     }
+
 };
