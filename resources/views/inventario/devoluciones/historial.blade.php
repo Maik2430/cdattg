@@ -49,12 +49,17 @@
                                         </thead>
                                         <tbody>
                                             @foreach($devoluciones as $devolucion)
+                                                @php
+                                                    $producto = $devolucion->detalleOrden->producto ?? null;
+                                                    $productoNombre = $producto?->name ?? 'N/A';
+                                                    $productoDescripcion = $producto?->descripcion ?? '';
+                                                @endphp
                                                 <tr>
                                                     <td>
-                                                        <strong>{{ $devolucion->detalleOrden->name->name ?? 'N/A' }}</strong>
-                                                        @if($devolucion->detalleOrden && $devolucion->detalleOrden->name)
+                                                        <strong>{{ $productoNombre }}</strong>
+                                                        @if($productoDescripcion)
                                                             <br>
-                                                            <small class="text-muted">{{ $devolucion->detalleOrden->name->descripcion ?? '' }}</small>
+                                                            <small class="text-muted">{{ $productoDescripcion }}</small>
                                                         @endif
                                                     </td>
                                                     <td>

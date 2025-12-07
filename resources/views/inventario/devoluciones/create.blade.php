@@ -33,8 +33,15 @@
                             <div class="row mb-4">
                                 <div class="col-md-6">
                                     <h6>Producto</h6>
-                                    <p class="mb-0"><strong>{{ $detalleOrden->name->name }}</strong></p>
-                                    <small class="text-muted">{{ $detalleOrden->name->descripcion }}</small>
+                                    @php
+                                        $producto = $detalleOrden->producto;
+                                        $productoNombre = $producto?->name ?? 'N/A';
+                                        $productoDescripcion = $producto?->descripcion ?? '';
+                                    @endphp
+                                    <p class="mb-0"><strong>{{ $productoNombre }}</strong></p>
+                                    @if($productoDescripcion)
+                                    <small class="text-muted">{{ $productoDescripcion }}</small>
+                                    @endif
                                 </div>
                                 <div class="col-md-6">
                                     <h6>Orden #{{ $detalleOrden->orden->id }}</h6>

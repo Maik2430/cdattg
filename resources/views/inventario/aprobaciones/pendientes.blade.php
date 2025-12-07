@@ -147,14 +147,14 @@
                                         <tbody>
                                             @foreach($detallesOrden as $detalle)
                                             @php
-                                                $producto = $detalle->name;
-                                                $productoNombre = $producto->name ?? 'N/A';
+                                                $producto = $detalle->producto;
+                                                $productoNombre = $producto?->name ?? 'N/A';
                                                 $productoNombreCorto = Str::limit($productoNombre, 30);
-                                                $productoImagen = $producto->imagen ?? 'img/inventario/producto-default.png';
+                                                $productoImagen = $producto?->imagen ?? 'img/inventario/producto-default.png';
                                                 $productoImagenSrc = asset($productoImagen);
-                                                $stockDisponible = $producto->cantidad ?? 0;
+                                                $stockDisponible = $producto?->cantidad ?? 0;
                                                 $stockBadgeClass = $stockDisponible >= $detalle->cantidad ? 'success' : 'danger';
-                                                $productoCodigo = $producto->codigo_barras ?? 'N/A';
+                                                $productoCodigo = $producto?->codigo_barras ?? 'N/A';
                                             @endphp
                                             <tr>
                                                 <td>
@@ -298,10 +298,16 @@
                                                         Productos Solicitados
                                                     </h6>
                                                     @foreach($detallesOrden as $detalle)
+                                                        @php
+                                                            $producto = $detalle->producto;
+                                                            $productoNombre = $producto?->name ?? 'N/A';
+                                                            $productoCodigo = $producto?->codigo_barras ?? 'N/A';
+                                                            $stockDisponible = $producto?->cantidad ?? 0;
+                                                        @endphp
                                                         <div class="product-item mb-3 p-2 border rounded">
                                                             <div class="d-flex justify-content-between">
                                                                 <div>
-                                                                    <strong>{{ $detalle->name->name }}</strong><br>
+                                                                    <strong>{{ $productoNombre }}</strong><br>
                                                                     <small class="text-muted">
                                                                         Código: {{ $productoCodigo }}
                                                                     </small>
@@ -313,7 +319,7 @@
                                                                     </span>
                                                                     <br>
                                                                     <small class="text-muted">
-                                                                        Stock: {{ $detalle->name->cantidad }}
+                                                                        Stock: {{ $stockDisponible }}
                                                                     </small>
                                                                 </div>
                                                             </div>

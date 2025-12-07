@@ -49,11 +49,18 @@
                                         </thead>
                                         <tbody>
                                             @foreach($prestamos as $detalle)
+                                                @php
+                                                    $producto = $detalle->producto;
+                                                    $productoNombre = $producto?->name ?? 'N/A';
+                                                    $productoDescripcion = $producto?->descripcion ?? '';
+                                                @endphp
                                                 <tr>
                                                     <td>
-                                                        <strong>{{ $detalle->name->name }}</strong>
+                                                        <strong>{{ $productoNombre }}</strong>
+                                                        @if($productoDescripcion)
                                                         <br>
-                                                        <small class="text-muted">{{ $detalle->name->descripcion }}</small>
+                                                        <small class="text-muted">{{ $productoDescripcion }}</small>
+                                                        @endif
                                                     </td>
                                                     <td>{{ $detalle->cantidad }}</td>
                                                     <td>{{ $detalle->getCantidadDevuelta() }}</td>
