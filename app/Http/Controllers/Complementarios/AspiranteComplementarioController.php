@@ -52,14 +52,6 @@ class AspiranteComplementarioController extends Controller
     }
 
     /**
-     * Mostrar gestión de aspirantes (Admin)
-     */
-    public function gestionAspirantes(): View
-    {
-        return $this->index();
-    }
-
-    /**
      * Mostrar aspirantes de un programa específico (por nombre)
      */
     public function verAspirantes(string $curso): View
@@ -74,31 +66,39 @@ class AspiranteComplementarioController extends Controller
      */
     public function programa(int $programa): View
     {
-        $data = $this->aspiranteManagementService->obtenerAspirantesPorProgramaId($programa);
-
-        return view('complementarios.aspirantes.programa', $data);
+        try {
+            $data = $this->aspiranteManagementService->obtenerAspirantesPorProgramaId($programa);
+            return view('complementarios.aspirantes.programa', $data);
+        } catch (\Exception $e) {
+            \Log::error("Error en programa() método: " . $e->getMessage(), [
+                'programa_id' => $programa,
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
 
     /**
-     * Rechazar aspirante de un programa complementario (cambiar estado a rechazado)
+     * Eliminar/rechazar aspirante de un programa complementario (cambiar estado a rechazado)
      *
-     * Este método implementa el caso de uso RF-ASP-004: Rechazar Aspirante.
+     * Este método sigue las convenciones de Laravel Resource Controller (destroy).
+     * Implementa el caso de uso RF-ASP-004: Rechazar Aspirante.
      *
      * @param RechazarAspiranteRequest $request Request validado (opcional: motivo_rechazo, observaciones)
-     * @param int $complementarioId ID del programa complementario
-     * @param int $aspiranteId ID del aspirante a rechazar
+     * @param int $programa ID del programa complementario
+     * @param int $aspirante ID del aspirante a rechazar
      * @return JsonResponse Respuesta JSON con resultado de la operación
      */
-    public function eliminarAspirante(RechazarAspiranteRequest $request, int $complementarioId, int $aspiranteId): JsonResponse
+    public function destroy(RechazarAspiranteRequest $request, int $programa, int $aspirante): JsonResponse
     {
         $validated = $request->validated();
         $motivoRechazo = $validated['motivo_rechazo'] ?? null;
         $observaciones = $validated['observaciones'] ?? null;
 
         $resultado = $this->aspiranteManagementService->rechazarAspirante(
-            $complementarioId,
-            $aspiranteId,
+            $programa,
+            $aspirante,
             $motivoRechazo,
             $observaciones
         );
@@ -444,7 +444,7 @@ class AspiranteComplementarioController extends Controller
             'departamento_id' => $validated['departamento_id'] ?? null,
             'municipio_id' => $validated['municipio_id'] ?? null,
             'direccion' => $validated['direccion'] ?? null,
-            'caracterizaciones' => $validated['caracterizaciones'] ?? [],
+            'caracterizacion_ids' => $validated['caracterizaciones'] ?? [], // PersonaService espera 'caracterizacion_ids'
         ];
 
         return $this->personaService->crear($datosPersona);
