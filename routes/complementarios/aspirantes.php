@@ -18,16 +18,8 @@ Route::group([], function () {
     Route::post('/aspirantes/buscar-persona', [AspiranteComplementarioController::class, 'buscarPersona'])
         ->name('aspirantes.buscar-persona');
 
-    // Mostrar formulario para crear nuevo aspirante
-    Route::get('/aspirantes/programa/{programa}/create', [AspiranteComplementarioController::class, 'create'])
-        ->name('aspirantes.create');
-
-    // Almacenar nuevo aspirante (agregar persona existente)
-    Route::post('/aspirantes/programa/{programa}/store', [AspiranteComplementarioController::class, 'store'])
-        ->name('aspirantes.store');
-
-    // Nota: La ruta 'aspirantes.agregar-existente' está definida en aspirantes_management.php
-    // para mantener compatibilidad con vistas existentes
+    // Nota: Las rutas para crear y almacenar aspirantes están definidas en gestion_aspirante.php
+    // con nombres: programas-complementarios.aspirantes.create y programas-complementarios.aspirantes.store
 
     // Crear nueva persona y agregarla como aspirante
     Route::post('/aspirantes/programa/{programa}/create-new', [AspiranteComplementarioController::class, 'storeNewAspirante'])

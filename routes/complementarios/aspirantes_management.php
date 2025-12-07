@@ -14,19 +14,17 @@ Route::middleware('auth')
     ->group(function () {
         
         // Vista principal de gestión
-        Route::get('gestion', [AspiranteComplementarioController::class, 'gestionAspirantes'])
+        Route::get('gestion', [AspiranteComplementarioController::class, 'index'])
             ->name('gestion');
         
         // Ver aspirantes de un programa específico
         Route::get('programa/{curso}', [AspiranteComplementarioController::class, 'verAspirantes'])
             ->name('ver-por-programa');
         
-        // Gestión de aspirantes individuales
-        Route::post('programa/{complementarioId}/agregar', [AspiranteComplementarioController::class, 'store'])
-            ->name('agregar-existente')
-            ->where('complementarioId', ROUTE_PATTERN_NUMERIC);
+        // Nota: La ruta para almacenar aspirantes está definida en gestion_aspirante.php
+        // como programas-complementarios.aspirantes.store para seguir convenciones RESTful
         
-        Route::delete('programa/{complementarioId}/aspirante/{aspiranteId}', [AspiranteComplementarioController::class, 'eliminarAspirante'])
+        Route::delete('programa/{complementarioId}/aspirantes/{aspiranteId}', [AspiranteComplementarioController::class, 'destroy'])
             ->name('destroy')
             ->where(['complementarioId' => ROUTE_PATTERN_NUMERIC, 'aspiranteId' => ROUTE_PATTERN_NUMERIC]);
         
