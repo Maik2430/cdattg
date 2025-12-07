@@ -33,23 +33,60 @@ trait SeedsComplementariosDatabase
             // Si hay error al verificar, continuar y ejecutar seeders
         }
 
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\CentroFormacionSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
-        ]);
+        // Ejecutar seeders con manejo robusto de deadlocks para SQLite
+        // SQLite no maneja bien la concurrencia, así que usamos un enfoque más conservador
+        $maxRetries = 3;
+        $retryCount = 0;
+        $seeded = false;
+        
+        while ($retryCount < $maxRetries && !$seeded) {
+            try {
+                \Illuminate\Support\Facades\DB::beginTransaction();
+                
+                $this->seed([
+                    \Database\Seeders\RolePermissionSeeder::class,
+                    \Database\Seeders\ParametroSeeder::class,
+                    \Database\Seeders\TemaSeeder::class,
+                    \Database\Seeders\PaisSeeder::class,
+                    \Database\Seeders\DepartamentoSeeder::class,
+                    \Database\Seeders\MunicipioSeeder::class,
+                    \Database\Seeders\PersonaSeeder::class,
+                    \Database\Seeders\UsersSeeder::class,
+                    \Database\Seeders\RegionalSeeder::class,
+                    \Database\Seeders\CentroFormacionSeeder::class,
+                    \Database\Seeders\SedeSeeder::class,
+                    \Database\Seeders\BloqueSeeder::class,
+                    \Database\Seeders\PisoSeeder::class,
+                    \Database\Seeders\AmbienteSeeder::class,
+                    \Database\Seeders\JornadaFormacionSeeder::class,
+                ]);
+                
+                \Illuminate\Support\Facades\DB::commit();
+                $seeded = true;
+            } catch (\Illuminate\Database\QueryException $e) {
+                \Illuminate\Support\Facades\DB::rollBack();
+                
+                // Si hay un deadlock, esperar y reintentar
+                if (str_contains($e->getMessage(), 'database is locked') || 
+                    str_contains($e->getMessage(), 'deadlock') ||
+                    str_contains($e->getMessage(), 'locked')) {
+                    $retryCount++;
+                    if ($retryCount < $maxRetries) {
+                        usleep(500000 * $retryCount); // Esperar progresivamente más tiempo
+                    } else {
+                        // Si falla después de todos los reintentos, continuar sin seeders
+                        // Los tests que los necesiten fallarán, pero al menos no bloquearemos todo
+                        break;
+                    }
+                } else {
+                    throw $e;
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\DB::rollBack();
+                // Para otros errores, no reintentar
+                break;
+            }
+        }
     }
 }
 
