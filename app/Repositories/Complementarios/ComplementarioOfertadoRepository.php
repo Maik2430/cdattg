@@ -106,6 +106,9 @@ class ComplementarioOfertadoRepository
 
     /**
      * Obtener programas con mayor demanda
+     * 
+     * Nota: El cálculo de tasa_aceptacion ahora se realiza mediante un Accessor
+     * en el modelo ComplementarioOfertado (getTasaAceptacionAttribute).
      */
     public function getProgramasConMayorDemanda(int $limit = 10): Collection
     {
@@ -145,14 +148,6 @@ class ComplementarioOfertadoRepository
             )
             ->orderBy('total_aspirantes', 'desc')
             ->limit($limit)
-            ->get()
-            ->map(function($programa) {
-                $tasaAceptacion = $programa->total_aspirantes > 0
-                    ? round(($programa->aceptados / $programa->total_aspirantes) * 100, 1)
-                    : 0;
-
-                $programa->tasa_aceptacion = $tasaAceptacion;
-                return $programa;
-            });
+            ->get();
     }
 }
