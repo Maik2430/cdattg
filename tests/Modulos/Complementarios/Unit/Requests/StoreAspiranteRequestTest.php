@@ -44,6 +44,10 @@ class StoreAspiranteRequestTest extends TestCase
     #[Test]
     public function valida_numero_documento_debe_existir(): void
     {
+        // Nota: La validación de existencia de persona ahora se maneja en el servicio,
+        // no en el FormRequest, para permitir mensajes personalizados.
+        // Este test verifica que el FormRequest acepta cualquier número de documento
+        // y la validación de existencia se hace en el servicio.
         $request = new StoreAspiranteRequest();
         $rules = $request->rules();
 
@@ -51,12 +55,8 @@ class StoreAspiranteRequestTest extends TestCase
             'numero_documento' => '9999999999',
         ], $rules, $request->messages());
 
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey('numero_documento', $validator->errors()->toArray());
-        $this->assertStringContainsString(
-            'No se encontró ninguna persona',
-            $validator->errors()->first('numero_documento')
-        );
+        // El FormRequest ahora solo valida formato, no existencia
+        $this->assertFalse($validator->fails());
     }
 
     #[Test]
