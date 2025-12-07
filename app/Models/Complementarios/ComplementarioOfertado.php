@@ -9,6 +9,7 @@ use App\Models\JornadaFormacion;
 use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\ResultadosAprendizaje;
+use App\Models\User;
 use Database\Factories\ComplementarioOfertadoFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +39,8 @@ class ComplementarioOfertado extends Model
         'modalidad_id',
         'jornada_id',
         'ambiente_id',
+        'user_create_id',
+        'user_edit_id',
     ];
 
     public function modalidad()
@@ -53,6 +56,22 @@ class ComplementarioOfertado extends Model
     public function ambiente()
     {
         return $this->belongsTo(Ambiente::class, 'ambiente_id');
+    }
+
+    /**
+     * Usuario que creó el registro
+     */
+    public function usuarioCreador()
+    {
+        return $this->belongsTo(User::class, 'user_create_id');
+    }
+
+    /**
+     * Usuario que editó el registro por última vez
+     */
+    public function usuarioEditor()
+    {
+        return $this->belongsTo(User::class, 'user_edit_id');
     }
 
     public function diasFormacion()

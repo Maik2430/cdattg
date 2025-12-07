@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Complementarios\ComplementarioOfertado;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -121,6 +122,8 @@ class AspiranteComplementarioObserver
             'modalidad_id' => $complementarioOriginal->modalidad_id,
             'jornada_id' => $complementarioOriginal->jornada_id,
             'ambiente_id' => $complementarioOriginal->ambiente_id,
+            'user_create_id' => Auth::id() ?? 1, // Usuario autenticado o sistema
+            'user_edit_id' => Auth::id() ?? 1, // Usuario autenticado o sistema
         ]);
 
         // Copiar todas las relaciones
