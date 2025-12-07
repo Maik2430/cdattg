@@ -19,11 +19,10 @@ class CreateAspiranteRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
      *
      * Este Form Request valida los datos para crear una nueva persona
      * y agregarla como aspirante a un programa complementario.
-     * Implementa el caso de uso RF-ASP-006: Crear Nuevo Aspirante.
+     * Implementa el caso de uso: Crear Nuevo Aspirante.
      */
     public function rules(): array
     {

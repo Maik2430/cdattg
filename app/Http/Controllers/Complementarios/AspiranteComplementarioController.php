@@ -266,8 +266,6 @@ class AspiranteComplementarioController extends Controller
      * Almacenar nuevo aspirante a un programa complementario
      *
      * Este método sigue las convenciones de Laravel Resource Controller.
-     * Implementa el caso de uso RF-ASP-003: Agregar Aspirante a Programa.
-     *
      * Agrega una persona EXISTENTE como aspirante a un programa.
      * Para crear una persona nueva y agregarla como aspirante, usar storeNewAspirante().
      *
@@ -328,7 +326,6 @@ class AspiranteComplementarioController extends Controller
     /**
      * Crear nueva persona y agregarla como aspirante a un programa complementario
      *
-     * Este método implementa el caso de uso RF-ASP-006: Crear Nuevo Aspirante.
      * Crea una nueva persona en el sistema y simultáneamente la agrega como aspirante.
      *
      * @param CreateAspiranteRequest $request Request validado con todos los datos de la persona
