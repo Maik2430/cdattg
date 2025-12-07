@@ -24,6 +24,11 @@ Route::middleware('auth')
         // Nota: La ruta para almacenar aspirantes está definida en gestion_aspirante.php
         // como programas-complementarios.aspirantes.store para seguir convenciones RESTful
         
+        // Agregar persona existente como aspirante
+        Route::post('programa/{complementarioId}/agregar-existente', [AspiranteComplementarioController::class, 'store'])
+            ->name('agregar-existente')
+            ->where('complementarioId', ROUTE_PATTERN_NUMERIC);
+        
         Route::delete('programa/{complementarioId}/aspirantes/{aspiranteId}', [AspiranteComplementarioController::class, 'destroy'])
             ->name('destroy')
             ->where(['complementarioId' => ROUTE_PATTERN_NUMERIC, 'aspiranteId' => ROUTE_PATTERN_NUMERIC]);
