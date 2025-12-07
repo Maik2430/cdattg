@@ -23,27 +23,8 @@ class ProveedorRequestTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->migrateDatabases();
-        $this->ejecutarSeedersNecesarios();
-    }
-
-    private function ejecutarSeedersNecesarios(): void
-    {
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-        ]);
+        // Ejecutar seeder mínimo con datos esenciales para tests de inventario
+        $this->seed(\Tests\Modulos\Inventario\Feature\Requests\Seeders\InventarioRequestTestSeeder::class);
     }
 
     private function obtenerRules(): array
@@ -151,9 +132,10 @@ class ProveedorRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_store(): void
     {
-        $departamento = Departamento::query()->inRandomOrder()->first();
-        $municipio = Municipio::query()->where('departamento_id', $departamento->id)->inRandomOrder()->firstOrFail();
-        $estado = ParametroTema::query()->inRandomOrder()->first();
+        // Crear datos mínimos necesarios solo para este test
+        $departamento = Departamento::factory()->create();
+        $municipio = Municipio::factory()->create(['departamento_id' => $departamento->id]);
+        $estado = ParametroTema::factory()->create();
 
         $rules = $this->obtenerRules();
 

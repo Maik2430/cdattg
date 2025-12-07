@@ -6,14 +6,11 @@ namespace Tests\Inventario\Feature\Request;
 
 use Tests\TestCase;
 use App\Http\Requests\Inventario\AprobacionesRequest;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Attributes\Test;
 
 class AprobacionesRequestTest extends TestCase
 {
-    // No necesitamos RefreshDatabase para validar reglas de FormRequest
-    // use RefreshDatabase;
 
     private const LONGITUD_MAX_MOTIVO = 1000;
     private const LONGITUD_INVALIDA_MOTIVO = 1001;

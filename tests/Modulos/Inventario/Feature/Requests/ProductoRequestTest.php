@@ -14,6 +14,7 @@ use App\Models\Inventario\Proveedor;
 use App\Models\Ambiente;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Validator as ValidationValidator;
 use PHPUnit\Framework\Attributes\Test;
@@ -25,27 +26,8 @@ class ProductoRequestTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->migrateDatabases();
-        $this->ejecutarSeedersNecesarios();
-    }
-
-    private function ejecutarSeedersNecesarios(): void
-    {
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-        ]);
+        // Ejecutar seeder mínimo con datos esenciales para tests de inventario
+        $this->seed(\Tests\Modulos\Inventario\Feature\Requests\Seeders\InventarioRequestTestSeeder::class);
     }
 
     #[Test]
@@ -164,9 +146,10 @@ class ProductoRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_store(): void
     {
-        $tipoProducto = ParametroTema::query()->inRandomOrder()->first();
-        $unidadMedida = ParametroTema::query()->inRandomOrder()->first();
-        $estadoProducto = ParametroTema::query()->inRandomOrder()->first();
+        // Crear datos mínimos necesarios directamente sin usar factories complejos
+        $tipoProducto = $this->crearParametroTema('TIPO PRODUCTO TEST', 'TIPOS DE PRODUCTO');
+        $unidadMedida = $this->crearParametroTema('UNIDAD MEDIDA TEST', 'UNIDADES DE MEDIDA');
+        $estadoProducto = $this->crearParametroTema('ESTADO PRODUCTO TEST', 'ESTADOS DE PRODUCTO');
         
         $categoriaParametro = $this->crearParametroConTema('CATEGORIA TEST', 'CATEGORIAS');
         $marcaParametro = $this->crearParametroConTema('MARCA TEST', 'MARCAS');
@@ -183,35 +166,68 @@ class ProductoRequestTest extends TestCase
             'estado_producto_id' => $estadoProducto->id,
             'categoria_id' => $categoriaParametro->id,
             'marca_id' => $marcaParametro->id,
-            'contrato_convenio_id' => ContratoConvenio::factory()->create()->id,
-            'ambiente_id' => Ambiente::factory()->create()->id,
-            'proveedor_id' => Proveedor::factory()->create()->id,
+            'contrato_convenio_id' => $this->crearContratoConvenio()->id,
+            'ambiente_id' => $this->crearAmbiente()->id,
+            'proveedor_id' => $this->crearProveedor()->id,
         ], $rules);
 
         $this->assertFalse($validator->fails());
     }
 
-    private function crearParametroConTema(string $nombreParametro, string $nombreTema): \App\Models\Parametro
+    /**
+     * Create ParametroTema directly without complex factory dependencies.
+     */
+    private function crearParametroTema(string $nombreParametro, string $nombreTema): ParametroTema
     {
-        $tema = \App\Models\Tema::where('name', $nombreTema)->first();
-        $userId = User::query()->inRandomOrder()->value('id');
+        // Crear tema y parametro directamente
+        $tema = \App\Models\Tema::create([
+            'name' => $nombreTema,
+            'status' => 1,
+            'user_create_id' => null,
+            'user_edit_id' => null,
+        ]);
         
         $parametro = \App\Models\Parametro::create([
             'name' => $nombreParametro,
             'status' => 1,
-            'user_create_id' => $userId,
-            'user_edit_id' => $userId,
+            'user_create_id' => null,
+            'user_edit_id' => null,
         ]);
         
-        if ($tema) {
-            \App\Models\ParametroTema::create([
-                'parametro_id' => $parametro->id,
-                'tema_id' => $tema->id,
-                'status' => 1,
-                'user_create_id' => $userId,
-                'user_edit_id' => $userId,
-            ]);
-        }
+        return ParametroTema::create([
+            'parametro_id' => $parametro->id,
+            'tema_id' => $tema->id,
+            'status' => 1,
+            'user_create_id' => null,
+            'user_edit_id' => null,
+        ]);
+    }
+
+    private function crearParametroConTema(string $nombreParametro, string $nombreTema): \App\Models\Parametro
+    {
+        // Crear tema directamente sin usar factory que requiere User
+        // Los campos user_create_id y user_edit_id son nullable según la migración
+        $tema = \App\Models\Tema::create([
+            'name' => $nombreTema,
+            'status' => 1,
+            'user_create_id' => null,
+            'user_edit_id' => null,
+        ]);
+        
+        $parametro = \App\Models\Parametro::create([
+            'name' => $nombreParametro,
+            'status' => 1,
+            'user_create_id' => null,
+            'user_edit_id' => null,
+        ]);
+        
+        \App\Models\ParametroTema::create([
+            'parametro_id' => $parametro->id,
+            'tema_id' => $tema->id,
+            'status' => 1,
+            'user_create_id' => null,
+            'user_edit_id' => null,
+        ]);
         
         return $parametro;
     }
@@ -255,6 +271,87 @@ class ProductoRequestTest extends TestCase
         foreach ($campos as $campo) {
             $this->assertArrayHasKey($campo, $errores);
         }
+    }
+
+    /**
+     * Get Ambiente from seeder data.
+     */
+    private function crearAmbiente(): Ambiente
+    {
+        // El seeder ya creó el ambiente, solo obtenerlo
+        $ambienteId = DB::table('ambientes')->value('id');
+        return Ambiente::findOrFail($ambienteId);
+    }
+
+    /**
+     * Get user ID from seeder data.
+     */
+    private function obtenerUserId(): int
+    {
+        $userId = DB::table('users')->value('id');
+        if (!$userId) {
+            throw new \RuntimeException('User not found. Ensure InventarioRequestTestSeeder was executed.');
+        }
+        return $userId;
+    }
+
+    /**
+     * Create Proveedor with unique name for testing.
+     */
+    private function crearProveedor(): Proveedor
+    {
+        $userId = $this->obtenerUserId();
+        
+        // Generar nombre único para evitar constraint UNIQUE
+        $proveedorName = 'PROVEEDOR TEST ' . uniqid();
+        $proveedorId = DB::table('proveedores')->insertGetId([
+            'name' => $proveedorName,
+            'nit' => rand(100000000, 999999999) . '-' . rand(0, 9),
+            'email' => 'test' . uniqid() . '@proveedor.com',
+            'telefono' => '6012345678',
+            'direccion' => 'Dirección test',
+            'departamento_id' => null,
+            'municipio_id' => null,
+            'persona_id' => null,
+            'estado_id' => null,
+            'user_create_id' => $userId,
+            'user_update_id' => $userId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
+        return Proveedor::find($proveedorId);
+    }
+
+    /**
+     * Create ContratoConvenio with unique name and code for testing.
+     */
+    private function crearContratoConvenio(): ContratoConvenio
+    {
+        // Crear proveedor mínimo primero
+        $proveedor = $this->crearProveedor();
+        
+        // Crear estado (ParametroTema) mínimo
+        $estado = $this->crearParametroTema('ESTADO TEST', 'ESTADOS');
+        
+        $userId = $this->obtenerUserId();
+        
+        // Generar nombre y código únicos para evitar constraint UNIQUE
+        $uniqueId = uniqid();
+        $contratoId = DB::table('contratos_convenios')->insertGetId([
+            'name' => 'CONTRATO TEST ' . $uniqueId,
+            'codigo' => 'COD-TEST-' . $uniqueId,
+            'proveedor_id' => $proveedor->id,
+            'fecha_inicio' => now()->format('Y-m-d'),
+            'fecha_fin' => now()->addYear()->format('Y-m-d'),
+            'estado_id' => $estado->id,
+            'user_create_id' => $userId,
+            'user_update_id' => $userId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
+        return ContratoConvenio::find($contratoId);
     }
 }
 

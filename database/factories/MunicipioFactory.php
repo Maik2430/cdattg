@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Departamento;
+use App\Models\Municipio;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class MunicipioFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'municipio' => $this->faker->city(),
+            'departamento_id' => Departamento::factory(),
+            'status' => 1,
         ];
     }
 }

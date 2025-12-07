@@ -164,12 +164,10 @@
                                                 @endforeach
                                             </select>
                                             <small class="form-text text-muted">
-                                                <i class="fas fa-info-circle mr-1"></i>
-                                                Solo se muestran personas que tienen el rol <strong>PROVEEDOR</strong> asignado en el sistema.
                                                 @if($personas->isEmpty())
                                                     <span class="text-warning d-block mt-1">
                                                         <i class="fas fa-exclamation-triangle mr-1"></i>
-                                                        No hay personas con rol PROVEEDOR disponibles. Asigne el rol PROVEEDOR a una persona primero.
+                                                        No hay proveedores disponibles.
                                                     </span>
                                                 @endif
                                             </small>

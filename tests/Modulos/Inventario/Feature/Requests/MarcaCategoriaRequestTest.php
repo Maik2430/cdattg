@@ -20,7 +20,8 @@ class MarcaCategoriaRequestTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->migrateDatabases();
+        // Ejecutar seeder mínimo con datos esenciales para tests de inventario
+        $this->seed(\Tests\Modulos\Inventario\Feature\Requests\Seeders\InventarioRequestTestSeeder::class);
     }
 
     private function obtenerRules(): array

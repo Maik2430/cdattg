@@ -34,6 +34,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             'userCreate.persona',
             'userUpdate.persona',
             'estado.parametro',
+            'pais',
             'departamento',
             'municipio',
             'persona'
@@ -83,6 +84,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             'userCreate.persona',
             'userUpdate.persona',
             'estado.parametro',
+            'pais',
             'departamento',
             'municipio',
             'persona'

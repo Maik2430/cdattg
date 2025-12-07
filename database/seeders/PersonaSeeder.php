@@ -167,6 +167,30 @@ class PersonaSeeder extends Seeder
                 'user_edit_id' => null,
             ]
         );
+
+        Persona::updateOrCreate(
+            ['id' => 7],
+            [
+                'tipo_documento' => $tipoDocumentoCedula,
+                'numero_documento' => 222222222,
+                'primer_nombre' => 'PROVEEDOR',
+                'segundo_nombre' => 'DEMO',
+                'primer_apellido' => 'CDATTG',
+                'segundo_apellido' => 'PRUEBAS',
+                'fecha_nacimiento' => '1988-05-15',
+                'genero' => $generoMasculino,
+                'telefono' => null,
+                'celular' => '3052222222',
+                'email' => 'proveedor@dataguaviare.com',
+                'pais_id' => 1,
+                'departamento_id' => 95,
+                'municipio_id' => 1,
+                'direccion' => 'CALLE 7 #14-25',
+                'status' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
     }
 
     /**

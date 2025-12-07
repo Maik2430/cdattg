@@ -23,27 +23,8 @@ class CarritoRequestTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->migrateDatabases();
-        $this->ejecutarSeedersNecesarios();
-    }
-
-    private function ejecutarSeedersNecesarios(): void
-    {
-        $this->seed([
-            \Database\Seeders\RolePermissionSeeder::class,
-            \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\TemaSeeder::class,
-            \Database\Seeders\PaisSeeder::class,
-            \Database\Seeders\DepartamentoSeeder::class,
-            \Database\Seeders\MunicipioSeeder::class,
-            \Database\Seeders\PersonaSeeder::class,
-            \Database\Seeders\UsersSeeder::class,
-            \Database\Seeders\RegionalSeeder::class,
-            \Database\Seeders\SedeSeeder::class,
-            \Database\Seeders\BloqueSeeder::class,
-            \Database\Seeders\PisoSeeder::class,
-            \Database\Seeders\AmbienteSeeder::class,
-        ]);
+        // Ejecutar seeder mínimo con datos esenciales para tests de inventario
+        $this->seed(\Tests\Modulos\Inventario\Feature\Requests\Seeders\InventarioRequestTestSeeder::class);
     }
 
     private function obtenerRules(): array
@@ -128,14 +109,14 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function valida_items_debe_tener_cantidad(): void
     {
-        $producto = Producto::factory()->create();
+        $producto = $this->crearProductoMinimo();
         $this->validarItemSinCampo('cantidad', ['producto_id' => $producto->id]);
     }
 
     #[Test]
     public function valida_cantidad_minima_en_items(): void
     {
-        $producto = Producto::factory()->create();
+        $producto = $this->crearProductoMinimo();
         $this->validarItemConDatos('items.0.cantidad', [
             'producto_id' => $producto->id,
             'cantidad' => self::CANTIDAD_INVALIDA,
@@ -145,6 +126,7 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_actualizar(): void
     {
+        // No necesita productos ni seeders - solo valida reglas de validación
         $rules = $this->obtenerRulesParaActualizar();
         $validator = Validator::make(['cantidad' => self::CANTIDAD_VALIDA], $rules);
 
@@ -154,7 +136,7 @@ class CarritoRequestTest extends TestCase
     #[Test]
     public function acepta_datos_validos_para_agregar(): void
     {
-        $producto = Producto::factory()->create();
+        $producto = $this->crearProductoMinimo();
         $rules = $this->obtenerRules();
         $datos = [
             'items' => [
@@ -240,6 +222,11 @@ class CarritoRequestTest extends TestCase
         $rules = $this->obtenerRules();
         $datos = ['items' => [$datosItem]];
         $this->validarYVerificarError($datos, $rules, $campoEsperado);
+    }
+
+    private function crearProductoMinimo(): Producto
+    {
+        return Producto::factory()->create();
     }
 }
 

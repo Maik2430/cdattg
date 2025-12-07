@@ -37,17 +37,18 @@
                         searchValue="{{ request('search') }}"
                         :columns="[
                             ['label' => '#', 'width' => '3%'],
-                            ['label' => 'Proveedor', 'width' => '12%'],
-                            ['label' => 'NIT', 'width' => '8%'],
-                            ['label' => 'Email', 'width' => '12%'],
-                            ['label' => 'Teléfono', 'width' => '8%'],
-                            ['label' => 'Dirección', 'width' => '12%'],
-                            ['label' => 'Departamento', 'width' => '9%'],
-                            ['label' => 'Municipio', 'width' => '10%'],
-                            ['label' => 'Contacto', 'width' => '10%'],
-                            ['label' => 'Contratos', 'width' => '6%'],
-                            ['label' => 'Estado', 'width' => '8%'],
-                            ['label' => 'Opciones', 'width' => '11%', 'class' => 'text-center']
+                            ['label' => 'Proveedor', 'width' => '11%'],
+                            ['label' => 'NIT', 'width' => '7%'],
+                            ['label' => 'Email', 'width' => '11%'],
+                            ['label' => 'Teléfono', 'width' => '7%'],
+                            ['label' => 'Dirección', 'width' => '11%'],
+                            ['label' => 'País', 'width' => '8%'],
+                            ['label' => 'Departamento', 'width' => '8%'],
+                            ['label' => 'Municipio', 'width' => '9%'],
+                            ['label' => 'Contacto', 'width' => '9%'],
+                            ['label' => 'Contratos', 'width' => '5%'],
+                            ['label' => 'Estado', 'width' => '7%'],
+                            ['label' => 'Opciones', 'width' => '10%', 'class' => 'text-center']
                         ]"
                         :pagination="$proveedores->links()"
                     >
@@ -59,6 +60,7 @@
                                 <td>{{ $proveedor->email ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->telefono ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->direccion ?? 'N/A' }}</td>
+                                <td>{{ $proveedor->pais->pais ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->departamento->departamento ?? 'N/A' }}</td>
                                 <td>{{ $proveedor->municipio->municipio ?? 'N/A' }}</td>
                                 <td>
@@ -105,7 +107,7 @@
                             </tr>
                         @empty
                             <x-table-empty
-                                colspan="11"
+                                colspan="12"
                                 message="No hay proveedores registrados"
                                 icon="fas fa-truck"
                             />
