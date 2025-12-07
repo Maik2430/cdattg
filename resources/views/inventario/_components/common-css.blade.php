@@ -5,6 +5,6 @@
 @endpush
 
 @push('js')
-    @vite('resources/js/inventario/global.js')
+    @vite(['resources/js/inventario/global.js'])
 @endpush
 

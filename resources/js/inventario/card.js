@@ -54,7 +54,6 @@ function expandirImagen(imageSrc) {
     }
 
     expandedImage.src = imageSrc;
-    // Usar jQuery si está disponible
     if (typeof $ !== 'undefined' && $?.fn?.modal) {
         $(imageModal).modal('show');
     }
@@ -68,7 +67,6 @@ function agregarAlCarritoDesdeModal(productId, productName, productStock) {
         addToCart(productId, productName, productStock);
         closeProductModal();
     } catch (error) {
-        console.error('Error al agregar al carrito:', error);
         alert('Error al agregar al carrito. Por favor intente de nuevo.');
     }
 }
@@ -85,7 +83,6 @@ function isCatalogPage() {
  * Inicializa la vista de catálogo
  */
 function initializeCardView() {
-    // Resetear acciones antes de inicializar para evitar duplicados
     resetProductActions();
     
     setupSearchFilter();
@@ -99,13 +96,11 @@ function initializeCardView() {
  * Inicialización cuando el DOM está listo
  */
 function setupCardInitialization() {
-    // Verificar que estamos en la página del catálogo
     const productsGrid = document.getElementById('products-grid');
     if (!productsGrid) {
-        return; // No estamos en la página del catálogo
+        return;
     }
 
-    // Pequeño delay para asegurar que el DOM esté completamente renderizado
     setTimeout(() => {
         initializeCardView();
         updateCartCount();
@@ -118,14 +113,10 @@ function setupCardInitialization() {
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupCardInitialization);
 } else {
-    // DOM ya está listo
     setupCardInitialization();
 }
 
-// También ejecutar inmediatamente si detectamos que estamos en la página del catálogo
-// Esto es útil cuando el script se carga después de la navegación
 if (isCatalogPage()) {
-    // Pequeño delay para asegurar que el DOM esté listo
     setTimeout(setupCardInitialization, 100);
 }
 
@@ -145,14 +136,11 @@ function setupNavigationListener() {
         }, 200);
     };
 
-    // Escuchar cuando Livewire navega (wire:navigate)
     if (typeof Livewire !== 'undefined') {
-        // Livewire 3
         if (typeof Livewire.on === 'function') {
             Livewire.on('navigate', handleNavigation);
         }
 
-        // También escuchar eventos de hook
         if (typeof Livewire.hook === 'function') {
             Livewire.hook('morph', {
                 updated: handleNavigation
@@ -160,7 +148,6 @@ function setupNavigationListener() {
         }
     }
 
-    // Escuchar clics en enlaces con wire:navigate
     document.addEventListener('click', function(event) {
         const link = event.target.closest('a[wire\\:navigate], a[data-wire-navigate]');
         if (link && link.href) {
@@ -171,10 +158,8 @@ function setupNavigationListener() {
         }
     }, true);
 
-    // Escuchar cambios en la URL usando popstate
     window.addEventListener('popstate', handleNavigation);
 
-    // Observar cambios en la URL directamente
     let lastUrl = location.href;
     const urlCheckInterval = setInterval(() => {
         const currentUrl = location.href;
@@ -186,7 +171,6 @@ function setupNavigationListener() {
         }
     }, 500);
 
-    // Observar cambios en el DOM que puedan indicar navegación
     const domObserver = new MutationObserver((mutations) => {
         const hasSignificantChanges = mutations.some(mutation => {
             return mutation.addedNodes.length > 0 || 
@@ -194,7 +178,6 @@ function setupNavigationListener() {
         });
 
         if (hasSignificantChanges && isCatalogPage()) {
-            // Verificar si el grid de productos está presente
             const productsGrid = document.getElementById('products-grid');
             if (productsGrid) {
                 handleNavigation();
@@ -202,23 +185,19 @@ function setupNavigationListener() {
         }
     });
 
-    // Observar cambios en el body
     domObserver.observe(document.body, {
         childList: true,
         subtree: true
     });
 
-    // Limpiar intervalo cuando se descargue la página
     window.addEventListener('beforeunload', () => {
         clearInterval(urlCheckInterval);
         domObserver.disconnect();
     });
 }
 
-// Configurar listener de navegación
 setupNavigationListener();
 
-// Exportar función para uso externo (desde script global)
 globalThis.initializeCatalogPage = function() {
     if (isCatalogPage()) {
         setupCardInitialization();
@@ -270,29 +249,56 @@ function handleProductModalEscape(event) {
     }
 }
 
+// Variables para evitar listeners duplicados en filtros
+let searchFilterInitialized = false;
+let searchTimeout = null;
+let searchInputHandler = null;
+let searchKeypressHandler = null;
+
 /**
  * Configurar búsqueda de productos
  */
 function setupSearchFilter() {
     const searchInput = document.getElementById('search-product');
-    if (!searchInput) return;
+    if (!searchInput) {
+        return;
+    }
 
-    // Búsqueda con Enter o después de dejar de escribir
-    let searchTimeout;
-    searchInput.addEventListener('input', function(e) {
-        clearTimeout(searchTimeout);
+    if (searchFilterInitialized && searchInput.dataset.searchInitialized === 'true') {
+        return;
+    }
+
+    if (searchInputHandler) {
+        searchInput.removeEventListener('input', searchInputHandler);
+    }
+    if (searchKeypressHandler) {
+        searchInput.removeEventListener('keypress', searchKeypressHandler);
+    }
+
+    searchInputHandler = function() {
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
         searchTimeout = setTimeout(() => {
             applyFilters();
         }, 500);
-    });
+    };
 
-    // También aplicar al presionar Enter
-    searchInput.addEventListener('keypress', function(e) {
+    searchKeypressHandler = function(e) {
         if (e.key === 'Enter') {
-            clearTimeout(searchTimeout);
+            e.preventDefault();
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
             applyFilters();
         }
-    });
+    };
+
+    searchInput.addEventListener('input', searchInputHandler);
+    searchInput.addEventListener('keypress', searchKeypressHandler);
+
+    searchInput.dataset.searchInitialized = 'true';
+    searchFilterInitialized = true;
 }
 
 /**
@@ -320,50 +326,52 @@ function setupSortFilter() {
 }
 
 /**
- * Manejar cambio de filtros (alias para applyFilters)
- */
-function handleFiltersChange() {
-    applyFilters();
-}
-
-/**
  * Aplicar filtros mediante redirección con parámetros GET
  */
 function applyFilters() {
-    const searchTerm = document.getElementById('search-product')?.value.trim() || '';
-    const typeId = document.getElementById('filter-type')?.value || '';
-    const sortBy = document.getElementById('sort-by')?.value || 'name';
+    const searchInput = document.getElementById('search-product');
+    const typeSelect = document.getElementById('filter-type');
+    const sortSelect = document.getElementById('sort-by');
+    
+    const searchTerm = searchInput?.value.trim() || '';
+    const typeId = typeSelect?.value || '';
+    const sortBy = sortSelect?.value || 'name';
 
-    // Construir URL con parámetros
-    const url = new URL(globalThis.location.href);
-    url.searchParams.delete('page'); // Resetear a página 1 cuando se filtran
+    try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('page');
 
-    if (searchTerm) {
-        url.searchParams.set('search', searchTerm);
-    } else {
-        url.searchParams.delete('search');
+        if (searchTerm) {
+            url.searchParams.set('search', searchTerm);
+        } else {
+            url.searchParams.delete('search');
+        }
+
+        if (typeId) {
+            url.searchParams.set('tipo_producto_id', typeId);
+        } else {
+            url.searchParams.delete('tipo_producto_id');
+        }
+
+        if (sortBy && sortBy !== 'name') {
+            url.searchParams.set('sort_by', sortBy);
+        } else {
+            url.searchParams.delete('sort_by');
+        }
+
+        window.location.href = url.toString();
+    } catch (error) {
+        const baseUrl = window.location.origin + window.location.pathname;
+        const params = new URLSearchParams();
+        
+        if (searchTerm) params.set('search', searchTerm);
+        if (typeId) params.set('tipo_producto_id', typeId);
+        if (sortBy && sortBy !== 'name') params.set('sort_by', sortBy);
+        
+        const queryString = params.toString();
+        window.location.href = queryString ? `${baseUrl}?${queryString}` : baseUrl;
     }
-
-    if (typeId) {
-        url.searchParams.set('tipo_producto_id', typeId);
-    } else {
-        url.searchParams.delete('tipo_producto_id');
-    }
-
-    if (sortBy && sortBy !== 'name') {
-        url.searchParams.set('sort_by', sortBy);
-    } else {
-        url.searchParams.delete('sort_by');
-    }
-
-    // Redirigir a la URL con los filtros
-    globalThis.location.href = url.toString();
 }
-
-
-/**
- * Configurar acciones de productos (ver detalles, agregar al carrito)
- */
 
 /**
  * Restaurar la grilla original renderizada por Blade
@@ -437,7 +445,6 @@ async function fetchAndRenderProducts({ searchTerm, typeId, sortBy }) {
             return;
         }
 
-        console.error('Error al buscar productos:', error);
         grid.innerHTML = `
             <div class="col-12">
                 <div class="alert alert-danger text-center">
@@ -467,7 +474,6 @@ function sortProducts(sortBy) {
     
     cards.sort((a, b) => compareCards(a, b, sortBy));
 
-    // Reorganizar elementos
     for (const card of cards) {
         grid.appendChild(card);
     }
@@ -638,19 +644,17 @@ function initializeSelect2() {
     for (const element of elements) {
         const $element = $(element);
         
-        // Destruir instancia existente si existe
         if ($element.hasClass('select2-hidden-accessible')) {
             $element.select2('destroy');
         }
 
-        // Solo inicializar si tiene opciones
         if (element.options?.length > 0) {
             $element.select2({
                 theme: 'bootstrap4',
                 width: '100%',
                 placeholder: element.dataset.placeholder || 'Seleccione una opción',
                 allowClear: true,
-                minimumResultsForSearch: -1 // Ocultar barra de búsqueda
+                minimumResultsForSearch: -1
             });
         }
     }
@@ -665,7 +669,6 @@ function truncateText(text, maxLength) {
 }
 
 function getStockClass(quantity = 0) {
-
     if (quantity <= 0) {
         return 'danger';
     }
@@ -683,43 +686,34 @@ function setPaginationVisibility(show) {
     pagination.style.display = show ? '' : 'none';
 }
 
-// Variable para almacenar el handler de event delegation
 let productActionsHandler = null;
 let productActionsInitialized = false;
 
 /**
  * Configurar acciones de productos usando event delegation
- * Esto evita problemas con listeners duplicados y funciona con contenido dinámico
  */
 function setupProductActions() {
-    // Usar event delegation en el contenedor de productos
     const productsGrid = document.getElementById('products-grid');
     if (!productsGrid) {
         return;
     }
 
-    // Si ya está inicializado, no hacer nada más
     if (productActionsInitialized && productActionsHandler) {
         return;
     }
 
-    // Remover listener anterior si existe (por si acaso)
     if (productActionsHandler) {
         productsGrid.removeEventListener('click', productActionsHandler, true);
         productActionsHandler = null;
     }
 
-    // Crear nuevo handler
     productActionsHandler = function(event) {
-        // Prevenir múltiples ejecuciones del mismo evento
         if (event.defaultPrevented) {
             return;
         }
 
-        // Buscar el botón más cercano (puede ser el botón mismo o un elemento dentro)
         let target = event.target;
         
-        // Si el clic fue en un icono o texto dentro del botón, buscar el botón padre
         while (target && target !== productsGrid) {
             if (target.classList && 
                 (target.classList.contains('btn-view-details') || 
@@ -729,26 +723,20 @@ function setupProductActions() {
             target = target.parentElement;
         }
 
-        // Si no encontramos un botón válido, salir
         if (!target || target === productsGrid || !target.classList) {
             return;
         }
 
-        // Prevenir comportamiento por defecto y propagación
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
 
-        // Verificar si es botón de detalles
         if (target.classList.contains('btn-view-details')) {
             const productId = target.dataset.id || target.getAttribute('data-id');
             if (productId) {
                 showProductDetails(productId);
-            } else {
-                console.error('No se encontró productId en el botón de detalles');
             }
         } 
-        // Verificar si es botón de agregar al carrito
         else if (target.classList.contains('btn-add-to-cart')) {
             const productId = target.dataset.id || target.getAttribute('data-id');
             const productName = target.dataset.name || target.getAttribute('data-name');
@@ -757,24 +745,16 @@ function setupProductActions() {
             
             if (productId && productName && !isNaN(productStock)) {
                 addToCart(productId, productName, productStock);
-            } else {
-                console.error('Datos incompletos del producto:', { 
-                    productId, 
-                    productName, 
-                    productStock,
-                    element: target
-                });
             }
         }
     };
 
-    // Agregar listener usando event delegation (solo una vez)
-    productsGrid.addEventListener('click', productActionsHandler, true); // Usar capture phase
+    productsGrid.addEventListener('click', productActionsHandler, true);
     productActionsInitialized = true;
 }
 
 /**
- * Resetear la inicialización de acciones (útil cuando se navega a otra página)
+ * Resetear la inicialización de acciones
  */
 function resetProductActions() {
     const productsGrid = document.getElementById('products-grid');
@@ -792,7 +772,6 @@ async function showProductDetails(productId) {
     const contentDiv = document.getElementById('product-detail-content');
     if (!contentDiv) return;
 
-    // Mostrar loading
     contentDiv.innerHTML = `
         <div class="text-center">
             <i class="fas fa-spinner fa-spin fa-3x"></i>
@@ -801,7 +780,6 @@ async function showProductDetails(productId) {
     `;
 
     try {
-        // Usar la ruta /detalles en lugar de la ruta show normal
         const response = await fetch(`${API_BASE_URL}/productos/detalles/${productId}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -816,11 +794,9 @@ async function showProductDetails(productId) {
         const html = await response.text();
         contentDiv.innerHTML = html;
         
-        // Mostrar el modal DESPUÉS de cargar el contenido
         showModal('productDetailModal');
         
     } catch (error) {
-        console.error('Error:', error);
         contentDiv.innerHTML = `
             <div class="alert alert-danger text-center">
                 <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
@@ -828,7 +804,6 @@ async function showProductDetails(productId) {
                 <small>${error.message}</small>
             </div>
         `;
-        // Mostrar el modal incluso con error para que vea el mensaje
         showModal('productDetailModal');
     }
 }
@@ -837,19 +812,15 @@ async function showProductDetails(productId) {
  * Agregar producto al carrito
  */
 function addToCart(productId, productName, productStock) {
-    // Verificar si el producto ya está en el carrito
     const existingItem = cart.find(item => item.id === productId);
 
     if (existingItem) {
-        // Verificar stock disponible
         if (existingItem.quantity >= productStock) {
             showStockAlert(productName, productStock);
             return;
         }
-        // Incrementar cantidad
         existingItem.quantity++;
     } else {
-        // Agregar nuevo producto
         cart.push({
             id: productId,
             name: productName,
@@ -858,13 +829,10 @@ function addToCart(productId, productName, productStock) {
         });
     }
 
-    // Guardar en localStorage
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
 
-    // Actualizar contador
     updateCartCount();
 
-    // Mostrar notificación
     showSuccessNotification(`"${productName}" agregado al carrito`);
 }
 
@@ -872,20 +840,17 @@ function addToCart(productId, productName, productStock) {
  * Actualizar contador del carrito
  */
 function updateCartCount() {
-    // Usar la función global si está disponible
     if (typeof globalThis.updateCartCountFromStorage === 'function') {
         globalThis.updateCartCountFromStorage();
         return;
     }
 
-    // Fallback local
     const countBadge = document.getElementById('cart-count');
     if (!countBadge) return;
 
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     countBadge.textContent = totalItems;
 
-    // Animar el badge si hay items
     if (totalItems > 0) {
         countBadge.classList.add('badge-warning');
         countBadge.classList.remove('badge-light');
@@ -933,7 +898,6 @@ function showStockAlert(productName, maxStock) {
  * Mostrar notificación de éxito
  */
 function showSuccessNotification(message) {
-    // Toast notification
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -969,19 +933,18 @@ function clearFilters() {
     }
     if (sortSelect) sortSelect.value = 'name';
 
-    handleFiltersChange();
+    applyFilters();
 }
 
-// Exportar funciones para uso externo si es necesario
+// Exportar funciones para uso externo
 globalThis.inventarioCard = {
-    handleFiltersChange,
+    applyFilters,
     sortProducts,
     clearFilters,
     addToCart,
     updateCartCount
 };
 
-// Exponer funciones utilizadas por atributos onclick en el HTML renderizado por Blade
 globalThis.closeProductModal = closeProductModal;
 globalThis.agregarAlCarritoDesdeModal = agregarAlCarritoDesdeModal;
 globalThis.expandirImagen = expandirImagen;
