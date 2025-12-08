@@ -14,6 +14,7 @@ use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
@@ -106,7 +107,7 @@ class AspiranteManagementServiceTest extends TestCase
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
-            ->with(1, ['modalidad.parametro', 'jornada', 'diasFormacion'])
+            ->with(1, ['modalidad', 'jornada', 'diasFormacion'])
             ->andReturn($programa);
 
         $this->aspiranteRepositoryMock->shouldReceive('findByPrograma')
@@ -140,7 +141,7 @@ class AspiranteManagementServiceTest extends TestCase
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
-            ->with(1, ['modalidad.parametro', 'jornada', 'diasFormacion'])
+            ->with(1, ['modalidad', 'jornada', 'diasFormacion'])
             ->andReturn($programa);
 
         $this->aspiranteRepositoryMock->shouldReceive('findByPrograma')
@@ -179,14 +180,14 @@ class AspiranteManagementServiceTest extends TestCase
             ->andReturn($programa);
 
         $this->personaRepositoryMock->shouldReceive('findByNumeroDocumento')
-            ->twice()
+            ->once()
             ->with(self::TEST_NUMERO_DOCUMENTO)
             ->andReturn($persona);
 
+        // Nota: La validación de inscripción duplicada ahora se maneja en StoreAspiranteRequest,
+        // no en el servicio. El servicio solo crea el aspirante si la persona existe.
         $this->aspiranteRepositoryMock->shouldReceive('existeInscripcion')
-            ->once()
-            ->with(1, 1)
-            ->andReturn(false);
+            ->never(); // Ya no se llama desde el servicio
 
         $this->aspiranteRepositoryMock->shouldReceive('create')
             ->once()
@@ -247,15 +248,26 @@ class AspiranteManagementServiceTest extends TestCase
             ->with(self::TEST_NUMERO_DOCUMENTO)
             ->andReturn($persona);
 
+        // Nota: La validación de inscripción duplicada ahora se maneja en StoreAspiranteRequest,
+        // no en el servicio. El servicio solo crea el aspirante si la persona existe.
+        // Este test verifica que el servicio puede agregar un aspirante cuando la persona existe.
         $this->aspiranteRepositoryMock->shouldReceive('existeInscripcion')
+            ->never(); // Ya no se llama desde el servicio
+
+        $this->aspiranteRepositoryMock->shouldReceive('create')
             ->once()
-            ->with(1, 1)
-            ->andReturn(true);
+            ->with(Mockery::on(function ($data) {
+                return $data['persona_id'] === 1 &&
+                       $data['complementario_id'] === 1 &&
+                       $data['estado'] === 1;
+            }))
+            ->andReturn(new AspiranteComplementario(['id' => 1, 'persona_id' => 1, 'complementario_id' => 1]));
 
         $resultado = $this->service->agregarAspirante(1, self::TEST_NUMERO_DOCUMENTO);
 
-        $this->assertFalse($resultado['success']);
-        $this->assertStringContainsString('ya se encuentra inscrita', $resultado['message']);
+        // El servicio ahora solo verifica que la persona exista, la validación de duplicados
+        // está en el FormRequest
+        $this->assertTrue($resultado['success']);
     }
 
     #[Test]
@@ -314,7 +326,7 @@ class AspiranteManagementServiceTest extends TestCase
     {
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
-            ->with(999, ['modalidad.parametro', 'jornada', 'diasFormacion'])
+            ->with(999, ['modalidad', 'jornada', 'diasFormacion'])
             ->andReturn(null);
 
         try {
@@ -368,25 +380,29 @@ class AspiranteManagementServiceTest extends TestCase
         $programa->setAttribute('id', 1);
 
         $persona = new Persona();
-        $persona->setAttribute('id', 1);
-        $persona->setAttribute('primer_nombre', 'Juan');
-        $persona->setAttribute('primer_apellido', 'Pérez');
-        $persona->setAttribute('numero_documento', self::TEST_NUMERO_DOCUMENTO);
+        $persona->setRawAttributes([
+            'id' => 1,
+            'primer_nombre' => 'Juan',
+            'primer_apellido' => 'Pérez',
+            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+        ]);
+        $persona->syncOriginal();
 
-        // Crear un mock parcial del aspirante para poder mockear el método load()
-        $aspirante = Mockery::mock(AspiranteComplementario::class)->makePartial();
+        // Crear una instancia real del modelo para que funcione correctamente con Collection::where()
+        $aspirante = new AspiranteComplementario();
         $aspirante->setRawAttributes([
             'id' => 1,
             'persona_id' => 1,
             'complementario_id' => 1,
             'estado' => 1,
+            'observaciones' => null,
         ]);
+        
+        // Establecer la relación persona usando setRelation
+        // Esto marca la relación como cargada automáticamente
         $aspirante->setRelation('persona', $persona);
-        // Mockear load() para que no intente cargar desde la base de datos
-        $aspirante->shouldReceive('load')
-            ->with('persona')
-            ->andReturnSelf();
-        // Asegurar que el modelo tenga los atributos correctos para ->where('id', 1)
+        
+        // Sincronizar atributos originales
         $aspirante->syncOriginal();
 
         $collection = new EloquentCollection([$aspirante]);
@@ -405,24 +421,41 @@ class AspiranteManagementServiceTest extends TestCase
         Auth::shouldReceive('id')
             ->andReturn(1);
 
+        Gate::shouldReceive('allows')
+            ->with('ELIMINAR ASPIRANTE COMPLEMENTARIO')
+            ->andReturn(true);
+
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
             ->with(1)
             ->andReturn($programa);
 
-        // El servicio llama a findByPrograma en validarRechazarAspirante (línea 329) y en rechazarAspirante (línea 121)
+        // El servicio llama a findByPrograma en validarRechazarAspirante y en rechazarAspirante
         // Ambas veces hace ->where('id', $aspiranteId)->first() sobre la Collection retornada
         // El método findByPrograma puede recibir un segundo parámetro opcional (relations)
         // Necesitamos que retorne una Collection que soporte ->where('id', $aspiranteId)->first()
         // El servicio llama primero sin relaciones (en validarRechazarAspirante) y luego sin relaciones (en rechazarAspirante)
         $this->aspiranteRepositoryMock->shouldReceive('findByPrograma')
-            ->with(1)
+            ->with(1, Mockery::any())
             ->twice()
             ->andReturn($collection);
 
         $this->aspiranteRepositoryMock->shouldReceive('update')
             ->once()
-            ->with($aspirante, ['estado' => 4])
+            ->with(Mockery::on(function ($arg) use ($aspirante) {
+                return $arg === $aspirante || ($arg instanceof AspiranteComplementario && $arg->id === $aspirante->id);
+            }), Mockery::on(function ($data) {
+                return isset($data['estado']) && $data['estado'] === 4;
+            }))
+            ->andReturn(true);
+
+        // Mockear Log para evitar errores
+        \Illuminate\Support\Facades\Log::shouldReceive('info')
+            ->zeroOrMoreTimes()
+            ->andReturn(true);
+        
+        \Illuminate\Support\Facades\Log::shouldReceive('error')
+            ->zeroOrMoreTimes()
             ->andReturn(true);
 
         $resultado = $this->service->rechazarAspirante(1, 1);
@@ -435,14 +468,9 @@ class AspiranteManagementServiceTest extends TestCase
     #[Test]
     public function no_rechaza_aspirante_sin_permisos(): void
     {
-        Auth::shouldReceive('user')
-            ->andReturn(new class {
-                public function can($permission) {
-                    // Parameter required by Laravel's Authorizable interface signature
-                    unset($permission);
-                    return false;
-                }
-            });
+        Gate::shouldReceive('allows')
+            ->with('ELIMINAR ASPIRANTE COMPLEMENTARIO')
+            ->andReturn(false);
 
         $resultado = $this->service->rechazarAspirante(1, 1);
 
@@ -454,14 +482,9 @@ class AspiranteManagementServiceTest extends TestCase
     #[Test]
     public function no_rechaza_aspirante_si_programa_no_existe(): void
     {
-        Auth::shouldReceive('user')
-            ->andReturn(new class {
-                public function can($permission) {
-                    // Parameter required by Laravel's Authorizable interface signature
-                    unset($permission);
-                    return true;
-                }
-            });
+        Gate::shouldReceive('allows')
+            ->with('ELIMINAR ASPIRANTE COMPLEMENTARIO')
+            ->andReturn(true);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
@@ -480,20 +503,18 @@ class AspiranteManagementServiceTest extends TestCase
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
 
-        Auth::shouldReceive('user')
-            ->andReturn(new class {
-                public function can($permission) {
-                    // Parameter required by Laravel's Authorizable interface signature
-                    unset($permission);
-                    return true;
-                }
-            });
+        Gate::shouldReceive('allows')
+            ->with('ELIMINAR ASPIRANTE COMPLEMENTARIO')
+            ->andReturn(true);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
             ->once()
             ->with(1)
             ->andReturn($programa);
 
+        // El servicio llama a findByPrograma en validarRechazarAspirante
+        // Si retorna una colección vacía, validarRechazarAspirante retorna el error
+        // y rechazarAspirante NO debería llamarlo de nuevo
         $this->aspiranteRepositoryMock->shouldReceive('findByPrograma')
             ->once()
             ->with(1)
@@ -508,16 +529,9 @@ class AspiranteManagementServiceTest extends TestCase
     #[Test]
     public function maneja_excepcion_al_rechazar_aspirante(): void
     {
-        $userMock = new class {
-            public function can($permission) {
-                // Parameter required by Laravel's Authorizable interface signature
-                unset($permission);
-                return true;
-            }
-        };
-
-        Auth::shouldReceive('user')
-            ->andReturn($userMock);
+        Gate::shouldReceive('allows')
+            ->with('ELIMINAR ASPIRANTE COMPLEMENTARIO')
+            ->andReturn(true);
 
         Auth::shouldReceive('id')
             ->andReturn(1);
@@ -526,6 +540,10 @@ class AspiranteManagementServiceTest extends TestCase
             ->once()
             ->with(1)
             ->andThrow(new \Exception('Error de base de datos'));
+
+        \Illuminate\Support\Facades\Log::shouldReceive('error')
+            ->zeroOrMoreTimes()
+            ->andReturn(true);
 
         $resultado = $this->service->rechazarAspirante(1, 1);
 

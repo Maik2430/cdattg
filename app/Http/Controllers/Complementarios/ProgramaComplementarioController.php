@@ -10,6 +10,7 @@ use App\Services\Complementarios\ComplementarioService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProgramaComplementarioController extends Controller
@@ -193,7 +194,11 @@ class ProgramaComplementarioController extends Controller
         $payload = $request->validated();
 
         DB::transaction(function () use ($payload) {
-            $programa = ComplementarioOfertado::create($this->extractProgramaAtributos($payload));
+            $atributos = $this->extractProgramaAtributos($payload);
+            $atributos['user_create_id'] = Auth::id();
+            $atributos['user_edit_id'] = Auth::id();
+
+            $programa = ComplementarioOfertado::create($atributos);
 
             // Sincronizar días de formación
             $this->complementarioService->sincronizarDiasFormacion($programa, $payload['dias'] ?? null);
@@ -217,7 +222,10 @@ class ProgramaComplementarioController extends Controller
         $payload = $request->validated();
 
         DB::transaction(function () use ($programa, $payload) {
-            $programa->update($this->extractProgramaAtributos($payload));
+            $atributos = $this->extractProgramaAtributos($payload);
+            $atributos['user_edit_id'] = Auth::id();
+
+            $programa->update($atributos);
 
             $this->complementarioService->sincronizarDiasFormacion($programa, $payload['dias'] ?? null);
 
