@@ -22,17 +22,48 @@ trait SeedsComplementariosDatabase
      */
     protected function seedComplementariosDatabaseIfNeeded(): void
     {
-        // Verificar si la tabla existe y si ya hay datos
-        // Esto es importante porque RefreshDatabase recrea la BD pero los seeders
-        // pueden no haberse ejecutado aún en este test específico
-        try {
-            if (Schema::hasTable('parametros') && Parametro::count() > 0) {
-                return;
+        // En cualquier entorno que no sea producción, verificar si los datos base existen
+        // Si no existen o están incompletos, ejecutar seeders
+        if (app()->environment('production')) {
+            // En producción, solo ejecutar si no hay datos
+            try {
+                if (Schema::hasTable('parametros') && \App\Models\Parametro::count() > 0) {
+                    return;
+                }
+            } catch (\Exception $e) {
+                // Si hay error, ejecutar seeders
             }
-        } catch (\Exception $e) {
-            // Si hay error al verificar, continuar y ejecutar seeders
+        } else {
+            // En desarrollo/testing, verificar datos críticos
+            try {
+                // Verificar si tema_id=3 existe (GENERO)
+                $temaGeneroExists = Schema::hasTable('temas') && 
+                    \App\Models\Tema::where('id', 3)->exists();
+                
+                // Verificar si hay parametros_temas para genero
+                $parametroTemaExists = Schema::hasTable('parametros_temas') &&
+                    \App\Models\ParametroTema::where('tema_id', 3)
+                        ->whereIn('parametro_id', [9, 10, 11])
+                        ->exists();
+                
+                if ($temaGeneroExists && $parametroTemaExists) {
+                    // Datos críticos existen, no ejecutar seeders
+                    return;
+                }
+            } catch (\Exception $e) {
+                // Si hay error, ejecutar seeders
+            }
         }
 
+        // Ejecutar seeders
+        $this->runSeeders();
+    }
+
+    /**
+     * Ejecuta todos los seeders necesarios.
+     */
+    private function runSeeders(): void
+    {
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
@@ -52,4 +83,3 @@ trait SeedsComplementariosDatabase
         ]);
     }
 }
-

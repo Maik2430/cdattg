@@ -34,6 +34,9 @@ class ProgramaComplementarioControllerTest extends TestCase
         $this->seedComplementariosDatabaseIfNeeded();
         
         $this->user = User::factory()->create();
+        
+        // Deshabilitar CSRF para tests
+        $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
     }
 
     #[Test]
