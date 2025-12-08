@@ -166,7 +166,9 @@
                                             >
                                                 <option value="">Seleccionar tipo</option>
                                                 @foreach($tiposProductos as $tipo)
-                                                    <option value="{{ $tipo->id }}" {{ old('tipo_producto_id') == $tipo->id ? 'selected' : '' }}>
+                                                    <option value="{{ $tipo->id }}" 
+                                                            data-tipo="{{ strtolower($tipo->parametro->name) }}"
+                                                            {{ old('tipo_producto_id') == $tipo->id ? 'selected' : '' }}>
                                                         {{ $tipo->parametro->name }}
                                                     </option>
                                                 @endforeach
@@ -426,11 +428,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" id="fecha-vencimiento-container" style="display: none;">
                                         <div class="form-group-modern">
                                             <label for="fecha_vencimiento">
                                                 <i class="fas fa-calendar-times"></i>
                                                 Fecha de Vencimiento
+                                                <span class="text-danger">*</span>
                                             </label>
                                             <input type="date"
                                                    class="form-control-modern @error('fecha_vencimiento') is-invalid @enderror"
@@ -483,7 +486,7 @@
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"
             integrity="sha384-VZQkKBeVH3AU5b8KP5hJNF8FLg4Gx8FzIW7YF2JqLvKgVOp8YKjJpBxHBLrp3z+i"
             crossorigin="anonymous"></script>
-    @vite('resources/js/inventario/imagen.js')
+    @vite(['resources/js/inventario/imagen.js', 'resources/js/inventario/fecha-vencimiento.js'])
     <script>
         // Preview de imagen
         document.getElementById('imagen').addEventListener('change', function(e) {

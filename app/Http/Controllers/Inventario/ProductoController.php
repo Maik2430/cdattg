@@ -148,11 +148,14 @@ class ProductoController extends Controller
         if (!$producto) {
             abort(404);
         }
+        
         $opciones = $this->formOptionsService->obtenerOpcionesProducto(self::THEME_PRODUCT_STATES);
         $datosFormulario = $this->formDataService->obtenerDatosFormulario();
+        $tiposProductos = $this->repository->obtenerTiposProductos();
 
         return view('inventario.productos.edit', array_merge($opciones, $datosFormulario, [
-            'producto' => $producto
+            'producto' => $producto,
+            'tiposProductos' => $tiposProductos
         ]));
     }
 

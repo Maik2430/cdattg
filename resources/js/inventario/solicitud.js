@@ -26,9 +26,9 @@ function cargarDatosCarrito() {
         if (debeCargarDesdeCarrito()) {
             mostrarAlertaCarritoCargado(data);
             // Limpiar el parámetro de la URL sin recargar
-            const url = new URL(window.location);
+            const url = new URL(globalThis.location);
             url.searchParams.delete('desde_carrito');
-            window.history.replaceState({}, '', url);
+            globalThis.history.replaceState({}, '', url);
         }
     } catch (error) {
         manejarErrorCargaCarrito(error);

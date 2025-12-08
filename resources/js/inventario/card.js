@@ -519,10 +519,10 @@ function compareCards(a, b, sortBy) {
         case 'stock-desc':
             return extractCardStock(b) - extractCardStock(a);
         case 'newest':
-            return Number.parseInt(b.dataset.id) - Number.parseInt(a.dataset.id);
+            return Number.parseInt(b.dataset?.id ?? '0', 10) - Number.parseInt(a.dataset?.id ?? '0', 10);
         case 'name':
         default:
-            return (a.dataset.name || '').localeCompare(b.dataset.name || '');
+            return (a.dataset?.name ?? '').localeCompare(b.dataset?.name ?? '');
     }
 }
 
@@ -735,7 +735,7 @@ function setupProductActions() {
 
     // Helper: Manejar vista de detalles
     const handleViewDetails = (button) => {
-        const productId = button.dataset?.id ?? button.getAttribute('data-id');
+        const productId = button.dataset?.id ?? button.getAttribute?.('data-id');
         if (productId) {
             console.log('Abriendo detalles del producto:', productId);
             showProductDetails(productId);
@@ -744,9 +744,9 @@ function setupProductActions() {
 
     // Helper: Manejar agregar al carrito
     const handleAddToCart = (button) => {
-        const productId = button.dataset?.id ?? button.getAttribute('data-id');
-        const productName = button.dataset?.name ?? button.getAttribute('data-name');
-        const productStockStr = button.dataset?.stock ?? button.getAttribute('data-stock');
+        const productId = button.dataset?.id ?? button.getAttribute?.('data-id');
+        const productName = button.dataset?.name ?? button.getAttribute?.('data-name');
+        const productStockStr = button.dataset?.stock ?? button.getAttribute?.('data-stock');
         const productStock = Number.parseInt(productStockStr, 10);
         
         if (productId && productName && !Number.isNaN(productStock)) {

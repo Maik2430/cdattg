@@ -162,7 +162,7 @@ function setupNavigationListener() {
 
     // Escuchar clics en enlaces con wire:navigate
     document.addEventListener('click', function(event) {
-        const link = event.target.closest('a[wire\\:navigate], a[data-wire-navigate]');
+        const link = event.target.closest(String.raw`a[wire\:navigate], a[data-wire-navigate]`);
         if (link && link.href) {
             const href = link.href.toLowerCase();
             if (href.includes('carrito-sena') || href.includes('carrito')) {
