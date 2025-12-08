@@ -29,10 +29,7 @@ class EstadisticaComplementarioController extends Controller
         $departamentos = Departamento::select('id', 'departamento')->get();
         $municipios = Municipio::select('id', 'municipio')->get();
 
-        // Obtener datos reales para las estadísticas
-        $estadisticas = $this->estadisticaService->obtenerEstadisticasReales();
-
-        return view('complementarios.estadisticas', compact('departamentos', 'municipios', 'estadisticas'));
+        return view('complementarios.estadisticas', compact('departamentos', 'municipios'));
     }
 
     /**
