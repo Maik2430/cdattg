@@ -82,7 +82,7 @@ function agregarAlCarritoDesdeModal(productId, productName, productStock) {
 
 // Función para verificar si estamos en la página del catálogo
 function isCatalogPage() {
-    const pathname = window.location.pathname;
+    const pathname = globalThis.location.pathname;
     return pathname.includes('productos') && 
            (pathname.includes('catalogo') || 
             document.getElementById('products-grid') !== null);
@@ -171,7 +171,7 @@ function setupNavigationListener() {
         }
     }, true);
 
-    window.addEventListener('popstate', handleNavigation);
+    globalThis.addEventListener('popstate', handleNavigation);
 
     let lastUrl = location.href;
     const urlCheckInterval = setInterval(() => {
@@ -203,7 +203,7 @@ function setupNavigationListener() {
         subtree: true
     });
 
-    window.addEventListener('beforeunload', () => {
+    globalThis.addEventListener('beforeunload', () => {
         clearInterval(urlCheckInterval);
         domObserver.disconnect();
     });
@@ -351,7 +351,7 @@ function applyFilters() {
     const sortBy = sortSelect?.value || 'name';
 
     try {
-        const url = new URL(window.location.href);
+        const url = new URL(globalThis.location.href);
         url.searchParams.delete('page');
 
         if (searchTerm) {
@@ -498,14 +498,14 @@ function sortProductData(products, sortBy) {
     sorted.sort((a, b) => {
         switch (sortBy) {
             case 'stock-asc':
-                return (a.cantidad || 0) - (b.cantidad || 0);
+                return (a.cantidad ?? 0) - (b.cantidad ?? 0);
             case 'stock-desc':
-                return (b.cantidad || 0) - (a.cantidad || 0);
+                return (b.cantidad ?? 0) - (a.cantidad ?? 0);
             case 'newest':
-                return (b.id || 0) - (a.id || 0);
+                return (b.id ?? 0) - (a.id ?? 0);
             case 'name':
             default:
-                return (a.producto || '').toLowerCase().localeCompare((b.producto || '').toLowerCase());
+                return (a.producto ?? '').toLowerCase().localeCompare((b.producto ?? '').toLowerCase());
         }
     });
 

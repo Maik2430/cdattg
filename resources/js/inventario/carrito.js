@@ -115,7 +115,7 @@ if (document.readyState === 'loading') {
 
 // Función para verificar si estamos en la página del carrito
 function isCartPage() {
-    const pathname = window.location.pathname;
+    const pathname = globalThis.location.pathname;
     const hasCartContainer = document.getElementById('cart-items-container') !== null;
     return pathname.includes('carrito-sena') || 
            pathname.includes('carrito') ||
@@ -163,7 +163,7 @@ function setupNavigationListener() {
     // Escuchar clics en enlaces con wire:navigate
     document.addEventListener('click', function(event) {
         const link = event.target.closest(String.raw`a[wire\:navigate], a[data-wire-navigate]`);
-        if (link && link.href) {
+        if (link?.href) {
             const href = link.href.toLowerCase();
             if (href.includes('carrito-sena') || href.includes('carrito')) {
                 handleNavigation();
@@ -172,7 +172,7 @@ function setupNavigationListener() {
     }, true);
 
     // Escuchar cambios en la URL usando popstate
-    window.addEventListener('popstate', handleNavigation);
+    globalThis.addEventListener('popstate', handleNavigation);
 
     // Observar cambios en la URL directamente
     let lastUrl = location.href;
@@ -276,14 +276,14 @@ async function loadProductDetails(productId) {
         // Extraer información del producto
         const productData = {
             id: productId,
-            name: doc.querySelector('h3')?.textContent.trim() || 'Producto',
-            image: doc.querySelector('.product-image-wrapper img')?.src || 
-                   doc.querySelector('img[alt]')?.src || 
+            name: doc.querySelector('h3')?.textContent?.trim() ?? 'Producto',
+            image: doc.querySelector('.product-image-wrapper img')?.src ?? 
+                   doc.querySelector('img[alt]')?.src ?? 
                    '/img/inventario/producto-default.png',
             stock: Number.parseInt(doc.querySelector('.stat-card-value')?.textContent, 10) || 
                    Number.parseInt(Array.from(doc.querySelectorAll('.badge')).find(el => el.textContent.includes('unidades'))?.textContent, 10) || 0,
-            code: doc.querySelector('.badge-secondary')?.textContent.trim() || '',
-            description: doc.querySelector('.card-text')?.textContent.trim() || ''
+            code: doc.querySelector('.badge-secondary')?.textContent?.trim() ?? '',
+            description: doc.querySelector('.card-text')?.textContent?.trim() ?? ''
         };
 
         productsDetails[productId] = productData;

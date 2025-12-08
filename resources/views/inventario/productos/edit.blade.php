@@ -175,7 +175,7 @@
                                             >
                                                 <option value="">Seleccionar tipo</option>
                                                 @foreach($tiposProductos as $tipo)
-                                                    <option value="{{ $tipo->id }}" 
+                                                    <option value="{{ $tipo->id }}"
                                                             data-tipo="{{ strtolower($tipo->parametro->name) }}"
                                                             {{ old('tipo_producto_id', $producto->tipo_producto_id) == $tipo->id ? 'selected' : '' }}>
                                                         {{ $tipo->parametro->name }}
