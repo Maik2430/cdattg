@@ -45,7 +45,7 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
         $tipoOrden = $orden->tipoOrden->parametro->name ?? 'N/A';
 
         $message = (new MailMessage)
-            ->subject('❌ Tu Solicitud ha sido Rechazada - Orden #' . $orden->id)
+            ->subject('Tu Solicitud ha sido Rechazada - Orden #' . $orden->id)
             ->greeting('Hola, ' . $notifiable->name)
             ->line('Lamentamos informarte que tu solicitud de ' . strtolower($tipoOrden) . ' ha sido rechazada.')
             ->line('**Orden:** #' . $orden->id)

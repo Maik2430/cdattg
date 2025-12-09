@@ -186,7 +186,7 @@
                                                 <div class="ml-2 d-flex flex-column">
                                                     @if($accionUrl)
                                                         <button
-                                                            class="btn btn-sm btn-info mb-1 text-white"
+                                                            class="btn btn-sm btn-info mb-1 text-white open-notification"
                                                             data-id="{{ $notificacion->id }}"
                                                             data-url="{{ $accionUrl }}"
                                                             data-unread="{{ is_null($notificacion->leida_en) ? 'true' : 'false' }}"

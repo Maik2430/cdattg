@@ -20,7 +20,8 @@ class NotificacionController extends Controller
 
     public function __construct(UserNotificationService $service)
     {
-        $this->middleware('can:VER NOTIFICACION')->only(['index']);
+        $this->middleware('auth');
+        $this->middleware('can:VER NOTIFICACION')->only(['index', 'getUnread']);
         $this->service = $service;
     }
 
@@ -94,24 +95,27 @@ class NotificacionController extends Controller
     /**
      * Eliminar una notificación
      */
-    public function destroy(string $id) : RedirectResponse
+    public function destroy(string $id) : JsonResponse
     {
         try {
             $resultado = $this->service->eliminar(Auth::id(), $id);
+            $statusCode = $resultado ? 200 : 404;
+            $message = $resultado ? 'Notificación eliminada exitosamente' : self::NOTIFICACION_NO_ENCONTRADA;
 
-            if ($resultado) {
-                return back()->with('success', 'Notificación eliminada exitosamente');
-            }
-
-            abort(404, self::NOTIFICACION_NO_ENCONTRADA);
+            return response()->json([
+                'success' => $resultado,
+                'message' => $message
+            ], $statusCode);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Si el usuario no existe, también es 404
-            abort(404, self::NOTIFICACION_NO_ENCONTRADA);
-        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
-            // Re-lanzar excepciones HTTP (como abort(404)) sin capturarlas
-            throw $e;
+            return response()->json([
+                'success' => false,
+                'message' => self::NOTIFICACION_NO_ENCONTRADA
+            ], 404);
         } catch (\Exception $e) {
-            return back()->with('error', self::ERROR_ELIMINAR . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => self::ERROR_ELIMINAR . $e->getMessage()
+            ], 500);
         }
     }
 
