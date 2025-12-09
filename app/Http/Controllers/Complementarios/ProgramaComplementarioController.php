@@ -246,23 +246,10 @@ class ProgramaComplementarioController extends Controller
     {
         try {
             // Verificar si hay registros relacionados antes de eliminar
-            $tieneAspirantes = $programa->aspirantes()->exists();
-            $tieneCompetencias = $programa->competencias()->exists();
-            $tieneRaps = $programa->raps()->exists();
-            $tieneGuias = $programa->guiasAprendizaje()->exists();
-            $tieneDias = $programa->diasFormacion()->exists();
-
-            if ($tieneAspirantes || $tieneCompetencias || $tieneRaps || $tieneGuias || $tieneDias) {
-                $relaciones = [];
-                
-                if ($tieneAspirantes) $relaciones[] = 'aspirantes inscritos';
-                if ($tieneCompetencias) $relaciones[] = 'competencias asociadas';
-                if ($tieneRaps) $relaciones[] = 'resultados de aprendizaje (RAPs) asociados';
-                if ($tieneGuias) $relaciones[] = 'guías de aprendizaje asociadas';
-                if ($tieneDias) $relaciones[] = 'días de formación asignados';
-                
-                $mensaje = 'No se puede eliminar el programa porque tiene ' . implode(', ', $relaciones) . '. ';
-                $mensaje .= 'Por favor, elimine estas relaciones primero o cambie el estado del programa a "Sin Oferta".';
+            $relacionesActivas = $this->obtenerRelacionesActivas($programa);
+            
+            if (!empty($relacionesActivas)) {
+                $mensaje = $this->construirMensajeErrorRelaciones($relacionesActivas);
 
                 return response()->json([
                     'success' => false,
@@ -277,25 +264,9 @@ class ProgramaComplementarioController extends Controller
                 'message' => 'Programa eliminado exitosamente.',
             ]);
         } catch (\Illuminate\Database\QueryException $e) {
-            // Capturar excepción de integridad referencial
-            if ($e->getCode() == 23000) { // Código para violación de restricción de clave foránea
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No se puede eliminar el programa porque tiene registros relacionados en el sistema. Por favor, elimine primero todas las relaciones (aspirantes, competencias, RAPs, guías de aprendizaje, días de formación) o cambie el estado del programa a "Sin Oferta".',
-                ], 422);
-            }
-            
-            // Para otras excepciones de base de datos
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al intentar eliminar el programa: ' . $e->getMessage(),
-            ], 500);
+            return $this->manejarExcepcionBaseDatos($e);
         } catch (\Exception $e) {
-            // Para cualquier otra excepción
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error inesperado: ' . $e->getMessage(),
-            ], 500);
+            return $this->manejarExcepcionGeneral($e);
         }
     }
 
@@ -346,5 +317,77 @@ class ProgramaComplementarioController extends Controller
         if (isset($payload['guias'])) {
             $programa->guiasAprendizaje()->sync($payload['guias']);
         }
+    }
+
+    /**
+     * Obtiene las relaciones activas de un programa complementario.
+     */
+    private function obtenerRelacionesActivas(ComplementarioOfertado $programa): array
+    {
+        $relaciones = [];
+
+        if ($programa->aspirantes()->exists()) {
+            $relaciones[] = 'aspirantes inscritos';
+        }
+        
+        if ($programa->competencias()->exists()) {
+            $relaciones[] = 'competencias asociadas';
+        }
+        
+        if ($programa->raps()->exists()) {
+            $relaciones[] = 'resultados de aprendizaje (RAPs) asociados';
+        }
+        
+        if ($programa->guiasAprendizaje()->exists()) {
+            $relaciones[] = 'guías de aprendizaje asociadas';
+        }
+        
+        if ($programa->diasFormacion()->exists()) {
+            $relaciones[] = 'días de formación asignados';
+        }
+
+        return $relaciones;
+    }
+
+    /**
+     * Construye el mensaje de error para relaciones activas.
+     */
+    private function construirMensajeErrorRelaciones(array $relaciones): string
+    {
+        $mensaje = 'No se puede eliminar el programa porque tiene ' . implode(', ', $relaciones) . '. ';
+        $mensaje .= 'Por favor, elimine estas relaciones primero o cambie el estado del programa a "Sin Oferta".';
+        
+        return $mensaje;
+    }
+
+    /**
+     * Maneja excepciones de base de datos durante la eliminación.
+     */
+    private function manejarExcepcionBaseDatos(\Illuminate\Database\QueryException $e): JsonResponse
+    {
+        // Capturar excepción de integridad referencial
+        if ($e->getCode() == 23000) { // Código para violación de restricción de clave foránea
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede eliminar el programa porque tiene registros relacionados en el sistema. Por favor, elimine primero todas las relaciones (aspirantes, competencias, RAPs, guías de aprendizaje, días de formación) o cambie el estado del programa a "Sin Oferta".',
+            ], 422);
+        }
+        
+        // Para otras excepciones de base de datos
+        return response()->json([
+            'success' => false,
+            'message' => 'Ocurrió un error al intentar eliminar el programa: ' . $e->getMessage(),
+        ], 500);
+    }
+
+    /**
+     * Maneja excepciones generales durante la eliminación.
+     */
+    private function manejarExcepcionGeneral(\Exception $e): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Ocurrió un error inesperado: ' . $e->getMessage(),
+        ], 500);
     }
 }
