@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProgramaComplementarioController extends Controller
 {
@@ -229,29 +230,27 @@ class ProgramaComplementarioController extends Controller
      */
     public function destroy(ComplementarioOfertado $programa): JsonResponse
     {
+        // Verificar si hay registros relacionados antes de eliminar
+        $relacionesActivas = $this->obtenerRelacionesActivas($programa);
+        
+        if (!empty($relacionesActivas)) {
+            $mensaje = $this->construirMensajeErrorRelaciones($relacionesActivas);
+
+            return response()->json([
+                'success' => false,
+                'message' => $mensaje,
+            ], 422);
+        }
+
         try {
-            // Verificar si hay registros relacionados antes de eliminar
-            $relacionesActivas = $this->obtenerRelacionesActivas($programa);
-            
-            if (!empty($relacionesActivas)) {
-                $mensaje = $this->construirMensajeErrorRelaciones($relacionesActivas);
-
-                return response()->json([
-                    'success' => false,
-                    'message' => $mensaje,
-                ], 422);
-            }
-
             $programa->delete();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Programa eliminado exitosamente.',
             ]);
-        } catch (\Illuminate\Database\QueryException $e) {
-            return $this->manejarExcepcionBaseDatos($e);
         } catch (\Exception $e) {
-            return $this->manejarExcepcionGeneral($e);
+            return $this->manejarExcepcion($e);
         }
     }
 
@@ -345,21 +344,25 @@ class ProgramaComplementarioController extends Controller
     }
 
     /**
-     * Maneja excepciones de base de datos durante la eliminación.
+     * Maneja excepciones durante la eliminación.
      */
-    private function manejarExcepcionBaseDatos(\Illuminate\Database\QueryException $e): JsonResponse
+    private function manejarExcepcion(\Exception $e): JsonResponse
     {
-        // Capturar excepción de integridad referencial
-        if ($e->getCode() == 23000) { // Código para violación de restricción de clave foránea
+        // Capturar excepción de integridad referencial (código 23000 para violación de restricción de clave foránea)
+        if ($e instanceof \Illuminate\Database\QueryException && $e->getCode() == 23000) {
             return response()->json([
                 'success' => false,
                 'message' => 'No se puede eliminar el programa porque tiene registros relacionados en el sistema. Por favor, elimine primero todas las relaciones (aspirantes, competencias, RAPs, guías de aprendizaje, días de formación) o cambie el estado del programa a "Sin Oferta".',
             ], 422);
         }
         
-        // Para otras excepciones de base de datos, usar mensaje genérico
-        // Log del error para debugging (en producción se debería usar un sistema de logging)
-        // error_log('Error de base de datos al eliminar programa: ' . $e->getMessage());
+        // Para otras excepciones, usar mensaje genérico
+        Log::error('Error al eliminar programa complementario', [
+            'error' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'trace' => $e->getTraceAsString(),
+            'exception_type' => get_class($e)
+        ]);
         
         return response()->json([
             'success' => false,
@@ -391,19 +394,5 @@ class ProgramaComplementarioController extends Controller
         return $programa->diasFormacion->map(static function ($dia) {
             return $dia->name . ' (' . $dia->pivot->hora_inicio . ' - ' . $dia->pivot->hora_fin . ')';
         })->implode(', ');
-    }
-
-    /**
-     * Maneja excepciones generales durante la eliminación.
-     */
-    private function manejarExcepcionGeneral(\Exception $e): JsonResponse
-    {
-        // Log del error para debugging (en producción se debería usar un sistema de logging)
-        // error_log('Error general al eliminar programa: ' . $e->getMessage());
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Ocurrió un error inesperado. Por favor, intente nuevamente.',
-        ], 500);
     }
 }
