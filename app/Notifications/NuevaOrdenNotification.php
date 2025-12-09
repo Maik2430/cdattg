@@ -53,7 +53,7 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
         $motivo = isset($matchMotivo[1]) ? trim($matchMotivo[1]) : 'No especificado';
 
         return (new MailMessage)
-            ->subject('📋 Nueva Solicitud de ' . $tipoOrden . ' - Orden #' . $this->orden->id)
+            ->subject('Nueva Solicitud de ' . $tipoOrden . ' - Orden #' . $this->orden->id)
             ->greeting('¡Hola, ' . $notifiable->name . '!')
             ->line('Se ha recibido una nueva solicitud de ' . strtolower($tipoOrden) . ' que requiere tu aprobación.')
             ->line('**Orden:** #' . $this->orden->id)

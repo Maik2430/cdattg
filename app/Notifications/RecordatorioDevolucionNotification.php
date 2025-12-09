@@ -60,7 +60,7 @@ class RecordatorioDevolucionNotification extends Notification implements ShouldQ
             foreach ($this->orden->detalles as $detalle) {
                 $cantidadPendiente = $detalle->getCantidadPendiente();
                 if ($cantidadPendiente > 0) {
-                    $message->line('• ' . $detalle->producto->producto . ' (' . $cantidadPendiente . ' unidad' . ($cantidadPendiente > 1 ? 'es' : '') . ')');
+                    $message->line('• ' . $detalle->producto->name . ' (' . $cantidadPendiente . ' unidad' . ($cantidadPendiente > 1 ? 'es' : '') . ')');
                 }
             }
         }
@@ -89,7 +89,7 @@ class RecordatorioDevolucionNotification extends Notification implements ShouldQ
             if ($cantidadPendiente > 0) {
                 $productosPendientes[] = [
                     'id' => $detalle->producto->id,
-                    'nombre' => $detalle->producto->producto,
+                    'nombre' => $detalle->producto->name,
                     'cantidad_pendiente' => $cantidadPendiente,
                 ];
             }
