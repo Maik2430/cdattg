@@ -16,6 +16,7 @@ let currentFetchedProducts = [];
 let currentFetchController = null;
 let originalGridHTML = null;
 let originalPaginationHTML = '';
+let productModalOpen = false;
 
 /**
  * Helper para mostrar/ocultar modales compatible con Bootstrap 4 y 5
@@ -42,13 +43,14 @@ function showModal(elementId) {
 function closeProductModal() {
     const modal = document.getElementById('productDetailModal');
     if (!modal) return;
-    
+
     if (modal instanceof HTMLDialogElement) {
         modal.close();
         modal.removeAttribute('open');
-    } else {
-        modal.style.display = 'none';
     }
+
+    modal.style.setProperty('display', 'none', 'important');
+    productModalOpen = false;
 }
 
 /**
@@ -74,7 +76,13 @@ function expandirImagen(imageSrc) {
 function agregarAlCarritoDesdeModal(productId, productName, productStock) {
     try {
         addToCart(productId, productName, productStock);
-        closeProductModal();
+        // Mantener el modal abierto para seguir revisando detalles o agregar más productos
+        if (productModalOpen) {
+            const modal = document.getElementById('productDetailModal');
+            if (modal instanceof HTMLDialogElement) {
+                modal.focus();
+            }
+        }
     } catch (error) {
         console.error('agregarAlCarritoDesdeModal: no se agregó el producto', error);
         alert('Error al agregar al carrito. Por favor intente de nuevo.');
@@ -106,6 +114,9 @@ function initializeCardView() {
  * Inicialización cuando el DOM está listo
  */
 function setupCardInitialization() {
+    if (productModalOpen) {
+        return;
+    }
     const productsGrid = document.getElementById('products-grid');
     if (!productsGrid) {
         return;
@@ -139,6 +150,10 @@ function setupNavigationListener() {
     let navigationTimeout = null;
     
     const handleNavigation = () => {
+        if (productModalOpen) {
+            return;
+        }
+
         if (navigationTimeout) {
             clearTimeout(navigationTimeout);
         }
@@ -183,8 +198,23 @@ function setupNavigationListener() {
         }
     }, 500);
 
-    const domObserver = new MutationObserver((mutations) => {
+        const domObserver = new MutationObserver((mutations) => {
         const hasSignificantChanges = mutations.some(mutation => {
+                if (productModalOpen) {
+                    return false;
+                }
+
+            const modalElement = document.getElementById('productDetailModal');
+            const mutationTargetsModal = modalElement && (
+                modalElement.contains(mutation.target) ||
+                Array.from(mutation.addedNodes).some(node => modalElement.contains(node)) ||
+                Array.from(mutation.removedNodes).some(node => modalElement.contains(node))
+            );
+
+            if (mutationTargetsModal) {
+                return false;
+            }
+
             return mutation.addedNodes.length > 0 || 
                    mutation.removedNodes.length > 0;
         });
@@ -809,12 +839,14 @@ async function showProductDetails(productId) {
     const contentDiv = document.getElementById('product-detail-content');
     if (!contentDiv) return;
 
+    productModalOpen = true;
     contentDiv.innerHTML = `
         <div class="text-center">
             <i class="fas fa-spinner fa-spin fa-3x"></i>
             <p class="mt-3">Cargando detalles...</p>
         </div>
     `;
+    showModal('productDetailModal');
 
     try {
         const response = await fetch(`${API_BASE_URL}/productos/detalles/${productId}`, {
@@ -829,6 +861,9 @@ async function showProductDetails(productId) {
         }
 
         const html = await response.text();
+        if (!productModalOpen) {
+            return;
+        }
         contentDiv.innerHTML = html;
         
         // Mostrar el modal DESPUÉS de cargar el contenido
@@ -838,6 +873,9 @@ async function showProductDetails(productId) {
         // Verificar que se abrió
         setTimeout(() => {
             const modal = document.getElementById('productDetailModal');
+            if (!productModalOpen) {
+                return;
+            }
             if (modal && modal.style.display !== 'flex' && !modal.hasAttribute('open')) {
                 console.warn('Modal no se abrió correctamente, forzando apertura...');
                 modal.showModal();
@@ -847,6 +885,9 @@ async function showProductDetails(productId) {
         }, 100);
         
     } catch (error) {
+        if (!productModalOpen) {
+            return;
+        }
         contentDiv.innerHTML = `
             <div class="alert alert-danger text-center">
                 <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
