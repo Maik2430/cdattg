@@ -47,6 +47,23 @@ class ProductoRepository implements ProductoRepositoryInterface
             $query->where('categoria_id', $filtros['categoria_id']);
         }
 
+        if (!empty($filtros['marca_id'])) {
+            $query->where('marca_id', $filtros['marca_id']);
+        }
+
+        if (!empty($filtros['estado_producto_id'])) {
+            $estadoFiltro = $filtros['estado_producto_id'];
+
+            if ($estadoFiltro === 'bajo_stock') {
+                $query->where('cantidad', '>', 0)
+                    ->where('cantidad', '<=', 5);
+            } elseif ($estadoFiltro === 'solo_agotado') {
+                $query->where('cantidad', '<=', 0);
+            } else {
+                $query->where('estado_producto_id', $estadoFiltro);
+            }
+        }
+
         if (isset($filtros['stock_minimo'])) {
             $query->where('cantidad', '>=', $filtros['stock_minimo']);
         }

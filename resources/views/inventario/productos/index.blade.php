@@ -28,6 +28,91 @@
                         icon="fa-plus-circle"
                         permission="CREAR PRODUCTO"
                     />
+
+                    {{-- Filtros adicionales (mismo estilo que en el catálogo) --}}
+                    <div class="row mb-3 mt-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form method="GET" action="{{ route('inventario.productos.index') }}">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="filtro_estado">
+                                                        <i class="fas fa-info-circle"></i> Estado del producto
+                                                    </label>
+                                                    <select
+                                                        id="filtro_estado"
+                                                        name="estado_producto_id"
+                                                        class="form-control"
+                                                    >
+                                                        <option value="">Todos los estados</option>
+                                                        <option value="solo_agotado" {{ request('estado_producto_id') === 'solo_agotado' ? 'selected' : '' }}>
+                                                            AGOTADO
+                                                        </option>
+                                                        <option value="bajo_stock" {{ request('estado_producto_id') === 'bajo_stock' ? 'selected' : '' }}>
+                                                            BAJO STOCK
+                                                        </option>
+                                                        @foreach($estadosProducto as $estado)
+                                                            <option value="{{ $estado->id }}"
+                                                                {{ (string)request('estado_producto_id') === (string)$estado->id ? 'selected' : '' }}>
+                                                                {{ $estado->parametro->name ?? '' }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="filtro_categoria">
+                                                        <i class="fas fa-folder"></i> Categoría
+                                                    </label>
+                                                    <select
+                                                        id="filtro_categoria"
+                                                        name="categoria_id"
+                                                        class="form-control"
+                                                    >
+                                                        <option value="">Todas las categorías</option>
+                                                        @foreach($categorias as $categoria)
+                                                            <option value="{{ $categoria->parametro->id }}"
+                                                                {{ (string)request('categoria_id') === (string)$categoria->parametro->id ? 'selected' : '' }}>
+                                                                {{ $categoria->parametro->name ?? '' }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="filtro_marca">
+                                                        <i class="fas fa-tag"></i> Marca
+                                                    </label>
+                                                    <select
+                                                        id="filtro_marca"
+                                                        name="marca_id"
+                                                        class="form-control"
+                                                    >
+                                                        <option value="">Todas las marcas</option>
+                                                        @foreach($marcas as $marca)
+                                                            <option value="{{ $marca->parametro->id }}"
+                                                                {{ (string)request('marca_id') === (string)$marca->parametro->id ? 'selected' : '' }}>
+                                                                {{ $marca->parametro->name ?? '' }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-filter"></i> Aplicar filtros
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Botón para escanear código de barras -->
                     <div class="mt-3 text-right">
                         <button class="btn btn-secondary btn-lg" data-toggle="modal" data-target="#modalEscanear">

@@ -63,18 +63,28 @@ class ProductoController extends Controller
     {
         $filtros = [
             'search' => $request->input('search'),
+            'categoria_id' => $request->input('categoria_id'),
+            'marca_id' => $request->input('marca_id'),
+            'estado_producto_id' => $request->input('estado_producto_id'),
             'per_page' => 10
         ];
 
         $productos = $this->repository->obtenerConFiltros($filtros);
-        $productos->appends($request->only('search'));
+        $productos->appends($request->only(['search', 'categoria_id', 'marca_id', 'estado_producto_id']));
 
         // Enriquecer productos con marcas y categorías
         $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
-        $tiposProductos = $this->repository->obtenerTiposProductos();
+        $categorias = $this->formOptionsService->obtenerCategorias();
+        $marcas = $this->formOptionsService->obtenerMarcas();
+        $estadosProducto = $this->formOptionsService->obtenerEstados(self::THEME_PRODUCT_STATES);
 
-        return view('inventario.productos.index', compact('productos', 'tiposProductos'));
+        return view('inventario.productos.index', compact(
+            'productos',
+            'categorias',
+            'marcas',
+            'estadosProducto'
+        ));
     }
 
     /**
