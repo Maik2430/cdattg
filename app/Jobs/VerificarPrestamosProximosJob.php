@@ -2,10 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Inventario\Interfaces\Repositories\ParametroTema\ParametroTemaRepositoryInterface;
 use App\Models\Inventario\Orden;
-use App\Models\ParametroTema;
-use App\Models\Tema;
-use App\Models\Parametro;
 use App\Notifications\RecordatorioDevolucionNotification;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -20,41 +18,62 @@ class VerificarPrestamosProximosJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected ParametroTemaRepositoryInterface $parametroTemaRepository;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(ParametroTemaRepositoryInterface $parametroTemaRepository)
+    {
+        $this->parametroTemaRepository = $parametroTemaRepository;
+    }
+
     /**
      * Execute the job.
      */
     public function handle(): void
     {
         try {
-            $diasAntes = 3;
-            $fechaObjetivo = Carbon::today()->addDays($diasAntes);
-
-            // Obtener IDs necesarios
-            $tipoPrestamoId = $this->getTipoPrestamoId();
-            $estadoAprobadaId = $this->getEstadoAprobadaId();
+            // Obtener IDs necesarios usando el repositorio
+            $tipoPrestamoId = $this->obtenerTipoPrestamoId();
+            $estadoAprobadaId = $this->obtenerEstadoAprobadaId();
 
             if (!$tipoPrestamoId || !$estadoAprobadaId) {
                 Log::warning('[VerificarPrestamosProximosJob] No se encontraron tipos o estados necesarios');
                 return;
             }
 
-            // Buscar préstamos que vencen en 3 días
-            $ordenes = Orden::with(['detalles.producto', 'detalles.devoluciones', 'userCreate'])
-                ->where('tipo_orden_id', $tipoPrestamoId)
-                ->whereDate('fecha_devolucion', $fechaObjetivo)
-                ->whereNotNull('fecha_devolucion')
-                ->whereHas('detalles', function ($query) use ($estadoAprobadaId) {
-                    $query->where('estado_orden_id', $estadoAprobadaId);
-                })
-                ->get();
+            $ordenesTotales = 0;
 
-            foreach ($ordenes as $orden) {
-                $this->procesarOrden($orden, $diasAntes);
+            // Verificar para 3, 2 y 1 días antes del vencimiento
+            foreach ([3, 2, 1] as $diasAntes) {
+                $fechaObjetivo = Carbon::today()->addDays($diasAntes);
+
+                // Buscar préstamos que vencen en N días
+                $ordenes = Orden::with(['detalles.producto', 'detalles.devoluciones', 'userCreate'])
+                    ->where('tipo_orden_id', $tipoPrestamoId)
+                    ->whereDate('fecha_devolucion', $fechaObjetivo)
+                    ->whereNotNull('fecha_devolucion')
+                    ->whereHas('detalles', function ($query) use ($estadoAprobadaId) {
+                        $query->where('estado_orden_id', $estadoAprobadaId);
+                    })
+                    ->get();
+
+                foreach ($ordenes as $orden) {
+                    $this->procesarOrden($orden, $diasAntes);
+                }
+
+                $ordenesTotales += $ordenes->count();
+
+                Log::info('[VerificarPrestamosProximosJob] Verificación para ' . $diasAntes . ' días', [
+                    'ordenes_procesadas' => $ordenes->count(),
+                    'fecha_objetivo' => $fechaObjetivo->format('Y-m-d'),
+                    'dias_restantes' => $diasAntes,
+                ]);
             }
 
             Log::info('[VerificarPrestamosProximosJob] Verificación completada', [
-                'ordenes_procesadas' => $ordenes->count(),
-                'fecha_objetivo' => $fechaObjetivo->format('Y-m-d'),
+                'ordenes_totales' => $ordenesTotales,
             ]);
 
         } catch (\Exception $e) {
@@ -89,8 +108,8 @@ class VerificarPrestamosProximosJob implements ShouldQueue
                 return;
             }
 
-            // Verificar si ya se envió notificación hoy
-            if ($this->yaSeEnvioNotificacionHoy($orden)) {
+            // Verificar si ya se envió notificación hoy para estos días específicos
+            if ($this->yaSeEnvioNotificacionHoy($orden, $diasAntes)) {
                 return;
             }
 
@@ -114,55 +133,27 @@ class VerificarPrestamosProximosJob implements ShouldQueue
     }
 
     /**
-     * Obtener el ID del tipo de orden PRÉSTAMO
+     * Obtener el ID del tipo de orden PRÉSTAMO usando el repositorio
      */
-    private function getTipoPrestamoId(): ?int
+    private function obtenerTipoPrestamoId(): ?int
     {
-        $tema = Tema::where('name', 'TIPOS DE ORDEN')->first();
-        if (!$tema) {
-            return null;
-        }
-
-        $parametro = Parametro::where('name', 'PRÉSTAMO')->first();
-        if (!$parametro) {
-            return null;
-        }
-
-        $parametroTema = ParametroTema::where('tema_id', $tema->id)
-            ->where('parametro_id', $parametro->id)
-            ->where('status', 1)
-            ->first();
-
+        $parametroTema = $this->parametroTemaRepository->obtenerEstadoPorNombre('PRÉSTAMO', 'TIPOS DE ORDEN');
         return $parametroTema?->id;
     }
 
     /**
-     * Obtener el ID del estado APROBADA
+     * Obtener el ID del estado APROBADA usando el repositorio
      */
-    private function getEstadoAprobadaId(): ?int
+    private function obtenerEstadoAprobadaId(): ?int
     {
-        $tema = Tema::where('name', 'ESTADOS DE ORDEN')->first();
-        if (!$tema) {
-            return null;
-        }
-
-        $parametro = Parametro::where('name', 'APROBADA')->first();
-        if (!$parametro) {
-            return null;
-        }
-
-        $parametroTema = ParametroTema::where('tema_id', $tema->id)
-            ->where('parametro_id', $parametro->id)
-            ->where('status', 1)
-            ->first();
-
+        $parametroTema = $this->parametroTemaRepository->obtenerEstadoPorNombre('APROBADA', 'ESTADOS DE ORDEN');
         return $parametroTema?->id;
     }
 
     /**
-     * Verificar si ya se envió notificación hoy para esta orden
+     * Verificar si ya se envió notificación hoy para esta orden y días específicos
      */
-    private function yaSeEnvioNotificacionHoy(Orden $orden): bool
+    private function yaSeEnvioNotificacionHoy(Orden $orden, int $diasAntes): bool
     {
         if (!$orden->userCreate) {
             return false;
@@ -174,6 +165,7 @@ class VerificarPrestamosProximosJob implements ShouldQueue
             ->where('type', RecordatorioDevolucionNotification::class)
             ->whereDate('created_at', Carbon::today())
             ->whereRaw("JSON_EXTRACT(data, '$.orden_id') = ?", [$orden->id])
+            ->whereRaw("JSON_EXTRACT(data, '$.dias_restantes') = ?", [$diasAntes])
             ->exists();
     }
 }
