@@ -29,7 +29,7 @@ class SofiaValidationProgressFactory extends Factory
         return [
             'complementario_id' => ComplementarioOfertado::factory(),
             'user_id' => User::factory(),
-            'status' => 'pending',
+            'status' => 284, // PENDING = 284 según ParametroSeeder
             'total_aspirantes' => $this->faker->numberBetween(1, 100),
             'processed_aspirantes' => 0,
             'successful_validations' => 0,
@@ -46,7 +46,7 @@ class SofiaValidationProgressFactory extends Factory
     public function processing(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'processing',
+            'status' => 285, // PROCESSING = 285 según ParametroSeeder
             'started_at' => now(),
         ]);
     }
@@ -57,7 +57,7 @@ class SofiaValidationProgressFactory extends Factory
     public function completed(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'completed',
+            'status' => 286, // COMPLETED = 286 según ParametroSeeder
             'completed_at' => now(),
         ]);
     }
@@ -68,7 +68,7 @@ class SofiaValidationProgressFactory extends Factory
     public function failed(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'failed',
+            'status' => 287, // FAILED = 287 según ParametroSeeder
             'completed_at' => now(),
             'errors' => ['Error de ejemplo'],
         ]);
