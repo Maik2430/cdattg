@@ -559,7 +559,10 @@ class AspiranteComplementarioController extends Controller
         try {
             $estadisticas = $this->aspiranteRepository->getEstadisticasExclusion($complementarioId);
 
-            return response()->json($estadisticas);
+            return response()->json([
+                'success' => true,
+                'estadisticas' => $estadisticas
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
