@@ -35,7 +35,9 @@
                     </h5>
                     <div class="product-image-wrapper">
                         @php
-                            $imagenUrl = $producto->imagen ? asset($producto->imagen) : asset('public/img/inventario/producto-default.png');
+                            $imagenPath = $producto->imagen
+                                ?: config('inventario.imagenes.default', 'img/inventario/producto-default.png');
+                            $imagenUrl = asset($imagenPath);
                         @endphp
                         <button type="button"
                                 class="border-0 bg-transparent p-0 w-100"
