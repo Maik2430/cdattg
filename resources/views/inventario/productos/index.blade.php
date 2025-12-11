@@ -115,11 +115,14 @@
                     </div>
                     <!-- Botones de acciones -->
                     <div class="d-flex justify-content-end flex-wrap mt-3 mb-4">
-                        <button class="btn btn-secondary btn-lg mr-4" data-toggle="modal" data-target="#modalEscanear">
+                        <button class="btn btn-secondary btn-lg mr-2" data-toggle="modal" data-target="#modalEscanear">
                             <i class="fas fa-barcode"></i> Escanear Código de Barras
                         </button>
-                        <a href="{{ route('inventario.productos.exportar-pdf') }}" class="btn btn-danger btn-lg">
+                        <a href="{{ route('inventario.productos.exportar-pdf') }}" class="btn btn-danger btn-lg mr-2">
                             <i class="fas fa-file-pdf"></i> Exportar PDF
+                        </a>
+                        <a href="{{ route('inventario.productos.exportar-excel') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-file-excel"></i> Exportar Excel
                         </a>
                     </div>
 
