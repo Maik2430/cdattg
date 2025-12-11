@@ -905,12 +905,6 @@ return [
                             'can'  => $permisoVerOrden,
                         ],
                         [
-                            'text' => 'Solicitar Préstamo/Salida',
-                            'url'  => 'inventario/ordenes/prestamos-salidas',
-                            'icon' => 'fas fa-fw fa-hand-holding',
-                            'can'  => 'CREAR ORDEN',
-                        ],
-                        [
                             'text' => 'Aprobaciones Pendientes',
                             'url'  => 'inventario/aprobaciones/pendientes',
                             'icon' => 'fas fa-fw fa-hourglass-half',
@@ -939,7 +933,7 @@ return [
                     ],
                     'submenu' => [
                         [
-                            'text' => 'Préstamos Pendientes',
+                            'text' => 'Devoluciones Pendientes',
                             'url'  => 'inventario/devoluciones',
                             'icon' => 'fas fa-fw fa-clock',
                             'can'  => 'DEVOLVER PRESTAMO',
@@ -949,12 +943,6 @@ return [
                             'url'  => 'inventario/devoluciones-historial',
                             'icon' => 'fas fa-fw fa-history',
                             'can'  => 'VER DEVOLUCION',
-                        ],
-                        [
-                            'text' => 'Historial Mis Préstamos',
-                            'url'  => 'inventario/historial-prestamos',
-                            'icon' => 'fas fa-fw fa-user-clock',
-                            'can'  => 'VER ORDEN',
                         ],
                     ],
                 ],
