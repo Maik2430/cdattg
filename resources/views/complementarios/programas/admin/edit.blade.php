@@ -143,7 +143,7 @@
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <label for="justificacion" class="form-label font-weight-semibold mb-0">
-                                                Justificación del programa<span class="text-danger"> *</span>
+                                                Descripción del programa<span class="text-danger"> *</span>
                                             </label>
                                             <span id="justificacionCounter" class="character-count">0/600</span>
                                         </div>
@@ -479,7 +479,7 @@
     <script>
         // Datos del servidor
         const rapsSeleccionados = JSON.parse(document.getElementById('raps-seleccionados-data').textContent);
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof $ !== 'undefined' && $.fn.select2) {
                 // Configurar Select2 para campos existentes

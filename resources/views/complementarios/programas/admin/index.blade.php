@@ -343,7 +343,7 @@
                         <dd class="col-sm-8" id="detalle-nombre">-</dd>
                         <dt class="col-sm-4">Código</dt>
                         <dd class="col-sm-8" id="detalle-codigo">-</dd>
-                        <dt class="col-sm-4">Justificación</dt>
+                        <dt class="col-sm-4">Descripción</dt>
                         <dd class="col-sm-8" id="detalle-justificacion">-</dd>
                         <dt class="col-sm-4">Requisitos de Ingreso</dt>
                         <dd class="col-sm-8" id="detalle-requisitos-ingreso">-</dd>
@@ -397,7 +397,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="font-weight-semibold" for="edit-justificacion">Justificación</label>
+                            <label class="font-weight-semibold" for="edit-justificacion">Descripción</label>
                             <textarea class="form-control" id="edit-justificacion" rows="3" required maxlength="600"></textarea>
                             <small class="form-text text-muted">Máximo 600 caracteres</small>
                         </div>
@@ -468,7 +468,7 @@
 @section('js')
     <!-- Cargar Axios desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
+
     <!-- Datos del servidor para JavaScript -->
     <script type="application/json" id="modalidades-data">
         @json($modalidades)

@@ -178,7 +178,7 @@
                                     @if($programa->justificacion)
                                     <div class="description-box">
                                         <h6 class="font-weight-bold mb-2">
-                                            <i class="fas fa-align-left mr-2"></i>Justificación
+                                            <i class="fas fa-align-left mr-2"></i>Descripción
                                         </h6>
                                         <p class="mb-0 text-muted">{{ $programa->justificacion }}</p>
                                     </div>

@@ -22,9 +22,9 @@
 
                 </div>
 
-                <h5 class="mb-3">Justificación</h5>
+                <h5 class="mb-3">Descripción</h5>
                 <p class="text-muted mb-3">{{ $programaData['justificacion'] ?? 'No disponible' }}</p>
-                
+
                 <h5 class="mb-3">Requisitos de Ingreso</h5>
                 <p class="text-muted mb-5">{{ $programaData['requisitos_ingreso'] ?? 'No disponible' }}</p>
 
