@@ -1,10 +1,5 @@
 /* Modal de Producto - Estilos Limpios */
 
-/* Contenedor del modal (dialog element) */
-#productDetailModal {
-    /* El modal se controla desde JavaScript, no desde CSS */
-}
-
 @keyframes fadeInModal {
     from { opacity: 0; }
     to { opacity: 1; }
