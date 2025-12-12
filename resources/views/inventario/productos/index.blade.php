@@ -139,10 +139,10 @@
                             ['label' => 'Categoría', 'width' => '10%'],
                             ['label' => 'Marca', 'width' => '10%'],
                             ['label' => 'Cantidad', 'width' => '8%'],
-                            ['label' => 'Peso', 'width' => '8%'],
-                            ['label' => 'Estado', 'width' => '8%'],
+                            ['label' => 'Ubicación', 'width' => '8%'],
                             ['label' => 'Contrato', 'width' => '6%'],
                             ['label' => 'Proveedor', 'width' => '7%'],
+                            ['label' => 'Estado', 'width' => '8%'],
                             ['label' => 'Opciones', 'width' => '6%', 'class' => 'text-center']
                         ]"
                         :pagination="$productos->links()"
@@ -192,11 +192,19 @@
                                     </span>
                                 </td>
                                 <td>
-                                    @if($producto->peso && $producto->unidadMedida)
-                                        <small>{{ $producto->peso }} {{ $producto->unidadMedida->parametro->name ?? '' }}</small>
-                                    @else
-                                        <small class="text-muted">N/A</small>
-                                    @endif
+                                    <small>
+                                        {{ $producto->ambiente->title ?? 'N/A' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <small>
+                                        {{ $producto->contratoConvenio->name ?? 'N/A' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <small>
+                                        {{ $producto->proveedor->name ?? 'N/A' }}
+                                    </small>
                                 </td>
                                 <td>
                                     @php
@@ -218,16 +226,6 @@
                                         {{ $estadoText }}
                                     </span>
                                 </td>
-                                <td>
-                                    <small>
-                                        {{ $producto->contratoConvenio->name ?? 'N/A' }}
-                                    </small>
-                                </td>
-                                <td>
-                                    <small>
-                                        {{ $producto->proveedor->name ?? 'N/A' }}
-                                    </small>
-                                </td>
                                 <td class="text-center">
                                     <x-action-buttons
                                         show="true"
@@ -239,8 +237,8 @@
                                         showTitle="Ver producto"
                                         editTitle="Editar producto"
                                         deleteTitle="Eliminar producto"
-                                    />
-                                </td>
+                                        />
+                                    </td>
                             </tr>
                         @empty
                             <x-table-empty

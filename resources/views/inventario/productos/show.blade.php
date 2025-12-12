@@ -198,7 +198,7 @@
 
                             @if ($producto->updated_at && $producto->created_at && $producto->updated_at != $producto->created_at)
                                 <li>
-                                    <i class="fas fa-calendar-edit"></i>
+                                    <i class="fas fa-calendar-day"></i>
                                     <strong>Última Actualización:</strong>
                                     <span>{{ optional($producto->updated_at)->format('d/m/Y H:i') ?? 'N/A' }}</span>
                                 </li>
@@ -206,9 +206,16 @@
 
                             @if ($producto->userCreate)
                                 <li>
-                                    <i class="fas fa-user"></i>
+                                    <i class="fas fa-user-check"></i>
                                     <strong>Creado por:</strong>
                                     <span>{{ $producto->userCreate->name }}</span>
+                                </li>
+                            @endif
+                            @if ($producto->userUpdate)
+                                <li>
+                                    <i class="fas fa-user-clock"></i>
+                                    <strong>Actualizado por:</strong>
+                                    <span>{{ $producto->userUpdate->name }}</span>
                                 </li>
                             @endif
                         </ul>
