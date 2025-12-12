@@ -33,6 +33,7 @@ class DevolucionControllerTest extends TestCase
     private const VISTA_CREATE = 'inventario.devoluciones.create';
 
     protected User $user;
+    protected Orden $orden;
     protected DetalleOrden $detalleOrden;
     protected ParametroTema $estadoAprobada;
 
@@ -114,6 +115,8 @@ class DevolucionControllerTest extends TestCase
             'fecha_devolucion' => now(),
         ]);
 
+        $this->orden = $orden;
+
         // Obtener tipo de producto CONSUMIBLE (TemaSeeder ya crea el tema)
         $temaTiposProducto = Tema::where('name', 'TIPOS DE PRODUCTO')->first();
         
@@ -161,6 +164,10 @@ class DevolucionControllerTest extends TestCase
 
         $this->crearPermisos();
         $this->crearUsuarioConPermisos();
+
+        $this->orden->update([
+            'user_create_id' => $this->user->id,
+        ]);
     }
 
     private function desactivarCSRF(): void

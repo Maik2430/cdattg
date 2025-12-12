@@ -10,6 +10,7 @@ use App\Models\Parametro;
 use App\Models\ParametroTema;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ParametroTemaRepositoryTest extends TestCase
 {
@@ -19,6 +20,13 @@ class ParametroTemaRepositoryTest extends TestCase
     private const TEMA_ESTADOS_PRODUCTO = 'ESTADOS DE PRODUCTO';
     private const TEMA_ESTADOS_ORDEN = 'ESTADOS DE ORDEN';
     private const PARAMETRO_NO_CONSUMIBLE = 'NO CONSUMIBLE';
+    private const PARAMETRO_CONSUMIBLE = 'CONSUMIBLE';
+    private const PARAMETRO_DISPONIBLE = 'DISPONIBLE';
+    private const PARAMETRO_APROBADA = 'APROBADA';
+    private const PARAMETRO_RECHAZADA = 'RECHAZADA';
+    private const PARAMETRO_EN_ESPERA = 'TEMA INEXISTENTE';
+    private const PARAMETRO_MARCAS = 'MARCAS';
+    private const PARAMETRO_CATEGORIAS = 'CATEGORIAS';
 
     private ParametroTemaRepository $repository;
 
@@ -28,12 +36,12 @@ class ParametroTemaRepositoryTest extends TestCase
         $this->repository = new ParametroTemaRepository();
     }
 
-    /** @test */
+    #[test]
     public function obtiene_parametros_tema_por_nombre_de_tema(): void
     {
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_TIPOS_PRODUCTO]);
-        $parametro1 = Parametro::factory()->create(['name' => 'CONSUMIBLE']);
+        $parametro1 = Parametro::factory()->create(['name' => self::PARAMETRO_CONSUMIBLE]);
         $parametro2 = Parametro::factory()->create(['name' => self::PARAMETRO_NO_CONSUMIBLE]);
         
         $parametroTema1 = ParametroTema::create([
@@ -54,28 +62,28 @@ class ParametroTemaRepositoryTest extends TestCase
         // Assert
         $this->assertCount(2, $resultado);
         $this->assertEquals($parametroTema1->id, $resultado->first()->id);
-        $this->assertEquals('CONSUMIBLE', $resultado->first()->parametro->name);
+        $this->assertEquals(self::PARAMETRO_CONSUMIBLE, $resultado->first()->parametro->name);
         $this->assertEquals($parametroTema2->id, $resultado->last()->id);
         $this->assertEquals(self::PARAMETRO_NO_CONSUMIBLE, $resultado->last()->parametro->name);
     }
 
-    /** @test */
+    #[test]
     public function retorna_coleccion_vacia_cuando_tema_no_existe(): void
     {
         // Act
-        $resultado = $this->repository->obtenerPorTema('TEMA INEXISTENTE');
+        $resultado = $this->repository->obtenerPorTema(self::PARAMETRO_EN_ESPERA);
 
         // Assert
         $this->assertCount(0, $resultado);
         $this->assertTrue($resultado->isEmpty());
     }
 
-    /** @test */
+    #[test]
     public function no_obtiene_parametros_tema_inactivos(): void
     {
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_TIPOS_PRODUCTO]);
-        $parametroActivo = Parametro::factory()->create(['name' => 'CONSUMIBLE']);
+        $parametroActivo = Parametro::factory()->create(['name' => self::PARAMETRO_CONSUMIBLE]);
         $parametroInactivo = Parametro::factory()->create(['name' => self::PARAMETRO_NO_CONSUMIBLE]);
         
         ParametroTema::create([
@@ -87,7 +95,7 @@ class ParametroTemaRepositoryTest extends TestCase
         ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametroInactivo->id,
-            'status' => 0 // Inactivo
+            'status' => 0
         ]);
 
         // Act
@@ -95,15 +103,15 @@ class ParametroTemaRepositoryTest extends TestCase
 
         // Assert
         $this->assertCount(1, $resultado);
-        $this->assertEquals('CONSUMIBLE', $resultado->first()->parametro->name);
+        $this->assertEquals(self::PARAMETRO_CONSUMIBLE, $resultado->first()->parametro->name);
     }
 
-    /** @test */
+    #[test]
     public function obtiene_parametro_tema_por_tema_y_parametro(): void
     {
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_ESTADOS_PRODUCTO]);
-        $parametro = Parametro::factory()->create(['name' => 'DISPONIBLE']);
+        $parametro = Parametro::factory()->create(['name' => self::PARAMETRO_DISPONIBLE]);
         
         $parametroTema = ParametroTema::create([
             'tema_id' => $tema->id,
@@ -121,12 +129,12 @@ class ParametroTemaRepositoryTest extends TestCase
         $this->assertEquals($parametro->id, $resultado->parametro_id);
     }
 
-    /** @test */
+    #[test]
     public function retorna_null_cuando_parametro_tema_no_existe(): void
     {
         // Arrange
         Tema::factory()->create(['name' => self::TEMA_ESTADOS_PRODUCTO]);
-        Parametro::factory()->create(['name' => 'DISPONIBLE']);
+        Parametro::factory()->create(['name' => self::PARAMETRO_DISPONIBLE]);
 
         // Act - Buscamos con IDs que no tienen relación
         $resultado = $this->repository->obtenerPorTemaYParametro(9999, 9999);
@@ -135,12 +143,12 @@ class ParametroTemaRepositoryTest extends TestCase
         $this->assertNull($resultado);
     }
 
-    /** @test */
+    #[test]
     public function no_obtiene_parametro_tema_inactivo_por_tema_y_parametro(): void
     {
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_ESTADOS_PRODUCTO]);
-        $parametro = Parametro::factory()->create(['name' => 'DISPONIBLE']);
+        $parametro = Parametro::factory()->create(['name' => self::PARAMETRO_DISPONIBLE]);
         
         ParametroTema::create([
             'tema_id' => $tema->id,
@@ -155,12 +163,12 @@ class ParametroTemaRepositoryTest extends TestCase
         $this->assertNull($resultado);
     }
 
-    /** @test */
+    #[test]
     public function obtiene_estado_por_nombre(): void
     {
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_ESTADOS_ORDEN]);
-        $parametro = Parametro::factory()->create(['name' => 'APROBADA']);
+        $parametro = Parametro::factory()->create(['name' => self::PARAMETRO_APROBADA]);
         
         $parametroTema = ParametroTema::create([
             'tema_id' => $tema->id,
@@ -169,28 +177,28 @@ class ParametroTemaRepositoryTest extends TestCase
         ]);
 
         // Act
-        $resultado = $this->repository->obtenerEstadoPorNombre('APROBADA', self::TEMA_ESTADOS_ORDEN);
+        $resultado = $this->repository->obtenerEstadoPorNombre(self::PARAMETRO_APROBADA, self::TEMA_ESTADOS_ORDEN);
 
         // Assert
         $this->assertNotNull($resultado);
         $this->assertEquals($parametroTema->id, $resultado->id);
-        $this->assertEquals('APROBADA', $resultado->parametro->name);
+        $this->assertEquals(self::PARAMETRO_APROBADA, $resultado->parametro->name);
     }
 
-    /** @test */
+    #[test]
     public function retorna_null_cuando_tema_no_existe_al_buscar_estado(): void
     {
         // Arrange
-        Parametro::factory()->create(['name' => 'APROBADA']);
+        Parametro::factory()->create(['name' => self::PARAMETRO_APROBADA]);
 
         // Act
-        $resultado = $this->repository->obtenerEstadoPorNombre('APROBADA', 'TEMA INEXISTENTE');
+        $resultado = $this->repository->obtenerEstadoPorNombre(self::PARAMETRO_APROBADA, self::PARAMETRO_EN_ESPERA);
 
         // Assert
         $this->assertNull($resultado);
     }
 
-    /** @test */
+    #[test]
     public function retorna_null_cuando_parametro_no_existe_al_buscar_estado(): void
     {
         // Arrange
@@ -203,12 +211,12 @@ class ParametroTemaRepositoryTest extends TestCase
         $this->assertNull($resultado);
     }
 
-    /** @test */
+    #[test]
     public function no_obtiene_estado_inactivo_por_nombre(): void
     {
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_ESTADOS_ORDEN]);
-        $parametro = Parametro::factory()->create(['name' => 'RECHAZADA']);
+        $parametro = Parametro::factory()->create(['name' => self::PARAMETRO_RECHAZADA]);
         
         ParametroTema::create([
             'tema_id' => $tema->id,
@@ -217,17 +225,17 @@ class ParametroTemaRepositoryTest extends TestCase
         ]);
 
         // Act
-        $resultado = $this->repository->obtenerEstadoPorNombre('RECHAZADA', self::TEMA_ESTADOS_ORDEN);
+        $resultado = $this->repository->obtenerEstadoPorNombre(self::PARAMETRO_RECHAZADA, self::TEMA_ESTADOS_ORDEN);
 
         // Assert
         $this->assertNull($resultado);
     }
 
-    /** @test */
+    #[test]
     public function obtiene_multiples_parametros_tema_del_mismo_tema(): void
     {
         // Arrange
-        $tema = Tema::factory()->create(['name' => 'MARCAS']);
+        $tema = Tema::factory()->create(['name' => self::PARAMETRO_MARCAS]);
         $parametros = [];
         
         for ($i = 1; $i <= 5; $i++) {
@@ -241,7 +249,7 @@ class ParametroTemaRepositoryTest extends TestCase
         }
 
         // Act
-        $resultado = $this->repository->obtenerPorTema('MARCAS');
+        $resultado = $this->repository->obtenerPorTema(self::PARAMETRO_MARCAS);
 
         // Assert
         $this->assertCount(5, $resultado);
@@ -251,11 +259,11 @@ class ParametroTemaRepositoryTest extends TestCase
         }
     }
 
-    /** @test */
+    #[test]
     public function parametros_tema_tienen_relacion_parametro_cargada(): void
     {
         // Arrange
-        $tema = Tema::factory()->create(['name' => 'CATEGORIAS']);
+        $tema = Tema::factory()->create(['name' => self::PARAMETRO_CATEGORIAS]);
         $parametro = Parametro::factory()->create(['name' => 'ELECTRÓNICA']);
         
         ParametroTema::create([
@@ -265,7 +273,7 @@ class ParametroTemaRepositoryTest extends TestCase
         ]);
 
         // Act
-        $resultado = $this->repository->obtenerPorTema('CATEGORIAS');
+        $resultado = $this->repository->obtenerPorTema(self::PARAMETRO_CATEGORIAS);
 
         // Assert
         $this->assertCount(1, $resultado);
