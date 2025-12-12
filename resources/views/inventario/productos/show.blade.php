@@ -308,7 +308,7 @@
 @push('js')
     @vite('resources/js/inventario/imagen.js')
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"
-            integrity="sha256-rbZdMyM71gayXqX8XvL0qxKJMQqiEm5YqPnmXqq5W3Y="
+            integrity="sha384-Kk5SjBOKprEnGfyBWfD2zROFd1Cu8kwOXxG2GIhYPcoDL2rBJS9P8Ud1ZMy4412a"
             crossorigin="anonymous"></script>
     <script>
         // Función para expandir imagen en modal

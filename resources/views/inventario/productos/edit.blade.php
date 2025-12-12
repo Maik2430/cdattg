@@ -475,10 +475,10 @@
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"
-            integrity="sha384-VZQkKBeVH3AU5b8KP5hJNF8FLg4Gx8FzIW7YF2JqLvKgVOp8YKjJpBxHBLrp3z+i"
+            integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+"
             crossorigin="anonymous"></script>
     @vite(['resources/js/inventario/imagen.js', 'resources/js/inventario/fecha-vencimiento.js'])
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"
-            integrity="sha256-rbZdMyM71gayXqX8XvL0qxKJMQqiEm5YqPnmXqq5W3Y="
+            integrity="sha384-Kk5SjBOKprEnGfyBWfD2zROFd1Cu8kwOXxG2GIhYPcoDL2rBJS9P8Ud1ZMy4412a"
             crossorigin="anonymous"></script>
 @endpush
