@@ -367,6 +367,15 @@ class AspiranteComplementarioController extends Controller
                 $observaciones
             );
 
+            $aspirante = $resultado['aspirante'] ?? null;
+            if ($aspirante && isset($validated['documento_identidad'])) {
+                $this->aspiranteManagementService->almacenarDocumentoIdentidad(
+                    $aspirante,
+                    $persona,
+                    $validated['documento_identidad']
+                );
+            }
+
             $statusCode = $resultado['status_code'] ?? 200;
             unset($resultado['status_code']);
             $resultado['status_code'] = $statusCode;

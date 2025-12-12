@@ -113,6 +113,29 @@ class CreateAspiranteRequestTest extends TestCase
     }
 
     #[Test]
+    public function valida_documento_identidad_requerido(): void
+    {
+        $request = new CreateAspiranteRequest();
+        $rules = $request->rules();
+
+        $tipoDocumento = $this->obtenerTipoDocumento();
+
+        if (!$tipoDocumento) {
+            $this->markTestSkipped(self::MENSAJE_DATOS_NO_DISPONIBLES);
+        }
+
+        $validator = Validator::make([
+            'tipo_documento' => $tipoDocumento->id,
+            'numero_documento' => self::NUMERO_DOCUMENTO_TEST,
+            'primer_nombre' => self::PRIMER_NOMBRE_TEST,
+            'primer_apellido' => self::PRIMER_APELLIDO_TEST,
+        ], $rules, $request->messages());
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('documento_identidad', $validator->errors()->toArray());
+    }
+
+    #[Test]
     public function valida_unicidad_numero_documento(): void
     {
         $request = new CreateAspiranteRequest();
