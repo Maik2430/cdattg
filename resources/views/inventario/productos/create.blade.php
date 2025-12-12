@@ -485,7 +485,7 @@
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"
-            integrity="sha384-VZQkKBeVH3AU5b8KP5hJNF8FLg4Gx8FzIW7YF2JqLvKgVOp8YKjJpBxHBLrp3z+i"
+            integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+"
             crossorigin="anonymous"></script>
     @vite([
         'resources/js/inventario/imagen.js',
