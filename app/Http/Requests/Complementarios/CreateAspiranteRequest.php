@@ -204,30 +204,49 @@ class CreateAspiranteRequest extends FormRequest
         }
 
         // Sanitizar campos de texto
-        if ($this->has('numero_documento')) {
-            $this->merge(['numero_documento' => trim($this->numero_documento)]);
+        $this->trimFields(['numero_documento', 'primer_nombre', 'primer_apellido']);
+        $this->trimFields(['segundo_nombre', 'segundo_apellido', 'direccion', 'observaciones'], true);
+        $this->trimField('email', true, fn (string $value): string => strtolower(trim($value)));
+        if ($this->has('caracterizacion_ids') && !$this->has('caracterizaciones')) {
+            $this->merge(['caracterizaciones' => $this->caracterizacion_ids ?? []]);
         }
-        if ($this->has('primer_nombre')) {
-            $this->merge(['primer_nombre' => trim($this->primer_nombre)]);
+
+        if ($this->has('genero') && !$this->has('genero_id')) {
+            $this->merge(['genero_id' => $this->genero]);
         }
-        if ($this->has('segundo_nombre') && $this->segundo_nombre !== null) {
-            $this->merge(['segundo_nombre' => trim($this->segundo_nombre)]);
+    }
+
+    /**
+     * Trim multiple fields according to the provided configuration.
+     *
+     * @param array<int, string> $fields
+     * @param bool $skipNull
+     */
+    private function trimFields(array $fields, bool $skipNull = false): void
+    {
+        foreach ($fields as $field) {
+            $this->trimField($field, $skipNull);
         }
-        if ($this->has('primer_apellido')) {
-            $this->merge(['primer_apellido' => trim($this->primer_apellido)]);
+    }
+
+    /**
+     * Trim and merge an individual field when it is present in the request.
+     */
+    private function trimField(string $field, bool $skipNull = false, ?callable $transform = null): void
+    {
+        if (!$this->has($field)) {
+            return;
         }
-        if ($this->has('segundo_apellido') && $this->segundo_apellido !== null) {
-            $this->merge(['segundo_apellido' => trim($this->segundo_apellido)]);
+
+        $value = $this->{$field};
+
+        if ($value === null && $skipNull) {
+            return;
         }
-        if ($this->has('email') && $this->email !== null) {
-            $this->merge(['email' => strtolower(trim($this->email))]);
-        }
-        if ($this->has('direccion') && $this->direccion !== null) {
-            $this->merge(['direccion' => trim($this->direccion)]);
-        }
-        if ($this->has('observaciones') && $this->observaciones !== null) {
-            $this->merge(['observaciones' => trim($this->observaciones)]);
-        }
+
+        $formatted = $transform ? $transform((string) $value) : trim((string) $value);
+
+        $this->merge([$field => $formatted]);
     }
 }
 

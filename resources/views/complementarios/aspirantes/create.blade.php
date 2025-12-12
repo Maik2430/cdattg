@@ -89,7 +89,7 @@
                     'vias' => $vias,
                     'letras' => $letras,
                     'cardinales' => $cardinales,
-                    'showCaracterizacion' => false,
+                    'showCaracterizacion' => true,
                     'numeroDocumentoPrellenado' => $numeroDocumentoPrellenado,
                 ])
 
