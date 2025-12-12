@@ -17,6 +17,7 @@ class ProductoControllerTest extends TestCase
 
     // Constantes para permisos
     private const PERMISSION_VER_PRODUCTO = 'VER PRODUCTO';
+    private const PERMISSION_VER_PRODUCTOS = 'VER PRODUCTOS';
     private const PERMISSION_CREAR_PRODUCTO = 'CREAR PRODUCTO';
     private const PERMISSION_EDITAR_PRODUCTO = 'EDITAR PRODUCTO';
     private const PERMISSION_ELIMINAR_PRODUCTO = 'ELIMINAR PRODUCTO';
@@ -73,6 +74,7 @@ class ProductoControllerTest extends TestCase
     private function crearPermisos(): void
     {
         Permission::firstOrCreate(['name' => self::PERMISSION_VER_PRODUCTO]);
+        Permission::firstOrCreate(['name' => self::PERMISSION_VER_PRODUCTOS]);
         Permission::firstOrCreate(['name' => self::PERMISSION_CREAR_PRODUCTO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_EDITAR_PRODUCTO]);
         Permission::firstOrCreate(['name' => self::PERMISSION_ELIMINAR_PRODUCTO]);
@@ -83,7 +85,10 @@ class ProductoControllerTest extends TestCase
     private function crearUsuarioConPermisos(): void
     {
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo(self::PERMISSION_VER_PRODUCTO);
+        $this->user->givePermissionTo([
+            self::PERMISSION_VER_PRODUCTO,
+            self::PERMISSION_VER_PRODUCTOS,
+        ]);
     }
 
     #[Test]
