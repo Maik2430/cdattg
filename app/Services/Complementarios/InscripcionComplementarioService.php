@@ -13,6 +13,7 @@ use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
 use App\Repositories\TemaRepository;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use App\Services\UserService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +22,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class InscripcionComplementarioService
@@ -32,6 +32,7 @@ class InscripcionComplementarioService
         private readonly ComplementarioOfertadoRepository $programaRepository,
         private readonly TemaRepository $temaRepository,
         private readonly \App\Services\Complementarios\ComplementarioService $complementarioService,
+        private readonly AspiranteDocumentoService $documentoService,
         private readonly UserService $userService
     ) {}
 
@@ -229,25 +230,15 @@ class InscripcionComplementarioService
         }
 
         try {
-            $file = $data['documento_identidad'];
-            $fileName = $this->generarNombreArchivo($persona, $file);
-
-            Log::info('Subiendo archivo a Google Drive', [
-                'file_name' => $fileName,
-                'aspirante_id' => $aspirante->id
-            ]);
-
-            $path = Storage::disk('google')->putFileAs('documentos_aspirantes', $file, $fileName);
+            $upload = $this->documentoService->subirDocumentoIdentidad(
+                $persona,
+                $data['documento_identidad']
+            );
 
             $this->aspiranteRepository->update($aspirante, [
-                'documento_identidad_path' => $path,
-                'documento_identidad_nombre' => $fileName,
+                'documento_identidad_path' => $upload['path'],
+                'documento_identidad_nombre' => $upload['name'],
                 // Mantener estado "En proceso" (1) - el estado 2 no existe
-            ]);
-
-            Log::info('Documento procesado exitosamente', [
-                'aspirante_id' => $aspirante->id,
-                'path' => $path
             ]);
 
         } catch (\Exception $e) {
