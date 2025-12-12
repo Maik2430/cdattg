@@ -306,12 +306,13 @@ class InscripcionComplementarioService
     {
         $tipoDocumento = $persona->tipoDocumento?->parametro->name ?? 'DOC';
         $numeroDocumento = $persona->numero_documento;
-        $primerNombre = $persona->primer_nombre;
-        $primerApellido = $persona->primer_apellido;
         $timestamp = now()->format('d-m-y-H-i-s');
         $extension = $file->getClientOriginalExtension();
 
-        return "{$tipoDocumento}_{$numeroDocumento}_{$primerNombre}_{$primerApellido}_{$timestamp}.{$extension}";
+        // Reemplazar espacios por guiones bajos
+        $tipoDocumento = str_replace(' ', '_', $tipoDocumento);
+
+        return "{$tipoDocumento}_{$numeroDocumento}_{$timestamp}.{$extension}";
     }
 
     /**

@@ -71,20 +71,15 @@ class DocumentoComplementarioController extends Controller
                 $file = $request->file('documento_identidad');
 
                 // Crear nombre de archivo con formato:
-                // tipo_documento_NumeroDocumento_PrimerNombre_PrimerApellido_timestamp.pdf
+                // tipo_documento_NumeroDocumento_timestamp.pdf
                 $tipoDocumento = $aspirante->persona->tipoDocumento?->parametro->name ?? 'DOC';
                 $numeroDocumento = $aspirante->persona->numero_documento;
-                $primerNombre = $aspirante->persona->primer_nombre;
-                $primerApellido = $aspirante->persona->primer_apellido;
                 $timestamp = now()->format('d-m-y-H-i-s');
 
-                // Reemplazar espacios por guiones bajos para consistencia con la búsqueda
+                // Reemplazar espacios por guiones bajos para consistencia
                 $tipoDocumento = str_replace(' ', '_', $tipoDocumento);
-                $primerNombre = str_replace(' ', '_', $primerNombre);
-                $primerApellido = str_replace(' ', '_', $primerApellido);
 
-                $fileName = "{$tipoDocumento}_{$numeroDocumento}_{$primerNombre}_" .
-                           "{$primerApellido}_{$timestamp}.{$file->getClientOriginalExtension()}";
+                $fileName = "{$tipoDocumento}_{$numeroDocumento}_{$timestamp}.{$file->getClientOriginalExtension()}";
 
                 Log::info('Attempting to upload file to Google Drive', [
                     'file_name' => $fileName,
