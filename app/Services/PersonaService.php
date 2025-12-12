@@ -268,6 +268,7 @@ class PersonaService
         }
     }
 
+
     /**
      * Crea una persona sin usuario (para importaciones masivas)
      *

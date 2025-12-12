@@ -22,7 +22,7 @@ class StorePersonaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tipo_documento'      => 'required|exists:parametros_temas,id',
+            'tipo_documento'      => 'required|exists:parametros,id',
             'numero_documento'    => 'required|unique:personas,numero_documento',
             'primer_nombre'       => 'required|string',
             'segundo_nombre'      => 'nullable|string',
