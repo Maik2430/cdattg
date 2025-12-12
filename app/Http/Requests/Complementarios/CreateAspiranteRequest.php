@@ -136,6 +136,14 @@ class CreateAspiranteRequest extends FormRequest
                 'string',
                 'max:500',
             ],
+
+            // Documento de identidad
+            'documento_identidad' => [
+                'required',
+                'file',
+                'mimes:pdf',
+                'max:5120',
+            ],
         ];
     }
 
@@ -190,6 +198,12 @@ class CreateAspiranteRequest extends FormRequest
             
             // Observaciones
             'observaciones.max' => 'Las observaciones no pueden exceder los 500 caracteres.',
+
+            // Documento de identidad
+            'documento_identidad.required' => 'El documento de identidad es obligatorio.',
+            'documento_identidad.file' => 'El documento de identidad debe ser un archivo válido.',
+            'documento_identidad.mimes' => 'El documento de identidad debe ser un archivo PDF.',
+            'documento_identidad.max' => 'El documento de identidad no puede ser mayor a 5MB.',
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace App\Services\Complementarios;
 
 use App\Exceptions\ProgramaNoEncontradoException;
+use App\Exceptions\ProcesarDocumentoIdentidadException;
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
@@ -12,6 +13,7 @@ use App\Repositories\PersonaRepository;
 use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 
@@ -23,7 +25,8 @@ class AspiranteManagementService
     public function __construct(
         private readonly AspiranteComplementarioRepository $aspiranteRepository,
         private readonly ComplementarioOfertadoRepository $programaRepository,
-        private readonly PersonaRepository $personaRepository
+        private readonly PersonaRepository $personaRepository,
+        private readonly AspiranteDocumentoService $documentoService
     ) {}
 
     /**
@@ -134,7 +137,7 @@ class AspiranteManagementService
             // Usar observaciones proporcionadas o valor por defecto
             $observacionesFinal = $observaciones ?? 'Agregado manualmente desde gestión de aspirantes';
 
-            $this->aspiranteRepository->create([
+            $aspirante = $this->aspiranteRepository->create([
                 'persona_id' => $persona->id,
                 'complementario_id' => $complementarioId,
                 'estado' => 1,
@@ -148,10 +151,13 @@ class AspiranteManagementService
                 'user_id' => Auth::id()
             ]);
 
-            return $this->createSuccessResponse(
+            $resultado = $this->createSuccessResponse(
                 'Aspirante agregado exitosamente. ' . $persona->primer_nombre . ' ' .
                 $persona->primer_apellido . ' ha sido inscrito en el programa.'
             );
+            $resultado['aspirante'] = $aspirante;
+
+            return $resultado;
 
         } catch (\Exception $e) {
             Log::error('Error agregando aspirante: ' . $e->getMessage(), [
@@ -415,6 +421,37 @@ class AspiranteManagementService
         }
 
         return $errorResponse;
+    }
+
+    /**
+     * Guardar documento de identidad para un aspirante existente.
+     */
+    public function almacenarDocumentoIdentidad(AspiranteComplementario $aspirante, Persona $persona, UploadedFile $archivo): void
+    {
+        try {
+            $upload = $this->documentoService->subirDocumentoIdentidad($persona, $archivo);
+
+            Log::info('Documento de identidad cargado manualmente', [
+                'aspirante_id' => $aspirante->id,
+                'persona_id' => $persona->id,
+                'file_name' => $upload['name'],
+            ]);
+
+            $this->aspiranteRepository->update($aspirante, [
+                'documento_identidad_path' => $upload['path'],
+                'documento_identidad_nombre' => $upload['name'],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al guardar el documento de identidad del aspirante', [
+                'aspirante_id' => $aspirante->id,
+                'persona_id' => $persona->id,
+                'exception' => $e->getMessage(),
+            ]);
+
+            $this->aspiranteRepository->update($aspirante, ['estado' => 1]);
+
+            throw new ProcesarDocumentoIdentidadException('Error al procesar el documento de identidad');
+        }
     }
 
     /**

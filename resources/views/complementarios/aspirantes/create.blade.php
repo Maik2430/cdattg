@@ -70,7 +70,8 @@
             </h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('aspirantes.store-new', ['programa' => $programa->id]) }}" autocomplete="off">
+            <form method="POST" action="{{ route('aspirantes.store-new', ['programa' => $programa->id]) }}"
+                  autocomplete="off" enctype="multipart/form-data">
                 @csrf
 
                 @php
@@ -92,6 +93,34 @@
                     'showCaracterizacion' => true,
                     'numeroDocumentoPrellenado' => $numeroDocumentoPrellenado,
                 ])
+
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="card-title m-0 text-primary">
+                            <i class="fas fa-id-card mr-2"></i>Documento de identidad
+                        </h5>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Por favor cargue una copia legible en PDF del documento de identidad. El archivo no debe superar los 5MB.
+                        </div>
+                        <div class="form-group">
+                            <label for="documento_identidad" class="form-label font-weight-bold">
+                                Documento de identidad (PDF) <span class="text-danger">*</span>
+                            </label>
+                            <input type="file"
+                                   class="form-control @error('documento_identidad') is-invalid @enderror"
+                                   id="documento_identidad" name="documento_identidad" accept=".pdf" required>
+                            <small class="form-text text-muted">
+                                Solo se permiten archivos PDF. Tamaño máximo: 5MB.
+                            </small>
+                            @error('documento_identidad')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
 
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white border-0">
