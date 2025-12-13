@@ -8,6 +8,7 @@ use App\Repositories\PersonaRepository;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\TemaRepository;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use App\Services\Complementarios\ComplementarioService;
 use App\Services\UserService;
 use App\Models\Complementarios\ComplementarioOfertado;
@@ -41,6 +42,7 @@ class InscripcionComplementarioServiceTest extends TestCase
     protected $temaRepositoryMock;
     protected $complementarioServiceMock;
     protected $userServiceMock;
+    protected $documentoServiceMock;
 
     protected function setUp(): void
     {
@@ -54,6 +56,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->temaRepositoryMock = Mockery::mock(TemaRepository::class);
         $this->complementarioServiceMock = Mockery::mock(ComplementarioService::class);
         $this->userServiceMock = Mockery::mock(UserService::class);
+        $this->documentoServiceMock = Mockery::mock(AspiranteDocumentoService::class);
         
         $this->service = new InscripcionComplementarioService(
             $this->personaRepositoryMock,
@@ -61,6 +64,7 @@ class InscripcionComplementarioServiceTest extends TestCase
             $this->programaRepositoryMock,
             $this->temaRepositoryMock,
             $this->complementarioServiceMock,
+            $this->documentoServiceMock,
             $this->userServiceMock
         );
     }
@@ -302,6 +306,7 @@ class InscripcionComplementarioServiceTest extends TestCase
             new ComplementarioOfertadoRepository(),
             Mockery::mock(TemaRepository::class),
             $complementarioService,
+            new AspiranteDocumentoService(),
             $userService
         );
 

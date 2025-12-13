@@ -7,6 +7,7 @@ use App\Services\Complementarios\AspiranteManagementService;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use App\Models\Complementarios\AspiranteComplementario;
@@ -33,6 +34,7 @@ class AspiranteManagementServiceTest extends TestCase
     protected $aspiranteRepositoryMock;
     protected $programaRepositoryMock;
     protected $personaRepositoryMock;
+    protected $documentoServiceMock;
 
     protected function setUp(): void
     {
@@ -43,11 +45,13 @@ class AspiranteManagementServiceTest extends TestCase
         $this->aspiranteRepositoryMock = Mockery::mock(AspiranteComplementarioRepository::class);
         $this->programaRepositoryMock = Mockery::mock(ComplementarioOfertadoRepository::class);
         $this->personaRepositoryMock = Mockery::mock(PersonaRepository::class);
+        $this->documentoServiceMock = Mockery::mock(AspiranteDocumentoService::class);
         
         $this->service = new AspiranteManagementService(
             $this->aspiranteRepositoryMock,
             $this->programaRepositoryMock,
-            $this->personaRepositoryMock
+            $this->personaRepositoryMock,
+            $this->documentoServiceMock
         );
     }
 
