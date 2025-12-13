@@ -49,7 +49,7 @@ class TemaSeeder extends Seeder
             [
                 'id'       => 1,
                 'name'     => 'ESTADOS',
-                'paramIds' => [1, 2],
+                'paramIds' => array_merge(range(1, 2), range(288, 290)),
             ],
             [
                 'id'       => 2,
@@ -64,7 +64,7 @@ class TemaSeeder extends Seeder
             [
                 'id'       => 4,
                 'name'     => 'DIAS',
-                'paramIds' => [range(12, 18), [276]],
+                'paramIds' => array_merge(range(12, 18), [276]),
             ],
             [
                 'id'       => 5,
@@ -135,6 +135,26 @@ class TemaSeeder extends Seeder
                 'id'       => 18,
                 'name'     => 'LETRAS',
                 'paramIds' => range(248, 273),
+            ],
+            [
+                'id'       => 19,
+                'name'     => 'ESTADOS SOFIA',
+                'paramIds' => [277, 278, 279],
+            ],
+            [
+                'id'       => 20,
+                'name'     => 'ACCIONES SOFIA',
+                'paramIds' => [280],
+            ],
+            [
+                'id'       => 21,
+                'name'     => 'RESULTADOS VALIDACION SOFIA',
+                'paramIds' => [281, 282, 283],
+            ],
+            [
+                'id'       => 22,
+                'name'     => 'ESTADOS PROGRESO SOFIA',
+                'paramIds' => [284, 285, 286, 287],
             ],
         ];
     }

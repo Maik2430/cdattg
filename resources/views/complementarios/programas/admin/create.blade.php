@@ -137,13 +137,13 @@
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <label for="justificacion" class="form-label font-weight-semibold mb-0">
-                                                Justificación del programa<span class="text-danger"> *</span>
+                                                Descripción<span class="text-danger"> *</span>
                                             </label>
                                             <span id="justificacionCounter" class="character-count">0/600</span>
                                         </div>
                                         <textarea name="justificacion" id="justificacion" rows="4"
                                             class="form-control @error('justificacion') is-invalid @enderror"
-                                            placeholder="Fundamenta la necesidad y propósito del programa complementario" maxlength="600" required>{{ old('justificacion') }}</textarea>
+                                            placeholder="Descripción del programa complementario" maxlength="600" required>{{ old('justificacion') }}</textarea>
                                         <small class="helper-text">Máximo 600 caracteres. Describe por qué se crea este programa.</small>
                                         @error('justificacion')
                                             <div class="invalid-feedback">{{ $message }}</div>

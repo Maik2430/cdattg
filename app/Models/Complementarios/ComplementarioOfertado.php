@@ -9,6 +9,7 @@ use App\Models\JornadaFormacion;
 use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\ResultadosAprendizaje;
+use App\Models\User;
 use Database\Factories\ComplementarioOfertadoFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,10 +35,17 @@ class ComplementarioOfertado extends Model
         'requisitos_ingreso',
         'duracion',
         'cupos',
-        'estado',
+        'estado_id',
         'modalidad_id',
         'jornada_id',
         'ambiente_id',
+    ];
+
+    /**
+     * Valores por defecto para los atributos
+     */
+    protected $attributes = [
+        'estado_id' => 3, // ID de parametros_temas para "Sin Oferta" (parametro_id = 277)
     ];
 
     public function modalidad()
@@ -53,6 +61,14 @@ class ComplementarioOfertado extends Model
     public function ambiente()
     {
         return $this->belongsTo(Ambiente::class, 'ambiente_id');
+    }
+
+    /**
+     * Relación con el estado parametrizado del programa complementario
+     */
+    public function estado()
+    {
+        return $this->belongsTo(ParametroTema::class, 'estado_id');
     }
 
     public function diasFormacion()
@@ -108,22 +124,90 @@ class ComplementarioOfertado extends Model
          ->withPivot('user_create_id', 'user_edit_id');
     }
 
+    /**
+     * Accessor para compatibilidad hacia atrás con código que espera el campo 'estado'
+     * Devuelve el valor numérico legacy basado en el nombre del parámetro
+     * Nota: Para evitar referencia circular, no usamos $this->estado
+     */
+    public function getEstadoAttribute()
+    {
+        // Obtener el estado_id directamente del atributo
+        $estadoId = $this->attributes['estado_id'] ?? null;
+
+        if (!$estadoId) {
+            return 0; // Valor por defecto: Sin Oferta
+        }
+
+        // Intentar obtener el nombre del parámetro a través de la relación
+        try {
+            // Usar una consulta directa para evitar referencia circular
+            $parametroTema = \App\Models\ParametroTema::with('parametro')->find($estadoId);
+            if ($parametroTema && $parametroTema->parametro) {
+                $nombre = strtoupper(trim($parametroTema->parametro->name));
+
+                return match ($nombre) {
+                    'SIN OFERTA' => 0,
+                    'CON OFERTA' => 1,
+                    'CUPOS LLENOS' => 2,
+                    default => 0,
+                };
+            }
+        } catch (\Exception $e) {
+            // Si hay error, retornar valor por defecto
+        }
+
+        return 0;
+    }
+
     public function getEstadoLabelAttribute()
     {
-        return match ($this->estado) {
-            0 => 'Sin Oferta',
-            1 => 'Con Oferta',
-            2 => 'Cupos Llenos',
-            default => 'Desconocido',
-        };
+        // Obtener el estado_id directamente del atributo
+        $estadoId = $this->attributes['estado_id'] ?? null;
+
+        if (!$estadoId) {
+            return 'Desconocido';
+        }
+
+        $label = 'Desconocido';
+
+        // Intentar obtener el nombre del parámetro a través de la relación
+        try {
+            /** @var ParametroTema|null $estadoRelacion */
+            $estadoRelacion = null;
+
+            if ($this->relationLoaded('estado')) {
+                $estadoRelacion = $this->getRelation('estado');
+            }
+
+            if ($estadoRelacion instanceof ParametroTema) {
+                if (!$estadoRelacion->relationLoaded('parametro')) {
+                    $estadoRelacion->load('parametro');
+                }
+                if ($this->estado->parametro) {
+                    $label = $this->estado->parametro->name;
+                }
+            } else {
+                // Si la relación no está cargada, hacer una consulta
+                $estado = $this->estado()->with('parametro')->first();
+                if ($estado && $estado->parametro) {
+                    $label = $estado->parametro->name;
+                }
+            }
+        } catch (\Exception $e) {
+            // Si hay error, mantener el valor por defecto
+        }
+
+        return $label;
     }
 
     public function getBadgeClassAttribute()
     {
-        return match ($this->estado) {
-            0 => 'bg-success',
-            1 => 'bg-warning',
-            2 => 'bg-danger',
+        $estadoNombre = $this->estado_label;
+
+        return match ($estadoNombre) {
+            'SIN OFERTA' => 'bg-success',
+            'CON OFERTA' => 'bg-warning',
+            'CUPOS LLENOS' => 'bg-danger',
             default => 'bg-secondary',
         };
     }
@@ -140,5 +224,26 @@ class ComplementarioOfertado extends Model
         ];
 
         return $iconos[$this->nombre] ?? 'fas fa-graduation-cap';
+    }
+
+    /**
+     * Calcular tasa de aceptación de aspirantes
+     *
+     * Este accessor calcula la tasa de aceptación basándose en los atributos
+     * total_aspirantes y aceptados que pueden venir de consultas agregadas.
+     *
+     * @return float Tasa de aceptación en porcentaje (0-100)
+     */
+    public function getTasaAceptacionAttribute(): float
+    {
+        // Los atributos agregados se almacenan directamente en $this->attributes
+        $totalAspirantes = $this->attributes['total_aspirantes'] ?? 0;
+        $aceptados = $this->attributes['aceptados'] ?? 0;
+
+        if ($totalAspirantes > 0 && is_numeric($aceptados) && is_numeric($totalAspirantes)) {
+            return round(($aceptados / $totalAspirantes) * 100, 1);
+        }
+
+        return 0.0;
     }
 }

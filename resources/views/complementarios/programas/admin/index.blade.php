@@ -343,7 +343,7 @@
                         <dd class="col-sm-8" id="detalle-nombre">-</dd>
                         <dt class="col-sm-4">Código</dt>
                         <dd class="col-sm-8" id="detalle-codigo">-</dd>
-                        <dt class="col-sm-4">Justificación</dt>
+                        <dt class="col-sm-4">Descripción</dt>
                         <dd class="col-sm-8" id="detalle-justificacion">-</dd>
                         <dt class="col-sm-4">Requisitos de Ingreso</dt>
                         <dd class="col-sm-8" id="detalle-requisitos-ingreso">-</dd>
@@ -397,7 +397,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="font-weight-semibold" for="edit-justificacion">Justificación</label>
+                            <label class="font-weight-semibold" for="edit-justificacion">Descripción</label>
                             <textarea class="form-control" id="edit-justificacion" rows="3" required maxlength="600"></textarea>
                             <small class="form-text text-muted">Máximo 600 caracteres</small>
                         </div>
@@ -466,6 +466,9 @@
 @endsection
 
 @section('js')
+    <!-- Cargar Axios desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <!-- Datos del servidor para JavaScript -->
     <script type="application/json" id="modalidades-data">
         @json($modalidades)
@@ -618,35 +621,55 @@
                     cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Sí, eliminar',
                     cancelButtonText: 'Cancelar',
-                    reverseButtons: true
+                    reverseButtons: true,
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                        const url = routes.destroy.replace(':id', id);
+                        return axios.delete(url)
+                            .then(response => response.data)
+                            .catch(error => {
+                                if (error.response) {
+                                    // El servidor respondió con un código de error
+                                    throw new Error(error.response.data.message || 'Error del servidor');
+                                } else if (error.request) {
+                                    // La solicitud fue hecha pero no se recibió respuesta
+                                    throw new Error('No se recibió respuesta del servidor');
+                                } else {
+                                    // Algo pasó al configurar la solicitud
+                                    throw new Error('Error al configurar la solicitud');
+                                }
+                            });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
                 }).then(result => {
-                    if (!result.isConfirmed) {
-                        return;
+                    if (result.isConfirmed) {
+                        if (result.value.success) {
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: result.value.message,
+                                icon: 'success',
+                                confirmButtonText: 'Aceptar'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            // Mostrar error sin recargar la página
+                            Swal.fire({
+                                title: 'No se puede eliminar',
+                                text: result.value.message,
+                                icon: 'error',
+                                confirmButtonText: 'Entendido',
+                                showCancelButton: false
+                            });
+                        }
                     }
-
-                    const url = routes.destroy.replace(':id', id);
-
-                    axios.delete(url)
-                        .then(response => {
-                            if (response.data.success) {
-                                Swal.fire('Eliminado', response.data.message, 'success')
-                                    .then(() => window.location.reload());
-                            } else {
-                                Swal.fire(
-                                    'Error',
-                                    response.data.message ??
-                                    'No se pudo eliminar el programa.',
-                                    'error'
-                                );
-                            }
-                        })
-                        .catch(() => {
-                            Swal.fire(
-                                'Error',
-                                'Ocurrió un problema al eliminar el programa.',
-                                'error'
-                            );
-                        });
+                }).catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: error.message || 'Ocurrió un problema al eliminar el programa.',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido'
+                    });
                 });
             });
 

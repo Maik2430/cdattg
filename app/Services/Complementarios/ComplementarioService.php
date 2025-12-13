@@ -65,13 +65,21 @@ class ComplementarioService
     }
 
     /**
+     * Convertir valor legacy de estado (0,1,2) a estado_id (ID de ParametroTema)
+     */
+    public function convertirEstadoLegacyAEstadoId(int $estadoLegacy): ?int
+    {
+        return $this->programaRepository->getEstadoIdByLegacyValue($estadoLegacy);
+    }
+
+    /**
      * Enriquecer un programa con datos auxiliares para la vista.
      */
     public function enriquecerPrograma(ComplementarioOfertado $programa): ComplementarioOfertado
     {
         $programa->icono = $this->getIconoForPrograma($programa->nombre);
-        $programa->badge_class = $this->getBadgeClassForEstado($programa->estado);
-        $programa->estado_label = $this->getEstadoLabel($programa->estado);
+        // Usar los accessors del modelo que ya manejan el nuevo sistema de estados
+        // $programa->badge_class y $programa->estado_label ya están definidos en el modelo
         $programa->modalidad_nombre = $programa->modalidad->parametro->name ?? null;
         $programa->jornada_nombre = $programa->jornada->jornada ?? null;
 

@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Complementarios\AspiranteComplementarioController;
 
 // Rutas RESTful para aspirantes complementarios
-Route::middleware('auth')->group(function () {
+// Nota: El middleware 'auth' ya se aplica desde web.php mediante $loadRouteFolders
+Route::group([], function () {
     // Lista de programas complementarios (gestión de aspirantes)
     Route::get('/aspirantes', [AspiranteComplementarioController::class, 'index'])
         ->name('aspirantes.index');
@@ -17,32 +18,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/aspirantes/buscar-persona', [AspiranteComplementarioController::class, 'buscarPersona'])
         ->name('aspirantes.buscar-persona');
 
-    // Mostrar formulario para crear nuevo aspirante
-    Route::get('/aspirantes/programa/{programa}/create', [AspiranteComplementarioController::class, 'create'])
-        ->name('aspirantes.create');
+    // Nota: Las rutas para crear y almacenar aspirantes están definidas en gestion_aspirante.php
+    // con nombres: programas-complementarios.aspirantes.create y programas-complementarios.aspirantes.store
 
-    // Almacenar nuevo aspirante
-    Route::post('/aspirantes/programa/{programa}/store', [AspiranteComplementarioController::class, 'store'])
-        ->name('aspirantes.store');
+    // Crear nueva persona y agregarla como aspirante
+    Route::post('/aspirantes/programa/{programa}/create-new', [AspiranteComplementarioController::class, 'storeNewAspirante'])
+        ->name('aspirantes.store-new');
 
-    // Agregar aspirante existente por número de documento (mantener compatibilidad)
-    Route::post('/aspirantes/programa/{complementarioId}/agregar-aspirante', [AspiranteComplementarioController::class, 'agregarAspirante'])
-        ->name('aspirantes.agregar-existente');
-
-    // Eliminar/rechazar aspirante de un programa
-    Route::delete('/aspirantes/programa/{complementarioId}/aspirante/{aspiranteId}', [AspiranteComplementarioController::class, 'eliminarAspirante'])
-        ->name('aspirantes.destroy');
-
-    // Exportar aspirantes a Excel
-    Route::get('/aspirantes/programa/{complementarioId}/exportar-excel', [AspiranteComplementarioController::class, 'exportarAspirantesExcel'])
-        ->name('aspirantes.exportar-excel');
-
-    // Descargar cédulas de aspirantes
-    Route::get('/aspirantes/programa/{complementarioId}/descargar-cedulas', [AspiranteComplementarioController::class, 'descargarCedulas'])
-        ->name('aspirantes.descargar-cedulas');
-
-    // Obtener estadísticas de exclusión para modal
-    Route::get('/aspirantes/programa/{complementarioId}/estadisticas-exclusion', [AspiranteComplementarioController::class, 'getEstadisticasExclusion'])
-        ->name('aspirantes.estadisticas-exclusion');
+    // Nota: Las siguientes rutas están definidas en aspirantes_management.php
+    // para mantener compatibilidad con vistas existentes:
+    // - aspirantes.destroy
+    // - aspirantes.exportar-excel
+    // - aspirantes.descargar-cedulas
+    // - aspirantes.estadisticas-exclusion
 });
 

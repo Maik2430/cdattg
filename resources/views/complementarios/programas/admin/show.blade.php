@@ -178,7 +178,7 @@
                                     @if($programa->justificacion)
                                     <div class="description-box">
                                         <h6 class="font-weight-bold mb-2">
-                                            <i class="fas fa-align-left mr-2"></i>Justificación
+                                            <i class="fas fa-align-left mr-2"></i>Descripción
                                         </h6>
                                         <p class="mb-0 text-muted">{{ $programa->justificacion }}</p>
                                     </div>
@@ -187,24 +187,6 @@
                                     <div class="description-box mt-3">
                                         <h6 class="font-weight-bold mb-2">
                                             <i class="fas fa-list-check mr-2"></i>Requisitos de Ingreso
-                                        </h6>
-                                        <p class="mb-0 text-muted">{{ $programa->requisitos_ingreso }}</p>
-                                    </div>
-                                    @endif
-
-                                    @if($programa->justificacion)
-                                    <div class="description-box">
-                                        <h6 class="font-weight-bold mb-2">
-                                            <i class="fas fa-lightbulb mr-2"></i>Justificación
-                                        </h6>
-                                        <p class="mb-0 text-muted">{{ $programa->justificacion }}</p>
-                                    </div>
-                                    @endif
-
-                                    @if($programa->requisitos_ingreso)
-                                    <div class="description-box">
-                                        <h6 class="font-weight-bold mb-2">
-                                            <i class="fas fa-clipboard-check mr-2"></i>Requisitos de Ingreso
                                         </h6>
                                         <p class="mb-0 text-muted">{{ $programa->requisitos_ingreso }}</p>
                                     </div>
@@ -380,4 +362,3 @@
         </div>
     </section>
 @endsection
-

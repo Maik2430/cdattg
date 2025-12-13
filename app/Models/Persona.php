@@ -15,6 +15,8 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\PersonaContactAlert;
 use App\Models\FichaCaracterizacion;
 use App\Models\Parametro;
+use App\Models\Tema;
+use App\Models\ParametroTema;
 
 class Persona extends Model
 {
@@ -47,11 +49,22 @@ class Persona extends Model
         'user_create_id',
         'user_edit_id',
         'parametro_id',
+        'nivel_escolaridad_id',
     ];
 
     protected static function boot()
     {
         parent::boot();
+
+        static::creating(function ($persona) {
+            // Establecer estado_sofia por defecto si no se especifica (NO REGISTRADO = 277)
+            if (!isset($persona->estado_sofia) || $persona->estado_sofia === null) {
+                $noRegistrado = Parametro::find(277);
+                if ($noRegistrado) {
+                    $persona->estado_sofia = $noRegistrado->id;
+                }
+            }
+        });
 
         static::saving(function ($persona) {
             $persona->primer_nombre = strtoupper($persona->primer_nombre);
@@ -292,33 +305,62 @@ class Persona extends Model
     }
 
     /**
+     * Relación con el parámetro de estado Sofia.
+     */
+    public function estadoSofiaParametro(): BelongsTo
+    {
+        return $this->belongsTo(Parametro::class, 'estado_sofia');
+    }
+
+    /**
      * Accesor para obtener la etiqueta del estado de SenaSofiaPlus.
+     * Obtiene el parámetro desde parametros_temas relacionado con el tema "ESTADOS SOFIA".
      *
      * @return string
      */
     public function getEstadoSofiaLabelAttribute()
     {
-        return match ($this->estado_sofia) {
-            0 => 'No registrado',
-            1 => 'Registrado',
-            2 => 'Requiere cambio de cédula',
-            default => 'Desconocido'
-        };
+        $label = 'Desconocido';
+
+        if ($this->estado_sofia &&
+            ($parametro = $this->estadoSofiaParametro) &&
+            ($temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first()) &&
+            ParametroTema::where('tema_id', $temaEstados->id)
+                ->where('parametro_id', $parametro->id)
+                ->where('status', 1)
+                ->exists()) {
+            $label = $parametro->name;
+        }
+
+        return $label;
     }
 
     /**
      * Accesor para obtener la clase CSS del badge del estado de SenaSofiaPlus.
+     * Obtiene el parámetro desde parametros_temas relacionado con el tema "ESTADOS SOFIA".
      *
      * @return string
      */
     public function getEstadoSofiaBadgeClassAttribute()
     {
-        return match ($this->estado_sofia) {
-            0 => 'bg-danger',
-            1 => 'bg-success',
-            2 => 'bg-warning',
-            default => 'bg-dark'
-        };
+        $badgeClass = 'bg-dark';
+
+        if ($this->estado_sofia &&
+            ($parametro = $this->estadoSofiaParametro) &&
+            ($temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first()) &&
+            ParametroTema::where('tema_id', $temaEstados->id)
+                ->where('parametro_id', $parametro->id)
+                ->where('status', 1)
+                ->exists()) {
+            $badgeClass = match (strtoupper($parametro->name)) {
+                'NO REGISTRADO' => 'bg-danger',
+                'REGISTRADO' => 'bg-success',
+                'REQUIERE CAMBIO' => 'bg-warning',
+                default => 'bg-dark'
+            };
+        }
+
+        return $badgeClass;
     }
 
     public function userCreatedBy()
@@ -368,5 +410,13 @@ class Persona extends Model
     public function contactAlerts()
     {
         return $this->hasMany(PersonaContactAlert::class);
+    }
+
+    /**
+     * Relación con el nivel de escolaridad.
+     */
+    public function nivelEscolaridad(): BelongsTo
+    {
+        return $this->belongsTo(ParametroTema::class, 'nivel_escolaridad_id');
     }
 }

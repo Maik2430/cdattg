@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Models\AsistenciaAprendiz;
 use App\Observers\AsistenciaAprendizObserver;
+use App\Models\Complementarios\AspiranteComplementario;
+use App\Observers\AspiranteComplementarioObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -150,6 +152,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Registrar observadores
         AsistenciaAprendiz::observe(AsistenciaAprendizObserver::class);
+        AspiranteComplementario::observe(AspiranteComplementarioObserver::class);
 
         // Cargar migraciones de subdirectorios
         $migrationsPath = database_path('migrations');

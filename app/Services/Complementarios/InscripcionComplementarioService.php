@@ -13,6 +13,7 @@ use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
 use App\Repositories\TemaRepository;
+use App\Services\Complementarios\AspiranteDocumentoService;
 use App\Services\UserService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +22,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class InscripcionComplementarioService
@@ -32,6 +32,7 @@ class InscripcionComplementarioService
         private readonly ComplementarioOfertadoRepository $programaRepository,
         private readonly TemaRepository $temaRepository,
         private readonly \App\Services\Complementarios\ComplementarioService $complementarioService,
+        private readonly AspiranteDocumentoService $documentoService,
         private readonly UserService $userService
     ) {}
 
@@ -46,7 +47,10 @@ class InscripcionComplementarioService
         $tiposDocumento = $this->complementarioService->getTiposDocumento();
         $generos = $this->complementarioService->getGeneros();
 
-        return compact('categoriasConHijos', 'paises', 'departamentos', 'tiposDocumento', 'generos');
+        // Obtener tema de nivel de escolaridad
+        $nivelEscolaridad = $this->buildTemaPayload($this->temaRepository->obtenerNivelEscolaridad());
+
+        return compact('categoriasConHijos', 'paises', 'departamentos', 'tiposDocumento', 'generos', 'nivelEscolaridad');
     }
 
     /**
@@ -61,9 +65,6 @@ class InscripcionComplementarioService
                     ->withInput()
                     ->with('error', 'Ya existe una persona registrada con este número de documento o correo electrónico.');
             }
-
-            // Convertir parametro_id a parametros_temas.id
-            $data = $this->convertirParametrosAParametrosTemas($data);
 
             // Crear nueva persona
             $this->personaRepository->create($data);
@@ -113,6 +114,9 @@ class InscripcionComplementarioService
         $letras = $this->buildTemaPayload($this->temaRepository->obtenerLetras());
         $cardinales = $this->buildTemaPayload($this->temaRepository->obtenerCardinales());
 
+        // Obtener tema de nivel de escolaridad
+        $nivelEscolaridad = $this->buildTemaPayload($this->temaRepository->obtenerNivelEscolaridad());
+
         $paises = Pais::all();
         $departamentos = Departamento::all();
         $municipios = collect();
@@ -133,6 +137,7 @@ class InscripcionComplementarioService
             'vias' => $vias,
             'letras' => $letras,
             'cardinales' => $cardinales,
+            'nivelEscolaridad' => $nivelEscolaridad,
             'personaAutenticada' => $personaAutenticada,
         ];
     }
@@ -198,14 +203,11 @@ class InscripcionComplementarioService
      */
     private function procesarPersona(array $data): Persona
     {
-        // Convertir parametro_id a parametros_temas.id
-        $data = $this->convertirParametrosAParametrosTemas($data);
-
         return $this->personaRepository->createOrUpdate($data);
     }
 
     /**
-     * Convertir parametro_id a parametros_temas.id para tipo_documento y genero
+     * Convertir parametro_id a parametros_temas.id para tipo_documento, genero y nivel_escolaridad_id
      */
     private function convertirParametrosAParametrosTemas(array $data): array
     {
@@ -228,6 +230,17 @@ class InscripcionComplementarioService
 
             if ($parametroTema) {
                 $data['genero'] = $parametroTema->id;
+            }
+        }
+
+        // Convertir nivel_escolaridad_id (parametro_id) a parametros_temas.id
+        if (isset($data['nivel_escolaridad_id'])) {
+            $parametroTema = \App\Models\ParametroTema::where('tema_id', 23) // NIVEL-ESCOLARIDAD
+                ->where('parametro_id', $data['nivel_escolaridad_id'])
+                ->first();
+
+            if ($parametroTema) {
+                $data['nivel_escolaridad_id'] = $parametroTema->id;
             }
         }
 
@@ -265,25 +278,15 @@ class InscripcionComplementarioService
         }
 
         try {
-            $file = $data['documento_identidad'];
-            $fileName = $this->generarNombreArchivo($persona, $file);
-
-            Log::info('Subiendo archivo a Google Drive', [
-                'file_name' => $fileName,
-                'aspirante_id' => $aspirante->id
-            ]);
-
-            $path = Storage::disk('google')->putFileAs('documentos_aspirantes', $file, $fileName);
+            $upload = $this->documentoService->subirDocumentoIdentidad(
+                $persona,
+                $data['documento_identidad']
+            );
 
             $this->aspiranteRepository->update($aspirante, [
-                'documento_identidad_path' => $path,
-                'documento_identidad_nombre' => $fileName,
+                'documento_identidad_path' => $upload['path'],
+                'documento_identidad_nombre' => $upload['name'],
                 // Mantener estado "En proceso" (1) - el estado 2 no existe
-            ]);
-
-            Log::info('Documento procesado exitosamente', [
-                'aspirante_id' => $aspirante->id,
-                'path' => $path
             ]);
 
         } catch (\Exception $e) {
@@ -304,14 +307,15 @@ class InscripcionComplementarioService
      */
     private function generarNombreArchivo(Persona $persona, $file): string
     {
-        $tipoDocumento = $persona->tipoDocumento->name ?? 'DOC';
+        $tipoDocumento = $persona->tipoDocumento?->name ?? 'DOC';
         $numeroDocumento = $persona->numero_documento;
-        $primerNombre = $persona->primer_nombre;
-        $primerApellido = $persona->primer_apellido;
         $timestamp = now()->format('d-m-y-H-i-s');
         $extension = $file->getClientOriginalExtension();
 
-        return "{$tipoDocumento}_{$numeroDocumento}_{$primerNombre}_{$primerApellido}_{$timestamp}.{$extension}";
+        // Reemplazar espacios por guiones bajos
+        $tipoDocumento = str_replace(' ', '_', $tipoDocumento);
+
+        return "{$tipoDocumento}_{$numeroDocumento}_{$timestamp}.{$extension}";
     }
 
     /**

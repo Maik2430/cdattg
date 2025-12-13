@@ -125,7 +125,7 @@
                         </label>
                         <input type="text" id="numero_documento" name="numero_documento"
                             class="form-control @error('numero_documento') is-invalid @enderror"
-                            value="{{ old('numero_documento', $isEdit ? $persona->numero_documento : '') }}" required>
+                            value="{{ old('numero_documento', $isEdit ? $persona->numero_documento : (isset($numeroDocumentoPrellenado) ? $numeroDocumentoPrellenado : '')) }}" required>
                         @error('numero_documento')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -402,6 +402,46 @@
                     </div>
 
                     @error('caracterizacion_ids')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+        @endif
+
+        @if(isset($nivelEscolaridad) && $nivelEscolaridad->parametros->isNotEmpty())
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title m-0 text-primary">
+                        <i class="fas fa-graduation-cap mr-2"></i> Nivel de Escolaridad
+                    </h5>
+                </div>
+                <div class="card-body pt-0">
+                    <p class="text-muted small mb-3">
+                        Seleccione el nivel de escolaridad más alto alcanzado.
+                    </p>
+
+                    <div class="row">
+                        @php
+                            $nivelEscolaridadSeleccionado = old('nivel_escolaridad_id', $isEdit && $persona->nivelEscolaridad ? $persona->nivelEscolaridad->id : null);
+                        @endphp
+                        @foreach ($nivelEscolaridad->parametros as $index => $parametro)
+                            <div class="col-md-6 mb-2">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input"
+                                        id="nivel-escolaridad-{{ $parametro->id }}" name="nivel_escolaridad_id"
+                                        value="{{ $parametro->id }}"
+                                        {{ $nivelEscolaridadSeleccionado == $parametro->id ? 'checked' : '' }}
+                                        {{ $index === 0 ? 'required' : '' }}>
+                                    <label class="custom-control-label"
+                                        for="nivel-escolaridad-{{ $parametro->id }}">
+                                        {{ $parametro->name }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @error('nivel_escolaridad_id')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>

@@ -328,6 +328,30 @@ class ParametroSeeder extends Seeder
         'dias_faltantes' => [
             276 => 'DOMINGO',
         ],
+        'estados_sofia' => [
+            277 => 'NO REGISTRADO',
+            278 => 'REGISTRADO',
+            279 => 'REQUIERE CAMBIO',
+        ],
+        'acciones_sofia' => [
+            280 => 'VALIDAR',
+        ],
+        'resultados_validacion_sofia' => [
+            281 => 'EXITOSO',
+            282 => 'ERROR',
+            283 => 'ADVERTENCIA',
+        ],
+        'estados_progreso_sofia' => [
+            284 => 'PENDING',
+            285 => 'PROCESSING',
+            286 => 'COMPLETED',
+            287 => 'FAILED',
+        ],
+        'estados_complementarios' => [
+            288 => 'SIN OFERTA',
+            289 => 'CON OFERTA',
+            290 => 'CUPOS LLENOS',
+        ],
     ];
 
     /**
