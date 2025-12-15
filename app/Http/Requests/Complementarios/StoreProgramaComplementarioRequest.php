@@ -14,11 +14,12 @@ class StoreProgramaComplementarioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codigo' => 'required|string|unique:complementarios_ofertados,codigo',
-            'nombre' => 'required|string',
+            'catalogo_id' => 'nullable|exists:complementarios_catalogo,id',
+            'codigo' => 'required_without:catalogo_id|string|unique:complementarios_ofertados,codigo',
+            'nombre' => 'required_without:catalogo_id|string',
             'justificacion' => 'required|string|max:600',
-            'requisitos_ingreso' => 'required|string|max:400',
-            'duracion' => 'required|integer|min:1',
+            'requisitos_ingreso' => 'required_without:catalogo_id|string|max:400',
+            'duracion' => 'required_without:catalogo_id|integer|min:1',
             'cupos' => 'required|integer|min:1',
             'estado' => 'required|integer|in:0,1,2',
             'modalidad_id' => 'required|exists:parametros_temas,id',

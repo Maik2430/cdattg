@@ -64,7 +64,12 @@
                                 </span>
                             </div>
                             <div class="d-flex flex-wrap mt-2 mt-md-0">
-                                <a href="{{ route('complementarios-ofertados.create') }}" class="btn btn-success mr-2 mb-2">
+                                <a href="{{ route('complementarios-ofertados.catalogo.import.create') }}"
+                                    class="btn btn-outline-success mr-2 mb-2">
+                                    <i class="fas fa-file-excel mr-1"></i> Importar catálogo SENA
+                                </a>
+                                <a href="{{ route('complementarios-ofertados.create') }}"
+                                    class="btn btn-success mr-2 mb-2">
                                     <i class="fas fa-plus-circle mr-1"></i> Crear programa
                                 </a>
                             </div>

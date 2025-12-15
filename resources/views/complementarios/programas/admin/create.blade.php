@@ -37,6 +37,91 @@
     </style>
 @endsection
 
+@section('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const catalogoSelect = document.getElementById('catalogo_id');
+            const codigoInput = document.getElementById('codigo');
+            const nombreInput = document.getElementById('nombre');
+            const duracionInput = document.getElementById('duracion');
+            const requisitosInput = document.getElementById('requisitos_ingreso');
+
+            if (!catalogoSelect) {
+                return;
+            }
+
+            function bloquearCamposDesdeCatalogo(usarCatalogo) {
+                const campos = [codigoInput, nombreInput, duracionInput, requisitosInput];
+
+                campos.forEach(function (campo) {
+                    if (!campo) {
+                        return;
+                    }
+
+                    if (usarCatalogo) {
+                        campo.setAttribute('readonly', 'readonly');
+                        campo.removeAttribute('required');
+                    } else {
+                        campo.removeAttribute('readonly');
+                    }
+                });
+
+                if (codigoInput && !usarCatalogo) {
+                    codigoInput.setAttribute('required', 'required');
+                }
+                if (nombreInput && !usarCatalogo) {
+                    nombreInput.setAttribute('required', 'required');
+                }
+                if (duracionInput && !usarCatalogo) {
+                    duracionInput.setAttribute('required', 'required');
+                }
+                if (requisitosInput && !usarCatalogo) {
+                    requisitosInput.setAttribute('required', 'required');
+                }
+            }
+
+            function aplicarSeleccionCatalogo() {
+                const option = catalogoSelect.options[catalogoSelect.selectedIndex];
+
+                const tieneCatalogo = !!option && !!option.value;
+
+                if (!tieneCatalogo) {
+                    bloquearCamposDesdeCatalogo(false);
+                    return;
+                }
+
+                const codigo = option.dataset.codigo || '';
+                const nombre = option.dataset.nombre || '';
+                const duracion = option.dataset.duracion || '';
+                const requisitos = option.dataset.requisitos || '';
+
+                if (codigoInput && codigo) {
+                    codigoInput.value = codigo;
+                }
+
+                if (nombreInput && nombre) {
+                    nombreInput.value = nombre;
+                }
+
+                if (duracionInput && duracion) {
+                    duracionInput.value = duracion;
+                }
+
+                if (requisitosInput && requisitos) {
+                    requisitosInput.value = requisitos;
+                }
+
+                bloquearCamposDesdeCatalogo(true);
+            }
+
+            catalogoSelect.addEventListener('change', aplicarSeleccionCatalogo);
+
+            // Aplicar estado inicial (por si viene con old('catalogo_id'))
+            aplicarSeleccionCatalogo();
+        });
+    </script>
+@endsection
+
 @section('content_header')
     <x-page-header icon="fa-graduation-cap" title="Programa Complementario"
         subtitle="Crear nuevo programa de formación complementaria" :breadcrumb="[
@@ -106,6 +191,42 @@
                             <div class="tab-content" id="formTabsContent">
                                 <div class="tab-pane fade show active" id="tab-general" role="tabpanel"
                                     aria-labelledby="tab-general-tab">
+                                    <div class="card card-outline card-success mb-4">
+                                        <div class="card-header py-2">
+                                            <h6 class="card-title mb-0">
+                                                <i class="fas fa-file-excel mr-2"></i>Seleccionar desde catálogo SENA
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="catalogo_id" class="form-label font-weight-semibold">
+                                                    Programa en catálogo (CURSO ESPECIAL)
+                                                </label>
+                                                <select name="catalogo_id" id="catalogo_id"
+                                                    class="form-control @error('catalogo_id') is-invalid @enderror">
+                                                    <option value="">-- Seleccionar desde catálogo --</option>
+                                                    @foreach ($catalogoProgramas ?? [] as $catalogo)
+                                                        <option value="{{ $catalogo->id }}"
+                                                            data-codigo="{{ $catalogo->prf_codigo }}"
+                                                            data-nombre="{{ $catalogo->denominacion }}"
+                                                            data-duracion="{{ $catalogo->duracion_horas }}"
+                                                            data-requisitos="{{ e($catalogo->requisitos_ingreso) }}"
+                                                            @selected(old('catalogo_id') == $catalogo->id)>
+                                                            {{ $catalogo->prf_codigo }} - {{ $catalogo->denominacion }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <small class="helper-text">
+                                                    Al seleccionar un programa del catálogo se rellenarán
+                                                    automáticamente el código, el nombre, los requisitos (si están
+                                                    disponibles) y la duración en horas.
+                                                </small>
+                                                @error('catalogo_id')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-7">
                                             <label for="nombre" class="form-label font-weight-semibold">Nombre del

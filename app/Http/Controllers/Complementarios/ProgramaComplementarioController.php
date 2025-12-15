@@ -262,6 +262,7 @@ class ProgramaComplementarioController extends Controller
     private function extractProgramaAtributos(array $payload): array
     {
         $atributos = collect($payload)->only([
+            'catalogo_id',
             'codigo',
             'nombre',
             'justificacion',
@@ -272,6 +273,23 @@ class ProgramaComplementarioController extends Controller
             'jornada_id',
             'ambiente_id',
         ])->toArray();
+
+        // Si se seleccionó un programa del catálogo, sobrescribir datos básicos
+        if (!empty($payload['catalogo_id'])) {
+            /** @var \App\Models\Complementarios\ComplementarioCatalogo|null $catalogo */
+            $catalogo = \App\Models\Complementarios\ComplementarioCatalogo::query()
+                ->find($payload['catalogo_id']);
+
+            if ($catalogo !== null) {
+                $atributos['catalogo_id'] = $catalogo->id;
+                $atributos['codigo'] = $catalogo->prf_codigo;
+                $atributos['nombre'] = $catalogo->denominacion;
+                $atributos['duracion'] = $catalogo->duracion_horas;
+                if (!empty($catalogo->requisitos_ingreso)) {
+                    $atributos['requisitos_ingreso'] = $catalogo->requisitos_ingreso;
+                }
+            }
+        }
 
         // Convertir estado legacy (0,1,2) a estado_id (ID de ParametroTema)
         if (isset($payload['estado'])) {
