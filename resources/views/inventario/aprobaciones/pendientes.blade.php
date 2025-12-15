@@ -2,9 +2,7 @@
 
 @section('title', 'Aprobaciones Pendientes')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
+@include('inventario._components.common-css')
 
 @section('content_header')
     <x-page-header
@@ -18,11 +16,10 @@
         ]"
     />
 @endsection
-@push('css')
+@push('css')     
     @vite([
-        'resources/css/inventario/shared/base.css', 
         'resources/css/inventario/modal-orden.css'
-    ])
+    ]) 
 @endpush
 
 @section('content')
@@ -62,7 +59,7 @@
                             $descripcion = $orden->descripcion_orden ?? '';
                             preg_match('/MOTIVO:\s*(.+?)$/s', $descripcion, $matchMotivo);
                             $motivoCorto = isset($matchMotivo[1]) ? trim($matchMotivo[1]) : 'N/A';
-                            $productosOrden = $detallesOrden->pluck('producto.producto')->join(', ');
+                            $productosOrden = $detallesOrden->pluck('producto.name')->join(', ');
                         @endphp
 
                         <div class="card mb-3 border-primary">
@@ -151,13 +148,13 @@
                                             @foreach($detallesOrden as $detalle)
                                             @php
                                                 $producto = $detalle->producto;
-                                                $productoNombre = $producto->producto ?? 'N/A';
+                                                $productoNombre = $producto?->name ?? 'N/A';
                                                 $productoNombreCorto = Str::limit($productoNombre, 30);
-                                                $productoImagen = $producto->imagen ?? 'img/inventario/producto-default.png';
+                                                $productoImagen = $producto?->imagen ?? 'img/inventario/producto-default.png';
                                                 $productoImagenSrc = asset($productoImagen);
-                                                $stockDisponible = $producto->cantidad ?? 0;
+                                                $stockDisponible = $producto?->cantidad ?? 0;
                                                 $stockBadgeClass = $stockDisponible >= $detalle->cantidad ? 'success' : 'danger';
-                                                $productoCodigo = $producto->codigo_barras ?? 'N/A';
+                                                $productoCodigo = $producto?->codigo_barras ?? 'N/A';
                                             @endphp
                                             <tr>
                                                 <td>
@@ -301,10 +298,16 @@
                                                         Productos Solicitados
                                                     </h6>
                                                     @foreach($detallesOrden as $detalle)
+                                                        @php
+                                                            $producto = $detalle->producto;
+                                                            $productoNombre = $producto?->name ?? 'N/A';
+                                                            $productoCodigo = $producto?->codigo_barras ?? 'N/A';
+                                                            $stockDisponible = $producto?->cantidad ?? 0;
+                                                        @endphp
                                                         <div class="product-item mb-3 p-2 border rounded">
                                                             <div class="d-flex justify-content-between">
                                                                 <div>
-                                                                    <strong>{{ $detalle->producto->producto }}</strong><br>
+                                                                    <strong>{{ $productoNombre }}</strong><br>
                                                                     <small class="text-muted">
                                                                         Código: {{ $productoCodigo }}
                                                                     </small>
@@ -316,7 +319,7 @@
                                                                     </span>
                                                                     <br>
                                                                     <small class="text-muted">
-                                                                        Stock: {{ $detalle->producto->cantidad }}
+                                                                        Stock: {{ $stockDisponible }}
                                                                     </small>
                                                                 </div>
                                                             </div>
@@ -353,7 +356,7 @@
         </div>
     </div>
 
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 

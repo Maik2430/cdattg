@@ -8,6 +8,7 @@ use App\Models\Regional;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use Faker\Generator as Faker;
 
 /**
@@ -78,8 +79,8 @@ class InstructorFactory extends Factory
             'persona_id' => Persona::factory(),
             'regional_id' => $regionalId,
             'status' => (rand(1, 100) <= 85) ? 1 : 0,
-            'user_create_id' => 1,
-            'user_edit_id' => 1,
+            'user_create_id' => $userId ?? 1,
+            'user_edit_id' => $userId ?? 1,
             'especialidades' => [
                 'principal' => $principalId,
                 'secundarias' => $secundariasIds,
@@ -112,6 +113,12 @@ class InstructorFactory extends Factory
 
     public function configure(): static
     {
+        // Solo configurar el callback si la tabla users existe
+        // Esto evita cualquier consulta a la tabla durante tests cuando no está migrada
+        if (!Schema::hasTable('users')) {
+            return $this;
+        }
+
         return $this->afterCreating(function (Instructor $instructor) {
             $persona = $instructor->persona;
 
@@ -119,9 +126,11 @@ class InstructorFactory extends Factory
                 return;
             }
 
-            $email = strtolower($persona->email);
+            $email = strtolower($persona->getAttributes()['email'] ?? $persona->getOriginal('email') ?? 'test@example.com');
 
-            if (! $persona->user) {
+            $user = $persona->user()->first();
+
+            if (! $user) {
                 $user = User::factory()
                     ->forPersona($persona)
                     ->state([
@@ -134,15 +143,15 @@ class InstructorFactory extends Factory
                     $user->assignRole('INSTRUCTOR');
                 }
             } else {
-                $persona->user->syncRoles(['INSTRUCTOR']);
-                $persona->user->update(['status' => $instructor->status ? 1 : 0]);
+                $user->syncRoles(['INSTRUCTOR']);
+                $user->update(['status' => $instructor->status ? 1 : 0]);
             }
         });
     }
 
     public function createdBy(int $userId): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn() => [
             'user_create_id' => $userId,
             'user_edit_id' => $userId,
         ]);

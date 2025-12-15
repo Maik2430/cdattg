@@ -33,10 +33,10 @@ class InstructorFichaDiasService
             $instructorFicha = InstructorFichaCaracterizacion::with(['instructor', 'ficha', 'competencia', 'resultadosAprendizaje'])->findOrFail($instructorFichaId);
             
             \Log::info('Instructor-ficha encontrado', ['instructor_ficha' => $instructorFicha]);
-            
+
             // Validar disponibilidad del instructor
             $validacion = $this->validarDisponibilidadInstructor($instructorFicha, $diasData);
-            
+
             if (!$validacion['disponible']) {
                 $conflictos = $validacion['conflictos'];
                 $mensaje = 'El instructor tiene conflictos de horario, jornada o fechas con otras fichas asignadas:';
@@ -81,7 +81,7 @@ class InstructorFichaDiasService
                     'hora_inicio' => $diaData['hora_inicio'] ?? null,
                     'hora_fin' => $diaData['hora_fin'] ?? null,
                 ]);
-                
+
                 $diasCreados[] = $diaCreado;
             }
 
@@ -113,7 +113,7 @@ class InstructorFichaDiasService
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('✗ Error al asignar días de formación', [
                 'instructor_ficha_id' => $instructorFichaId,
                 'error' => $e->getMessage(),
@@ -244,7 +244,7 @@ class InstructorFichaDiasService
     public function generarFechasEfectivas($instructorFicha, array $diasData): array
     {
         $fechasEfectivas = [];
-        
+
         // Obtener el rango de fechas de la ficha (soporta tanto modelo como objeto)
         $fechaInicio = $instructorFicha->fecha_inicio ?? ($instructorFicha->ficha->fecha_inicio ?? null);
         $fechaFin = $instructorFicha->fecha_fin ?? ($instructorFicha->ficha->fecha_fin ?? null);
@@ -262,11 +262,11 @@ class InstructorFichaDiasService
         // Iterar por cada día en el rango
         while ($fechaActual->lte($fechaFinal)) {
             $diaSemana = $fechaActual->dayOfWeek; // 0=Domingo, 1=Lunes, ..., 6=Sábado
-            
+
             // Verificar si este día de la semana está en los días asignados
             if (isset($diasSemanaMap[$diaSemana])) {
                 $diaInfo = $diasSemanaMap[$diaSemana];
-                
+
                 $fechasEfectivas[] = [
                     'fecha' => $fechaActual->format('Y-m-d'),
                     'dia_semana' => $fechaActual->locale('es')->isoFormat('dddd'),
@@ -284,14 +284,14 @@ class InstructorFichaDiasService
 
     /**
      * Mapea los IDs de días de parámetros a números de día de la semana.
-     * 
+     *
      * @param array $diasData
      * @return array
      */
     private function mapearDiasANumerosSemana(array $diasData): array
     {
         $mapa = [];
-        
+
         // Mapeo de dia_id a dayOfWeek (Carbon)
         // 12=Lunes->1, 13=Martes->2, 14=Miércoles->3, 15=Jueves->4, 16=Viernes->5, 17=Sábado->6, 18=Domingo->0
         $diaIdANumero = [

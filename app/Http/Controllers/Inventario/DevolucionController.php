@@ -1,68 +1,105 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
+use App\Inventario\Interfaces\Repositories\Devolucion\DevolucionRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Orden\DetalleOrdenRepositoryInterface;
+use App\Inventario\Services\Devolucion\DevolucionService;
 use App\Exceptions\DevolucionException;
-use App\Exceptions\OrdenException;
-use App\Models\Inventario\DetalleOrden;
-use App\Models\Inventario\Devolucion;
-use App\Models\ParametroTema;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Inventario\DevolucionRequest;
+use App\Http\Controllers\Controller;
 
-class DevolucionController extends InventarioController
+class DevolucionController extends Controller
 {
-    private const THEME_ORDER_STATES = 'ESTADOS DE ORDEN';
-    private const STATE_APPROVED = 'APROBADA';
+    protected DevolucionRepositoryInterface $repository;
+    protected DetalleOrdenRepositoryInterface $detalleOrdenRepository;
+    protected DevolucionService $service;
 
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        DevolucionRepositoryInterface $repository,
+        DetalleOrdenRepositoryInterface $detalleOrdenRepository,
+        DevolucionService $service
+    ) {
         $this->middleware('can:DEVOLVER PRESTAMO')->only(['index', 'create', 'store']);
+
+        $this->repository = $repository;
+        $this->detalleOrdenRepository = $detalleOrdenRepository;
+        $this->service = $service;
     }
 
     // Mostrar lista de préstamos pendientes de devolución
-    public function index()
+    public function index(): View
     {
-        $estadoAprobadaId = $this->getEstadoOrdenAprobadaId();
+        try {
+            $estadoAprobadaId = $this->getEstadoOrdenAprobadaId();
+            $user = Auth::user();
+            $userId = null;
 
-        $prestamos = DetalleOrden::with(['orden.tipoOrden', 'producto', 'devoluciones'])
-            ->whereHas('orden', function ($query) {
-                $query->whereNotNull('fecha_devolucion'); // Solo préstamos
-            })
-            ->where('estado_orden_id', $estadoAprobadaId)
-            ->paginate(10)
-            ->filter(function ($detalle) {
-                return !$detalle->estaCompletamenteDevuelto();
-            });
+            if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
+                $userId = (int) $user->id;
+            }
 
-        return view('inventario.devoluciones.index', compact('prestamos'));
+            $prestamos = $this->repository->obtenerPrestamosPendientes($estadoAprobadaId, $userId);
+
+            return view('inventario.devoluciones.index', compact('prestamos'));
+        } catch (\Exception $e) {
+            Log::error('Error en DevolucionController@index: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
 
     // Mostrar formulario de devolución
-    public function create($detalleOrdenId)
+    public function create(int $detalleOrdenId): View|RedirectResponse
     {
-        $detalleOrden = DetalleOrden::with(['orden', 'producto'])->findOrFail($detalleOrdenId);
-        
-        if ($detalleOrden->estaCompletamenteDevuelto()) {
-            return redirect()->route('inventario.devoluciones.index')
-                ->with('error', 'Este préstamo ya fue completamente devuelto.');
-        }
+        try {
+            $detalleOrden = $this->detalleOrdenRepository->encontrarConRelaciones($detalleOrdenId);
 
-        return view('inventario.devoluciones.create', compact('detalleOrden'));
+            if (!$detalleOrden) {
+                abort(404);
+            }
+
+            $user = Auth::user();
+
+            if ($user !== null
+                && !$user->can('VER TODAS LAS ORDENES')
+                && (int) $detalleOrden->orden->user_create_id !== (int) $user->id
+            ) {
+                abort(403);
+            }
+
+            if ($detalleOrden->estaCompletamenteDevuelto()) {
+                return redirect()
+                    ->route('inventario.devoluciones.index')
+                    ->with('error', 'Este préstamo ya fue completamente devuelto.');
+            }
+
+            return view('inventario.devoluciones.create', compact('detalleOrden'));
+        } catch (\Exception $e) {
+            Log::error('Error en DevolucionController@create: ' . $e->getMessage(), [
+                'exception' => $e,
+                'detalle_orden_id' => $detalleOrdenId,
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
-    
-    // Registrar devolució
-    public function store(Request $request)
+
+    // Registrar devolución
+    public function store(DevolucionRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'detalle_orden_id' => 'required|integer|exists:detalle_ordenes,id',
-            'cantidad_devuelta' => 'required|integer|min:0',
-            'observaciones' => 'nullable|string|max:500'
-        ]);
+        $validated = $request->validated();
 
         if ((int) $validated['cantidad_devuelta'] === 0) {
             $observaciones = $validated['observaciones'] ?? '';
@@ -74,24 +111,15 @@ class DevolucionController extends InventarioController
         }
 
         try {
-            $devolucion = Devolucion::registrarDevolucion(
+            $resultado = $this->service->registrarDevolucionConMensaje(
                 (int) $validated['detalle_orden_id'],
                 (int) $validated['cantidad_devuelta'],
                 $validated['observaciones'] ?? null
             );
 
-            $mensaje = 'Devolución registrada exitosamente.';
-            
-            if ($devolucion->cierra_sin_stock) {
-                $mensaje .= ' Se registró el consumo total sin restaurar stock.';
-            }
-
-            if ($devolucion->getDiasRetrasoDevolucion() > 0) {
-                $mensaje .= ' NOTA: La devolución se realizó con ' . $devolucion->getDiasRetrasoDevolucion() . ' días de retraso.';
-            }
-
-            return redirect()->route('inventario.devoluciones.index')
-                ->with('success', $mensaje);
+            return redirect()
+                ->route('inventario.devoluciones.index')
+                ->with('success', $resultado['mensaje']);
 
         } catch (DevolucionException $e) {
             return back()
@@ -104,81 +132,63 @@ class DevolucionController extends InventarioController
         }
     }
 
-    
     // Mostrar historial de devoluciones
-    public function historial()
+    public function historial(): View
     {
-        $devoluciones = Devolucion::with(['detalleOrden.producto', 'detalleOrden.orden', 'userCreate'])
-            ->orderBy('fecha_devolucion', 'desc')
-            ->paginate(20);
+        $user = Auth::user();
+        $userId = null;
+
+        if ($user !== null && !$user->can('VER TODAS LAS ORDENES')) {
+            $userId = (int) $user->id;
+        }
+
+        $devoluciones = $this->repository->obtenerHistorial($userId);
 
         return view('inventario.devoluciones.historial', compact('devoluciones'));
     }
 
-
     // Ver detalle de una devolución
-    public function show($id)
+    public function show(int $id): View
     {
-        $devolucion = Devolucion::with([
-            'detalleOrden.producto',
-            'detalleOrden.orden',
-            'userCreate',
-            'userUpdate'
-        ])->findOrFail($id);
+        $devolucion = $this->repository->encontrarConRelaciones($id);
+
+        if (!$devolucion) {
+            abort(404);
+        }
+
+        $user = Auth::user();
+
+        if ($user !== null
+            && !$user->can('VER TODAS LAS ORDENES')
+            && (int) $devolucion->detalleOrden->orden->user_create_id !== (int) $user->id
+        ) {
+            abort(403);
+        }
 
         return view('inventario.devoluciones.show', compact('devolucion'));
     }
     // Mostrar préstamos activos del usuario actual
-    public function misPrestamos()
+    public function misPrestamos(): View
     {
         $userId = Auth::id();
         $estadoAprobadaId = $this->getEstadoOrdenAprobadaId();
+        $prestamos = $this->repository->obtenerPrestamosActivosUsuario($userId, $estadoAprobadaId);
 
-        $prestamos = DetalleOrden::with(['orden.tipoOrden', 'producto', 'devoluciones'])
-            ->whereHas('orden', function ($query) use ($userId) {
-                // Solo préstamos
-                $query->where('user_create_id', $userId)
-                      ->whereNotNull('fecha_devolucion');
-            })
-            ->where('estado_orden_id', $estadoAprobadaId)
-            ->paginate(10)
-            ->filter(function ($detalle) {
-                return !$detalle->estaCompletamenteDevuelto();
-            });
-
-        return view('inventario.prestamos.mis', compact('prestamos'));
+        return view('inventario.prestamos.usuariosPrestamos', compact('prestamos'));
     }
 
     // Historial de préstamos del usuario
-    public function historialPrestamos()
+    public function historialPrestamos(): View
     {
         $userId = Auth::id();
-
-        $prestamos = DetalleOrden::with(['orden.tipoOrden', 'producto', 'devoluciones'])
-            ->whereHas('orden', function ($query) use ($userId) {
-                $query->where('user_create_id', $userId)
-                      ->whereNotNull('fecha_devolucion'); // Solo préstamos
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $prestamos = $this->repository->obtenerHistorialPrestamosUsuario($userId);
 
         return view('inventario.prestamos.historial', compact('prestamos'));
     }
 
     private function getEstadoOrdenAprobadaId(): int
     {
-        $estadoAprobada = ParametroTema::whereHas('tema', function ($query) {
-                $query->where('name', self::THEME_ORDER_STATES);
-            })
-            ->whereHas('parametro', function ($query) {
-                $query->where('name', self::STATE_APPROVED);
-            })
-            ->first();
-
-        if (!$estadoAprobada) {
-            throw new OrdenException("No se encontró el estado '" . self::STATE_APPROVED . "' en los parámetros configurados.");
-        }
-
+        $estadoAprobada = $this->service->obtenerEstadoAprobada();
         return (int) $estadoAprobada->id;
     }
 }

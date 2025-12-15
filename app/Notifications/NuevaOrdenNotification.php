@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -44,28 +46,22 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
     {
         $tipoOrden = $this->orden->tipoOrden->parametro->name ?? 'N/A';
         $cantidadProductos = $this->orden->detalles->count();
-        
+
         // Extraer motivo de la descripción
         $descripcion = $this->orden->descripcion_orden ?? '';
-        preg_match('/MOTIVO:\s*(.+?)$/s', $descripcion, $matchMotivo);
+        preg_match('/MOTIVO:\s*(.+)$/s', $descripcion, $matchMotivo);
         $motivo = isset($matchMotivo[1]) ? trim($matchMotivo[1]) : 'No especificado';
-        
+
         return (new MailMessage)
-            ->subject('📋 Nueva Solicitud de ' . $tipoOrden . ' - Orden #' . $this->orden->id)
-            ->greeting('¡Hola, ' . $notifiable->name . '!')
-            ->line('Se ha recibido una nueva solicitud de ' . strtolower($tipoOrden) . ' que requiere tu aprobación.')
-            ->line('**Orden:** #' . $this->orden->id)
-            ->line('**Tipo:** ' . $tipoOrden)
-            ->line('**Solicitante:** ' . $this->solicitante->name)
-            ->line('**Email:** ' . $this->solicitante->email)
-            ->line('**Productos:** ' . $cantidadProductos . ($cantidadProductos === 1 ? ' producto' : ' productos'))
-            ->line('**Motivo:** ' . \Illuminate\Support\Str::limit($motivo, 100))
-            ->when($this->orden->fecha_devolucion, function ($message) {
-                return $message->line('**Fecha de Devolución:** ' . $this->orden->fecha_devolucion->format('d/m/Y'));
-            })
-            ->action('Revisar Solicitud', url('/inventario/aprobaciones/pendientes'))
-            ->line('Por favor, revisa y aprueba/rechaza esta solicitud a la brevedad.')
-            ->salutation('Saludos, ' . config('app.name'));
+            ->subject('Nueva Solicitud de ' . $tipoOrden . ' - Orden #' . $this->orden->id)
+            ->view('inventario.email.nueva-orden', [
+                'notifiable' => $notifiable,
+                'orden' => $this->orden,
+                'tipoOrden' => $tipoOrden,
+                'solicitante' => $this->solicitante,
+                'cantidadProductos' => $cantidadProductos,
+                'motivo' => $motivo,
+            ]);
     }
 
     /**
@@ -77,21 +73,21 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
     {
         $tipoOrden = $this->orden->tipoOrden->parametro->name ?? 'N/A';
         $solicitante = $this->solicitante;
-        
+
         // Obtener el rol del usuario
         $rol = $solicitante && $solicitante->roles->isNotEmpty()
             ? $solicitante->roles->first()->name
             : 'N/A';
-        
+
         // Obtener datos de la persona
         $persona = $solicitante ? $solicitante->persona : null;
         $nombreCompleto = $persona
             ? trim(($persona->primer_nombre ?? '') . ' ' . ($persona->segundo_nombre ?? '') . ' ' .
                    ($persona->primer_apellido ?? '') . ' ' . ($persona->segundo_apellido ?? ''))
             : ($solicitante->name ?? 'N/A');
-        
+
         $documento = $persona ? $persona->numero_documento ?? 'N/A' : 'N/A';
-        
+
         return [
             'orden_id' => $this->orden->id,
             'tipo_orden' => $tipoOrden,

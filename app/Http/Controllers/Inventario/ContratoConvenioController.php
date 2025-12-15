@@ -1,129 +1,122 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
+use App\Inventario\Interfaces\Repositories\ContratoConvenio\ContratoConvenioRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface;
+use App\Inventario\Services\ContratoConvenio\ContratoConvenioService;
 use App\Models\Inventario\ContratoConvenio;
-use App\Models\Inventario\Proveedor;
-use App\Models\ParametroTema;
+use App\Models\Tema;
+use App\Exceptions\ContratoConvenioException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Inventario\ContratoConvenioRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
-class ContratoConvenioController extends InventarioController
+class ContratoConvenioController extends Controller
 {
-    public function __construct()
-    {
-        parent::__construct();
+    protected ContratoConvenioRepositoryInterface $repository;
+    protected ContratoConvenioService $service;
+    protected ProveedorRepositoryInterface $proveedorRepository;
+
+    public function __construct(
+        ContratoConvenioRepositoryInterface $repository,
+        ContratoConvenioService $service,
+        ProveedorRepositoryInterface $proveedorRepository
+    ) {
         $this->middleware('can:VER CONTRATO')->only('index', 'show');
         $this->middleware('can:CREAR CONTRATO')->only('create', 'store');
         $this->middleware('can:EDITAR CONTRATO')->only('edit', 'update');
         $this->middleware('can:ELIMINAR CONTRATO')->only('destroy');
+
+        $this->repository = $repository;
+        $this->service = $service;
+        $this->proveedorRepository = $proveedorRepository;
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $search = $request->input('search');
+        $filtros = [
+            'search' => $request->input('search'),
+            'per_page' => 10
+        ];
 
-        $contratosConveniosQuery = ContratoConvenio::with([
-            'proveedor',
-            'estado.parametro',
-            'userCreate.persona',
-            'userUpdate.persona'
-        ])->latest();
+        $contratosConvenios = $this->repository->obtenerConFiltros($filtros);
+        $contratosConvenios->appends($request->only('search'));
 
-        if (!empty($search)) {
-            $contratosConveniosQuery->where(function ($query) use ($search) {
-                $query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('codigo', 'LIKE', "%{$search}%")
-                    ->orWhereHas('proveedor', function ($proveedorQuery) use ($search) {
-                        $proveedorQuery->where('proveedor', 'LIKE', "%{$search}%");
-                    });
-            });
-        }
+        // Uso directo del modelo Tema (clase externa, sin SOLID)
+        $tema = Tema::where('name', 'ESTADOS')->first();
+        $estados = $tema ? collect($tema->parametros()->wherePivot('status', 1)->get()) : collect([]);
 
-        $contratosConvenios = $contratosConveniosQuery
-            ->paginate(10)
-            ->appends($request->only('search'));
+        $proveedores = $this->proveedorRepository->obtenerTodos();
 
-        $contratosConvenios->withPath(route('inventario.contratos-convenios.index'));
-
-        $estados = ParametroTema::with(['parametro', 'tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'ESTADOS'))
-            ->where('parametros_temas.status', 1)
-            ->get();
-
-        return view('inventario.contratos_convenios.index', compact('contratosConvenios', 'estados'));
+        return view('inventario.contratos_convenios.index', compact('contratosConvenios', 'estados', 'proveedores'));
     }
 
-    public function create()
+    public function create(): View
     {
-        $proveedores = Proveedor::orderBy('proveedor')->get();
+        $proveedores = $this->proveedorRepository->obtenerTodos();
         return view('inventario.contratos_convenios.create', compact('proveedores'));
     }
 
-    public function show(ContratoConvenio $contratoConvenio)
+    public function show(ContratoConvenio $contratoConvenio): View
     {
-        $contratoConvenio->load([
-            'proveedor',
-            'productos',
-            'estado.parametro',
-            'userCreate.persona',
-            'userUpdate.persona'
-        ]);
+        $contratoConvenio = $this->repository->encontrarConRelaciones($contratoConvenio->id);
+
+        if (!$contratoConvenio) {
+            abort(404);
+        }
+
         return view('inventario.contratos_convenios.show', compact('contratoConvenio'));
     }
 
-    public function edit(ContratoConvenio $contratoConvenio)
+    public function edit(ContratoConvenio $contratoConvenio): View
     {
-        $proveedores = Proveedor::orderBy('proveedor')->get();
+        $proveedores = $this->proveedorRepository->obtenerTodos();
         return view('inventario.contratos_convenios.edit', compact('contratoConvenio', 'proveedores'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:contratos_convenios,name',
-            'codigo' => 'nullable|string|max:50',
-            'proveedor_id' => 'nullable|exists:proveedores,id',
-            'fecha_inicio' => 'nullable|date',
-            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-            'estado_id' => 'required|exists:parametros_temas,id',
-        ]);
-
-        $contrato = new ContratoConvenio($validated);
-        $this->setUserIds($contrato);
-        $contrato->save();
-
-        return redirect()->route('inventario.contratos-convenios.index')
-            ->with('success', 'Contrato/Convenio creado exitosamente.');
-    }
-
-    public function update(Request $request, ContratoConvenio $contratoConvenio)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:contratos_convenios,name,' . $contratoConvenio->id,
-            'codigo' => 'nullable|string|max:50',
-            'proveedor_id' => 'nullable|exists:proveedores,id',
-            'fecha_inicio' => 'nullable|date',
-            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
-            'estado_id' => 'required|exists:parametros_temas,id',
-        ]);
-
-        $contratoConvenio->fill($validated);
-        $this->setUserIds($contratoConvenio, true);
-        $contratoConvenio->save();
-
-        return redirect()->route('inventario.contratos-convenios.index')
-            ->with('success', 'Contrato/Convenio actualizado exitosamente.');
-    }
-
-    public function destroy(ContratoConvenio $contratoConvenio)
+    public function store(ContratoConvenioRequest $request): RedirectResponse
     {
         try {
-            $contratoConvenio->delete();
-            return redirect()->route('inventario.contratos-convenios.index')
+            $validated = $request->validated();
+            $this->service->crear($validated, Auth::id());
+
+            return redirect()
+                ->route('inventario.contratos-convenios.index')
+                ->with('success', 'Contrato/Convenio creado exitosamente.');
+        } catch (ContratoConvenioException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function update(ContratoConvenioRequest $request, ContratoConvenio $contratoConvenio): RedirectResponse
+    {
+        try {
+            $validated = $request->validated();
+            $this->service->actualizar($contratoConvenio, $validated, Auth::id());
+
+            return redirect()
+                ->route('inventario.contratos-convenios.index')
+                ->with('success', 'Contrato/Convenio actualizado exitosamente.');
+        } catch (ContratoConvenioException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function destroy(ContratoConvenio $contratoConvenio): RedirectResponse
+    {
+        try {
+            $this->service->eliminar($contratoConvenio);
+            return redirect()
+                ->route('inventario.contratos-convenios.index')
                 ->with('success', 'Contrato/Convenio eliminado exitosamente.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'No se puede eliminar el Contrato/Convenio porque está en uso.');
+        } catch (ContratoConvenioException $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 }

@@ -3,20 +3,70 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
->
+         stopOnFailure="false"
+         stopOnError="false">
+
+    <!-- TEST SUITES POR MÓDULO -->
     <testsuites>
-        <testsuite name="Unit">
-            <directory>tests/Unit</directory>
+
+        <!-- Módulo Inventario -->
+        <testsuite name="Inventario">
+            <directory>tests/Inventario</directory>
         </testsuite>
-        <testsuite name="Feature">
-            <directory>tests/Feature</directory>
+
+        <!-- Módulo Complementarios -->
+        <testsuite name="Complementarios">
+            <directory>tests/Complementarios</directory>
         </testsuite>
+
     </testsuites>
+
+    <!-- COVERAGE AUTOMÁTICO -->
     <source>
         <include>
-            <directory>app</directory>
+            <!-- Inventario -->
+            <directory>app/Inventario</directory>
+            <directory>app/Models/Inventario</directory>
+            <directory>app/Http/Controllers/Inventario</directory>
+            <directory>app/Http/Requests/Inventario</directory>
+            <directory>app/Livewire/Inventario</directory>
+
+            <!-- Complementarios -->
+            <directory>app/Http/Controllers/Complementarios</directory>
+            <directory>app/Models/Complementarios</directory>
+            <directory>app/Http/Requests/Complementarios</directory>
+            <directory>app/Services/Complementarios</directory>
+            <directory>app/Repositories/Complementarios</directory>
+            <directory>app/Jobs/Complementarios</directory>
+            <directory>app/Exceptions/Complementarios</directory>
         </include>
     </source>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <!-- Inventario -->
+            <directory suffix=".php">app/Inventario</directory>
+            <directory suffix=".php">app/Models/Inventario</directory>
+            <directory suffix=".php">app/Http/Controllers/Inventario</directory>
+            <directory suffix=".php">app/Http/Requests/Inventario</directory>
+            <directory suffix=".php">app/Livewire/Inventario</directory>
+
+            <!-- Complementarios -->
+            <directory suffix=".php">app/Http/Controllers/Complementarios</directory>
+            <directory suffix=".php">app/Models/Complementarios</directory>
+            <directory suffix=".php">app/Http/Requests/Complementarios</directory>
+            <directory suffix=".php">app/Services/Complementarios</directory>
+            <directory suffix=".php">app/Repositories/Complementarios</directory>
+            <directory suffix=".php">app/Jobs/Complementarios</directory>
+            <directory suffix=".php">app/Exceptions/Complementarios</directory>
+        </include>
+
+        <report>
+            <text outputFile="php://stdout" />
+            <html outputDirectory="storage/coverage" />
+        </report>
+    </coverage>
+
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>

@@ -166,7 +166,7 @@ class ProgramaFormacionController extends Controller
     {
         try {
             $programaFormacion = ProgramaFormacion::with('competencias')->findOrFail($id);
-            
+
             // Validaciones de negocio adicionales para actualización
             $validationErrors = $this->validateBusinessRules($request, $programaFormacion);
             if (!empty($validationErrors)) {
@@ -219,15 +219,15 @@ class ProgramaFormacionController extends Controller
         try {
             $programaFormacion = ProgramaFormacion::findOrFail($id);
             $nombrePrograma = $programaFormacion->nombre;
-            
+
             // Validar que no tenga fichas activas
             $validationErrors = $this->validateDeletionRules($programaFormacion);
             if (!empty($validationErrors)) {
                 return redirect()->back()->withErrors($validationErrors);
             }
-            
+
             $programaFormacion->competencias()->detach();
-            
+
             if ($programaFormacion->delete()) {
                 Log::info('Programa de formación eliminado exitosamente', [
                     'programa_id' => $id,
@@ -268,7 +268,7 @@ class ProgramaFormacionController extends Controller
             $nivelFormacionId = $request->input('nivel_formacion_id');
             $status = $request->input('status');
             $perPage = $request->input('per_page', 6);
-            
+
             // Construir consulta base
             $programasQuery = ProgramaFormacion::with(['redConocimiento', 'nivelFormacion', 'userCreated', 'userEdited']);
 
@@ -348,14 +348,14 @@ class ProgramaFormacionController extends Controller
                 'error' => $e->getMessage(),
                 'usuario_id' => Auth::id()
             ]);
-            
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Error interno en la búsqueda.'
                 ], 500);
             }
-            
+
             return redirect()->route('programa.index')->with('error', 'Error interno en la búsqueda.');
         }
     }
@@ -371,14 +371,14 @@ class ProgramaFormacionController extends Controller
         try {
             $programa = ProgramaFormacion::findOrFail($id);
             $programa->status = !$programa->status;
-            
+
             if ($programa->save()) {
                 Log::info('Estado del programa cambiado', [
                     'programa_id' => $id,
                     'nuevo_estado' => $programa->status ? 'activo' : 'inactivo',
                     'usuario_id' => Auth::id()
                 ]);
-                
+
                 return redirect()->back()->with('success', 'Estado del programa actualizado exitosamente.');
             } else {
                 return redirect()->back()->with('error', 'Error al cambiar el estado del programa.');
@@ -389,7 +389,7 @@ class ProgramaFormacionController extends Controller
                 'error' => $e->getMessage(),
                 'usuario_id' => Auth::id()
             ]);
-            
+
             return redirect()->back()->with('error', 'Error interno al cambiar el estado del programa.');
         }
     }
@@ -425,7 +425,7 @@ class ProgramaFormacionController extends Controller
                 'error' => $e->getMessage(),
                 'usuario_id' => Auth::id()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener los programas.'
@@ -464,7 +464,7 @@ class ProgramaFormacionController extends Controller
                 'error' => $e->getMessage(),
                 'usuario_id' => Auth::id()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener los programas.'
@@ -503,7 +503,7 @@ class ProgramaFormacionController extends Controller
                 'error' => $e->getMessage(),
                 'usuario_id' => Auth::id()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener los programas activos.'
@@ -525,7 +525,7 @@ class ProgramaFormacionController extends Controller
         // 1. Validar código único por regional
         $codigo = $request->input('codigo');
         $redConocimientoId = $request->input('red_conocimiento_id');
-        
+
         if ($codigo && $redConocimientoId) {
             $query = ProgramaFormacion::where('codigo', $codigo)
                 ->whereHas('redConocimiento', function ($q) use ($redConocimientoId) {
@@ -666,7 +666,7 @@ class ProgramaFormacionController extends Controller
         ];
 
         $nivelesPermitidos = $compatibilidades[$redConocimiento->nombre] ?? ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO'];
-        
+
         return in_array($nivelFormacion->name, $nivelesPermitidos);
     }
 

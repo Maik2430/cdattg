@@ -50,6 +50,12 @@ class UsersSeeder extends Seeder
                 'persona_id' => 6,
                 'role' => 'APRENDIZ',
             ],
+            [
+                'email' => 'proveedor@dataguaviare.com',
+                'password' => 'Guaviare25.',
+                'persona_id' => 7,
+                'role' => 'PROVEEDOR',
+            ],
         ];
 
         foreach ($users as $userData) {

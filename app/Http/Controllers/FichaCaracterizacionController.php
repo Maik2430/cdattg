@@ -175,7 +175,7 @@ class FichaCaracterizacionController extends Controller
             'all_data' => $request->all(),
             'timestamp' => now()
         ]);
-        
+
         try {
             Log::info('Inicio de creación de nueva ficha de caracterización', [
                 'user_id' => Auth::id(),
@@ -221,19 +221,19 @@ class FichaCaracterizacionController extends Controller
                         'horarios_completos' => $request->horarios,
                         'all_request' => $request->all()
                     ]);
-                    
+
                     foreach ($request->dias_formacion as $diaId) {
                         $fichaDia = new \App\Models\FichaDiasFormacion();
                         $fichaDia->ficha_id = $ficha->id;
                         $fichaDia->dia_id = $diaId;
-                        
+
                         // Obtener horarios desde el array
                         $horarios = $request->input('horarios', []);
-                        
+
                         if (isset($horarios[$diaId])) {
                             $fichaDia->hora_inicio = $horarios[$diaId]['hora_inicio'] ?? '08:00:00';
                             $fichaDia->hora_fin = $horarios[$diaId]['hora_fin'] ?? '16:00:00';
-                            
+
                             Log::info("Horario para día {$diaId}", [
                                 'hora_inicio' => $fichaDia->hora_inicio,
                                 'hora_fin' => $fichaDia->hora_fin
@@ -242,16 +242,16 @@ class FichaCaracterizacionController extends Controller
                             // Horarios por defecto
                             $fichaDia->hora_inicio = '08:00:00';
                             $fichaDia->hora_fin = '16:00:00';
-                            
+
                             Log::warning("No se encontraron horarios para día {$diaId}, usando valores por defecto");
                         }
-                        
+
                         $fichaDia->save();
                     }
                 }
-                
+
                 DB::commit();
-                
+
                 Log::info('Ficha de caracterización creada exitosamente', [
                     'ficha_id' => $ficha->id,
                     'numero_ficha' => $ficha->ficha,
@@ -269,7 +269,7 @@ class FichaCaracterizacionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Error al crear ficha de caracterización', [
                 'error' => $e->getMessage(),
                 'user_id' => Auth::id(),
@@ -402,7 +402,7 @@ class FichaCaracterizacionController extends Controller
 
             if ($ficha->save()) {
                 DB::commit();
-                
+
                 Log::info('Ficha de caracterización actualizada exitosamente', [
                     'ficha_id' => $ficha->id,
                     'datos_originales' => $datosOriginales,
@@ -429,7 +429,7 @@ class FichaCaracterizacionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Error al actualizar ficha de caracterización', [
                 'ficha_id' => $id,
                 'error' => $e->getMessage(),
@@ -455,7 +455,7 @@ class FichaCaracterizacionController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             Log::info('═══════════════════════════════════════════════════════════');
             Log::info('INICIO: Intento de eliminación de ficha de caracterización', [
                 'ficha_id' => $id,
@@ -471,7 +471,7 @@ class FichaCaracterizacionController extends Controller
 
             // Buscar la ficha
             $ficha = FichaCaracterizacion::findOrFail($id);
-            
+
             Log::info('Ficha encontrada', [
                 'ficha_id' => $ficha->id,
                 'numero_ficha' => $ficha->ficha,
@@ -486,7 +486,7 @@ class FichaCaracterizacionController extends Controller
 
             // Verificar autorización de forma más directa
             $puedeEliminar = false;
-            
+
             // Verificar si es superadmin
             if ($user->hasRole('SUPER ADMINISTRADOR')) {
                 $puedeEliminar = true;
@@ -515,7 +515,7 @@ class FichaCaracterizacionController extends Controller
                     $puedeEliminar = false;
                 }
             }
-            
+
             if (!$puedeEliminar) {
                 Log::error('✗ ACCESO DENEGADO: Usuario no autorizado para eliminar fichas', [
                     'user_id' => $user->id,
@@ -524,7 +524,7 @@ class FichaCaracterizacionController extends Controller
                     'user_permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
                     'ficha_id' => $id
                 ]);
-                
+
                 return redirect()->route('fichaCaracterizacion.index')
                     ->with('error', 'No tienes permisos para eliminar fichas de caracterización.');
             }
@@ -563,7 +563,7 @@ class FichaCaracterizacionController extends Controller
                 ->where('aprendices.ficha_caracterizacion_id', $id)
                 ->whereNull('aprendices.deleted_at')
                 ->exists();
-            
+
             Log::info('Verificando asistencias registradas', [
                 'tiene_asistencias' => $tieneAsistencias
             ]);
@@ -602,15 +602,15 @@ class FichaCaracterizacionController extends Controller
                 DB::table('ficha_dias_formacion')
                     ->where('ficha_id', $id)
                     ->delete();
-                
+
                 Log::info('✓ Días de formación eliminados correctamente', [
                     'ficha_id' => $id
                 ]);
-                
+
                 $ficha->delete();
-                
+
                 DB::commit();
-                
+
                 Log::info('═══════════════════════════════════════════════════════════');
                 Log::info('✓ ÉXITO: Ficha de caracterización eliminada correctamente', [
                     'ficha_eliminada' => $fichaInfo,
@@ -622,10 +622,10 @@ class FichaCaracterizacionController extends Controller
 
                 return redirect()->route('fichaCaracterizacion.index')
                     ->with('success', 'Ficha de caracterización #' . $fichaInfo['numero_ficha'] . ' eliminada exitosamente.');
-                    
+
             } catch (\Exception $dbException) {
                 DB::rollBack();
-                
+
                 Log::error('✗ ERROR en la base de datos al eliminar la ficha', [
                     'ficha_id' => $id,
                     'error' => $dbException->getMessage(),
@@ -633,7 +633,7 @@ class FichaCaracterizacionController extends Controller
                     'line' => $dbException->getLine(),
                     'trace' => $dbException->getTraceAsString()
                 ]);
-                
+
                 throw new \Exception('Error al eliminar la ficha de la base de datos: ' . $dbException->getMessage());
             }
 
@@ -668,7 +668,7 @@ class FichaCaracterizacionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('═══════════════════════════════════════════════════════════');
             Log::error('✗ ERROR GENERAL al eliminar ficha de caracterización', [
                 'ficha_id' => $id,
@@ -933,7 +933,7 @@ class FichaCaracterizacionController extends Controller
             $sortBy = $request->input('sort_by', 'id');
             $sortDirection = $request->input('sort_direction', 'desc');
             $allowedSortFields = ['id', 'ficha', 'fecha_inicio', 'fecha_fin', 'total_horas', 'created_at'];
-            
+
             if (in_array($sortBy, $allowedSortFields)) {
                 $query->orderBy($sortBy, $sortDirection);
             } else {
@@ -1770,7 +1770,7 @@ class FichaCaracterizacionController extends Controller
 
             $ficha = FichaCaracterizacion::findOrFail($id);
             $estadoAnterior = $ficha->status;
-            
+
             DB::beginTransaction();
 
             $ficha->status = $request->input('status');
@@ -1778,9 +1778,9 @@ class FichaCaracterizacionController extends Controller
 
             if ($ficha->save()) {
                 DB::commit();
-                
+
                 $mensaje = $ficha->status ? 'Ficha activada exitosamente' : 'Ficha desactivada exitosamente';
-                
+
                 Log::info('Estado de ficha cambiado exitosamente', [
                     'ficha_id' => $ficha->id,
                     'estado_anterior' => $estadoAnterior,
@@ -1829,7 +1829,7 @@ class FichaCaracterizacionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Error al cambiar estado de ficha', [
                 'ficha_id' => $id,
                 'error' => $e->getMessage(),
@@ -1869,7 +1869,7 @@ class FichaCaracterizacionController extends Controller
                 'ficha_id' => $fichaId,
                 'error' => $e->getMessage()
             ]);
-            
+
             // En caso de error, asumir que sí tiene asistencias para ser conservador
             return true;
         }
@@ -1885,12 +1885,12 @@ class FichaCaracterizacionController extends Controller
     {
         try {
             $validator = new FichaCaracterizacionValidationService();
-            
+
             $datos = $request->all();
             $excluirFichaId = $request->input('excluir_ficha_id');
-            
+
             $resultado = $validator->validarFichaCompleta($datos, $excluirFichaId);
-            
+
             return response()->json($resultado);
 
         } catch (\Exception $e) {
@@ -1937,18 +1937,18 @@ class FichaCaracterizacionController extends Controller
                                        ->where('fecha_fin', '>=', $request->fecha_fin);
                           });
                 });
-            
+
             if ($request->excluir_ficha_id) {
                 $ambientesOcupados->where('id', '!=', $request->excluir_ficha_id);
             }
-            
+
             $resultado = [
                 'valido' => !$ambientesOcupados->exists(),
-                'mensaje' => $ambientesOcupados->exists() 
+                'mensaje' => $ambientesOcupados->exists()
                     ? 'El ambiente no está disponible en el rango de fechas especificado'
                     : 'El ambiente está disponible'
             ];
-            
+
             return response()->json($resultado);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -1996,18 +1996,18 @@ class FichaCaracterizacionController extends Controller
                                        ->where('fecha_fin', '>=', $request->fecha_fin);
                           });
                 });
-            
+
             if ($request->excluir_ficha_id) {
                 $instructoresOcupados->where('ficha_id', '!=', $request->excluir_ficha_id);
             }
-            
+
             $resultado = [
                 'valido' => !$instructoresOcupados->exists(),
-                'mensaje' => $instructoresOcupados->exists() 
+                'mensaje' => $instructoresOcupados->exists()
                     ? 'El instructor no está disponible en el rango de fechas especificado'
                     : 'El instructor está disponible'
             ];
-            
+
             return response()->json($resultado);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -2040,7 +2040,7 @@ class FichaCaracterizacionController extends Controller
         try {
             $validator = new FichaCaracterizacionValidationService();
             $resultado = $validator->validarEliminacionFicha($id);
-            
+
             return response()->json($resultado);
 
         } catch (\Exception $e) {
@@ -2068,7 +2068,7 @@ class FichaCaracterizacionController extends Controller
         try {
             $validator = new FichaCaracterizacionValidationService();
             $resultado = $validator->validarEdicionFicha($id);
-            
+
             return response()->json($resultado);
 
         } catch (\Exception $e) {
@@ -2204,22 +2204,22 @@ class FichaCaracterizacionController extends Controller
             // EXCLUIR: No filtrar al instructor líder (principal) ya que es una asignación separada
             $instructorLiderId = $ficha->instructor_id; // Instructor líder de la ficha
             $instructoresAsignadosIds = $instructoresAsignados->pluck('instructor_id')->toArray();
-            
+
             Log::info('🔍 DEBUG FILTRADO INSTRUCTORES', [
                 'instructor_lider_id' => $instructorLiderId,
                 'instructores_asignados_ids' => $instructoresAsignadosIds,
                 'total_disponibles_antes_filtro' => count($instructoresConDisponibilidad)
             ]);
-            
+
             $instructoresConDisponibilidad = array_filter($instructoresConDisponibilidad, function($instructorData) use ($instructoresAsignadosIds, $instructorLiderId) {
                 $instructorId = $instructorData['instructor']->id;
-                
+
                 // Si es el instructor líder, siempre incluirlo en la lista (puede ser reasignado)
                 if ($instructorId == $instructorLiderId) {
                     Log::info('🔍 INCLUYENDO INSTRUCTOR LÍDER', ['instructor_id' => $instructorId]);
                     return true;
                 }
-                
+
                 // Para otros instructores, excluir si ya están asignados como instructores adicionales
                 $incluir = !in_array($instructorId, $instructoresAsignadosIds);
                 if (!$incluir) {
@@ -2227,7 +2227,7 @@ class FichaCaracterizacionController extends Controller
                 }
                 return $incluir;
             });
-            
+
             // Reindexar el array para mantener índices numéricos
             $instructoresConDisponibilidad = array_values($instructoresConDisponibilidad);
 
@@ -2318,7 +2318,7 @@ class FichaCaracterizacionController extends Controller
                 'errors' => $e->errors(),
                 'user_id' => Auth::id()
             ]);
-            
+
             return back()
                 ->withErrors($e->errors())
                 ->withInput();
@@ -2524,11 +2524,11 @@ class FichaCaracterizacionController extends Controller
             // Validar días según jornada
             $configuracionJornadas = $this->obtenerConfiguracionJornadas();
             $jornadaId = $ficha->jornada_id;
-            
+
             if (isset($configuracionJornadas[$jornadaId])) {
                 $diasPermitidos = $configuracionJornadas[$jornadaId]['dias_permitidos'];
                 $diasSeleccionados = collect($request->dias)->pluck('dia_id')->toArray();
-                
+
                 $diasNoPermitidos = array_diff($diasSeleccionados, $diasPermitidos);
                 if (!empty($diasNoPermitidos)) {
                     $nombresDias = \App\Models\Parametro::whereIn('id', $diasNoPermitidos)->pluck('name')->toArray();
@@ -2781,7 +2781,7 @@ class FichaCaracterizacionController extends Controller
                 $horaInicio = \Carbon\Carbon::parse($dia->hora_inicio);
                 $horaFin = \Carbon\Carbon::parse($dia->hora_fin);
             $horasPorDia = $horaInicio->diffInHours($horaFin);
-            
+
             $horasTotales += $horasPorDia * $duracionEnDias;
             } catch (\Exception $e) {
                 // Log del error y continuar con el siguiente día
@@ -2823,8 +2823,8 @@ class FichaCaracterizacionController extends Controller
                 return [
                     'id' => $ambiente->id,
                     'title' => $ambiente->title,
-                    'descripcion' => $ambiente->piso ? 
-                        $ambiente->piso->bloque->nombre . ' - ' . $ambiente->piso->nombre : 
+                    'descripcion' => $ambiente->piso ?
+                        $ambiente->piso->bloque->nombre . ' - ' . $ambiente->piso->nombre :
                         'Sin ubicación'
                 ];
             });
@@ -2888,7 +2888,7 @@ class FichaCaracterizacionController extends Controller
                             $subQuery->whereIn('id', $aprendicesAsignadosIds);
                         });
                     }
-                    
+
                     // Personas sin rol APRENDIZ O aprendices desasignados
                     $query->where(function($subQuery) {
                         // Sin rol APRENDIZ
@@ -2910,7 +2910,7 @@ class FichaCaracterizacionController extends Controller
 
             // Debug: Obtener algunos aprendices desasignados para verificar
             $aprendicesDesasignados = \App\Models\Aprendiz::where('estado', 0)->with('persona')->get();
-            
+
             Log::info('Vista de gestión de aprendices cargada', [
                 'ficha_id' => $id,
                 'aprendices_asignados' => $ficha->aprendices->count(),
@@ -2964,7 +2964,7 @@ class FichaCaracterizacionController extends Controller
 
             // Obtener el rol de APRENDIZ
             $rolAprendiz = \Spatie\Permission\Models\Role::where('name', 'APRENDIZ')->first();
-            
+
             if (!$rolAprendiz) {
                 DB::rollBack();
                 return redirect()->back()
@@ -2974,7 +2974,7 @@ class FichaCaracterizacionController extends Controller
             // Procesar cada persona
             foreach ($personasIds as $personaId) {
                 $persona = \App\Models\Persona::with('user')->findOrFail($personaId);
-                
+
                 // Crear o actualizar registro de aprendiz
                 // Si el aprendiz existe pero está eliminado (soft delete), restaurarlo primero
                 $aprendiz = \App\Models\Aprendiz::withTrashed()
@@ -3049,7 +3049,7 @@ class FichaCaracterizacionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Error al asignar personas como aprendices', [
                 'ficha_id' => $id,
                 'error' => $e->getMessage(),
@@ -3072,7 +3072,7 @@ class FichaCaracterizacionController extends Controller
      */
     public function desasignarAprendices(Request $request, $id)
     {
-        try { 
+        try {
             Log::info('=== INICIO DESASIGNACIÓN APRENDICES ===', [
                 'ficha_id' => $id,
                 'request_data' => $request->all(),
@@ -3087,7 +3087,7 @@ class FichaCaracterizacionController extends Controller
             ]);
 
             $personasIds = $request->input('personas');
-            
+
             Log::info('Validación exitosa, procesando personas', [
                 'ficha_id' => $id,
                 'personas_ids' => $personasIds,
@@ -3097,7 +3097,7 @@ class FichaCaracterizacionController extends Controller
 
             // Buscar la ficha
             $ficha = FichaCaracterizacion::findOrFail($id);
-            
+
             Log::info('Ficha encontrada', [
                 'ficha_id' => $ficha->id,
                 'numero_ficha' => $ficha->ficha,
@@ -3114,7 +3114,7 @@ class FichaCaracterizacionController extends Controller
                         $query->whereIn('id', $personasIds);
                     })
                     ->get();
-                
+
                 Log::info('Aprendices asignados a esta ficha encontrados', [
                     'ficha_id' => $id,
                     'personas_solicitadas' => count($personasIds),
@@ -3124,27 +3124,27 @@ class FichaCaracterizacionController extends Controller
                     'aprendices_persona_ids' => $aprendicesAsignados->pluck('persona_id')->toArray(),
                     'user_id' => Auth::id()
                 ]);
-                
+
                 // Verificar que todas las personas seleccionadas tengan un aprendiz asignado a esta ficha
                 $personasEncontradas = $aprendicesAsignados->pluck('persona_id')->toArray();
                 $personasNoEncontradas = array_diff($personasIds, $personasEncontradas);
-                
-                if (count($personasNoEncontradas) > 0) {
+
+                if (!empty($personasNoEncontradas)) {
                     Log::warning('Personas no encontradas como aprendices en esta ficha', [
                         'ficha_id' => $id,
                         'personas_no_encontradas' => $personasNoEncontradas,
                         'personas_solicitadas' => $personasIds,
                         'user_id' => Auth::id()
                     ]);
-                    
+
                     DB::rollBack();
                     return redirect()->back()
                         ->with('error', 'Algunas personas no están asignadas como aprendices a esta ficha. Personas ID: ' . implode(', ', $personasNoEncontradas));
                 }
-                
+
                 // Obtener los IDs de los aprendices a desasignar
                 $aprendicesIds = $aprendicesAsignados->pluck('id');
-                
+
                 Log::info('IDs de aprendices a desasignar', [
                     'ficha_id' => $id,
                     'aprendices_ids' => $aprendicesIds->toArray(),
@@ -3195,7 +3195,7 @@ class FichaCaracterizacionController extends Controller
                                 'ficha_anterior' => $fichaAnterior,
                                 'rol_removido' => !$tieneOtraFicha && $aprendiz->persona && $aprendiz->persona->user && $aprendiz->persona->user->hasRole('APRENDIZ')
                             ];
-                            
+
                             Log::info('Aprendiz desactivado exitosamente', [
                                 'aprendiz_id' => $aprendiz->id,
                                 'persona_id' => $aprendiz->persona_id,
@@ -3268,7 +3268,7 @@ class FichaCaracterizacionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('=== ERROR CRÍTICO EN DESASIGNACIÓN APRENDICES ===', [
                 'ficha_id' => $id,
                 'request_data' => $request->all(),
@@ -3378,7 +3378,7 @@ class FichaCaracterizacionController extends Controller
             return response()->json([
                 'disponible' => !$resultado['tiene_conflictos'],
                 'conflictos' => $resultado['conflictos'],
-                'mensaje' => $resultado['tiene_conflictos'] 
+                'mensaje' => $resultado['tiene_conflictos']
                     ? 'El instructor tiene asignaciones superpuestas en ese rango de fechas'
                     : 'El instructor está disponible en ese rango de fechas'
             ]);
@@ -3496,7 +3496,7 @@ class FichaCaracterizacionController extends Controller
                 'errors' => $e->errors(),
                 'request_data' => $request->all()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error de validación',
@@ -3765,7 +3765,7 @@ class FichaCaracterizacionController extends Controller
     {
         try {
             $instructorFicha = \App\Models\InstructorFichaCaracterizacion::with('ficha')->findOrFail($instructorFichaId);
-            
+
             $diasService = app(\App\Services\InstructorFichaDiasService::class);
             $fechasEfectivas = $diasService->generarFechasEfectivas($instructorFicha, $request->dias ?? []);
 

@@ -2,128 +2,168 @@
 
 namespace App\Services;
 
-use App\Repositories\UserRepository;
+use App\Models\Persona;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    protected UserRepository $repository;
-
-    public function __construct(UserRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     /**
-     * Cambia el estado de un usuario
-     *
-     * @param int $userId
-     * @param int $usuarioActualId
-     * @return bool
-     * @throws \Exception
+     * Crear o actualizar usuario para aspirante
      */
-    public function cambiarEstado(int $userId, int $usuarioActualId): bool
+    public function createOrUpdateForAspirante(array $data, Persona $persona): User
     {
-        // Evitar que un usuario cambie su propio estado
-        if ($userId === $usuarioActualId) {
-            throw new \Exception('No puedes modificar tu propio estado.');
+        $existingUser = User::where('email', $data['email'])->first();
+
+        if (!$existingUser) {
+            return $this->createUserForAspirante($data, $persona);
         }
 
-        return DB::transaction(function () use ($userId) {
-            $user = User::find($userId);
-
-            if (!$user) {
-                throw new \Exception('Usuario no encontrado.');
-            }
-
-            $nuevoEstado = !$user->status;
-
-            $actualizado = $this->repository->actualizar($userId, [
-                'status' => $nuevoEstado,
-            ]);
-
-            Log::info('Estado de usuario cambiado', [
-                'user_id' => $userId,
-                'nuevo_estado' => $nuevoEstado,
-            ]);
-
-            return $actualizado;
-        });
+        return $this->updateUserRoleForAspirante($existingUser);
     }
 
     /**
-     * Asigna roles a un usuario
-     *
-     * @param int $userId
-     * @param array $roles
-     * @return bool
+     * Crear nuevo usuario para aspirante
      */
-    public function asignarRoles(int $userId, array $roles): bool
+    private function createUserForAspirante(array $data, Persona $persona): User
     {
-        return DB::transaction(function () use ($userId, $roles) {
-            $user = User::findOrFail($userId);
+        $user = User::create([
+            'email' => $data['email'],
+            'password' => Hash::make($data['numero_documento']),
+            'status' => 1,
+            'persona_id' => $persona->id,
+        ]);
 
-            $user->syncRoles($roles);
+        $user->assignRole('ASPIRANTE');
 
-            Log::info('Roles asignados', [
-                'user_id' => $userId,
-                'roles' => $roles,
-            ]);
+        // Enviar email de verificación automáticamente
+        $user->sendEmailVerificationNotification();
 
-            return true;
-        });
+        return $user;
     }
 
-    public function agregarRoles(int $userId, array $roles): bool
+    /**
+     * Actualizar rol de usuario existente
+     */
+    private function updateUserRoleForAspirante(User $user): User
     {
-        if (empty($roles)) {
-            return true;
+        // Si el usuario tiene rol de visitante, cambiarlo a aspirante
+        if ($user->hasRole('VISITANTE')) {
+            $user->removeRole('VISITANTE');
+            $user->assignRole('ASPIRANTE');
         }
 
-        return DB::transaction(function () use ($userId, $roles) {
-            $user = User::findOrFail($userId);
-
-            $rolesValidos = collect($roles)
-                ->map(static fn(string $rol) => strtoupper($rol))
-                ->unique()
-                ->values();
-
-            $rolesDisponibles = \Spatie\Permission\Models\Role::whereIn('name', $rolesValidos)->pluck('name');
-
-            if ($rolesDisponibles->isEmpty()) {
-                return true;
-            }
-
-            $rolesPrevios = $user->roles->pluck('name');
-
-            $rolesDisponibles->each(static function (string $rol) use ($user): void {
-                if (!$user->hasRole($rol)) {
-                    $user->assignRole($rol);
-                }
-            });
-
-            Log::info('Roles agregados al usuario', [
-                'user_id' => $userId,
-                'roles_previos' => $rolesPrevios->all(),
-                'roles_nuevos' => $rolesDisponibles->all(),
-                'roles_finales' => $user->roles->pluck('name')->all(),
-            ]);
-
-            return true;
-        });
+        return $user;
     }
 
     /**
-     * Obtiene usuarios por rol
-     *
-     * @param string $rol
-     * @return \Illuminate\Database\Eloquent\Collection
+     * Crear usuario básico
      */
-    public function obtenerPorRol(string $rol)
+    public function create(array $data): User
     {
-        return $this->repository->obtenerPorRol($rol);
+        return User::create([
+            'email' => $data['email'],
+            'password' => Hash::make($data['password'] ?? $data['numero_documento']),
+            'status' => $data['status'] ?? 1,
+            'persona_id' => $data['persona_id'] ?? null,
+        ]);
+    }
+
+    /**
+     * Actualizar usuario
+     */
+    public function update(User $user, array $data): bool
+    {
+        $updateData = [];
+
+        if (isset($data['email'])) {
+            $updateData['email'] = $data['email'];
+        }
+
+        if (isset($data['password'])) {
+            $updateData['password'] = Hash::make($data['password']);
+        }
+
+        if (isset($data['status'])) {
+            $updateData['status'] = $data['status'];
+        }
+
+        if (isset($data['persona_id'])) {
+            $updateData['persona_id'] = $data['persona_id'];
+        }
+
+        return $user->update($updateData);
+    }
+
+    /**
+     * Asignar rol a usuario
+     */
+    public function assignRole(User $user, string $role): void
+    {
+        $user->assignRole($role);
+    }
+
+    /**
+     * Remover rol de usuario
+     */
+    public function removeRole(User $user, string $role): void
+    {
+        $user->removeRole($role);
+    }
+
+    /**
+     * Verificar si usuario tiene rol
+     */
+    public function hasRole(User $user, string $role): bool
+    {
+        return $user->hasRole($role);
+    }
+
+    /**
+     * Activar usuario
+     */
+    public function activate(User $user): bool
+    {
+        return $user->update(['status' => 1]);
+    }
+
+    /**
+     * Desactivar usuario
+     */
+    public function deactivate(User $user): bool
+    {
+        return $user->update(['status' => 0]);
+    }
+
+    /**
+     * Enviar notificación de verificación de email
+     */
+    public function sendEmailVerification(User $user): void
+    {
+        $user->sendEmailVerificationNotification();
+    }
+
+    /**
+     * Verificar email del usuario
+     */
+    public function markEmailAsVerified(User $user): bool
+    {
+        return $user->markEmailAsVerified();
+    }
+
+    /**
+     * Buscar usuario por email
+     */
+    public function findByEmail(string $email): ?User
+    {
+        return User::where('email', $email)->first();
+    }
+
+    /**
+     * Buscar usuario por persona
+     */
+    public function findByPersona(int $personaId): ?User
+    {
+        return User::where('persona_id', $personaId)->first();
     }
 }
-

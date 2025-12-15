@@ -18,7 +18,7 @@ class ResultadosAprendizajeRepository
         return ResultadosAprendizaje::where('status', 1)->get();
     }
 
-    
+
     /**
      * Obtiene los resultados de aprendizaje de una competencia
      *
@@ -31,7 +31,7 @@ class ResultadosAprendizajeRepository
             $query->where('competencias.id', $competenciaId);
         })->get();
     }
-    
+
 
     /**
      * Obtiene los resultados de aprendizaje por ID de guía de aprendizaje

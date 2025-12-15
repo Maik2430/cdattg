@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +37,7 @@ class ValidarDocumentoJob implements ShouldQueue
         // Obtener registro de progreso si existe
         $progress = null;
         if ($this->progressId) {
-            $progress = \App\Models\SofiaValidationProgress::find($this->progressId);
+            $progress = \App\Models\Complementarios\SofiaValidationProgress::find($this->progressId);
             if ($progress) {
                 $progress->markAsStarted();
                 Log::info("📊 Progreso inicializado con ID: {$this->progressId}");
@@ -157,10 +157,10 @@ class ValidarDocumentoJob implements ShouldQueue
             $numeroDocumento = $persona->numero_documento;
             $primerNombre = str_replace(' ', '_', $persona->primer_nombre);
             $primerApellido = str_replace(' ', '_', $persona->primer_apellido);
-            
+
             // Listar archivos en Google Drive
             $files = Storage::disk('google')->files('documentos_aspirantes');
-            
+
             // Buscar el archivo que coincida con el patrón
             foreach ($files as $file) {
                 $fileName = basename($file);

@@ -12,7 +12,7 @@
 }
 .course-card .card-icon {
     font-size: 2rem;
-    color: #6c757d;
+    color: #495057;
     margin-bottom: 1rem;
 }
 .course-card .card-title {
@@ -85,7 +85,7 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d;
+    color: #495057;
     z-index: 10;
 }
 
@@ -94,7 +94,7 @@
 }
 
 .pagination .page-link {
-    color: #6c757d;
+    color: #495057;
     border: 1px solid #dee2e6;
 }
 

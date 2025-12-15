@@ -242,7 +242,7 @@ class AprendizService
         }
 
         $nuevoEstado = !$aprendiz->estado;
-        
+
         $actualizado = $this->repository->actualizar($id, ['estado' => $nuevoEstado]);
 
         Log::info('Estado de aprendiz cambiado', [

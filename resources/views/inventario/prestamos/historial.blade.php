@@ -2,27 +2,26 @@
 
 @section('title', 'Historial de Mis Préstamos')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
+@include('inventario._components.common-css')
 
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
-
-@section('content')
-<div class="container-fluid">
-    @include('inventario._components.page-header', [
-        'title' => 'Historial de Mis Préstamos',
-        'subtitle' => 'Registro completo de todos tus préstamos',
-        'breadcrumb' => [
+@section('content_header')
+    <x-page-header
+        icon="fas fa-history"
+        title="Historial de Mis Préstamos"
+        subtitle="Registro completo de todos tus préstamos"
+        :breadcrumb="[
             ['label' => 'Inicio', 'url' => '#'],
             ['label' => 'Inventario', 'active' => true],
-            ['label' => 'Historial Prestamos', 'active' => true]
-        ]
-    ])
+            ['label' => 'Préstamos', 'url' => route('inventario.prestamos.mis')],
+            ['label' => 'Historial', 'active' => true]
+        ]"
+    />
+@endsection
 
-    @include('inventario._components.alerts')
+@section('content')
+    <section class="content mt-4">
+        <div class="container-fluid">
+            @include('components.session-alerts')
 
     <div class="row">
         <div class="col-12">
@@ -51,11 +50,18 @@
                                 </thead>
                                 <tbody>
                                     @foreach($prestamos as $detalle)
+                                        @php
+                                            $producto = $detalle->producto;
+                                            $productoNombre = $producto?->name ?? 'N/A';
+                                            $productoDescripcion = $producto?->descripcion ?? '';
+                                        @endphp
                                         <tr>
                                             <td>
-                                                <strong>{{ $detalle->producto->producto }}</strong>
+                                                <strong>{{ $productoNombre }}</strong>
+                                                @if($productoDescripcion)
                                                 <br>
-                                                <small class="text-muted">{{ $detalle->producto->descripcion }}</small>
+                                                <small class="text-muted">{{ $productoDescripcion }}</small>
+                                                @endif
                                             </td>
                                             <td>{{ $detalle->cantidad }}</td>
                                             <td>{{ $detalle->getCantidadDevuelta() }}</td>
@@ -90,7 +96,7 @@
                                                         <i class="fas fa-undo"></i> Devolver
                                                     </a>
                                                 @endif
-                                                <a href="{{ route('inventario.ordenes.show', $detalle->orden->id) }}"
+                                                <a href="{{ route('inventario.ordenes.show', ['orden' => $detalle->orden->id, 'ref' => url()->current()]) }}"
                                                    class="btn btn-sm btn-info">
                                                     <i class="fas fa-eye"></i> Ver Orden
                                                 </a>
@@ -109,28 +115,17 @@
                     @else
                         @include('inventario._components.empty-state', [
                             'title' => 'No tienes historial de préstamos',
-                            'message' => 'Aún no has realizado ningún préstamo.',
+                            'description' => 'Aún no has realizado ningún préstamo.',
                             'icon' => 'fas fa-history'
                         ])
                     @endif
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-    {{-- Notificaciones manejadas globalmente por sweetalert2-notifications --}}
+    </section>
 @endsection
 
-@section('footer')
-    {{-- Footer SENA --}}
-    @include('layouts.footer')
-@endsection
+@include('inventario._components.common-footer')
 
-@push('css')
-    @vite([
-        'resources/css/inventario/shared/base.css',
-    ])
-@endpush
 
 

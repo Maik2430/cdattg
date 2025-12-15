@@ -1,0 +1,183 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Inventario\Feature\Request;
+
+use Tests\TestCase;
+use App\Http\Requests\Inventario\ContratoConvenioRequest;
+use App\Models\Inventario\ContratoConvenio;
+use App\Models\Inventario\Proveedor;
+use App\Models\ParametroTema;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
+use PHPUnit\Framework\Attributes\Test;
+
+class ContratoConvenioRequestTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private const ID_INEXISTENTE = 99999;
+    private const LONGITUD_MAX_NAME = 256;
+    private const LONGITUD_MAX_CODIGO = 101;
+    private const FECHA_INICIO = '2025-01-01';
+    private const FECHA_FIN = '2025-12-31';
+    private const FECHA_FIN_INVALIDA = '2025-01-01';
+    private const FECHA_INICIO_INVALIDA = '2025-12-31';
+    private const CONTRATO_TEST = 'CONTRATO TEST';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Ejecutar seeder mínimo con datos esenciales para tests de inventario
+        $this->seed(\Tests\Modulos\Inventario\Feature\Requests\Seeders\InventarioRequestTestSeeder::class);
+    }
+
+    private function obtenerRules(): array
+    {
+        $request = new ContratoConvenioRequest();
+        return $request->rules();
+    }
+
+    private function validarYVerificarError(array $data, array $rules, string $campoEsperado): void
+    {
+        $validator = Validator::make($data, $rules);
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey($campoEsperado, $validator->errors()->toArray());
+    }
+
+    #[Test]
+    public function valida_name_requerido_en_store(): void
+    {
+        $rules = $this->obtenerRules();
+
+        $this->validarYVerificarError([], $rules, 'name');
+    }
+
+    #[Test]
+    public function valida_unicidad_de_name_en_store(): void
+    {
+        $this->validarUnicidadEnStore('name', self::CONTRATO_TEST);
+    }
+
+    #[Test]
+    public function valida_unicidad_de_codigo_en_store(): void
+    {
+        $this->validarUnicidadEnStore('codigo', 'COD-001', ['name' => 'NUEVO CONTRATO']);
+    }
+
+    #[Test]
+    public function valida_longitud_maxima_de_name(): void
+    {
+        $this->validarLongitudMaxima('name', self::LONGITUD_MAX_NAME);
+    }
+
+    #[Test]
+    public function valida_longitud_maxima_de_codigo(): void
+    {
+        $this->validarLongitudMaxima('codigo', self::LONGITUD_MAX_CODIGO, ['name' => self::CONTRATO_TEST]);
+    }
+
+    #[Test]
+    public function valida_existencia_de_proveedor(): void
+    {
+        $this->validarExistenciaRelacion('proveedor_id', self::ID_INEXISTENTE);
+    }
+
+    #[Test]
+    public function valida_fecha_fin_debe_ser_posterior_o_igual_a_fecha_inicio(): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'name' => self::CONTRATO_TEST,
+            'fecha_inicio' => self::FECHA_INICIO_INVALIDA,
+            'fecha_fin' => self::FECHA_FIN_INVALIDA,
+        ];
+
+        $this->validarYVerificarError($datos, $rules, 'fecha_fin');
+    }
+
+    #[Test]
+    public function valida_estado_id_requerido(): void
+    {
+        $this->validarCampoRequerido('estado_id', ['name' => self::CONTRATO_TEST]);
+    }
+
+    #[Test]
+    public function valida_estado_id_debe_existir(): void
+    {
+        $this->validarExistenciaRelacion('estado_id', self::ID_INEXISTENTE);
+    }
+
+    #[Test]
+    public function acepta_datos_validos_para_store(): void
+    {
+        // Crear datos mínimos necesarios solo para este test
+        $proveedor = Proveedor::factory()->create();
+        $estado = ParametroTema::factory()->create();
+
+        $rules = $this->obtenerRules();
+
+        $validator = Validator::make([
+            'name' => 'CONTRATO VALIDO',
+            'codigo' => 'COD-001',
+            'proveedor_id' => $proveedor->id,
+            'fecha_inicio' => self::FECHA_INICIO,
+            'fecha_fin' => self::FECHA_FIN,
+            'estado_id' => $estado->id,
+        ], $rules);
+
+        $this->assertFalse($validator->fails());
+    }
+
+    /**
+     * Validate uniqueness in store scenario.
+     */
+    private function validarUnicidadEnStore(string $campo, string $valor, array $datosAdicionales = []): void
+    {
+        ContratoConvenio::factory()->create([$campo => $valor]);
+        $rules = $this->obtenerRules();
+        $datos = array_merge([$campo => $valor], $datosAdicionales);
+
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate maximum length of a field.
+     */
+    private function validarLongitudMaxima(string $campo, int $longitudMaxima, array $datosAdicionales = []): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = array_merge(
+            [$campo => str_repeat('a', $longitudMaxima)],
+            $datosAdicionales
+        );
+
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate existence of a related entity.
+     */
+    private function validarExistenciaRelacion(string $campo, int $idInexistente): void
+    {
+        $rules = $this->obtenerRules();
+        $datos = [
+            'name' => self::CONTRATO_TEST,
+            $campo => $idInexistente,
+        ];
+
+        $this->validarYVerificarError($datos, $rules, $campo);
+    }
+
+    /**
+     * Validate that a field is required.
+     */
+    private function validarCampoRequerido(string $campo, array $datosBase): void
+    {
+        $rules = $this->obtenerRules();
+        $this->validarYVerificarError($datosBase, $rules, $campo);
+    }
+}
+

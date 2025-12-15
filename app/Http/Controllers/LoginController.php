@@ -85,14 +85,14 @@ class LoginController extends Controller
                     'user_id' => $user->id,
                     'email' => $user->email,
                 ]);
-                
+
                 $user->sendEmailVerificationNotification();
-                
+
                 \Illuminate\Support\Facades\Log::info('Correo de verificación enviado automáticamente', [
                     'user_id' => $user->id,
                     'email' => $user->email,
                 ]);
-                
+
                 $response = back()
                     ->withInput()
                     ->with(
@@ -107,7 +107,7 @@ class LoginController extends Controller
                     'email' => $user->email,
                     'error' => $e->getMessage(),
                 ]);
-                
+
                 $response = back()
                     ->withInput()
                     ->with(
@@ -144,7 +144,7 @@ class LoginController extends Controller
 
         if (!$user->hasVerifiedEmail()) {
             Auth::logout();
-            
+
             // Enviar correo de verificación automáticamente
             try {
                 \Illuminate\Support\Facades\Log::info(
@@ -154,9 +154,9 @@ class LoginController extends Controller
                         'email' => $user->email,
                     ]
                 );
-                
+
                 $user->sendEmailVerificationNotification();
-                
+
                 \Illuminate\Support\Facades\Log::info(
                     'Correo de verificación enviado automáticamente después de login',
                     [
@@ -174,7 +174,7 @@ class LoginController extends Controller
                     ]
                 );
             }
-            
+
             return redirect()
                 ->route('verification.notice')
                 ->with(
@@ -238,7 +238,7 @@ class LoginController extends Controller
             // Construcción de datos de la persona
             $persona = [
                 "id" => $personaD->id,
-                "tipo_documento" => optional($personaD->tipoDocumento)->name,
+                "tipo_documento" => optional($personaD->tipoDocumento)->name ?? null,
                 "numero_documento" => $personaD->numero_documento,
                 "primer_nombre" => $personaD->primer_nombre,
                 "segundo_nombre" => $personaD->segundo_nombre,
@@ -287,14 +287,14 @@ class LoginController extends Controller
                     'user_id' => $user->id,
                     'email' => $user->email,
                 ]);
-                
+
                 $user->sendEmailVerificationNotification();
-                
+
                 \Illuminate\Support\Facades\Log::info('Correo de verificación enviado exitosamente', [
                     'user_id' => $user->id,
                     'email' => $user->email,
                 ]);
-                
+
                 $response = back()
                     ->withInput()
                     ->with(
@@ -310,13 +310,13 @@ class LoginController extends Controller
                     'trace' => $e->getTraceAsString(),
                     'class' => get_class($e),
                 ]);
-                
+
                 $errorMessage = 'No se pudo enviar el correo de verificación.';
                 if (str_contains($e->getMessage(), 'Connection') || str_contains($e->getMessage(), 'SMTP')) {
                     $errorMessage .= ' Verifica la configuración SMTP.';
                 }
                 $errorMessage .= ' Error: ' . $e->getMessage();
-                
+
                 $response = back()
                     ->withInput()
                     ->withErrors(['error' => $errorMessage]);

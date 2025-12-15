@@ -56,7 +56,7 @@ class AprendizRepository
         }
 
         $perPage = $filtros['per_page'] ?? 15;
-        
+
         return $query->orderBy('id', 'desc')->paginate($perPage);
     }
 

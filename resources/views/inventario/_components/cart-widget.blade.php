@@ -29,7 +29,7 @@
     <form id="add-to-cart-form" class="cart-form">
         @csrf
         <input type="hidden" name="producto_id" value="{{ $producto->id }}">
-        <input type="hidden" name="producto_name" value="{{ $producto->producto }}">
+        <input type="hidden" name="producto_name" value="{{ $producto->name }}">
         <input type="hidden" name="max_stock" value="{{ $producto->cantidad }}">
 
         <div class="form-group">
@@ -184,6 +184,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Actualizar contador del carrito
     function updateCartCount() {
+        // Usar la función global si está disponible
+        if (typeof globalThis.updateCartCountFromStorage === 'function') {
+            globalThis.updateCartCountFromStorage();
+            return;
+        }
+
+        // Fallback local
         const countBadge = document.getElementById('cart-count');
         if (countBadge) {
             const cart = JSON.parse(localStorage.getItem('inventario_carrito')) || [];

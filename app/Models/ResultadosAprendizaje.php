@@ -34,8 +34,8 @@ class ResultadosAprendizaje extends Model
     public function guiasAprendizaje()
     {
         return $this->belongsToMany(GuiasAprendizaje::class, 'guia_aprendizaje_rap', 'rap_id', 'guia_aprendizaje_id')
-                    ->withPivot('user_create_id', 'user_edit_id')
-                    ->withTimestamps();
+            ->withPivot('user_create_id', 'user_edit_id')
+            ->withTimestamps();
     }
 
     /**
@@ -111,7 +111,7 @@ class ResultadosAprendizaje extends Model
      */
     public function scopePorCompetencia($query, $competenciaId)
     {
-        return $query->whereHas('competencias', function($q) use ($competenciaId) {
+        return $query->whereHas('competencias', function ($q) use ($competenciaId) {
             $q->where('competencias.id', $competenciaId);
         });
     }

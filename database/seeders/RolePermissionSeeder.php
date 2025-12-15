@@ -39,6 +39,7 @@ class RolePermissionSeeder extends Seeder
             'visitante' => Role::firstOrCreate(['name' => 'VISITANTE']),
             'aprendiz' => Role::firstOrCreate(['name' => 'APRENDIZ']),
             'aspirante' => Role::firstOrCreate(['name' => 'ASPIRANTE']),
+            'proveedor' => Role::firstOrCreate(['name' => 'PROVEEDOR']),
         ];
     }
 
@@ -81,6 +82,9 @@ class RolePermissionSeeder extends Seeder
         // ADMINISTRADOR
         $roles['admin']->syncPermissions($this->getPermisosAdministrador());
 
+        // COORDINADOR
+        $roles['coordinador']->syncPermissions($this->getPermisosCoordinador());
+
         // INSTRUCTOR
         $roles['instructor']->syncPermissions($this->getPermisosInstructor());
 
@@ -92,6 +96,9 @@ class RolePermissionSeeder extends Seeder
 
         // APRENDIZ
         $roles['aprendiz']->syncPermissions($this->getPermisosAprendiz());
+
+        // PROVEEDOR
+        $roles['proveedor']->syncPermissions($this->getPermisosVisitante());
     }
 
     // ==========================================
@@ -286,6 +293,7 @@ class RolePermissionSeeder extends Seeder
             
             // Ordenes
             'VER ORDEN',
+            'VER TODAS LAS ORDENES',
             'CREAR ORDEN',
             'EDITAR ORDEN',
             'ELIMINAR ORDEN',
@@ -473,6 +481,7 @@ class RolePermissionSeeder extends Seeder
             ],
             $this->getPermisosRedesConocimiento(),
             $this->getPermisosAprendices(),
+            $this->getPermisosInventarioAdministrador(),
             [
                 'VER PROGRAMAS DE FORMACION',
                 'VER PROGRAMA DE FORMACION',
@@ -511,19 +520,62 @@ class RolePermissionSeeder extends Seeder
             [
                 'VER COMPETENCIA',
             ],
-            [
-                'VER CATALOGO PRODUCTO',
-                'BUSCAR PRODUCTO',
-                'VER CARRITO',
-                'AGREGAR CARRITO',
-                'ACTUALIZAR CARRITO',
-                'ELIMINAR CARRITO',
-                'VACIAR CARRITO',
-                'CREAR ORDEN',
-                'DEVOLVER PRESTAMO',
-                self::PERMISO_VER_NOTIFICACION,
-            ]
+            $this->getPermisosInventarioBasicos()
         );
+    }
+
+    /**
+     * Permisos de Inventario para el rol ADMINISTRADOR (todos menos aprobar orden)
+     */
+    private function getPermisosInventarioAdministrador(): array
+    {
+        $permisosInventario = $this->getPermisosInventario();
+
+        return array_values(
+            array_filter(
+                $permisosInventario,
+                static function (string $permiso): bool {
+                    return $permiso !== 'APROBAR ORDEN';
+                }
+            )
+        );
+    }
+
+    /**
+     * Permisos base de Inventario para roles que consumen el módulo (Instructor, Coordinador, Aprendiz)
+     */
+    private function getPermisosInventarioBasicos(): array
+    {
+        return [
+            'VER CATALOGO PRODUCTO',
+            'VER PRODUCTO',
+            'BUSCAR PRODUCTO',
+            'VER CARRITO',
+            'AGREGAR CARRITO',
+            'ACTUALIZAR CARRITO',
+            'ELIMINAR CARRITO',
+            'VACIAR CARRITO',
+            'CREAR ORDEN',
+            'VER ORDEN',
+            'EDITAR ORDEN',
+            'ELIMINAR ORDEN',
+            'VER PRESTAMO',
+            'CREAR PRESTAMO',
+            'EDITAR PRESTAMO',
+            'DEVOLVER PRESTAMO',
+            'VER DEVOLUCION',
+            'CREAR DEVOLUCION',
+            'PROCESAR DEVOLUCION',
+            self::PERMISO_VER_NOTIFICACION,
+        ];
+    }
+
+    /**
+     * Permisos para el rol COORDINADOR
+     */
+    private function getPermisosCoordinador(): array
+    {
+        return $this->getPermisosInventarioBasicos();
     }
 
     /**
@@ -554,6 +606,10 @@ class RolePermissionSeeder extends Seeder
      */
     private function getPermisosAprendiz(): array
     {
-        return $this->getPermisosVisitante();
+        return array_merge(
+            $this->getPermisosVisitante(),
+            $this->getPermisosInventarioBasicos()
+        );
     }
+
 }

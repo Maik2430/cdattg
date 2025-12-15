@@ -1,118 +1,144 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
-use Illuminate\Http\Request;
+use App\Inventario\Services\Notification\UserNotificationService;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Inventario\Notificacion;
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Controllers\Controller;
 
-class NotificacionController extends InventarioController
+class NotificacionController extends Controller
 {
-    public function __construct()
+    private const NOTIFICACION_NO_ENCONTRADA = 'Notificación no encontrada';
+    private const ERROR_ELIMINAR = 'Error al eliminar notificación: ';
+
+    protected UserNotificationService $service;
+
+    public function __construct(UserNotificationService $service)
     {
-        parent::__construct();
         $this->middleware('auth');
-        $this->middleware('can:VER NOTIFICACION')->only(['index']);
+        $this->middleware('can:VER NOTIFICACION')->only(['index', 'getUnread']);
+        $this->service = $service;
     }
 
     /**
      * Mostrar todas las notificaciones del usuario
      */
-    public function index()
+    public function index() : View
     {
-        $notificaciones = Auth::user()->notifications()
-            ->paginate(10);
-        
+        $notificaciones = $this->service->obtenerNotificacionesPaginadas(Auth::id());
+
         return view('inventario.notificaciones.index', compact('notificaciones'));
     }
 
     /**
      * Obtener notificaciones no leídas para el dropdown
      */
-    public function getUnread()
+    public function getUnread() : JsonResponse
     {
-        $notificaciones = Auth::user()->unreadNotifications()
-            ->take(5)
-            ->get();
-        
-        $count = Auth::user()->unreadNotifications()->count();
-        
-        return response()->json([
-            'notificaciones' => $notificaciones,
-            'count' => $count
-        ]);
+        $datos = $this->service->obtenerDatosDropdown(Auth::id());
+
+        return response()->json($datos);
     }
 
     /**
      * Marcar una notificación como leída
      */
-    public function markAsRead($id)
+    public function markAsRead(string $id) : JsonResponse
     {
-        $notificacion = Auth::user()->notifications()
-            ->where('id', $id)
-            ->first();
-        
-        if ($notificacion) {
-            $notificacion->markAsRead();
-            
+        try {
+            $resultado = $this->service->marcarComoLeida(Auth::id(), $id);
+
+            if ($resultado) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Notificación marcada como leída'
+                ]);
+            }
+
             return response()->json([
-                'success' => true,
-                'message' => 'Notificación marcada como leída'
-            ]);
+                'success' => false,
+                'message' => self::NOTIFICACION_NO_ENCONTRADA
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al marcar notificación: ' . $e->getMessage()
+            ], 500);
         }
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Notificación no encontrada'
-        ], 404);
     }
 
     /**
      * Marcar todas las notificaciones como leídas
      */
-    public function markAllAsRead()
+    public function markAllAsRead() : JsonResponse
     {
-        Auth::user()->unreadNotifications->each(function ($notification) {
-            $notification->markAsRead();
-        });
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Todas las notificaciones marcadas como leídas'
-        ]);
+        try {
+            $count = $this->service->marcarTodasComoLeidas(Auth::id());
+
+            return response()->json([
+                'success' => true,
+                'message' => "Todas las notificaciones marcadas como leídas ({$count})"
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al marcar notificaciones: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Eliminar una notificación
      */
-    public function destroy($id)
+    public function destroy(string $id) : JsonResponse
     {
-        $notificacion = Auth::user()->notifications()
-            ->where('id', $id)
-            ->first();
-        
-        if ($notificacion) {
-            $notificacion->delete();
-            
-            return back()->with('success', 'Notificación eliminada exitosamente');
+        try {
+            $resultado = $this->service->eliminar(Auth::id(), $id);
+            $statusCode = $resultado ? 200 : 404;
+            $message = $resultado ? 'Notificación eliminada exitosamente' : self::NOTIFICACION_NO_ENCONTRADA;
+
+            return response()->json([
+                'success' => $resultado,
+                'message' => $message
+            ], $statusCode);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => self::NOTIFICACION_NO_ENCONTRADA
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => self::ERROR_ELIMINAR . $e->getMessage()
+            ], 500);
         }
-        
-        return back()->with('error', 'Notificación no encontrada');
     }
 
     /**
      * Eliminar todas las notificaciones del usuario
      */
-    public function destroyAll()
+    public function destroyAll()  : JsonResponse
     {
-        $count = Auth::user()->notifications()->count();
-        
-        Auth::user()->notifications()->delete();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Todas las notificaciones han sido eliminadas',
-            'deleted' => $count
-        ]);
+        try {
+            $count = Auth::user()->notifications()->count();
+
+            Auth::user()->notifications()->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Todas las notificaciones han sido eliminadas',
+                'deleted' => $count
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar notificaciones: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

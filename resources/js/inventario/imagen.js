@@ -16,7 +16,30 @@ document.addEventListener('DOMContentLoaded', function() {
     configurarAtajosTeclado(elements);
     configurarDobleClick(elements, state);
     configurarPrevencionSeleccion(elements, state);
+    configurarPreviewImagen();
 });
+
+function configurarPreviewImagen() {
+    const input = document.getElementById('imagen');
+    const preview = document.getElementById('preview');
+
+    if (!input || !preview) {
+        return;
+    }
+
+    input.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(loadEvent) {
+            preview.src = loadEvent.target?.result ?? preview.src;
+        };
+        reader.readAsDataURL(file);
+    });
+}
 
 function obtenerElementosViewer() {
     return {
@@ -62,7 +85,7 @@ function configurarDescarga(elements) {
         link.download = `producto-${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
+        link.remove();
 
         mostrarNotificacion('Imagen descargada correctamente', 'success');
     });

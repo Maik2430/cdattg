@@ -41,23 +41,17 @@ class OrdenAprobadaNotification extends Notification implements ShouldQueue
         $orden = $this->detalleOrden->orden;
         $producto = $this->detalleOrden->producto;
         $tipoOrden = $orden->tipoOrden->parametro->name ?? 'N/A';
-        
+
         return (new MailMessage)
-            ->subject('✅ Tu Solicitud ha sido Aprobada - Orden #' . $orden->id)
-            ->greeting('¡Hola, ' . $notifiable->name . '!')
-            ->line('¡Buenas noticias! Tu solicitud de ' . strtolower($tipoOrden) . ' ha sido aprobada.')
-            ->line('**Orden:** #' . $orden->id)
-            ->line('**Tipo:** ' . $tipoOrden)
-            ->line('**Producto:** ' . $producto->producto)
-            ->line('**Cantidad Aprobada:** ' . $this->detalleOrden->cantidad . ' unidades')
-            ->line('**Aprobado por:** ' . $this->aprobador->name)
-            ->when($orden->fecha_devolucion, function ($message) use ($orden) {
-                return $message->line('**Fecha de Devolución:** ' . $orden->fecha_devolucion->format('d/m/Y'))
-                    ->line('⚠️ Recuerda devolver el producto en la fecha indicada.');
-            })
-            ->action('Ver Detalles', url('/inventario/ordenes/' . $orden->id))
-            ->line('Puedes pasar a recoger el producto.')
-            ->salutation('Saludos, ' . config('app.name'));
+            ->subject('Tu Solicitud ha sido Aprobada - Orden #' . $orden->id)
+            ->view('inventario.email.orden-aprobada', [
+                'notifiable' => $notifiable,
+                'orden' => $orden,
+                'detalleOrden' => $this->detalleOrden,
+                'producto' => $producto,
+                'tipoOrden' => $tipoOrden,
+                'aprobador' => $this->aprobador,
+            ]);
     }
 
     /**
@@ -67,12 +61,15 @@ class OrdenAprobadaNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
+        $producto = $this->detalleOrden->producto;
+
         return [
             'orden_id' => $this->detalleOrden->orden->id,
             'detalle_orden_id' => $this->detalleOrden->id,
             'producto' => [
-                'id' => $this->detalleOrden->producto->id,
-                'producto' => $this->detalleOrden->producto->producto,
+                'id' => $producto->id,
+                'producto' => $producto->name,
+                'name' => $producto->name,
             ],
             'cantidad' => $this->detalleOrden->cantidad,
             'aprobador' => [

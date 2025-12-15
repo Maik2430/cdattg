@@ -85,7 +85,7 @@
                                 @forelse ($programas as $programa)
                                     @php
                                         $busqueda = Str::of(
-                                            $programa->nombre . ' ' . $programa->codigo . ' ' . $programa->descripcion,
+                                            $programa->nombre . ' ' . $programa->codigo . ' ' . ($programa->justificacion ?? ''),
                                         )->lower();
                                         $modalidadSlug = Str::slug($programa->modalidad->parametro->name ?? '');
                                         $jornadaSlug = Str::slug($programa->jornada->jornada ?? '');
@@ -100,7 +100,7 @@
                                                 {{ $programa->nombre }}
                                             </div>
                                             <small class="text-muted d-block">
-                                                {{ Str::limit($programa->descripcion, 90) }}
+                                                {{ Str::limit($programa->justificacion ?? 'Sin justificación', 90) }}
                                             </small>
                                         </td>
                                         <td class="align-middle">
@@ -118,20 +118,19 @@
                                             {{ $programa->cupos }}
                                         </td>
                                         <td class="align-middle text-center">
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <button type="button" class="btn btn-outline-primary" data-action="view"
-                                                    data-id="{{ $programa->id }}" data-toggle="tooltip" title="Ver ficha">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-outline-warning" data-action="edit"
-                                                    data-id="{{ $programa->id }}" data-toggle="tooltip" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-outline-danger" data-action="delete"
-                                                    data-id="{{ $programa->id }}" data-toggle="tooltip" title="Eliminar">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </div>
+                                            <x-action-buttons
+                                                :show="true"
+                                                :edit="true"
+                                                :delete="true"
+                                                :showUrl="route('complementarios-ofertados.show', $programa->id)"
+                                                :editUrl="route('complementarios-ofertados.edit', $programa->id)"
+                                                :deleteUrl="route('complementarios-ofertados.destroy', $programa->id)"
+                                                :showTitle="'Ver detalles del programa'"
+                                                :editTitle="'Editar programa'"
+                                                :deleteTitle="'Eliminar programa'"
+                                                :modelName="'programa'"
+                                                :modelId="$programa->id"
+                                            />
                                         </td>
                                     </tr>
                                 @empty
@@ -345,7 +344,9 @@
                         <dt class="col-sm-4">Código</dt>
                         <dd class="col-sm-8" id="detalle-codigo">-</dd>
                         <dt class="col-sm-4">Descripción</dt>
-                        <dd class="col-sm-8" id="detalle-descripcion">-</dd>
+                        <dd class="col-sm-8" id="detalle-justificacion">-</dd>
+                        <dt class="col-sm-4">Requisitos de Ingreso</dt>
+                        <dd class="col-sm-8" id="detalle-requisitos-ingreso">-</dd>
                         <dt class="col-sm-4">Duración</dt>
                         <dd class="col-sm-8" id="detalle-duracion">-</dd>
                         <dt class="col-sm-4">Cupos</dt>
@@ -396,8 +397,14 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="font-weight-semibold" for="edit-descripcion">Descripción</label>
-                            <textarea class="form-control" id="edit-descripcion" rows="3" required></textarea>
+                            <label class="font-weight-semibold" for="edit-justificacion">Descripción</label>
+                            <textarea class="form-control" id="edit-justificacion" rows="3" required maxlength="600"></textarea>
+                            <small class="form-text text-muted">Máximo 600 caracteres</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-semibold" for="edit-requisitos-ingreso">Requisitos de Ingreso</label>
+                            <textarea class="form-control" id="edit-requisitos-ingreso" rows="3" required maxlength="400"></textarea>
+                            <small class="form-text text-muted">Máximo 400 caracteres</small>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
@@ -459,7 +466,30 @@
 @endsection
 
 @section('js')
+    <!-- Cargar Axios desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Datos del servidor para JavaScript -->
+    <script type="application/json" id="modalidades-data">
+        @json($modalidades)
+    </script>
+    <script type="application/json" id="jornadas-data">
+        @json($jornadas)
+    </script>
+    <script type="application/json" id="ambientes-data">
+        @json($ambientes)
+    </script>
+    <!-- Rutas del servidor para JavaScript -->
+    <script type="application/json" id="routes-data">
+        {
+            "editApi": "{{ route('complementarios-ofertados.edit-api', ':id') }}",
+            "update": "{{ route('complementarios-ofertados.update', ':id') }}",
+            "destroy": "{{ route('complementarios-ofertados.destroy', ':id') }}"
+        }
+    </script>
     <script>
+        // Rutas del servidor
+        const routes = JSON.parse(document.getElementById('routes-data').textContent);
         $(function() {
             const table = $('#programas-table').DataTable({
                 language: {
@@ -506,20 +536,21 @@
             });
 
             const fetchPrograma = (id) => {
-                const url = '{{ route('complementarios-ofertados.edit', ':id') }}'.replace(':id', id);
+                const url = routes.editApi.replace(':id', id);
                 return axios.get(url).then(response => response.data);
             };
 
             const showDetalle = (data) => {
                 $('#detalle-nombre').text(data.nombre);
                 $('#detalle-codigo').text(data.codigo);
-                $('#detalle-descripcion').text(data.descripcion || 'N/A');
+                $('#detalle-justificacion').text(data.justificacion || 'N/A');
+                $('#detalle-requisitos-ingreso').text(data.requisitos_ingreso || 'N/A');
                 $('#detalle-duracion').text(`${data.duracion} horas`);
                 $('#detalle-cupos').text(data.cupos);
 
-                const modalidades = @json($modalidades);
-                const jornadas = @json($jornadas);
-                const ambientes = @json($ambientes);
+                const modalidades = JSON.parse(document.getElementById('modalidades-data').textContent);
+                const jornadas = JSON.parse(document.getElementById('jornadas-data').textContent);
+                const ambientes = JSON.parse(document.getElementById('ambientes-data').textContent);
                 const estados = {
                     0: 'Sin oferta',
                     1: 'Con oferta',
@@ -555,7 +586,8 @@
                 $('#edit-programa-id').val(data.id);
                 $('#edit-nombre').val(data.nombre);
                 $('#edit-codigo').val(data.codigo);
-                $('#edit-descripcion').val(data.descripcion);
+                $('#edit-justificacion').val(data.justificacion);
+                $('#edit-requisitos-ingreso').val(data.requisitos_ingreso);
                 $('#edit-duracion').val(data.duracion);
                 $('#edit-cupos').val(data.cupos);
                 $('#edit-modalidad').val(data.modalidad_id);
@@ -565,16 +597,11 @@
                 $('#modal-editar-programa').modal('show');
             };
 
-            $('[data-action="view"]').on('click', function() {
-                const id = $(this).data('id');
-                fetchPrograma(id)
-                    .then(showDetalle)
-                    .catch(() => {
-                        Swal.fire('Error', 'No se pudo cargar la información del programa.', 'error');
-                    });
-            });
+            // Los botones de view y edit ahora son enlaces directos, no necesitan event listeners
+            // El delete se maneja automáticamente por el componente action-buttons con la clase formulario-eliminar
 
-            $('[data-action="edit"]').on('click', function() {
+            // Mantener el modal de edición para compatibilidad si se accede desde otra parte
+            $(document).on('click', '[data-action="edit-modal"]', function() {
                 const id = $(this).data('id');
                 fetchPrograma(id)
                     .then(showEditar)
@@ -583,7 +610,7 @@
                     });
             });
 
-            $('[data-action="delete"]').on('click', function() {
+            $(document).on('click', '[data-action="delete"]', function() {
                 const id = $(this).data('id');
                 Swal.fire({
                     title: '¿Eliminar programa?',
@@ -594,49 +621,68 @@
                     cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Sí, eliminar',
                     cancelButtonText: 'Cancelar',
-                    reverseButtons: true
+                    reverseButtons: true,
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                        const url = routes.destroy.replace(':id', id);
+                        return axios.delete(url)
+                            .then(response => response.data)
+                            .catch(error => {
+                                if (error.response) {
+                                    // El servidor respondió con un código de error
+                                    throw new Error(error.response.data.message || 'Error del servidor');
+                                } else if (error.request) {
+                                    // La solicitud fue hecha pero no se recibió respuesta
+                                    throw new Error('No se recibió respuesta del servidor');
+                                } else {
+                                    // Algo pasó al configurar la solicitud
+                                    throw new Error('Error al configurar la solicitud');
+                                }
+                            });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
                 }).then(result => {
-                    if (!result.isConfirmed) {
-                        return;
+                    if (result.isConfirmed) {
+                        if (result.value.success) {
+                            Swal.fire({
+                                title: '¡Eliminado!',
+                                text: result.value.message,
+                                icon: 'success',
+                                confirmButtonText: 'Aceptar'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            // Mostrar error sin recargar la página
+                            Swal.fire({
+                                title: 'No se puede eliminar',
+                                text: result.value.message,
+                                icon: 'error',
+                                confirmButtonText: 'Entendido',
+                                showCancelButton: false
+                            });
+                        }
                     }
-
-                    const url = '{{ route('complementarios-ofertados.destroy', ':id') }}'
-                        .replace(':id', id);
-
-                    axios.delete(url)
-                        .then(response => {
-                            if (response.data.success) {
-                                Swal.fire('Eliminado', response.data.message, 'success')
-                                    .then(() => window.location.reload());
-                            } else {
-                                Swal.fire(
-                                    'Error',
-                                    response.data.message ??
-                                    'No se pudo eliminar el programa.',
-                                    'error'
-                                );
-                            }
-                        })
-                        .catch(() => {
-                            Swal.fire(
-                                'Error',
-                                'Ocurrió un problema al eliminar el programa.',
-                                'error'
-                            );
-                        });
+                }).catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: error.message || 'Ocurrió un problema al eliminar el programa.',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido'
+                    });
                 });
             });
 
             $('#form-editar-programa').on('submit', function(event) {
                 event.preventDefault();
                 const id = $('#edit-programa-id').val();
-                const url = '{{ route('complementarios-ofertados.update', ':id') }}'
-                    .replace(':id', id);
+                const url = routes.update.replace(':id', id);
 
                 const payload = {
                     nombre: $('#edit-nombre').val(),
                     codigo: $('#edit-codigo').val(),
-                    descripcion: $('#edit-descripcion').val(),
+                    justificacion: $('#edit-justificacion').val(),
+                    requisitos_ingreso: $('#edit-requisitos-ingreso').val(),
                     duracion: $('#edit-duracion').val(),
                     cupos: $('#edit-cupos').val(),
                     modalidad_id: $('#edit-modalidad').val(),

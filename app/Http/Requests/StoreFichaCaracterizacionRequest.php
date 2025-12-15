@@ -28,7 +28,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
             'has_crear_ficha_de' => $user->can('CREAR FICHA DE CARACTERIZACION'),
             'permissions' => $user->getAllPermissions()->pluck('name')
         ]);
-        
+
         return $canCreate;
     }
 
@@ -43,7 +43,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
             'user_id' => $this->user()->id,
             'all_data' => $this->all()
         ]);
-        
+
         return [
             // Validación del número de ficha
             'ficha' => [
@@ -300,7 +300,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     $this->fecha_inicio,
                     $this->fecha_fin
                 );
-                
+
                 if (!$validacionAmbiente['valido']) {
                     $validator->errors()->add('ambiente_id', $validacionAmbiente['mensaje']);
                 }
@@ -313,7 +313,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     $this->fecha_inicio,
                     $this->fecha_fin
                 );
-                
+
                 if (!$validacionInstructor['valido']) {
                     $validator->errors()->add('instructor_id', $validacionInstructor['mensaje']);
                 }
@@ -325,7 +325,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     $this->ficha,
                     $this->programa_formacion_id
                 );
-                
+
                 if (!$validacionFicha['valido']) {
                     $validator->errors()->add('ficha', $validacionFicha['mensaje']);
                 }
@@ -395,7 +395,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
             // 6. Validar reglas de negocio específicas del SENA
             $datos = $this->all();
             $validacionReglas = $this->validarReglasNegocioSena($datos);
-            
+
             if (!$validacionReglas['valido']) {
                 // Agregar cada error individualmente para mejor UX
                 $mensajes = explode('. ', $validacionReglas['mensaje']);
@@ -417,7 +417,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     }
                 }
             }
-            
+
             \Log::info('StoreFichaCaracterizacionRequest withValidator completed', [
                 'user_id' => $this->user()->id,
                 'final_errors_count' => $validator->errors()->count(),

@@ -1,7 +1,9 @@
 <?php
 
+
 namespace Database\Factories;
 
+use App\Exceptions\UserFactoryException;
 use App\Models\Persona;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,13 +30,41 @@ class UserFactory extends Factory
         $uniqueId = uniqid('user_', true);
         $timestamp = time() . rand(1000, 9999);
         
+        // Asegurar que persona_id nunca sea null
+        $personaId = null;
+        
+        try {
+            $personaId = Persona::query()->inRandomOrder()->value('id');
+        } catch (\Throwable $e) {
+            // Ignorar error de consulta, se creará una nueva persona
+        }
+        
+        if (!$personaId) {
+            try {
+                $persona = Persona::factory()->create();
+                $personaId = $persona->id;
+            } catch (\Throwable $e) {
+                // Si falla la creación del factory, lanzar excepción en lugar de establecer null
+                throw new UserFactoryException(
+                    'No se pudo crear una Persona para el User. Error: ' . $e->getMessage(),
+                    0,
+                    $e
+                );
+            }
+        }
+        
+        // Validación final: asegurar que persona_id no sea null
+        if (!$personaId) {
+            throw new UserFactoryException('persona_id no puede ser null. La tabla users requiere persona_id NOT NULL.');
+        }
+        
         return [
             'email' => strtolower($uniqueId . $timestamp . '@example.com'),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('12345678'),
             'remember_token' => Str::random(10),
             'status' => 1,
-            'persona_id' => Persona::factory(),
+            'persona_id' => $personaId,
         ];
     }
 

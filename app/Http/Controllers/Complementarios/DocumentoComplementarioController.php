@@ -4,13 +4,18 @@ namespace App\Http\Controllers\Complementarios;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\ComplementarioOfertado;
-use App\Models\AspiranteComplementario;
+use App\Models\Complementarios\ComplementarioOfertado;
+use App\Models\Complementarios\AspiranteComplementario;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Services\Complementarios\ComplementarioService;
 
 class DocumentoComplementarioController extends Controller
 {
+    public function __construct(
+        private readonly ComplementarioService $complementarioService
+    ) {}
+
     /**
      * Mostrar formulario para subir documentos
      */
@@ -19,7 +24,7 @@ class DocumentoComplementarioController extends Controller
         $programa = ComplementarioOfertado::findOrFail($id);
 
         // Obtener aspirante_id de la URL
-        $aspiranteId = $request->query('aspirante_id');
+        $aspirante_id = $request->query('aspirante_id');
 
         return view('complementarios.inscripciones.documents', compact('programa', 'aspirante_id'));
     }
@@ -66,15 +71,15 @@ class DocumentoComplementarioController extends Controller
                 $file = $request->file('documento_identidad');
 
                 // Crear nombre de archivo con formato:
-                // tipo_documento_NumeroDocumento_PrimerNombre_PrimerApellido_timestamp.pdf
-                $tipoDocumento = $aspirante->persona->tipoDocumento->name ?? 'DOC';
+                // tipo_documento_NumeroDocumento_timestamp.pdf
+                $tipoDocumento = $aspirante->persona->tipoDocumento?->name ?? 'DOC';
                 $numeroDocumento = $aspirante->persona->numero_documento;
-                $primerNombre = $aspirante->persona->primer_nombre;
-                $primerApellido = $aspirante->persona->primer_apellido;
                 $timestamp = now()->format('d-m-y-H-i-s');
 
-                $fileName = "{$tipoDocumento}_{$numeroDocumento}_{$primerNombre}_" .
-                           "{$primerApellido}_{$timestamp}.{$file->getClientOriginalExtension()}";
+                // Reemplazar espacios por guiones bajos para consistencia
+                $tipoDocumento = str_replace(' ', '_', $tipoDocumento);
+
+                $fileName = "{$tipoDocumento}_{$numeroDocumento}_{$timestamp}.{$file->getClientOriginalExtension()}";
 
                 Log::info('Attempting to upload file to Google Drive', [
                     'file_name' => $fileName,
@@ -132,6 +137,66 @@ class DocumentoComplementarioController extends Controller
      */
     public function procesarDocumentos()
     {
-        return view('complementarios.inscripciones.processing');
+        $tiposDocumento = $this->complementarioService->getTiposDocumento();
+        return view('complementarios.inscripciones.processing', compact('tiposDocumento'));
+    }
+
+    /**
+     * Procesar envío de documento desde el formulario
+     */
+    public function procesarDocumentoSubmit(Request $request)
+    {
+        Log::info('=== procesarDocumentoSubmit method reached ===', [
+            'request_data' => $request->all(),
+            'files' => $request->files->all()
+        ]);
+
+        // Validar los datos del formulario
+        $request->validate([
+            'tipo_documento' => 'required|exists:parametros,id',
+            'numero_documento' => 'required|string|max:50',
+            'documento_identidad' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB máximo
+        ]);
+
+        try {
+            // Procesar el archivo y subirlo a Google Drive
+            if ($request->hasFile('documento_identidad')) {
+                $file = $request->file('documento_identidad');
+
+                // Obtener el nombre del tipo de documento
+                $tipoDocumento = \App\Models\Parametro::find($request->tipo_documento);
+                $tipoDocumentoName = $tipoDocumento ? str_replace(' ', '_', $tipoDocumento->name) : 'DOC';
+                $numeroDocumento = $request->numero_documento;
+                $timestamp = now()->format('d-m-y-H-i-s');
+
+                // Crear nombre de archivo
+                $fileName = "{$tipoDocumentoName}_{$numeroDocumento}_{$timestamp}.{$file->getClientOriginalExtension()}";
+
+                Log::info('Attempting to upload file to Google Drive', [
+                    'file_name' => $fileName,
+                    'tipo_documento' => $tipoDocumentoName,
+                    'numero_documento' => $numeroDocumento,
+                    'file_size' => $file->getSize()
+                ]);
+
+                // Subir a Google Drive
+                $path = Storage::disk('google')->putFileAs('documentos_aspirantes', $file, $fileName);
+
+                Log::info('File uploaded successfully', ['path' => $path]);
+
+                return redirect()->route('procesar-documentos')
+                    ->with('success', 'Documento subido exitosamente a Google Drive.');
+            }
+
+            return back()->with('error', 'No se pudo procesar el archivo.');
+
+        } catch (\Exception $e) {
+            Log::error('Error al procesar documento: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->with('error', 'Error al procesar el documento. Por favor intente nuevamente.');
+        }
     }
 }
+

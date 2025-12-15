@@ -2,6 +2,7 @@
 
 $rutaLogoAdmin = 'vendor/adminlte/dist/img/LogoSena.png';
 $permisoVerProducto = 'VER PRODUCTO';
+$permisoVerProductos = 'VER PRODUCTOS';
 $permisoVerCatalogoProducto = 'VER CATALOGO PRODUCTO';
 $permisoVerCategoria = 'VER CATEGORIA';
 $permisoVerMarca = 'VER MARCA';
@@ -471,7 +472,7 @@ return [
                         ],
                         [
                             'text' => 'Estadísticas',
-                            'url' => 'estadisticas',
+                            'url' => 'complementarios/estadisticas',
                             'icon' => 'fas fa-fw fa-chart-line',
                             'can' => 'VER ESTADISTICAS',
                         ],

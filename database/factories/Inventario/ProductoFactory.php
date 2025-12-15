@@ -2,10 +2,13 @@
 
 namespace Database\Factories\Inventario;
 
+use App\Exceptions\ProductoFactoryException;
 use App\Models\Ambiente;
 use App\Models\Inventario\ContratoConvenio;
 use App\Models\Inventario\Producto;
 use App\Models\Inventario\Proveedor;
+use Database\Factories\Concerns\HasParametroTema;
+use Database\Factories\Concerns\HasUserId;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -13,11 +16,87 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ProductoFactory extends Factory
 {
+    use HasUserId, HasParametroTema;
+
     protected $model = Producto::class;
+
+    /**
+     * Sobrescribe el método para usar ProductoFactoryException
+     */
+    protected function getParametroTemaExceptionClass(): string
+    {
+        return ProductoFactoryException::class;
+    }
 
     public function definition(): array
     {
-        $ambienteId = Ambiente::query()->inRandomOrder()->value('id') ?? 1;
+        // Obtener o crear ambiente
+        $ambienteId = null;
+        try {
+            $ambienteId = Ambiente::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            // Ignorar error de consulta
+        }
+
+        if (!$ambienteId) {
+            try {
+                $ambienteId = Ambiente::factory()->create()->id;
+            } catch (\Exception $e) {
+                // Si falla, usar null si es nullable, o lanzar excepción
+                $ambienteId = null;
+            }
+        }
+
+        // Obtener o crear contrato convenio
+        $contratoConvenioId = null;
+        try {
+            $contratoConvenioId = ContratoConvenio::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            // Ignorar error de consulta
+        }
+
+        if (!$contratoConvenioId) {
+            try {
+                $contratoConvenioId = ContratoConvenio::factory()->create()->id;
+            } catch (\Exception $e) {
+                // Si falla, usar null si es nullable
+                $contratoConvenioId = null;
+            }
+        }
+
+        // Obtener o crear proveedor
+        $proveedorId = null;
+        try {
+            $proveedorId = Proveedor::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            // Ignorar error de consulta
+        }
+
+        if (!$proveedorId) {
+            try {
+                $proveedorId = Proveedor::factory()->create()->id;
+            } catch (\Exception $e) {
+                // Si falla, usar null si es nullable
+                $proveedorId = null;
+            }
+        }
+
+        // Obtener IDs de parametros_temas - campos NOT NULL
+        // Intentar obtener cualquier parametro_tema existente
+        $tipoProductoId = $this->obtenerParametroTemaAleatorio();
+        $unidadMedidaId = $this->obtenerParametroTemaAleatorio();
+        $estadoProductoId = $this->obtenerParametroTemaAleatorio();
+
+        // Campos nullable
+        $categoriaId = null;
+        $marcaId = null;
+
+        try {
+            $categoriaId = \App\Models\Inventario\Categoria::query()->inRandomOrder()->value('id');
+            $marcaId = \App\Models\Inventario\Marca::query()->inRandomOrder()->value('id');
+        } catch (\Exception $e) {
+            // Ignorar errores, campos son nullable
+        }
 
         $productos = ['COMPUTADOR', 'MONITOR', 'TECLADO', 'MOUSE', 'CABLE', 'SWITCH', 'ROUTER', 'ESCRITORIO', 'SILLA'];
         $producto = strtoupper($productos[array_rand($productos)] . ' ' . $productos[array_rand($productos)]);
@@ -30,25 +109,26 @@ class ProductoFactory extends Factory
         ];
 
         return [
-            'producto' => $producto,
-            'tipo_producto_id' => [28, 29][array_rand([28, 29])],
+            'name' => $producto,
+            'tipo_producto_id' => $tipoProductoId,
             'descripcion' => $descripciones[array_rand($descripciones)],
             'peso' => round(rand(50, 250000) / 100, 2),
-            'unidad_medida_id' => range(30, 41)[array_rand(range(30, 41))],
+            'unidad_medida_id' => $unidadMedidaId,
             'cantidad' => rand(1, 80),
             'codigo_barras' => rand(1000000000000, 9999999999999),
-            'estado_producto_id' => [42, 43][array_rand([42, 43])],
-            'categoria_id' => range(51, 59)[array_rand(range(51, 59))],
-            'marca_id' => rand(60, 179),
-            'contrato_convenio_id' => ContratoConvenio::factory(),
+            'estado_producto_id' => $estadoProductoId,
+            'categoria_id' => $categoriaId,
+            'marca_id' => $marcaId,
+            'contrato_convenio_id' => $contratoConvenioId,
             'ambiente_id' => $ambienteId,
-            'proveedor_id' => Proveedor::factory(),
+            'proveedor_id' => $proveedorId,
             'fecha_vencimiento' => date('Y-m-d', strtotime('+' . rand(90, 730) . ' days')),
             'imagen' => 'img/inventario/producto-default.png',
-            'user_create_id' => 1,
-            'user_update_id' => 1,
+            'user_create_id' => $this->getUserId(),
+            'user_update_id' => $this->getUserId(),
         ];
     }
+
 }
 
 

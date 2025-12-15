@@ -2,19 +2,13 @@
 
 @section('title', 'Carrito de Compras')
 
-@section('css')
-    <link href="{{ asset('css/parametros.css') }}" rel="stylesheet">
-@endsection
-
-@push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-@endpush
+@include('inventario._components.common-css')
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h1 class="m-0 text-dark">
-                <i class="fas fa-shopping-cart"></i> Mi Carrito de Compras
+                <i class="fas fa-shopping-cart"></i> Mi Carrito
             </h1>
             <small class="text-muted">Gestiona los productos de tu solicitud</small>
         </div>
@@ -59,7 +53,8 @@
                                 <div class="table-responsive d-none" id="cart-items-table">
                                     <table class="table table-hover">
                                         <caption id="carrito-description" class="sr-only">
-                                            Vista del carrito de compras con información de producto, stock, cantidad y acciones disponibles.
+                                            Vista del carrito de compras con información de producto, stock,
+                                             cantidad y acciones disponibles.
                                         </caption>
                                         <thead>
                                             <tr>
@@ -247,16 +242,12 @@
 
 @section('footer')
     {{-- Footer SENA --}}
-    @include('layouts.footer')
+@include('inventario._components.common-footer')
 @endsection
 
 @push('css')
-    @vite(['resources/css/inventario/shared/base.css'])
-    <style>
-        .sticky-top {
-            z-index: 1020;
-        }
-    </style>
+    {{-- base.css se carga desde common-css.blade.php --}}
+    @vite(['resources/css/inventario/carrito.css'])
 @endpush
 
 @push('js')

@@ -328,30 +328,54 @@ class ParametroSeeder extends Seeder
         'dias_faltantes' => [
             276 => 'DOMINGO',
         ],
+        'estados_sofia' => [
+            277 => 'NO REGISTRADO',
+            278 => 'REGISTRADO',
+            279 => 'REQUIERE CAMBIO',
+        ],
+        'acciones_sofia' => [
+            280 => 'VALIDAR',
+        ],
+        'resultados_validacion_sofia' => [
+            281 => 'EXITOSO',
+            282 => 'ERROR',
+            283 => 'ADVERTENCIA',
+        ],
+        'estados_progreso_sofia' => [
+            284 => 'PENDING',
+            285 => 'PROCESSING',
+            286 => 'COMPLETED',
+            287 => 'FAILED',
+        ],
+        'estados_complementarios' => [
+            288 => 'SIN OFERTA',
+            289 => 'CON OFERTA',
+            290 => 'CUPOS LLENOS',
+        ],
 
         'jornadas' => [
-            277 => 'MAÑANA',
-            278 => 'TARDE',
-            279 => 'NOCHE',
-            280 => 'FINES DE SEMANA',
+            291 => 'MAÑANA',
+            292 => 'TARDE',
+            293 => 'NOCHE',
+            294 => 'FINES DE SEMANA',
         ],
 
         'tipos_vinculacion' => [
-            281 => 'PLANTA',
-            282 => 'CONTRATISTA',
-            283 => 'APOYO A LA FORMACION',
+            295 => 'PLANTA',
+            296 => 'CONTRATISTA',
+            297 => 'APOYO A LA FORMACION',
         ],
 
         'niveles_academicos' => [
-            284 => 'PRIMARIA',
-            285 => 'SECUNDARIA',
-            286 => 'TECNICO MEDIO',
-            287 => 'TECNOLOGO PROFESIONAL',
-            288 => 'PREGRADO',
-            289 => 'POSTGRADO',
-            290 => 'DOCTORADO',
-            291 => 'ESPECIALIDAD',
-            292 => 'MAESTRIA',
+            298 => 'PRIMARIA',
+            299 => 'SECUNDARIA',
+            300 => 'TECNICO MEDIO',
+            301 => 'TECNOLOGO PROFESIONAL',
+            302 => 'PREGRADO',
+            303 => 'POSTGRADO',
+            304 => 'DOCTORADO',
+            305 => 'ESPECIALIDAD',
+            306 => 'MAESTRIA',
         ],
     ];
 
@@ -374,7 +398,20 @@ class ParametroSeeder extends Seeder
             return;
         }
 
-        $this->truncateModel(Parametro::class);
+        // En testing, RefreshDatabase ya limpia la base de datos, así que solo truncamos si no estamos en testing
+        // o si estamos en testing pero necesitamos limpiar datos específicos
+        if (app()->environment('testing')) {
+            // En testing, RefreshDatabase maneja la limpieza, pero si necesitamos limpiar específicamente
+            // intentamos truncar, pero manejamos errores de foreign key gracefully
+            try {
+                $this->truncateModel(Parametro::class);
+            } catch (\Exception $e) {
+                // Si falla por foreign key, simplemente continuamos
+                // RefreshDatabase ya limpiará todo al final del test
+            }
+        } else {
+            $this->truncateModel(Parametro::class);
+        }
     }
 
     /**

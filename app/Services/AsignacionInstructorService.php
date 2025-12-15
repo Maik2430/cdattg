@@ -26,7 +26,7 @@ class AsignacionInstructorService
     public function asignarInstructores(array $instructoresData, int $fichaId, int $instructorPrincipalId, int $userId): array
     {
         DB::beginTransaction();
-        
+
         try {
             $ficha = FichaCaracterizacion::with(['programaFormacion.redConocimiento', 'diasFormacion', 'jornadaFormacion.parametro'])->findOrFail($fichaId);
             
@@ -52,7 +52,7 @@ class AsignacionInstructorService
             // Validar cada instructor antes de la asignación
             $instructoresValidos = [];
             $instructorIdConError = null; // Para registrar en logs si hay error
-            
+
             foreach ($instructoresData as $instructorData) {
                 $instructor = Instructor::findOrFail($instructorData['instructor_id']);
                 $instructorIdConError = $instructor->id; // Guardar ID para posibles errores
@@ -61,7 +61,7 @@ class AsignacionInstructorService
                 // Actualizar datos de la ficha para validaciones
                 $datosFicha['horas_semanales'] = 0; // Se calculará después
                 $datosFicha['dias_formacion'] = $instructorData['dias_semana'] ?? ($instructorData['dias_formacion'] ?? []);
-                
+
                 // Validar disponibilidad
                 $disponibilidad = $this->businessRulesService->verificarDisponibilidad($instructor, $datosFicha, $fichaId);
                 if (!$disponibilidad['disponible']) {
@@ -80,7 +80,7 @@ class AsignacionInstructorService
             foreach ($instructoresValidos as $instructorData) {
                 // Buscar si ya existe una asignación para este instructor
                 $asignacionExistente = $asignacionesExistentes->firstWhere('instructor_id', $instructorData['instructor_id']);
-                
+
                 if ($asignacionExistente) {
                     // Actualizar asignación existente (sin horas todavía, se calcularán después de crear los días)
                     $asignacionExistente->update([
@@ -113,7 +113,7 @@ class AsignacionInstructorService
                     
                     // Eliminar días existentes
                     $asignacionExistente->instructorFichaDias()->delete();
-                    
+
                     // Obtener días seleccionados
                     $diasSeleccionados = [];
                     $diasParaServicio = [];
@@ -149,7 +149,7 @@ class AsignacionInstructorService
                     } elseif (isset($instructorData['dias_formacion']) && is_array($instructorData['dias_formacion'])) {
                         $diasSeleccionados = collect($instructorData['dias_formacion'])->pluck('dia_id')->filter()->toArray();
                     }
-                    
+
                     // Crear días tomando horarios de la configuración de la ficha
                     if (!empty($diasSeleccionados)) {
                         foreach ($diasSeleccionados as $diaId) {
@@ -180,7 +180,7 @@ class AsignacionInstructorService
                             $asignacionExistente->save();
                         }
                     }
-                    
+
                     $asignacionesCreadas[] = $asignacionExistente;
                 } else {
                     // Crear nueva asignación
@@ -231,7 +231,7 @@ class AsignacionInstructorService
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             // Crear log de error con el ID del instructor que causó el problema (si existe)
             AsignacionInstructorLog::crearLog(
                 $instructorIdConError ?? null, // ID del instructor que falló, o null si fue error general
@@ -241,7 +241,7 @@ class AsignacionInstructorService
                 'Error en asignación de instructores: ' . $e->getMessage(),
                 $userId,
                 [
-                    'error' => $e->getMessage(), 
+                    'error' => $e->getMessage(),
                     'instructores_data' => $instructoresData,
                     'instructor_con_error' => $instructorIdConError
                 ]
@@ -288,7 +288,7 @@ class AsignacionInstructorService
 
         // Crear días de formación tomando horarios de la configuración de la ficha
         $diasSeleccionados = [];
-        
+
         // Formato nuevo: dias_semana (array simple de IDs)
         if (isset($instructorData['dias_semana']) && is_array($instructorData['dias_semana'])) {
             $diasSeleccionados = $instructorData['dias_semana'];
@@ -329,10 +329,10 @@ class AsignacionInstructorService
             foreach ($diasSeleccionados as $diaId) {
                 // Buscar horario del día en la configuración de la ficha
                 $diaFormacionFicha = $ficha->diasFormacion->firstWhere('dia_id', $diaId);
-                
+
                 $horaInicio = $diaFormacionFicha->hora_inicio ?? ($ficha->jornadaFormacion->hora_inicio ?? '08:00');
                 $horaFin = $diaFormacionFicha->hora_fin ?? ($ficha->jornadaFormacion->hora_fin ?? '12:00');
-                
+
                 $instructorFicha->instructorFichaDias()->create([
                     'dia_id' => $diaId,
                     'hora_inicio' => $horaInicio,
@@ -382,10 +382,10 @@ class AsignacionInstructorService
     {
         try {
             $ficha = FichaCaracterizacion::with(['diasFormacion', 'jornadaFormacion'])->findOrFail($fichaId);
-            
+
             // Obtener días seleccionados
             $diasSeleccionados = [];
-            
+
             if (isset($instructorData['dias_semana']) && is_array($instructorData['dias_semana'])) {
                 $diasSeleccionados = $instructorData['dias_semana'];
             } elseif (isset($instructorData['dias']) && is_array($instructorData['dias'])) {
@@ -393,33 +393,33 @@ class AsignacionInstructorService
             } elseif (isset($instructorData['dias_formacion']) && is_array($instructorData['dias_formacion'])) {
                 $diasSeleccionados = collect($instructorData['dias_formacion'])->pluck('dia_id')->filter()->toArray();
             }
-            
+
             if (empty($diasSeleccionados)) {
                 return 40; // Valor por defecto si no hay días
             }
-            
+
             // Preparar datos de días con horarios de la ficha
             $diasParaServicio = [];
             foreach ($diasSeleccionados as $diaId) {
                 // Buscar horario del día en la configuración de la ficha
                 $diaFormacionFicha = $ficha->diasFormacion->firstWhere('dia_id', $diaId);
-                
+
                 $horaInicio = $diaFormacionFicha->hora_inicio ?? ($ficha->jornadaFormacion->hora_inicio ?? '08:00');
                 $horaFin = $diaFormacionFicha->hora_fin ?? ($ficha->jornadaFormacion->hora_fin ?? '12:00');
-                
+
                 $diasParaServicio[] = [
                     'dia_id' => $diaId,
                     'hora_inicio' => $horaInicio,
                     'hora_fin' => $horaFin
                 ];
             }
-            
+
             // Crear objeto temporal para el cálculo
             $instructorFichaTemp = new \stdClass();
             $instructorFichaTemp->fecha_inicio = $instructorData['fecha_inicio'];
             $instructorFichaTemp->fecha_fin = $instructorData['fecha_fin'];
             $instructorFichaTemp->ficha = $ficha;
-            
+
             // Calcular horas totales basado en fechas efectivas
             $totalHoras = $this->calcularHorasDesdeFechasEfectivas($instructorFichaTemp, $diasParaServicio);
             
@@ -431,19 +431,19 @@ class AsignacionInstructorService
                 'instructor_data' => $instructorData,
                 'error' => $e->getMessage()
             ]);
-            
+
             // 4. Obtener horas por jornada desde ficha_dias_formacion
             $horasPorJornada = 6.5; // Valor por defecto
-            
+
             if ($ficha->diasFormacion && $ficha->diasFormacion->isNotEmpty()) {
                 // Obtener el primer día de formación para tomar las horas (asumiendo que todos tienen las mismas horas)
                 $primerDia = $ficha->diasFormacion->first();
                 if ($primerDia && $primerDia->hora_inicio && $primerDia->hora_fin) {
                     $horasPorJornada = $this->convertirTiempoAHoras(
-                        $primerDia->hora_inicio, 
+                        $primerDia->hora_inicio,
                         $primerDia->hora_fin
                     );
-                    
+
                     Log::info('🕒 Horas obtenidas de ficha_dias_formacion', [
                         'ficha_id' => $fichaId,
                         'hora_inicio' => $primerDia->hora_inicio,
@@ -457,10 +457,10 @@ class AsignacionInstructorService
                     'horas_por_defecto' => $horasPorJornada
                 ]);
             }
-            
+
             // 5. Calcular horas totales
             $horasTotales = $diasFormacionPorSemana * $horasPorJornada * $semanas;
-            
+
             Log::info('🔢 CÁLCULO AUTOMÁTICO DE HORAS', [
                 'ficha_id' => $fichaId,
                 'fecha_inicio' => $fechaInicio->format('Y-m-d'),
@@ -470,16 +470,16 @@ class AsignacionInstructorService
                 'horas_por_jornada' => $horasPorJornada,
                 'horas_totales_calculadas' => $horasTotales
             ]);
-            
+
             return (int) round($horasTotales);
-            
+
         } catch (\Exception $e) {
             Log::error('Error calculando horas automáticas', [
                 'ficha_id' => $fichaId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             // Fallback: retornar un valor por defecto
             return 40; // 40 horas por defecto
         }
@@ -493,7 +493,7 @@ class AsignacionInstructorService
         try {
             $diasService = app(InstructorFichaDiasService::class);
             $fechasEfectivas = $diasService->generarFechasEfectivas($instructorFicha, $diasData);
-            
+
             $totalHoras = 0;
             foreach ($fechasEfectivas as $fecha) {
                 if ($fecha['hora_inicio'] && $fecha['hora_fin']) {
@@ -501,12 +501,12 @@ class AsignacionInstructorService
                     $totalHoras += $horas;
                 }
             }
-            
+
             Log::info('Horas calculadas desde fechas efectivas', [
                 'total_fechas' => count($fechasEfectivas),
                 'total_horas' => $totalHoras
             ]);
-            
+
             return (int) $totalHoras;
         } catch (\Exception $e) {
             Log::error('Error al calcular horas desde fechas efectivas', [
@@ -530,14 +530,14 @@ class AsignacionInstructorService
             ]);
             return 6.5; // 6.5 horas por defecto
         }
-        
+
         try {
             $inicio = Carbon::parse($horaInicio);
             $fin = Carbon::parse($horaFin);
-            
+
             $diferenciaMinutos = $inicio->diffInMinutes($fin);
             $horas = $diferenciaMinutos / 60;
-            
+
             return $horas;
         } catch (\Exception $e) {
             Log::error('Error parseando horas de jornada', [
@@ -555,7 +555,7 @@ class AsignacionInstructorService
     public function desasignarInstructor(int $instructorId, int $fichaId, int $userId): array
     {
         DB::beginTransaction();
-        
+
         try {
             $asignacion = InstructorFichaCaracterizacion::where('instructor_id', $instructorId)
                 ->where('ficha_id', $fichaId)
@@ -579,7 +579,7 @@ class AsignacionInstructorService
                     'dia_nombre' => $dia->dia->name ?? 'Sin nombre'
                 ];
             })->toArray();
-            
+
             $datosAnteriores = [
                 'fecha_inicio' => $asignacion->fecha_inicio,
                 'fecha_fin' => $asignacion->fecha_fin,
@@ -592,15 +592,15 @@ class AsignacionInstructorService
             $asignacionesAsistencias = \DB::table('asistencia_aprendices')
                 ->where('instructor_ficha_id', $asignacion->id)
                 ->get();
-            
+
             // Actualizar las asistencias para que apunten a NULL
             \DB::table('asistencia_aprendices')
                 ->where('instructor_ficha_id', $asignacion->id)
                 ->update(['instructor_ficha_id' => null]);
-            
+
             // Ahora eliminar los días de formación
             $asignacion->instructorFichaDias()->delete();
-            
+
             // Finalmente eliminar la asignación
             $asignacion->delete();
 
@@ -653,7 +653,7 @@ class AsignacionInstructorService
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             // Crear log de error
             AsignacionInstructorLog::crearLog(
                 $instructorId,
@@ -939,7 +939,7 @@ class AsignacionInstructorService
         $fechaFin = $fechaFin ?? now()->endOfMonth();
 
         $estadisticas = AsignacionInstructorLog::obtenerEstadisticas($fechaInicio, $fechaFin);
-        
+
         // Estadísticas adicionales
         $totalAsignacionesActivas = InstructorFichaCaracterizacion::whereHas('ficha', function($q) {
             $q->where('status', true)

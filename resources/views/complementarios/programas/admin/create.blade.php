@@ -77,25 +77,26 @@
                         </div>
 
                         <div class="card-body">
-                            <ul class="nav nav-pills nav-form-steps flex-column flex-md-row mb-4" id="formTabs"
-                                role="tablist">
-                                <li class="nav-item flex-md-fill mr-md-2 mb-2 mb-md-0" role="presentation">
+                            <ul class="nav nav-pills nav-form-steps flex-column flex-md-row mb-4" id="formTabs">
+                                <li class="nav-item flex-md-fill mr-md-2 mb-2 mb-md-0">
                                     <a class="nav-link active d-flex align-items-center justify-content-center"
                                         id="tab-general-tab" data-toggle="tab" href="#tab-general" role="tab"
                                         aria-controls="tab-general" aria-selected="true">
                                         <i class="fas fa-layer-group mr-2"></i> Información general
                                     </a>
                                 </li>
-                                <li class="nav-item flex-md-fill mr-md-2 mb-2 mb-md-0" role="presentation">
+                                <li class="nav-item flex-md-fill mr-md-2 mb-2 mb-md-0">
                                     <a class="nav-link d-flex align-items-center justify-content-center" id="tab-config-tab"
-                                        data-toggle="tab" href="#tab-config" role="tab" aria-controls="tab-config"
+                                        data-toggle="tab" href="#tab-config" role="tab"
+                                        aria-controls="tab-config"
                                         aria-selected="false">
                                         <i class="fas fa-sliders-h mr-2"></i> Configuración académica
                                     </a>
                                 </li>
-                                <li class="nav-item flex-md-fill" role="presentation">
+                                <li class="nav-item flex-md-fill">
                                     <a class="nav-link d-flex align-items-center justify-content-center" id="tab-estado-tab"
-                                        data-toggle="tab" href="#tab-estado" role="tab" aria-controls="tab-estado"
+                                        data-toggle="tab" href="#tab-estado" role="tab"
+                                        aria-controls="tab-estado"
                                         aria-selected="false">
                                         <i class="fas fa-traffic-light mr-2"></i> Estado operativo
                                     </a>
@@ -135,17 +136,32 @@
 
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <label for="descripcion" class="form-label font-weight-semibold mb-0">
-                                                Descripción del programa<span class="text-danger"> *</span>
+                                            <label for="justificacion" class="form-label font-weight-semibold mb-0">
+                                                Descripción<span class="text-danger"> *</span>
                                             </label>
-                                            <span id="descripcionCounter" class="character-count">0/600</span>
+                                            <span id="justificacionCounter" class="character-count">0/600</span>
                                         </div>
-                                        <textarea name="descripcion" id="descripcion" rows="4"
-                                            class="form-control @error('descripcion') is-invalid @enderror"
-                                            placeholder="Describe objetivos, alcance y requisitos de participación" maxlength="600" required>{{ old('descripcion') }}</textarea>
-                                        <small class="helper-text">Máximo 600 caracteres. La información se mostrará en la
-                                            vista pública.</small>
-                                        @error('descripcion')
+                                        <textarea name="justificacion" id="justificacion" rows="4"
+                                            class="form-control @error('justificacion') is-invalid @enderror"
+                                            placeholder="Descripción del programa complementario" maxlength="600" required>{{ old('justificacion') }}</textarea>
+                                        <small class="helper-text">Máximo 600 caracteres. Describe por qué se crea este programa.</small>
+                                        @error('justificacion')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label for="requisitos_ingreso" class="form-label font-weight-semibold mb-0">
+                                                Requisitos de Ingreso<span class="text-danger"> *</span>
+                                            </label>
+                                            <span id="requisitosCounter" class="character-count">0/400</span>
+                                        </div>
+                                        <textarea name="requisitos_ingreso" id="requisitos_ingreso" rows="3"
+                                            class="form-control @error('requisitos_ingreso') is-invalid @enderror"
+                                            placeholder="Especifica los criterios de admisión y perfil requerido" maxlength="400" required>{{ old('requisitos_ingreso') }}</textarea>
+                                        <small class="helper-text">Máximo 400 caracteres. Define quiénes pueden participar.</small>
+                                        @error('requisitos_ingreso')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -154,6 +170,51 @@
                                 <div class="tab-pane fade" id="tab-config" role="tabpanel"
                                     aria-labelledby="tab-config-tab">
                                     <p class="text-muted">Define la logística académica del programa.</p>
+
+                                    <!-- Sección de Estructura Académica -->
+                                    <div class="card card-outline card-info mb-4">
+                                        <div class="card-header">
+                                            <h6 class="card-title mb-0">
+                                                <i class="fas fa-graduation-cap mr-2"></i>Estructura Académica
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Selector de Competencias -->
+                                            <div class="form-group">
+                                                <label for="competencias" class="form-label font-weight-semibold">
+                                                    Competencias del Programa
+                                                </label>
+                                                <select class="form-control select2-multiple" id="competencias" name="competencias[]" multiple>
+                                                    @foreach($competencias ?? [] as $competencia)
+                                                        <option value="{{ $competencia->id }}">{{ $competencia->codigo }} - {{ $competencia->nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <small class="helper-text">Selecciona las competencias que conforman este programa.</small>
+                                            </div>
+
+                                            <!-- Visualización de RAPs por Competencia (Opcional) -->
+                                            <div id="raps-container" class="mt-3" style="display: none;">
+                                                <h6>Resultados de Aprendizaje Asociados <small class="text-muted">(Opcional)</small></h6>
+                                                <div id="raps-list" class="border rounded p-3 bg-light">
+                                                    <!-- Se llena dinámicamente con JavaScript -->
+                                                </div>
+                                                <small class="helper-text">Los RAPs se muestran automáticamente según las competencias seleccionadas. Su selección es opcional.</small>
+                                            </div>
+
+                                            <!-- Selector de Guías de Aprendizaje -->
+                                            <div class="form-group mt-3">
+                                                <label for="guias" class="form-label font-weight-semibold">
+                                                    Guías de Aprendizaje
+                                                </label>
+                                                <select class="form-control select2-multiple" id="guias" name="guias[]" multiple>
+                                                    @foreach($guias ?? [] as $guia)
+                                                        <option value="{{ $guia->id }}">{{ $guia->codigo }} - {{ $guia->nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <small class="helper-text">Selecciona las guías de aprendizaje asociadas a este programa.</small>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-row">
                                         <div class="form-group col-sm-6">
                                             <label for="duracion" class="form-label font-weight-semibold">
@@ -298,7 +359,7 @@
                                     </div>
                                 </div>
 
-                                <div class="tab-pane fade" id="tab-estado" role="tabpanel"
+                                <div class="tab-pane fade" id="tab-estado"
                                     aria-labelledby="tab-estado-tab">
                                     <p class="text-muted">Selecciona el estado del programa en la planeación actual.</p>
                                     <div class="form-group mb-4">
@@ -402,6 +463,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof $ !== 'undefined' && $.fn.select2) {
+                // Configurar Select2 para campos existentes
                 $('.select2').select2({
                     theme: 'bootstrap4',
                     width: '100%',
@@ -412,19 +474,93 @@
                         $(this).removeClass('is-invalid');
                     }
                 });
+
+                // Configurar Select2 múltiple para competencias y guías
+                $('.select2-multiple').select2({
+                    theme: 'bootstrap4',
+                    width: '100%',
+                    language: 'es',
+                    placeholder: 'Selecciona una o más opciones',
+                    allowClear: true
+                });
             }
 
             const form = document.getElementById('programaForm');
             const saveBtn = document.getElementById('saveBtn');
-            const descripcion = document.getElementById('descripcion');
-            const descripcionCounter = document.getElementById('descripcionCounter');
+            const justificacion = document.getElementById('justificacion');
+            const justificacionCounter = document.getElementById('justificacionCounter');
+            const requisitosIngreso = document.getElementById('requisitos_ingreso');
+            const requisitosCounter = document.getElementById('requisitosCounter');
 
-            const updateDescripcionCounter = () => {
-                descripcionCounter.textContent = `${descripcion.value.length}/600`;
+            // Contadores de caracteres para los nuevos campos
+            const updateJustificacionCounter = () => {
+                justificacionCounter.textContent = `${justificacion.value.length}/600`;
             };
-            updateDescripcionCounter();
-            descripcion.addEventListener('input', updateDescripcionCounter);
 
+            const updateRequisitosCounter = () => {
+                requisitosCounter.textContent = `${requisitosIngreso.value.length}/400`;
+            };
+
+            updateJustificacionCounter();
+            updateRequisitosCounter();
+
+            justificacion.addEventListener('input', updateJustificacionCounter);
+            requisitosIngreso.addEventListener('input', updateRequisitosCounter);
+
+            // Gestión de competencias y RAPs
+            const competenciasSelect = document.getElementById('competencias');
+            const rapsContainer = document.getElementById('raps-container');
+            const rapsList = document.getElementById('raps-list');
+
+            if (competenciasSelect) {
+                competenciasSelect.addEventListener('change', function() {
+                    const competenciasIds = $(this).val();
+                    if (competenciasIds && competenciasIds.length > 0) {
+                        cargarRAPsPorCompetencias(competenciasIds);
+                        rapsContainer.style.display = 'block';
+                    } else {
+                        rapsContainer.style.display = 'none';
+                        rapsList.innerHTML = '';
+                    }
+                });
+            }
+
+            // Función para cargar RAPs por competencias
+            function cargarRAPsPorCompetencias(competenciasIds) {
+                fetch('/api/complementarios/raps?competencias=' + competenciasIds.join(','))
+                    .then(response => response.json())
+                    .then(raps => {
+                        mostrarRAPsJerarquizados(raps);
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar RAPs:', error);
+                        rapsList.innerHTML = '<div class="text-danger">Error al cargar los resultados de aprendizaje</div>';
+                    });
+            }
+
+            // Función para mostrar RAPs jerarquizados
+            function mostrarRAPsJerarquizados(raps) {
+                if (!raps || raps.length === 0) {
+                    rapsList.innerHTML = '<div class="text-muted">No se encontraron resultados de aprendizaje para las competencias seleccionadas.</div>';
+                    return;
+                }
+
+                let html = '';
+                raps.forEach(rap => {
+                    html += `
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="raps[]" value="${rap.id}" id="rap-${rap.id}">
+                            <label class="form-check-label" for="rap-${rap.id}">
+                                <strong>${rap.codigo}</strong> - ${rap.nombre}
+                                <small class="text-muted d-block">${rap.competencia_nombre}</small>
+                            </label>
+                        </div>
+                    `;
+                });
+                rapsList.innerHTML = html;
+            }
+
+            // Navegación entre pestañas
             $('#formTabs a[data-toggle="tab"]').on('shown.bs.tab', function(event) {
                 event.target.classList.add('active');
             });
@@ -437,11 +573,13 @@
                 }
             };
 
+            // Validación del formulario
             form.addEventListener('submit', function(e) {
                 const requiredFields = form.querySelectorAll('[required]');
                 let isValid = true;
                 let primerCampoInvalido = null;
 
+                // Validar campos requeridos
                 requiredFields.forEach(field => {
                     if (!field.value || !field.value.trim()) {
                         field.classList.add('is-invalid');
@@ -454,18 +592,15 @@
                     }
                 });
 
+                // Validar estructura académica - Solo competencias son requeridas
+                // Los RAPs son informativos y se relacionan con las competencias, no son obligatorios
+
                 if (!isValid) {
                     e.preventDefault();
                     if (primerCampoInvalido) {
                         activarTabDeCampo(primerCampoInvalido);
                         primerCampoInvalido.focus();
                     }
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Campos obligatorios',
-                        text: 'Verifica los campos resaltados para continuar.',
-                        confirmButtonText: 'Entendido'
-                    });
                     return;
                 }
 

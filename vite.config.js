@@ -26,6 +26,7 @@ export default defineConfig({
                 'inventario_modal_producto_css': 'resources/css/inventario/modal-producto.css',
                 'inventario_notificaciones_css': 'resources/css/inventario/notificaciones.css',
                 'inventario_orden_css': 'resources/css/inventario/orden.css',
+                'inventario_email_css': 'resources/css/inventario/email.css',
                 // Complementarios CSS files
                 'formulario_inscripcion_css': 'resources/css/formulario_inscripcion.css',
                 'gestion_aspirantes_css': 'resources/css/complementario/gestion_aspirantes.css',
@@ -46,12 +47,17 @@ export default defineConfig({
                 'inventario_card': 'resources/js/inventario/card.js',
                 'inventario_carrito': 'resources/js/inventario/carrito.js',
                 'inventario_escaner': 'resources/js/inventario/escaner.js',
+                'inventario_fecha_vencimiento': 'resources/js/inventario/fecha-vencimiento.js',
                 'inventario_filtro_departamento': 'resources/js/inventario/filtro-departamento.js',
+                'inventario_global': 'resources/js/inventario/global.js',
                 'inventario_imagen': 'resources/js/inventario/imagen.js',
                 'inventario_notificaciones': 'resources/js/inventario/notificaciones.js',
                 'inventario_solicitud': 'resources/js/inventario/solicitud.js',
+                'inventario_select-marca': 'resources/js/inventario/select-marca.js',
+                'inventario_ordenes_index': 'resources/js/inventario/ordenes-index.js',
                 // Complementarios files
                 'estadisticas_complementarios': 'resources/js/complementarios/estadisticas.js',
+                'aspirantes_programa': 'resources/js/complementarios/aspirantes/programa.js',
                 // Personas files
                 'formularios-generico': 'resources/js/pages/formularios-generico.js',
                 'formularios-select-dinamico': 'resources/js/pages/formularios-select-dinamico.js',

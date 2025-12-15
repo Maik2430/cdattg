@@ -1,35 +1,60 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
+use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
+use App\Inventario\Services\Producto\ProductoService;
+use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
+use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
+use App\Inventario\Services\ProductoEnrichment\ProductoEnrichmentService;
+use App\Inventario\Services\FormData\FormDataService;
+use App\Exceptions\OrdenException;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 use Illuminate\Http\Request;
-use App\Models\Inventario\Producto;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\User;
-use App\Models\ParametroTema;
-use App\Models\Parametro;
-use App\Models\Tema;
-use App\Models\Inventario\ContratoConvenio;
-use App\Models\Ambiente;
-use App\Models\Inventario\Proveedor;
-use App\Notifications\StockBajoNotification;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Inventario\ProductoRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\ExportService;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
-class ProductoController extends InventarioController
+class ProductoController extends Controller
 {
     private const THEME_PRODUCT_STATES = 'ESTADOS DE PRODUCTO';
-    private const RULE_REQUIRED_PARAMETRO_TEMA = 'required|exists:parametros_temas,id';
-    private const RULE_REQUIRED_PARAMETRO = 'required|exists:parametros,id';
-    private const DEFAULT_PRODUCT_IMAGE = 'img/inventario/producto-default.png';
 
+    protected ProductoRepositoryInterface $repository;
+    protected ProductoService $service;
+    protected FormOptionsServiceInterface $formOptionsService;
+    protected StockValidatorServiceInterface $stockValidator;
+    protected ProductoEnrichmentService $enrichmentService;
+    protected FormDataService $formDataService;
+    protected ExportService $exportService;
 
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        ProductoRepositoryInterface $repository,
+        ProductoService $service,
+        FormOptionsServiceInterface $formOptionsService,
+        StockValidatorServiceInterface $stockValidator,
+        ProductoEnrichmentService $enrichmentService,
+        FormDataService $formDataService,
+        ExportService $exportService
+    ) {
         $this->middleware('auth');
-        
+
+        $this->repository = $repository;
+        $this->service = $service;
+        $this->formOptionsService = $formOptionsService;
+        $this->stockValidator = $stockValidator;
+        $this->enrichmentService = $enrichmentService;
+        $this->formDataService = $formDataService;
+        $this->exportService = $exportService;
+
         // Middlewares de permisos de inventario
         $this->middleware('can:VER PRODUCTO')->only(['index', 'show']);
         $this->middleware('can:VER CATALOGO PRODUCTO')->only(['catalogo']);
@@ -41,441 +66,279 @@ class ProductoController extends InventarioController
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $search = $request->input('search');
+        $filtros = [
+            'search' => $request->input('search'),
+            'categoria_id' => $request->input('categoria_id'),
+            'marca_id' => $request->input('marca_id'),
+            'estado_producto_id' => $request->input('estado_producto_id'),
+            'per_page' => 10
+        ];
 
-        $query = Producto::with([
-            'tipoProducto.parametro',
-            'unidadMedida.parametro',
-            'estado.parametro',
-            'contratoConvenio',
-            'ambiente',
-            'proveedor'
-        ]);
+        $productos = $this->repository->obtenerConFiltros($filtros);
+        $productos->appends($request->only(['search', 'categoria_id', 'marca_id', 'estado_producto_id']));
 
-        if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('producto', 'LIKE', "%{$search}%")
-                  ->orWhere('codigo_barras', 'LIKE', "%{$search}%")
-                  ->orWhere('descripcion', 'LIKE', "%{$search}%");
-            });
-        }
+        // Enriquecer productos con marcas y categorías
+        $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
-        $productos = $query
-            ->paginate(10)
-            ->appends($request->only('search'));
+        $categorias = $this->formOptionsService->obtenerCategorias();
+        $marcas = $this->formOptionsService->obtenerMarcas();
+        $estadosProducto = $this->formOptionsService->obtenerEstados(self::THEME_PRODUCT_STATES);
 
-        $productos->withPath(route('inventario.productos.index'));
+        return view('inventario.productos.index', compact(
+            'productos',
+            'categorias',
+            'marcas',
+            'estadosProducto'
+        ));
+    }
 
-        // Cargar marca y categoria directamente para cada producto
-        $productos->each(function($producto) {
-            if ($producto->marca_id) {
-                $producto->marca = Parametro::find($producto->marca_id);
-            }
-            if ($producto->categoria_id) {
-                $producto->categoria = Parametro::find($producto->categoria_id);
-            }
+    public function exportarPdf()
+    {
+        $productos = $this->repository->obtenerTodosOrdenadosPorCantidadDesc();
+
+        $pdf = Pdf::loadView('inventario.productos.report', [
+            'productos' => $productos,
+            'pdf' => true
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('reporte_productos_inventario.pdf');
+    }
+
+    public function exportarExcel(): BinaryFileResponse
+    {
+        $productos = $this->repository->obtenerTodosOrdenadosPorCantidadDesc();
+
+        $datos = $productos->map(static function ($producto): array {
+            return [
+                'id' => $producto->id,
+                'nombre' => $producto->name,
+                'codigo_barras' => $producto->codigo_barras,
+                'cantidad' => $producto->cantidad,
+                'categoria' => $producto->categoria->name ?? '',
+                'marca' => $producto->marca->name ?? '',
+                'ubicacion' => $producto->ambiente->title ?? '',
+                'fecha_vencimiento' => optional($producto->fecha_vencimiento)->format('d/m/Y') ?? '',
+                'fecha_registro' => optional($producto->created_at)->format('d/m/Y') ?? '',
+                'estado' => $producto->estado?->parametro?->name ?? '',
+            ];
         });
-        
-        return view('inventario.productos.index', compact('productos'));
+
+        $columnas = [
+            ['field' => 'id', 'label' => 'ID'],
+            ['field' => 'nombre', 'label' => 'Producto'],
+            ['field' => 'codigo_barras', 'label' => 'Código de barras'],
+            ['field' => 'cantidad', 'label' => 'Cantidad'],
+            ['field' => 'categoria', 'label' => 'Categoría'],
+            ['field' => 'marca', 'label' => 'Marca'],
+            ['field' => 'ubicacion', 'label' => 'Ubicación'],
+            ['field' => 'fecha_vencimiento', 'label' => 'F. Vencimiento'],
+            ['field' => 'fecha_registro', 'label' => 'F. Registro'],
+            ['field' => 'estado', 'label' => 'Estado'],
+        ];
+
+        $relativePath = $this->exportService->exportarExcel($datos, $columnas, 'productos_inventario');
+        $absolutePath = storage_path('app/public/' . $relativePath);
+
+        return response()->download($absolutePath, 'productos_inventario.xlsx')->deleteFileAfterSend(true);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-
-    public function create()
+    public function create(): View
     {
-        $tiposProductos = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'TIPOS DE PRODUCTO'))
-            ->where('status', 1)
-            ->get();
+        $opciones = $this->formOptionsService->obtenerOpcionesProducto(self::THEME_PRODUCT_STATES);
+        $datosFormulario = $this->formDataService->obtenerDatosFormulario();
 
-        $unidadesMedida = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'UNIDADES DE MEDIDA'))
-            ->where('status', 1)
-            ->get();
+        $filtros = [
+            'per_page' => 12
+        ];
+        $productos = $this->repository->obtenerParaCatalogo($filtros);
+        $tiposProductos = $this->repository->obtenerTiposProductos();
 
-        $estados = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', self::THEME_PRODUCT_STATES))
-            ->where('status', 1)
-            ->get();
-
-        $categorias = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'CATEGORIAS'))
-            ->where('status', 1)
-            ->get();
-
-        $marcas = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'MARCAS'))
-            ->where('status', 1)
-            ->get();
-        
-        $contratosConvenios = ContratoConvenio::all();
-
-        $ambientes = Ambiente::all();
-
-        $proveedores = Proveedor::all();
+        // Enriquecer productos con marcas y categorías
+        $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
         return view(
             'inventario.productos.create',
-            compact(
-                'tiposProductos',
-                'unidadesMedida',
-                'estados',
-                'categorias',
-                'marcas',
-                'contratosConvenios',
-                'ambientes',
-                'proveedores'
-            )
+            array_merge($opciones, $datosFormulario, [
+                'productos' => $productos,
+                'tiposProductos' => $tiposProductos
+            ])
         );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductoRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'producto' => 'required|unique:productos',
-            'tipo_producto_id' => self::RULE_REQUIRED_PARAMETRO_TEMA,
-            'descripcion' => 'required|string',
-            'peso' => 'required|numeric|min:0',
-            'unidad_medida_id' => self::RULE_REQUIRED_PARAMETRO_TEMA,
-            'cantidad' => 'required|integer|min:1',
-            'codigo_barras' => ['nullable','string'],
-            'estado_producto_id' => self::RULE_REQUIRED_PARAMETRO_TEMA,
-            'categoria_id' => self::RULE_REQUIRED_PARAMETRO,
-            'marca_id' => self::RULE_REQUIRED_PARAMETRO,
-            'contrato_convenio_id' => 'required|exists:contratos_convenios,id',
-            'ambiente_id' => 'required|exists:ambientes,id',
-            'proveedor_id' => 'required|exists:proveedores,id',
-            'fecha_vencimiento' => 'nullable|date',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png| max:2048'
-        ]);
+        try {
+            $validated = $request->validated();
+            $validated['imagen'] = $request->hasFile('imagen') ? $request->file('imagen') : null;
 
-        if ($request->hasFile('imagen')) {
-            $nombreArchivo = time() . '.' . $request->imagen->extension();
-            $request->imagen->move(public_path('img/inventario'), $nombreArchivo);
-            $validated['imagen'] = 'img/inventario/' . $nombreArchivo;
-        } else {
-            // Si no se sube imagen, se subirá la imagen por defecto
-            $validated['imagen'] = self::DEFAULT_PRODUCT_IMAGE;
+            $this->service->crear($validated, Auth::id());
+
+            return redirect()
+                ->route('inventario.productos.index')
+                ->with('success', 'Producto creado correctamente.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error al crear el producto: ' . $e->getMessage());
         }
-
-        // Normalizar/autoasignar código de barras (11 dígitos incrementales si no llega uno válido)
-        $validated['codigo_barras'] = $this->resolveBarcodeForCreate($request->input('codigo_barras'));
-
-        $validated['user_create_id'] = Auth::id();
-        $validated['user_update_id'] = Auth::id();
-
-        Producto::create($validated);
-
-        return redirect()->route('inventario.productos.index')->with('success', 'Producto creado correctamente.');
-    }
-
-    private function resolveBarcodeForCreate(?string $raw): string
-    {
-        $digits = preg_replace('/\D/', '', (string) $raw);
-        if (strlen($digits) === 11) {
-            return $digits;
-        }
-        return $this->generateNextBarcode();
-    }
-
-    private function generateNextBarcode(): string
-    {
-        return DB::transaction(function () {
-            $max = DB::table('productos')->whereNotNull('codigo_barras')->max('codigo_barras');
-            $onlyDigits = preg_replace('/\D/', '', (string) $max);
-            $num = $onlyDigits === '' ? 0 : (int) $onlyDigits;
-            $next = $num + 1;
-            $code = str_pad((string)$next, 11, '0', STR_PAD_LEFT);
-
-            // Asegurar no colisiona (reintento simple)
-            for ($i = 0; $i < 3; $i++) {
-                $exists = DB::table('productos')->where('codigo_barras', $code)->exists();
-                if (!$exists) {
-                    return $code;
-                }
-                $code = str_pad((string)($next + $i + 1), 11, '0', STR_PAD_LEFT);
-            }
-            return $code;
-        }, 3);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): View
     {
-        $producto = Producto::with([
-            'tipoProducto.parametro',
-            'unidadMedida.parametro',
-            'estado.parametro',
-            'categoria',
-            'marca',
-            'contratoConvenio',
-            'ambiente',
-            'proveedor',
-        ])->findOrFail($id);
+        $producto = $this->repository->encontrarConRelaciones((int) $id);
+
+        if (!$producto) {
+            abort(404);
+        }
+
         return view('inventario.productos.show', compact('producto'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id): View
     {
-        // Obtener el producto con sus relaciones
-        $producto = Producto::with(['tipoProducto', 'unidadMedida', 'estado'])->findOrFail($id);
+        $producto = $this->repository->encontrarConRelaciones((int) $id);
 
-        // Obtener tipos de productos
-        $tiposProductos = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'TIPOS DE PRODUCTO'))
-            ->where('status', 1)
-            ->get();
+        if (!$producto) {
+            abort(404);
+        }
+        
+        $opciones = $this->formOptionsService->obtenerOpcionesProducto(self::THEME_PRODUCT_STATES);
+        $datosFormulario = $this->formDataService->obtenerDatosFormulario();
+        $tiposProductos = $this->repository->obtenerTiposProductos();
 
-        // Obtener unidades de medida
-        $unidadesMedida = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'UNIDADES DE MEDIDA'))
-            ->where('status', 1)
-            ->get();
-
-        // Obtener estados de producto
-        $estados = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'ESTADOS DE PRODUCTO'))
-            ->where('status', 1)
-            ->get();
-
-        // Obtener categorías
-        $categorias = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'CATEGORIAS'))
-            ->where('status', 1)
-            ->get();
-
-        // Obtener marcas
-        $marcas = ParametroTema::with(['parametro','tema'])
-            ->whereHas('tema', fn($q) => $q->where('name', 'MARCAS'))
-            ->where('status', 1)
-            ->get();
-
-        $contratosConvenios = ContratoConvenio::all();
-        $ambientes = Ambiente::all();
-        $proveedores = Proveedor::all();
-    
-        return view('inventario.productos.edit', compact(
-            'producto',
-            'tiposProductos',
-            'unidadesMedida',
-            'estados',
-            'categorias',
-            'marcas',
-            'contratosConvenios',
-            'ambientes',
-            'proveedores'
-        ));
+        return view('inventario.productos.edit', array_merge($opciones, $datosFormulario, [
+            'producto' => $producto,
+            'tiposProductos' => $tiposProductos
+        ]));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ProductoRequest $request, string $id): RedirectResponse
     {
-        $producto = Producto::findOrFail($id);
-        $validated = $this->validateUpdateRequest($request, $id);
-        $this->processImageForUpdate($request, $producto, $validated);
-        $this->normalizeBarcodeForUpdate($request, $validated);
-        $validated['user_update_id'] = Auth::id();
+        try {
+            $producto = $this->repository->encontrar((int) $id);
 
-        $cantidadAnterior = $producto->cantidad;
-        $producto->update($validated);
+            if (!$producto) {
+                abort(404);
+            }
+            $validated = $request->validated();
 
-        $this->notifyIfStockLow($producto, $cantidadAnterior);
+            if ($request->hasFile('imagen')) {
+                $validated['imagen'] = $request->file('imagen');
+            }
 
-        // Redireccionar con mensaje de éxito
-        return redirect()->route('inventario.productos.show', $producto->id)
-            ->with('success', 'Producto actualizado correctamente.');
+            $this->service->actualizar($producto, $validated, Auth::id());
+
+            return redirect()
+                ->route('inventario.productos.show', $producto->id)
+                ->with('success', 'Producto actualizado correctamente.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el producto: ' . $e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): RedirectResponse
     {
-        $producto = Producto::findOrFail($id);
-        
-        // Se elimina la imagen si no es la de defecto
-        if ($producto->imagen && 
-            $producto->imagen !== self::DEFAULT_PRODUCT_IMAGE && 
-            file_exists(public_path($producto->imagen))) {
-            unlink(public_path($producto->imagen));
+        try {
+            $producto = $this->repository->encontrar((int) $id);
+
+            if (!$producto) {
+                abort(404);
+            }
+            $this->service->eliminar($producto);
+
+            return redirect()
+                ->route('inventario.productos.index')
+                ->with('success', 'Producto eliminado correctamente');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error al eliminar el producto: ' . $e->getMessage());
         }
-        
-        $producto->delete();
-        
-        return redirect()->route('inventario.productos.index')
-            ->with('success', 'Producto eliminado correctamente');
     }
-    
-    public function buscarPorCodigo($codigo)
+
+    public function buscarPorCodigo(string $codigo): JsonResponse
     {
-        $producto = Producto::where('codigo_barras', $codigo)->first();
+        $producto = $this->repository->buscarPorCodigoBarras($codigo);
 
         if ($producto) {
             return response()->json($producto);
-        } else {
-            return response()->json(null, 404);
         }
+
+        return response()->json(null, 404);
     }
 
     /**
      * Mostrar catálogo de productos estilo ecommerce
      */
-    public function catalogo(Request $request)
+    public function catalogo(Request $request): View
     {
-        // Obtener filtros de la URL
-        $search = $request->input('search');
-        $tipoProductoId = $request->input('tipo_producto_id');
-        $sortBy = $request->input('sort_by', 'name');
+        $estadoAgotado = $this->formOptionsService->obtenerEstadoAgotado(self::THEME_PRODUCT_STATES);
 
-        // Obtener el ParametroTema del estado "AGOTADO"
-        $parametroAgotado = Parametro::find(43);
+        $filtros = [
+            'search' => $request->input('search'),
+            'tipo_producto_id' => $request->input('tipo_producto_id'),
+            'categoria_id' => $request->input('categoria_id'),
+            'sort_by' => $request->input('sort_by', 'random'),
+            'estado_agotado_id' => $estadoAgotado?->id,
+            'per_page' => 12
+        ];
 
-        $query = Producto::with([
-            'tipoProducto.parametro',
-            'unidadMedida.parametro',
-            'estado.parametro',
-            'contratoConvenio',
-            'ambiente'
-        ])
-        ->where('cantidad', '>', 0); // Solo productos con stock
-
-        // Excluir productos con estado "AGOTADO"
-        if ($parametroAgotado) {
-            $estadoAgotadoTema = ParametroTema::where('parametro_id', 43)
-                ->whereHas('tema', function($query) {
-                    $query->where('name', self::THEME_PRODUCT_STATES);
-                })
-                ->first();
-            
-            if ($estadoAgotadoTema) {
-                $query->where('estado_producto_id', '!=', $estadoAgotadoTema->id);
-            }
-        }
-
-        // Aplicar filtro de búsqueda
-        if (!empty($search)) {
-            $query->where('producto', 'LIKE', "%{$search}%");
-        }
-
-        // Aplicar filtro de tipo de producto
-        if (!empty($tipoProductoId)) {
-            $query->where('tipo_producto_id', $tipoProductoId);
-        }
-
-        // Aplicar ordenamiento
-        switch ($sortBy) {
-            case 'stock-asc':
-                $query->orderBy('cantidad', 'asc');
-                break;
-            case 'stock-desc':
-                $query->orderBy('cantidad', 'desc');
-                break;
-            case 'newest':
-                $query->orderBy('created_at', 'desc');
-                break;
-            default: // 'name'
-                $query->orderBy('producto', 'asc');
-                break;
-        }
-
-        // Mantener filtros en la paginación
-        $productos = $query->paginate(12)->appends([
-            'search' => $search,
-            'tipo_producto_id' => $tipoProductoId,
-            'sort_by' => $sortBy
+        $productos = $this->repository->obtenerParaCatalogo($filtros);
+        $productos->appends([
+            'search' => $filtros['search'],
+            'tipo_producto_id' => $filtros['tipo_producto_id'],
+            'categoria_id' => $filtros['categoria_id'],
+            'sort_by' => $filtros['sort_by']
         ]);
 
-        // Cargar marca y categoria directamente para cada producto
-        $productos->each(function($producto) {
-            if ($producto->marca_id) {
-                $producto->marca = Parametro::find($producto->marca_id);
-            }
-            if ($producto->categoria_id) {
-                $producto->categoria = Parametro::find($producto->categoria_id);
-            }
-        });
+        $tiposProductos = $this->repository->obtenerTiposProductos();
+        $categorias = $this->formOptionsService->obtenerCategorias();
 
-        $tiposProductos = ParametroTema::with(['parametro', 'tema'])
-            ->whereHas('tema', function ($query) {
-                $query->where('name', 'TIPOS DE PRODUCTO');
-            })
-            ->where('status', 1)
-            ->get()
-            ->sortBy(function ($tipo) {
-                return mb_strtolower($tipo->parametro->name ?? '');
-            })
-            ->values();
-
-        return view('inventario.productos.card', compact('productos', 'tiposProductos'));
+        return view('inventario.productos.card', compact('productos', 'tiposProductos', 'categorias'));
     }
 
     /**
      * Buscar productos por término de búsqueda (AJAX)
      */
-    public function buscar(Request $request)
+    public function buscar(Request $request): JsonResponse
     {
-        $search = $request->input('search');
-        $tipoProductoId = $request->input('tipo_producto_id');
+        $estadoAgotado = $this->formOptionsService->obtenerEstadoAgotado(self::THEME_PRODUCT_STATES);
 
-        $query = Producto::with([
-            'tipoProducto.parametro',
-            'unidadMedida.parametro',
-            'estado.parametro',
-            'contratoConvenio',
-            'ambiente'
-        ])
-        ->where('cantidad', '>', 0)
-        ->orderBy('producto', 'asc');
+        $filtros = [
+            'search' => $request->input('search'),
+            'tipo_producto_id' => $request->input('tipo_producto_id'),
+            'estado_agotado_id' => $estadoAgotado?->id
+        ];
 
-        // Excluir productos con estado "AGOTADO"
-        $parametroAgotado = Parametro::find(43);
-        if ($parametroAgotado) {
-            $estadoAgotadoTema = ParametroTema::where('parametro_id', 43)
-                ->whereHas('tema', function($query) {
-                    $query->where('name', self::THEME_PRODUCT_STATES);
-                })
-                ->first();
+        $productos = $this->repository->buscarParaAjax($filtros);
 
-            if ($estadoAgotadoTema) {
-                $query->where('estado_producto_id', '!=', $estadoAgotadoTema->id);
-            }
-        }
+        // Enriquecer productos con marcas y categorías (SRP)
+        $this->enrichmentService->enriquecerConMarcasYCategorias($productos);
 
-        if (!empty($search)) {
-            $query->where(function($q) use ($search) {
-                $q->where('producto', 'LIKE', "%{$search}%");
-            });
-        }
-
-        if ($tipoProductoId) {
-            $query->where('tipo_producto_id', $tipoProductoId);
-        }
-
-        $productos = $query->get();
-
-        $productos->each(function($producto) {
-            if ($producto->marca_id) {
-                $producto->marca = Parametro::find($producto->marca_id);
-            }
-            if ($producto->categoria_id) {
-                $producto->categoria = Parametro::find($producto->categoria_id);
-            }
+        foreach ($productos as $producto) {
             $producto->imagen_url = $producto->imagen ? asset($producto->imagen) : null;
-        });
+        }
 
         return response()->json([
             'success' => true,
@@ -483,106 +346,25 @@ class ProductoController extends InventarioController
         ]);
     }
 
-    private function validateUpdateRequest(Request $request, string $id): array
-    {
-        return $request->validate([
-            'producto' => 'required|unique:productos,producto,' . $id,
-            'tipo_producto_id' => self::RULE_REQUIRED_PARAMETRO_TEMA,
-            'descripcion' => 'required|string',
-            'peso' => 'required|numeric|min:0',
-            'unidad_medida_id' => self::RULE_REQUIRED_PARAMETRO_TEMA,
-            'cantidad' => 'required|integer|min:0',
-            'codigo_barras' => ['nullable', 'string'],
-            'estado_producto_id' => self::RULE_REQUIRED_PARAMETRO_TEMA,
-            'categoria_id' => self::RULE_REQUIRED_PARAMETRO,
-            'marca_id' => self::RULE_REQUIRED_PARAMETRO,
-            'contrato_convenio_id' => 'required|exists:contratos_convenios,id',
-            'ambiente_id' => 'required|exists:ambientes,id',
-            'fecha_vencimiento' => 'nullable|date',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png'
-        ]);
-    }
-
-    private function processImageForUpdate(Request $request, Producto $producto, array &$validated): void
-    {
-        if (!$request->hasFile('imagen')) {
-            return;
-        }
-
-        $this->deleteExistingImage($producto);
-        $validated['imagen'] = $this->storeUploadedImage($request);
-    }
-
-    private function deleteExistingImage(Producto $producto): void
-    {
-        if (!$producto->imagen ||
-            $producto->imagen === self::DEFAULT_PRODUCT_IMAGE ||
-            !file_exists(public_path($producto->imagen))) {
-            return;
-        }
-
-        unlink(public_path($producto->imagen));
-    }
-
-    private function storeUploadedImage(Request $request): string
-    {
-        $nombreArchivo = time() . '.' . $request->imagen->extension();
-        $request->imagen->move(public_path('img/inventario'), $nombreArchivo);
-
-        return 'img/inventario/' . $nombreArchivo;
-    }
-
-    private function normalizeBarcodeForUpdate(Request $request, array &$validated): void
-    {
-        if (!$request->has('codigo_barras')) {
-            return;
-        }
-
-        $raw = $request->input('codigo_barras');
-
-        if ($raw === null || $raw === '') {
-            unset($validated['codigo_barras']);
-            return;
-        }
-
-        $digits = preg_replace('/\D/', '', (string) $raw);
-
-        $validated['codigo_barras'] = strlen($digits) === 11
-            ? $digits
-            : $this->generateNextBarcode();
-    }
-
-    private function notifyIfStockLow(Producto $producto, int $cantidadAnterior): void
-    {
-        if ($cantidadAnterior == $producto->cantidad || $producto->cantidad > 10) {
-            return;
-        }
-
-        $superadmins = User::role('SUPER ADMINISTRADOR')->get();
-
-        if ($superadmins->isEmpty()) {
-            return;
-        }
-
-        foreach ($superadmins as $admin) {
-            $admin->notify(new StockBajoNotification($producto, $producto->cantidad, 10));
-        }
-    }
 
     /**
-     * Agregar producto al carrito (AJAX)
+     * Agregar producto al carrito
      */
-    public function agregarAlCarrito(Request $request)
+    public function agregarAlCarrito(ProductoRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'producto_id' => 'required|exists:productos,id',
-            'cantidad' => 'required|integer|min:1'
-        ]);
+        $validated = $request->validated();
+        $producto = $this->repository->encontrar((int) $validated['producto_id']);
 
-        $producto = Producto::findOrFail($validated['producto_id']);
+        if (!$producto) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Producto no encontrado'
+            ], 404);
+        }
 
-        // Verificar stock disponible
-        if ($producto->cantidad < $validated['cantidad']) {
+        try {
+            $this->stockValidator->validarStockSuficiente($producto, $validated['cantidad']);
+        } catch (OrdenException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Stock insuficiente',
@@ -595,43 +377,58 @@ class ProductoController extends InventarioController
             'message' => 'Producto agregado al carrito',
             'producto' => [
                 'id' => $producto->id,
-                'nombre' => $producto->producto,
+                'nombre' => $producto->name,
                 'stock' => $producto->cantidad
             ]
         ]);
     }
 
     /**
-     * Obtener detalles del producto para modal 
+     * Obtener detalles del producto para modal
      */
-    public function detalles(string $id)
+    public function detalles(string $id): View
     {
-        $producto = Producto::with([
-            'tipoProducto.parametro',
-            'unidadMedida.parametro',
-            'estado.parametro',
-            'contratoConvenio',
-            'ambiente',
-            'proveedor',
-        ])->findOrFail($id);
+        $producto = $this->repository->encontrarConRelaciones((int) $id);
 
-        // Cargar marca y categoria DIRECTAMENTE desde Parametro sin usar la relación del modelo
-        if ($producto->marca_id) {
-            $producto->setRelation('marca', Parametro::find($producto->marca_id));
+        if (!$producto) {
+            abort(404);
         }
-        if ($producto->categoria_id) {
-            $producto->setRelation('categoria', Parametro::find($producto->categoria_id));
-        }
+
+        // Enriquecer producto con marca y categoría usando el servicio
+        $this->enrichmentService->enriquecerProducto($producto);
 
         return view('inventario.productos._detalles-modal', compact('producto'));
     }
 
     /**
-     * Vista imprimible de la etiqueta con código de barras SENA (JS en cliente)
+     * Vista imprimible de la etiqueta con código de barras
      */
-    public function etiqueta(string $id)
+    public function etiqueta(string $id): View
     {
-        $producto = Producto::findOrFail($id);
-        return view('inventario.productos.etiqueta', compact('producto'));
+        $producto = $this->repository->encontrar((int) $id);
+
+        if (!$producto) {
+            abort(404);
+        }
+
+        $barcodeImage = null;
+
+        if (!empty($producto->codigo_barras)) {
+            $generator = new BarcodeGeneratorPNG();
+            $binary = $generator->getBarcode(
+                (string) $producto->codigo_barras,
+                $generator::TYPE_CODE_128,
+                2,
+                60
+            );
+
+            $barcodeImage = 'data:image/png;base64,' . base64_encode($binary);
+        }
+
+        return view('inventario.productos.etiqueta', [
+            'producto' => $producto,
+            'barcodeImage' => $barcodeImage,
+        ]);
     }
 }
+

@@ -10,12 +10,13 @@ class AmbienteRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
-        $this->cacheType = 'programas';
+        $this->cacheType = 'parametros';
         $this->cacheTags = ['ambientes', 'infraestructura'];
-    }    /**
+    }
+
+    /**
      * Obtiene todos los ambientes activos
      *
      * @return Collection
@@ -24,10 +25,10 @@ class AmbienteRepository
     {
         return $this->cache('activos', function () {
             return Ambiente::where('status', true)
-                ->with(['sede', 'piso'])
-                ->orderBy('nombre')
+                ->with(['piso.bloque', 'sede'])
+                ->orderBy('title')
                 ->get();
-        }, 360); // 6 horas
+        }, 720); // 12 horas
     }
 
     /**
@@ -38,33 +39,39 @@ class AmbienteRepository
      */
     public function obtenerPorSede(int $sedeId): Collection
     {
-        return $this->cache("sede.{$sedeId}.ambientes", function () use ($sedeId) {
-            return Ambiente::where('sede_id', $sedeId)
-                ->where('status', true)
-                ->orderBy('nombre')
+        return $this->cache("sede_{$sedeId}", function () use ($sedeId) {
+            return Ambiente::whereHas('piso.bloque', function ($query) use ($sedeId) {
+                $query->where('sede_id', $sedeId);
+            })
+                ->with(['piso.bloque', 'piso.bloque.sede'])
                 ->get();
-        }, 360);
+        }, 720); // 12 horas
     }
 
     /**
-     * Verifica disponibilidad de ambiente
+     * Encuentra un ambiente con sus relaciones
      *
-     * @param int $ambienteId
-     * @param string $fecha
-     * @param string $horaInicio
-     * @param string $horaFin
-     * @return bool
+     * @param int $id
+     * @return Ambiente|null
      */
-    public function estaDisponible(int $ambienteId, string $fecha, string $horaInicio, string $horaFin): bool
+    public function encontrar(int $id): ?Ambiente
     {
-        // Verificar si hay fichas asignadas al ambiente en ese horario
-        $ocupado = \App\Models\FichaCaracterizacion::where('ambiente_id', $ambienteId)
-            ->where('status', 1)
-            ->where('fecha_inicio', '<=', $fecha)
-            ->where('fecha_fin', '>=', $fecha)
-            ->exists();
+        return Ambiente::with(['piso.bloque', 'sede'])->find($id);
+    }
 
-        return !$ocupado;
+    /**
+     * Obtiene ambientes por piso
+     *
+     * @param int $pisoId
+     * @return Collection
+     */
+    public function obtenerPorPiso(int $pisoId): Collection
+    {
+        return $this->cache("piso_{$pisoId}", function () use ($pisoId) {
+            return Ambiente::where('piso_id', $pisoId)
+                ->with(['piso.bloque', 'sede'])
+                ->get();
+        }, 720); // 12 horas
     }
 
     /**

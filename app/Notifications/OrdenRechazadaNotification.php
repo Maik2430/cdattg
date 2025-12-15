@@ -43,27 +43,18 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
         $orden = $this->detalleOrden->orden;
         $producto = $this->detalleOrden->producto;
         $tipoOrden = $orden->tipoOrden->parametro->name ?? 'N/A';
-        
-        $message = (new MailMessage)
-            ->subject('❌ Tu Solicitud ha sido Rechazada - Orden #' . $orden->id)
-            ->greeting('Hola, ' . $notifiable->name)
-            ->line('Lamentamos informarte que tu solicitud de ' . strtolower($tipoOrden) . ' ha sido rechazada.')
-            ->line('**Orden:** #' . $orden->id)
-            ->line('**Tipo:** ' . $tipoOrden)
-            ->line('**Producto:** ' . $producto->producto)
-            ->line('**Cantidad Solicitada:** ' . $this->detalleOrden->cantidad . ' unidades')
-            ->line('**Rechazado por:** ' . $this->aprobador->name);
-        
-        if ($this->motivoRechazo) {
-            $message->line('**Motivo del Rechazo:**')
-                ->line($this->motivoRechazo);
-        }
-        
-        $message->action('Ver Detalles', url('/inventario/ordenes/' . $orden->id))
-            ->line('Si tienes alguna pregunta, por favor contacta al administrador.')
-            ->salutation('Saludos, ' . config('app.name'));
-        
-        return $message;
+
+        return (new MailMessage)
+            ->subject('Tu Solicitud ha sido Rechazada - Orden #' . $orden->id)
+            ->view('inventario.email.orden-rechazada', [
+                'notifiable' => $notifiable,
+                'orden' => $orden,
+                'detalleOrden' => $this->detalleOrden,
+                'producto' => $producto,
+                'tipoOrden' => $tipoOrden,
+                'aprobador' => $this->aprobador,
+                'motivoRechazo' => $this->motivoRechazo,
+            ]);
     }
 
     /**
@@ -73,12 +64,15 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
+        $producto = $this->detalleOrden->producto;
+
         return [
             'orden_id' => $this->detalleOrden->orden->id,
             'detalle_orden_id' => $this->detalleOrden->id,
             'producto' => [
-                'id' => $this->detalleOrden->producto->id,
-                'producto' => $this->detalleOrden->producto->producto,
+                'id' => $producto->id,
+                'producto' => $producto->name,
+                'name' => $producto->name,
             ],
             'cantidad' => $this->detalleOrden->cantidad,
             'aprobador' => [

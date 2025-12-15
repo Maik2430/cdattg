@@ -27,11 +27,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(producto => {
                     resultadoDiv.innerHTML = `
                         <div class="alert alert-success mt-3">
-                            Producto encontrado: <strong>${producto.producto}</strong>. Redirigiendo...
+                            Producto encontrado: <strong>${producto.name}</strong>. Redirigiendo...
                         </div>
                     `;
                     setTimeout(() => {
-                        window.location.href = `/inventario/productos/${producto.id}`;
+                        globalThis.location.href = `/inventario/productos/${producto.id}`;
                     }, 1000);
                 })
                 .catch(error => {

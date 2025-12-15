@@ -8,7 +8,6 @@ use App\Http\Controllers\Complementarios\ProgramaComplementarioController;
 use App\Http\Controllers\Complementarios\ValidacionSofiaController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\GoogleDriveController;
-use App\Http\Controllers\Inventario\ProductoController;
 use App\Http\Controllers\MunicipioController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 | Aquí se registran las rutas web de la aplicación.
 |
 */
+
+if (!defined('ROUTE_PATTERN_NUMERIC')) {
+    define('ROUTE_PATTERN_NUMERIC', '[0-9]+');
+}
 
 $loadRouteFolders = static function (array $folders, array $middleware = ['web']): void {
     foreach ($folders as $folder) {
@@ -60,7 +63,17 @@ Route::middleware('web')->group(function () {
                 ->name('validar-documento');
 
             Route::get('{programa}', [ProgramaComplementarioController::class, 'verPrograma'])
+                ->where('programa', ROUTE_PATTERN_NUMERIC) // Solo acepta IDs numéricos
                 ->name('show');
+
+            // Rutas para documentos
+            Route::get('{id}/formulario-documentos', [\App\Http\Controllers\Complementarios\DocumentoComplementarioController::class, 'formularioDocumentos'])
+                ->where('id', ROUTE_PATTERN_NUMERIC)
+                ->name('formulario-documentos');
+
+            Route::post('{id}/subir-documentos', [\App\Http\Controllers\Complementarios\DocumentoComplementarioController::class, 'subirDocumento'])
+                ->where('id', ROUTE_PATTERN_NUMERIC)
+                ->name('subir-documentos');
         });
 
     Route::prefix('inscripcion')
@@ -69,7 +82,7 @@ Route::middleware('web')->group(function () {
             Route::get('/', [InscripcionComplementarioController::class, 'inscripcionGeneral'])
                 ->name('general');
             Route::post('/', [InscripcionComplementarioController::class, 'procesarInscripcionGeneral'])
-                ->name('procesar');
+                ->name('general.store');
         });
 
     Route::get('/sofia-validation-progress/{progressId}', [ValidacionSofiaController::class, 'getValidationProgress'])
@@ -109,14 +122,6 @@ Route::middleware(['web', 'auth'])->group(function () {
         [AsistenceQrController::class, 'verifyDocument']
     )->name('api.verifyDocument');
 
-    Route::prefix('inventario')
-        ->name('inventario.')
-        ->group(function () {
-            Route::get(
-                'productos/{id}/etiqueta',
-                [ProductoController::class, 'etiqueta']
-            )->name('productos.etiqueta');
-        });
 
     Route::get(
         '/mi-perfil',

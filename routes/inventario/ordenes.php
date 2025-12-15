@@ -4,16 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventario\OrdenController;
 use App\Http\Controllers\Inventario\AprobacionController;
 
-// Rutas para órdenes del inventario (préstamos y salidas)
+// Rutas para órdenes del inventario
 Route::prefix('inventario')
     ->name('inventario.')
-    ->middleware(['auth'])
     ->group(function () {
-        // Vista de préstamos y salidas (GET) - Formulario de solicitud
+        // Vista de préstamos y salidas
         Route::get('ordenes/prestamos-salidas', [OrdenController::class, 'prestamosSalidas'])
             ->name('prestamos-salidas');
             
-        // Procesar préstamo/salida (POST)
+        // Procesar préstamo/salida
         Route::post('ordenes/prestamos-salidas', [OrdenController::class, 'storePrestamos'])
             ->name('prestamos-salidas.store');
         
@@ -28,6 +27,8 @@ Route::prefix('inventario')
             ->name('ordenes.completadas');
         Route::get('ordenes/rechazadas', [OrdenController::class, 'rechazadas'])
             ->name('ordenes.rechazadas');
+        Route::delete('ordenes/vaciar-historial', [OrdenController::class, 'vaciarHistorial'])
+            ->name('ordenes.vaciar-historial');
         Route::get($ordenRoute, [OrdenController::class, 'show'])
             ->name('ordenes.show');
         Route::put($ordenRoute, [OrdenController::class, 'update'])
@@ -35,7 +36,7 @@ Route::prefix('inventario')
         Route::delete($ordenRoute, [OrdenController::class, 'destroy'])
             ->name('ordenes.destroy');
 
-        // Rutas para aprobaciones (solo superadministrador)
+        // Rutas para aprobaciones
         Route::middleware(['can:APROBAR ORDEN'])->group(function () {
             // Ver solicitudes pendientes
             Route::get('aprobaciones/pendientes', [AprobacionController::class, 'pendientes'])
@@ -52,9 +53,5 @@ Route::prefix('inventario')
                 ->name('aprobaciones.aprobar-orden');
             Route::post('aprobaciones/orden/{orden}/rechazar', [AprobacionController::class, 'rechazarOrden'])
                 ->name('aprobaciones.rechazar-orden');
-
-            // Historial de aprobaciones
-            Route::get('aprobaciones/historial', [AprobacionController::class, 'historial'])
-                ->name('aprobaciones.historial');
         });
     });

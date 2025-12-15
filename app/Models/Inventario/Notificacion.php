@@ -2,57 +2,49 @@
 
 namespace App\Models\Inventario;
 
+use Database\Factories\Inventario\NotificacionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Carbon;
 
 class Notificacion extends DatabaseNotification
 {
-    /**
-     * La tabla asociada con el modelo.
-     *
-     * @var string
-     */
+    use HasFactory;
     protected $table = 'notificaciones';
 
-    /**
-     * Indica si el modelo debe tener timestamps.
-     *
-     * @var bool
-     */
     public $timestamps = true;
 
-    /**
-     * Indica si el IDs son auto-incrementales.
-     *
-     * @var bool
-     */
     public $incrementing = false;
 
-    /**
-     * El tipo de dato de la clave primaria ID.
-     *
-     * @var string
-     */
     protected $keyType = 'string';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'id',
         'tipo',
-        'notificable_type',
-        'notificable_id',
         'datos',
         'leida_en',
+        'notificable_type',
+        'notificable_id',
+        'created_at',
+        'updated_at',
     ];
 
     /**
-     * Los atributos que deben ser convertidos.
-     *
-     * @var array
+     * Override para usar nuestros nombres de columna personalizados
      */
+    public function getNotifiableTypeAttribute(): ?string
+    {
+        return $this->attributes['notificable_type'] ?? null;
+    }
+
+    /**
+     * Override para usar nuestros nombres de columna personalizados
+     */
+    public function getNotifiableIdAttribute(): int|string|null
+    {
+        return $this->attributes['notificable_id'] ?? null;
+    }
+
     protected $casts = [
         'datos' => 'array',
         'leida_en' => 'datetime',
@@ -63,23 +55,30 @@ class Notificacion extends DatabaseNotification
     /**
      * Laravel espera 'data' pero nuestra columna es 'datos'
      */
-    public function getDataAttribute()
+    public function getDataAttribute() : array
     {
-        return $this->attributes['datos'] ?? [];
+        $datos = $this->attributes['datos'] ?? null;
+
+        if ($datos === null) {
+            return [];
+        }
+
+        if (is_array($datos)) {
+            return $datos;
+        }
+
+        // Si es JSON string, decodificarlo
+        $decoded = is_string($datos) ? json_decode($datos, true) : null;
+        return is_array($decoded) ? $decoded : [];
     }
 
-    /**
-     * Laravel espera 'type' pero nuestra columna es 'tipo'
-     */
-    public function getTypeAttribute()
+  
+    public function getTypeAttribute() : ?string
     {
         return $this->attributes['tipo'] ?? null;
     }
 
-    /**
-     * Laravel espera 'read_at' pero nuestra columna es 'leida_en'
-     */
-    public function getReadAtAttribute()
+    public function getReadAtAttribute() : ?Carbon
     {
         return $this->leida_en;
     }
@@ -87,7 +86,7 @@ class Notificacion extends DatabaseNotification
     /**
      * Marcar la notificación como leída
      */
-    public function markAsRead()
+    public function markAsRead() : void
     {
         if (is_null($this->leida_en)) {
             $this->forceFill(['leida_en' => $this->freshTimestamp()])->save();
@@ -97,7 +96,7 @@ class Notificacion extends DatabaseNotification
     /**
      * Marcar la notificación como no leída
      */
-    public function markAsUnread()
+    public function markAsUnread() : void
     {
         if (!is_null($this->leida_en)) {
             $this->forceFill(['leida_en' => null])->save();
@@ -107,7 +106,7 @@ class Notificacion extends DatabaseNotification
     /**
      * Determinar si la notificación ha sido leída
      */
-    public function read()
+    public function read() : bool
     {
         return $this->leida_en !== null;
     }
@@ -115,7 +114,7 @@ class Notificacion extends DatabaseNotification
     /**
      * Determinar si la notificación no ha sido leída
      */
-    public function unread()
+    public function unread() : bool
     {
         return $this->leida_en === null;
     }

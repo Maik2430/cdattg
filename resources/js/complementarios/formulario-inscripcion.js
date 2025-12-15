@@ -1,25 +1,5 @@
 // Funcionalidad para formularios de inscripción y registro
 
-// Constantes de configuración
-const CONFIG = {
-    EDAD_MINIMA: 14,
-    MENSAJE_EDAD_INVALIDA: 'Debe tener al menos 14 años para registrarse.',
-    NINGUNA_LABEL: 'NINGUNA',
-    CAMPOS_TEXTOS: ['primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido'],
-    CAMPOS_NUMERICOS: ['numero_documento', 'telefono', 'celular'],
-    CAMPOS_DIRECCION_NUMERICOS: ['numero_via', 'numero_casa']
-};
-
-// Función para detectar el contexto del formulario
-function getFormContext() {
-    const registroForm = document.getElementById('registroForm');
-    const formInscripcion = document.getElementById('formInscripcion');
-
-    if (registroForm) return 'registro';
-    if (formInscripcion) return 'inscripcion';
-    return 'unknown';
-}
-
 // Constantes de configuración para centralizar reglas de negocio
 const CONFIG = {
     EDAD_MINIMA: 14,
@@ -43,8 +23,8 @@ function getFormContext() {
 document.addEventListener('DOMContentLoaded', function () {
     const context = getFormContext();
 
-    // Inicializar municipios si hay datos guardados
-    initializeMunicipios();
+    // NO inicializar municipios aquí - el script form.js del partial lo maneja
+    // initializeMunicipios();
 
     // Configurar validaciones de formularios
     setupFormValidations();
@@ -55,8 +35,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Configurar validación de números
     setupNumberValidation();
 
-    // Configurar carga dinámica de municipios
-    setupMunicipioLoading();
+    // NO configurar carga dinámica de municipios aquí - el script form.js del partial lo maneja
+    // setupMunicipioLoading();
 
     // Configurar manejo de caracterización solo para inscripción
     if (context === 'inscripcion') {
@@ -66,10 +46,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Configurar validación de edad mínima (aplica a ambos contextos si existe el campo)
     setupEdadMinimaValidation();
 
-    // Inicializar municipios dinámicos para formularios que lo necesiten
-    if (typeof initializeMunicipiosDynamic === 'function') {
-        initializeMunicipiosDynamic();
-    }
+    // NO inicializar municipios dinámicos aquí - el script form.js del partial lo maneja
+    // if (typeof initializeMunicipiosDynamic === 'function') {
+    //     initializeMunicipiosDynamic();
+    // }
 
     // Para registro, inicializar carga dinámica de países (solo si aplica)
     if (context === 'registro') {
@@ -122,13 +102,13 @@ function getUserData() {
 // Configurar validaciones de formularios
 function setupFormValidations() {
     const forms = document.querySelectorAll('#formInscripcion, #registroForm');
-    forms.forEach(form => {
+    for (const form of forms) {
         form.addEventListener('submit', function (e) {
             if (!validateForm(this)) {
                 e.preventDefault();
             }
         });
-    });
+    }
 }
 
 // Validar formulario completo
@@ -136,14 +116,14 @@ function validateForm(form) {
     let isValid = true;
 
     // Validar nombres y apellidos (solo letras)
-    CONFIG.CAMPOS_TEXTOS.forEach(campoId => {
+    for (const campoId of CONFIG.CAMPOS_TEXTOS) {
         const campo = form.querySelector(`#${campoId}`);
-        if (campo && campo.value && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-]+$/.test(campo.value)) {
+        if (campo?.value && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s-]+$/.test(campo.value)) {
             alert(`El campo ${campoId.replace('_', ' ')} solo puede contener letras, espacios y guiones.`);
             campo.focus();
             isValid = false;
         }
-    });
+    }
 
     // Validar términos y condiciones si existe
     const terminosCheckbox = form.querySelector('#acepto_terminos');
@@ -154,7 +134,7 @@ function validateForm(form) {
 
     // Validar número de documento
     const numeroDocumento = form.querySelector('#numero_documento');
-    if (numeroDocumento && numeroDocumento.value && !/^\d+$/.test(numeroDocumento.value)) {
+    if (numeroDocumento?.value && !/^\d+$/.test(numeroDocumento.value)) {
         alert('El número de documento solo puede contener números.');
         numeroDocumento.focus();
         isValid = false;
@@ -162,7 +142,7 @@ function validateForm(form) {
 
     // Validar teléfono fijo si tiene valor
     const telefono = form.querySelector('#telefono');
-    if (telefono && telefono.value && !/^\d+$/.test(telefono.value)) {
+    if (telefono?.value && !/^\d+$/.test(telefono.value)) {
         alert('El teléfono fijo solo puede contener números.');
         telefono.focus();
         isValid = false;
@@ -170,7 +150,7 @@ function validateForm(form) {
 
     // Validar celular
     const celular = form.querySelector('#celular');
-    if (celular && celular.value && !/^\d+$/.test(celular.value)) {
+    if (celular?.value && !/^\d+$/.test(celular.value)) {
         alert('El celular solo puede contener números.');
         celular.focus();
         isValid = false;
@@ -181,12 +161,12 @@ function validateForm(form) {
 
 // Configurar conversión a mayúsculas y validación de texto
 function setupUppercaseConversion() {
-    CONFIG.CAMPOS_TEXTOS.forEach(campoId => {
+    for (const campoId of CONFIG.CAMPOS_TEXTOS) {
         const campo = document.getElementById(campoId);
         if (campo) {
             campo.addEventListener('input', function () {
                 // Convertir a mayúsculas y remover números
-                this.value = this.value.toUpperCase().replace(/\d/g, '');
+                this.value = this.value.toUpperCase().replaceAll(/\d/g, '');
             });
 
             // Validación en tiempo real - prevenir números durante escritura
@@ -196,7 +176,7 @@ function setupUppercaseConversion() {
                     return true;
                 }
                 // Permitir letras, espacios, guiones, tildes y teclas de control
-                if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-]$/.test(char) &&
+                if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s-]$/.test(char) &&
                     !e.ctrlKey && !e.altKey && !e.metaKey) {
                     e.preventDefault();
                     return false;
@@ -204,17 +184,17 @@ function setupUppercaseConversion() {
                 return true;
             });
         }
-    });
+    }
 }
 
 // Configurar validación de solo números
 function setupNumberValidation() {
-    CONFIG.CAMPOS_NUMERICOS.forEach(campoId => {
+    for (const campoId of CONFIG.CAMPOS_NUMERICOS) {
         const campo = document.getElementById(campoId);
         if (campo) {
             campo.addEventListener('keypress', soloNumeros);
         }
-    });
+    }
 }
 
 // Función para permitir solo números
@@ -346,7 +326,7 @@ function populateLocationSelect(selectElement, items, selectedId, entityType) {
         return;
     }
 
-    items.forEach(item => {
+    for (const item of items) {
         const option = document.createElement('option');
         option.value = item.id;
         const label = item.nombre ?? item[entityType] ?? item.name ?? item.label ?? '';
@@ -355,7 +335,7 @@ function populateLocationSelect(selectElement, items, selectedId, entityType) {
             option.selected = true;
         }
         selectElement.appendChild(option);
-    });
+    }
 }
 
 // Cargar departamentos para un país
@@ -418,13 +398,12 @@ function setupAddressForm() {
         toggleButton.addEventListener('click', function () {
             const addressForm = document.getElementById('addressForm');
             const isVisible = addressForm.classList.contains('show');
-            const button = this;
             if (isVisible) {
                 $('#addressForm').collapse('hide');
-                button.setAttribute('aria-expanded', 'false');
+                this.setAttribute('aria-expanded', 'false');
             } else {
                 $('#addressForm').collapse('show');
-                button.setAttribute('aria-expanded', 'true');
+                this.setAttribute('aria-expanded', 'true');
             }
         });
     }
@@ -437,12 +416,12 @@ function setupAddressForm() {
         cancelButton.addEventListener('click', cancelAddress);
     }
 
-    CONFIG.CAMPOS_DIRECCION_NUMERICOS.forEach(fieldId => {
+    for (const fieldId of CONFIG.CAMPOS_DIRECCION_NUMERICOS) {
         const element = document.getElementById(fieldId);
         if (element) {
             element.addEventListener('keypress', soloNumeros);
         }
-    });
+    }
 }
 
 // Inicializar setupAddressForm cuando el DOM esté listo
@@ -453,7 +432,9 @@ document.addEventListener('DOMContentLoaded', function () {
 // Cancelar edición de dirección
 function cancelAddress() {
     $('#addressForm').collapse('hide');
-    document.querySelectorAll('.address-field').forEach(field => field.value = '');
+    for (const field of document.querySelectorAll('.address-field')) {
+        field.value = '';
+    }
 }
 
 function getFieldValue(fieldId) {
@@ -482,16 +463,16 @@ function validateAddressFields(tipoVia, numeroVia, numeroCasa, carrera, calle) {
 }
 
 function clearAddressFields() {
-    document.querySelectorAll('.address-field').forEach(field => {
+    for (const field of document.querySelectorAll('.address-field')) {
         if (field.type === 'select-one') {
             field.selectedIndex = 0;
         } else {
             field.value = '';
         }
-    });
+    }
 
     const oldFields = ['carrera', 'calle', 'numero_apartamento'];
-    oldFields.forEach(fieldId => {
+    for (const fieldId of oldFields) {
         const field = document.getElementById(fieldId);
         if (field) {
             if (field.type === 'select-one') {
@@ -500,7 +481,7 @@ function clearAddressFields() {
                 field.value = '';
             }
         }
-    });
+    }
 }
 
 function collectNewAddressFields() {
@@ -572,21 +553,21 @@ function handleRadioChange(radio, ningunaRadio, allRadios) {
     if (radio !== ningunaRadio && radio.checked) {
         ningunaRadio.checked = false;
     } else if (radio === ningunaRadio && radio.checked) {
-        allRadios.forEach(otherRadio => {
+        for (const otherRadio of allRadios) {
             if (otherRadio !== ningunaRadio) {
                 otherRadio.checked = false;
             }
-        });
+        }
     }
 }
 
 function resetToNinguna(ningunaRadio, allRadios) {
     ningunaRadio.checked = true;
-    allRadios.forEach(radio => {
+    for (const radio of allRadios) {
         if (radio !== ningunaRadio) {
             radio.checked = false;
         }
-    });
+    }
 }
 
 function setupCaracterizacionHandling() {
@@ -595,18 +576,18 @@ function setupCaracterizacionHandling() {
     if (!ningunaRadio) return;
 
     ningunaRadio.checked = true;
-    caracterizacionRadios.forEach(radio => {
+    for (const radio of caracterizacionRadios) {
         radio.addEventListener('change', () => {
             handleRadioChange(radio, ningunaRadio, caracterizacionRadios);
         });
-    });
+    }
 
     const forms = document.querySelectorAll('#formInscripcion, #registroForm');
-    forms.forEach(form => {
+    for (const form of forms) {
         form.addEventListener('reset', () => {
             setTimeout(() => resetToNinguna(ningunaRadio, caracterizacionRadios), 0);
         });
-    });
+    }
 }
 
 function calcularFechaLimiteEdadMinima() {
@@ -659,7 +640,7 @@ function setupEdadMinimaValidation() {
     });
 
     const forms = document.querySelectorAll('#formInscripcion, #registroForm');
-    forms.forEach(form => {
+    for (const form of forms) {
         form.addEventListener('submit', function (e) {
             if (!validarEdad(fechaNacimientoInput.value)) {
                 e.preventDefault();
@@ -669,7 +650,7 @@ function setupEdadMinimaValidation() {
                 return false;
             }
         });
-    });
+    }
 }
 
 function initializePaisesForRegistro() {
@@ -696,6 +677,6 @@ function initializePaisesForRegistro() {
 }
 
 // Exportar funciones globales para uso en HTML
-window.setupAddressForm = setupAddressForm;
-window.initializeMunicipiosDynamic = initializeMunicipiosDynamic;
-window.initializePaisesForRegistro = initializePaisesForRegistro;
+globalThis.setupAddressForm = setupAddressForm;
+globalThis.initializeMunicipiosDynamic = initializeMunicipiosDynamic;
+globalThis.initializePaisesForRegistro = initializePaisesForRegistro;

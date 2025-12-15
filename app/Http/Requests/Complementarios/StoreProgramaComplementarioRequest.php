@@ -16,7 +16,8 @@ class StoreProgramaComplementarioRequest extends FormRequest
         return [
             'codigo' => 'required|string|unique:complementarios_ofertados,codigo',
             'nombre' => 'required|string',
-            'descripcion' => 'nullable|string',
+            'justificacion' => 'required|string|max:600',
+            'requisitos_ingreso' => 'required|string|max:400',
             'duracion' => 'required|integer|min:1',
             'cupos' => 'required|integer|min:1',
             'estado' => 'required|integer|in:0,1,2',
@@ -38,6 +39,12 @@ class StoreProgramaComplementarioRequest extends FormRequest
             'dias.*.dia_id' => 'required_with:dias.*.hora_inicio,dias.*.hora_fin|exists:parametros_temas,id',
             'dias.*.hora_inicio' => 'nullable|date_format:H:i',
             'dias.*.hora_fin' => 'nullable|date_format:H:i|after:dias.*.hora_inicio',
+            'competencias' => 'nullable|array',
+            'competencias.*' => 'exists:competencias,id',
+            'raps' => 'nullable|array',
+            'raps.*' => 'exists:resultados_aprendizajes,id',
+            'guias' => 'nullable|array',
+            'guias.*' => 'exists:guia_aprendizajes,id',
         ];
     }
 
@@ -63,5 +70,4 @@ class StoreProgramaComplementarioRequest extends FormRequest
         return $validated;
     }
 }
-
 

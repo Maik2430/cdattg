@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ComplementarioOfertado;
+use App\Models\Complementarios\ComplementarioOfertado;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -15,9 +15,19 @@ class HomeController extends Controller
     public function index()
     {
         // Obtener programas complementarios activos (estado = 1)
-        $programas = ComplementarioOfertado::with(['modalidad.parametro', 'jornada', 'diasFormacion'])
-            ->where('estado', 1)
-            ->get();
+        // Nota: estado_id ahora es FK a parametros_temas, necesitamos obtener el ID correspondiente
+        $estadoActivoId = $this->getEstadoIdByLegacyValue(1);
+        
+        $programas = ComplementarioOfertado::with(['modalidad.parametro', 'jornada', 'diasFormacion']);
+        
+        if ($estadoActivoId) {
+            $programas = $programas->where('estado_id', $estadoActivoId);
+        } else {
+            // Si no se encuentra el estado_id, retornar colección vacía
+            $programas = $programas->where('estado_id', 0); // Esto no devolverá resultados
+        }
+        
+        $programas = $programas->get();
 
         // Asignar iconos a cada programa
         $programas->each(function($programa) {
@@ -27,17 +37,17 @@ class HomeController extends Controller
         // Obtener programas en los que el usuario está inscrito
         $programasInscritos = collect();
         $programasInscritosIds = collect();
-        
+
         if (Auth::check() && Auth::user()->persona) {
             $personaId = Auth::user()->persona->id;
-            
+
             // Debug: Verificar si hay datos en la tabla aspirantes_complementarios
-            $aspirantesCount = \App\Models\AspiranteComplementario::where('persona_id', $personaId)
+            $aspirantesCount = \App\Models\Complementarios\AspiranteComplementario::where('persona_id', $personaId)
                 ->where('estado', 1)
                 ->count();
-            
+
             Log::info("Debug HomeController - Persona ID: {$personaId}, Aspirantes encontrados: {$aspirantesCount}");
-            
+
             $programasInscritos = ComplementarioOfertado::with(['modalidad.parametro', 'jornada', 'diasFormacion'])
                 ->whereHas('aspirantes', function($query) use ($personaId) {
                     $query->where('persona_id', $personaId)
@@ -59,6 +69,43 @@ class HomeController extends Controller
         }
 
         return view('home', compact('programas', 'programasInscritos', 'programasInscritosIds'));
+    }
+
+    /**
+     * Obtener el estado_id correspondiente a un valor legacy (0,1,2)
+     */
+    private function getEstadoIdByLegacyValue(int $estadoLegacy): ?int
+    {
+        $nombreEstado = match ($estadoLegacy) {
+            0 => 'Sin Oferta',
+            1 => 'Con Oferta',
+            2 => 'Cupos Llenos',
+            default => 'Sin Oferta',
+        };
+        
+        // Buscar el ParametroTema correspondiente al estado
+        try {
+            $temaEstado = \App\Models\Tema::where('name', 'ESTADO_PROGRAMA_COMPLEMENTARIO')->first();
+            
+            if ($temaEstado) {
+                $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+                
+                if ($parametro) {
+                    $parametroTema = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
+                        ->where('parametro_id', $parametro->id)
+                        ->first();
+                    
+                    if ($parametroTema) {
+                        return $parametroTema->id;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Si hay error, retornar null
+            Log::error("Error obteniendo estado_id para valor legacy {$estadoLegacy}: " . $e->getMessage());
+        }
+        
+        return null;
     }
 
     /**

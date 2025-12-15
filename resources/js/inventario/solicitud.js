@@ -5,17 +5,13 @@
 // Esperar a que el DOM esté listo
 document.addEventListener('DOMContentLoaded', function () {
     cargarDatosCarrito();
+    setupFormSubmit();
 });
 
 /**
  * Cargar datos del carrito desde sessionStorage
  */
 function cargarDatosCarrito() {
-    if (!debeCargarDesdeCarrito()) {
-        setupFechaDevolucionToggle();
-        return;
-    }
-
     const carritoDataString = obtenerDatosCarrito();
     if (!carritoDataString) {
         setupFechaDevolucionToggle();
@@ -25,7 +21,15 @@ function cargarDatosCarrito() {
     try {
         const data = JSON.parse(carritoDataString);
         aplicarDatosCarrito(data);
-        sessionStorage.removeItem('carrito_data');
+        
+        // Solo mostrar alerta si viene desde el carrito
+        if (debeCargarDesdeCarrito()) {
+            mostrarAlertaCarritoCargado(data);
+            // Limpiar el parámetro de la URL sin recargar
+            const url = new URL(globalThis.location);
+            url.searchParams.delete('desde_carrito');
+            globalThis.history.replaceState({}, '', url);
+        }
     } catch (error) {
         manejarErrorCargaCarrito(error);
     }
@@ -34,7 +38,7 @@ function cargarDatosCarrito() {
 }
 
 function debeCargarDesdeCarrito() {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(globalThis.location.search);
     return urlParams.get('desde_carrito') === 'true';
 }
 
@@ -47,7 +51,6 @@ function aplicarDatosCarrito(data) {
     mostrarResumenCarrito();
     renderizarItemsCarrito(data);
     inyectarHiddenCarrito(data);
-    mostrarAlertaCarritoCargado(data);
 }
 
 function actualizarTotalesCarrito(data) {
@@ -152,4 +155,35 @@ function setupFechaDevolucionToggle() {
         tipo.addEventListener('change', updateFechaEntregaVisibility);
         updateFechaEntregaVisibility();
     }
+}
+
+/**
+ * Configurar el evento submit del formulario
+ */
+function setupFormSubmit() {
+    const form = document.getElementById('form-solicitud');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+        // Obtener datos del carrito desde sessionStorage
+        const carritoDataString = sessionStorage.getItem('carrito_data');
+        let carritoItems = [];
+        
+        if (carritoDataString) {
+            try {
+                const data = JSON.parse(carritoDataString);
+                carritoItems = data.items || [];
+            } catch (error) {
+                console.error('Error al parsear carrito_data:', error);
+            }
+        }
+        
+        // Asignar al campo hidden
+        const carritoInput = document.getElementById('carrito');
+        if (carritoInput) {
+            carritoInput.value = JSON.stringify(carritoItems);
+        }
+        
+        // NO limpiar aquí - se limpiará después del éxito en el servidor
+    });
 }

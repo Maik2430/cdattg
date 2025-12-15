@@ -55,7 +55,7 @@ class RegistrarAsistenciaPrueba extends Command
 
             // Obtener cualquier instructor_ficha disponible
             $instructorFicha = InstructorFichaCaracterizacion::inRandomOrder()->first();
-            
+
             if (!$instructorFicha) {
                 $this->error('❌ No se encontró ningún instructor asignado a una ficha.');
                 $this->info('💡 Por favor, crea al menos una asignación de instructor a ficha primero.');

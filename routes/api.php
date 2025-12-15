@@ -445,3 +445,16 @@ Route::get('/presencia/estadisticas/hoy', [\App\Http\Controllers\PersonaIngresoS
 Route::get('/presencia/personas-dentro', [\App\Http\Controllers\PersonaIngresoSalidaController::class, 'personasDentro']);
 Route::get('/presencia/estadisticas/fecha', [\App\Http\Controllers\PersonaIngresoSalidaController::class, 'estadisticasPorFecha']);
 Route::get('/presencia/estadisticas/sede/{sedeId}', [\App\Http\Controllers\PersonaIngresoSalidaController::class, 'estadisticasPorSede']);
+
+// ==========================================
+// COMPLEMENTARIOS - API RUTAS
+// ==========================================
+
+Route::get('/complementarios/competencias', [\App\Http\Controllers\Api\ComplementarioApiController::class, 'getCompetencias'])
+    ->name('api.complementarios.competencias');
+
+Route::get('/complementarios/raps', [\App\Http\Controllers\Api\ComplementarioApiController::class, 'getRapsByCompetencias'])
+    ->name('api.complementarios.raps.by.competencias');
+
+Route::get('/complementarios/guias-aprendizaje', [\App\Http\Controllers\Api\ComplementarioApiController::class, 'getGuiasAprendizaje'])
+    ->name('api.complementarios.guias.aprendizaje');
