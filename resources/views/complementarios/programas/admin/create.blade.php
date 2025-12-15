@@ -37,91 +37,6 @@
     </style>
 @endsection
 
-@section('js')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const catalogoSelect = document.getElementById('catalogo_id');
-            const codigoInput = document.getElementById('codigo');
-            const nombreInput = document.getElementById('nombre');
-            const duracionInput = document.getElementById('duracion');
-            const requisitosInput = document.getElementById('requisitos_ingreso');
-
-            if (!catalogoSelect) {
-                return;
-            }
-
-            function bloquearCamposDesdeCatalogo(usarCatalogo) {
-                const campos = [codigoInput, nombreInput, duracionInput, requisitosInput];
-
-                campos.forEach(function (campo) {
-                    if (!campo) {
-                        return;
-                    }
-
-                    if (usarCatalogo) {
-                        campo.setAttribute('readonly', 'readonly');
-                        campo.removeAttribute('required');
-                    } else {
-                        campo.removeAttribute('readonly');
-                    }
-                });
-
-                if (codigoInput && !usarCatalogo) {
-                    codigoInput.setAttribute('required', 'required');
-                }
-                if (nombreInput && !usarCatalogo) {
-                    nombreInput.setAttribute('required', 'required');
-                }
-                if (duracionInput && !usarCatalogo) {
-                    duracionInput.setAttribute('required', 'required');
-                }
-                if (requisitosInput && !usarCatalogo) {
-                    requisitosInput.setAttribute('required', 'required');
-                }
-            }
-
-            function aplicarSeleccionCatalogo() {
-                const option = catalogoSelect.options[catalogoSelect.selectedIndex];
-
-                const tieneCatalogo = !!option && !!option.value;
-
-                if (!tieneCatalogo) {
-                    bloquearCamposDesdeCatalogo(false);
-                    return;
-                }
-
-                const codigo = option.dataset.codigo || '';
-                const nombre = option.dataset.nombre || '';
-                const duracion = option.dataset.duracion || '';
-                const requisitos = option.dataset.requisitos || '';
-
-                if (codigoInput && codigo) {
-                    codigoInput.value = codigo;
-                }
-
-                if (nombreInput && nombre) {
-                    nombreInput.value = nombre;
-                }
-
-                if (duracionInput && duracion) {
-                    duracionInput.value = duracion;
-                }
-
-                if (requisitosInput && requisitos) {
-                    requisitosInput.value = requisitos;
-                }
-
-                bloquearCamposDesdeCatalogo(true);
-            }
-
-            catalogoSelect.addEventListener('change', aplicarSeleccionCatalogo);
-
-            // Aplicar estado inicial (por si viene con old('catalogo_id'))
-            aplicarSeleccionCatalogo();
-        });
-    </script>
-@endsection
-
 @section('content_header')
     <x-page-header icon="fa-graduation-cap" title="Programa Complementario"
         subtitle="Crear nuevo programa de formación complementaria" :breadcrumb="[
@@ -583,6 +498,81 @@
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Lógica de selección desde catálogo SENA
+            const catalogoSelect = document.getElementById('catalogo_id');
+            const codigoInput = document.getElementById('codigo');
+            const nombreInput = document.getElementById('nombre');
+            const duracionInput = document.getElementById('duracion');
+            const requisitosInput = document.getElementById('requisitos_ingreso');
+
+            if (catalogoSelect) {
+                const bloquearCamposDesdeCatalogo = (usarCatalogo) => {
+                    const campos = [codigoInput, nombreInput, duracionInput, requisitosInput];
+
+                    campos.forEach((campo) => {
+                        if (!campo) {
+                            return;
+                        }
+
+                        if (usarCatalogo) {
+                            campo.setAttribute('readonly', 'readonly');
+                            campo.removeAttribute('required');
+                        } else {
+                            campo.removeAttribute('readonly');
+                        }
+                    });
+
+                    if (codigoInput && !usarCatalogo) {
+                        codigoInput.setAttribute('required', 'required');
+                    }
+                    if (nombreInput && !usarCatalogo) {
+                        nombreInput.setAttribute('required', 'required');
+                    }
+                    if (duracionInput && !usarCatalogo) {
+                        duracionInput.setAttribute('required', 'required');
+                    }
+                    if (requisitosInput && !usarCatalogo) {
+                        requisitosInput.setAttribute('required', 'required');
+                    }
+                };
+
+                const aplicarSeleccionCatalogo = () => {
+                    const option = catalogoSelect.options[catalogoSelect.selectedIndex];
+
+                    const tieneCatalogo = !!option && !!option.value;
+
+                    if (!tieneCatalogo) {
+                        bloquearCamposDesdeCatalogo(false);
+                        return;
+                    }
+
+                    const codigo = option.dataset.codigo || '';
+                    const nombre = option.dataset.nombre || '';
+                    const duracion = option.dataset.duracion || '';
+                    const requisitos = option.dataset.requisitos || '';
+
+                    if (codigoInput && codigo) {
+                        codigoInput.value = codigo;
+                    }
+
+                    if (nombreInput && nombre) {
+                        nombreInput.value = nombre;
+                    }
+
+                    if (duracionInput && duracion) {
+                        duracionInput.value = duracion;
+                    }
+
+                    if (requisitosInput && requisitos) {
+                        requisitosInput.value = requisitos;
+                    }
+
+                    bloquearCamposDesdeCatalogo(true);
+                };
+
+                catalogoSelect.addEventListener('change', aplicarSeleccionCatalogo);
+                aplicarSeleccionCatalogo();
+            }
             if (typeof $ !== 'undefined' && $.fn.select2) {
                 // Configurar Select2 para campos existentes
                 $('.select2').select2({
@@ -694,39 +684,13 @@
                 }
             };
 
-            // Validación del formulario
-            form.addEventListener('submit', function(e) {
-                const requiredFields = form.querySelectorAll('[required]');
-                let isValid = true;
-                let primerCampoInvalido = null;
-
-                // Validar campos requeridos
-                requiredFields.forEach(field => {
-                    if (!field.value || !field.value.trim()) {
-                        field.classList.add('is-invalid');
-                        isValid = false;
-                        if (!primerCampoInvalido) {
-                            primerCampoInvalido = field;
-                        }
-                    } else {
-                        field.classList.remove('is-invalid');
-                    }
-                });
-
-                // Validar estructura académica - Solo competencias son requeridas
-                // Los RAPs son informativos y se relacionan con las competencias, no son obligatorios
-
-                if (!isValid) {
-                    e.preventDefault();
-                    if (primerCampoInvalido) {
-                        activarTabDeCampo(primerCampoInvalido);
-                        primerCampoInvalido.focus();
-                    }
-                    return;
+            // Validación ligera del formulario: delegar en validación HTML5/Laravel
+            form.addEventListener('submit', function () {
+                // Si el navegador detecta algún campo inválido, no llegará aquí.
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...';
                 }
-
-                saveBtn.disabled = true;
-                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...';
             });
         });
     </script>
