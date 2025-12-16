@@ -26,6 +26,7 @@ class UpdateProgramaComplementarioRequest extends FormRequest
             'modalidad_id' => 'required|exists:parametros_temas,id',
             'jornada_id' => 'required|exists:jornadas_formacion,id',
             'ambiente_id' => 'required|exists:ambientes,id',
+            'ambiente_comentario' => 'nullable|string|max:500',
             'dias' => 'nullable|array',
             'dias.*.dia_id' => 'required_with:dias.*.hora_inicio,dias.*.hora_fin|exists:parametros_temas,id',
             'dias.*.hora_inicio' => 'nullable|date_format:H:i',

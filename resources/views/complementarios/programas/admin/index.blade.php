@@ -362,6 +362,8 @@
                         <dd class="col-sm-8" id="detalle-jornada">-</dd>
                         <dt class="col-sm-4">Ambiente</dt>
                         <dd class="col-sm-8" id="detalle-ambiente">-</dd>
+                        <dt class="col-sm-4">Comentario ambiente</dt>
+                        <dd class="col-sm-8" id="detalle-ambiente-comentario">-</dd>
                         <dt class="col-sm-4">Estado</dt>
                         <dd class="col-sm-8" id="detalle-estado">-</dd>
                         <dt class="col-sm-4">Días de formación</dt>
@@ -572,6 +574,9 @@
                 const ambiente = ambientes.find(a => a.id === data.ambiente_id);
                 $('#detalle-ambiente').text(
                     ambiente ? `${ambiente.title} · ${ambiente.piso?.piso ?? 'N/A'}` : 'N/A'
+                );
+                $('#detalle-ambiente-comentario').text(
+                    data.ambiente_comentario ? data.ambiente_comentario : 'N/A'
                 );
                 $('#detalle-estado').text(estados[data.estado] ?? 'N/A');
 

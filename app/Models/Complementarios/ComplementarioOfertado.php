@@ -40,6 +40,7 @@ class ComplementarioOfertado extends Model
         'modalidad_id',
         'jornada_id',
         'ambiente_id',
+        'ambiente_comentario',
     ];
 
     /**

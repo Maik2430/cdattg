@@ -369,6 +369,20 @@
                                             @enderror
                                         </div>
                                     </div>
+
+                                    <div class="form-group">
+                                        <label for="ambiente_comentario" class="form-label font-weight-semibold">
+                                            Comentario sobre el ambiente
+                                        </label>
+                                        <textarea name="ambiente_comentario" id="ambiente_comentario" rows="2"
+                                            class="form-control @error('ambiente_comentario') is-invalid @enderror"
+                                            placeholder="Ej. Casa de la mujer, Alcaldía, Centro comunitario, etc."
+                                            maxlength="500">{{ old('ambiente_comentario', $programa->ambiente_comentario ?? '') }}</textarea>
+                                        <small class="helper-text">Opcional. Especifica detalles adicionales sobre la ubicación o lugar específico donde se ejecutará el programa (máximo 500 caracteres).</small>
+                                        @error('ambiente_comentario')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="tab-estado"

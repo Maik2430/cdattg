@@ -168,6 +168,7 @@ class ProgramaComplementarioController extends Controller
             'modalidad_id' => $programa->modalidad_id,
             'jornada_id' => $programa->jornada_id,
             'ambiente_id' => $programa->ambiente_id,
+            'ambiente_comentario' => $programa->ambiente_comentario,
             'dias' => $dias,
         ]);
     }
@@ -272,6 +273,7 @@ class ProgramaComplementarioController extends Controller
             'modalidad_id',
             'jornada_id',
             'ambiente_id',
+            'ambiente_comentario',
         ])->toArray();
 
         // Si no se proporcionó modalidad_id, establecer presencial por defecto

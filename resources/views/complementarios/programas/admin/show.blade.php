@@ -316,6 +316,12 @@
                                                 <span class="text-muted">N/A</span>
                                             @endif
                                         </p>
+                                        @if($programa->ambiente_comentario)
+                                            <div class="mt-2">
+                                                <small class="text-muted d-block mb-1"><i class="fas fa-comment-alt mr-1"></i>Comentario:</small>
+                                                <p class="mb-0 small">{{ $programa->ambiente_comentario }}</p>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     @if($programa->diasFormacion && $programa->diasFormacion->count() > 0)
