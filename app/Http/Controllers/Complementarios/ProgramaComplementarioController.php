@@ -274,6 +274,20 @@ class ProgramaComplementarioController extends Controller
             'ambiente_id',
         ])->toArray();
 
+        // Si no se proporcionó modalidad_id, establecer presencial por defecto
+        if (empty($atributos['modalidad_id'])) {
+            $modalidadPresencial = \App\Models\ParametroTema::query()
+                ->where('tema_id', 5) // MODALIDADES DE FORMACION
+                ->whereHas('parametro', function ($query) {
+                    $query->where('id', 18); // PRESENCIAL
+                })
+                ->first();
+            
+            if ($modalidadPresencial) {
+                $atributos['modalidad_id'] = $modalidadPresencial->id;
+            }
+        }
+
         // Si se seleccionó un programa del catálogo, sobrescribir datos básicos
         if (!empty($payload['catalogo_id'])) {
             /** @var \App\Models\Complementarios\ComplementarioCatalogo|null $catalogo */

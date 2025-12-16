@@ -237,18 +237,6 @@
                                                 <small class="helper-text">Los RAPs se muestran automáticamente según las competencias seleccionadas. Su selección es opcional.</small>
                                             </div>
 
-                                            <!-- Selector de Guías de Aprendizaje -->
-                                            <div class="form-group mt-3">
-                                                <label for="guias" class="form-label font-weight-semibold">
-                                                    Guías de Aprendizaje
-                                                </label>
-                                                <select class="form-control select2-multiple" id="guias" name="guias[]" multiple>
-                                                    @foreach($guias ?? [] as $guia)
-                                                        <option value="{{ $guia->id }}">{{ $guia->codigo }} - {{ $guia->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <small class="helper-text">Selecciona las guías de aprendizaje asociadas a este programa.</small>
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -293,32 +281,7 @@
                                     </div>
 
                                     <div class="form-row">
-                                        <div class="form-group col-md-4">
-                                            <label for="modalidad_id" class="form-label font-weight-semibold">
-                                                Modalidad<span class="text-danger"> *</span>
-                                            </label>
-                                            @php
-                                                $modalidadSelectClass = 'form-control select2';
-                                                if ($errors->has('modalidad_id')) {
-                                                    $modalidadSelectClass .= ' is-invalid';
-                                                }
-                                            @endphp
-                                            <select name="modalidad_id" id="modalidad_id"
-                                                class="{{ $modalidadSelectClass }}" required>
-                                                <option value="">Seleccione una modalidad</option>
-                                                @foreach ($modalidades as $modalidad)
-                                                    <option value="{{ $modalidad->id }}"
-                                                        {{ old('modalidad_id') == $modalidad->id ? 'selected' : '' }}>
-                                                        {{ $modalidad->parametro->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <small class="helper-text">Ejemplo: Presencial, virtual, mixta.</small>
-                                            @error('modalidad_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-6">
                                             <label for="jornada_id" class="form-label font-weight-semibold">
                                                 Jornada<span class="text-danger"> *</span>
                                             </label>
@@ -343,7 +306,7 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-6">
                                             <label for="ambiente_id" class="form-label font-weight-semibold">
                                                 Ambiente<span class="text-danger"> *</span>
                                             </label>
@@ -586,7 +549,7 @@
                     }
                 });
 
-                // Configurar Select2 múltiple para competencias y guías
+                // Configurar Select2 múltiple para competencias
                 $('.select2-multiple').select2({
                     theme: 'bootstrap4',
                     width: '100%',

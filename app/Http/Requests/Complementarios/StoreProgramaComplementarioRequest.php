@@ -22,7 +22,7 @@ class StoreProgramaComplementarioRequest extends FormRequest
             'duracion' => 'required_without:catalogo_id|integer|min:1',
             'cupos' => 'required|integer|min:1',
             'estado' => 'required|integer|in:0,1,2',
-            'modalidad_id' => 'required|exists:parametros_temas,id',
+            'modalidad_id' => 'nullable|exists:parametros_temas,id',
             'jornada_id' => 'required|exists:jornadas_formacion,id',
             'ambiente_id' => 'required|exists:ambientes,id',
             'dias' => 'nullable|array',
