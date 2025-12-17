@@ -407,15 +407,18 @@ class ProgramaComplementarioController extends Controller
     /**
      * Mapea los días de formación de un programa a un formato estructurado.
      *
+     * @param ComplementarioOfertado $programa
      * @return array<int, array<string, mixed>>
      */
     private function mapearDiasFormacion(ComplementarioOfertado $programa): array
     {
         return $programa->diasFormacion->map(static function ($dia) {
+            // El dia_id en el pivot es el ID del parámetro/día
+            // Usamos el ID del modelo relacionado (Parametro)
             return [
-                'dia_id' => $dia->id,
-                'hora_inicio' => $dia->pivot->hora_inicio,
-                'hora_fin' => $dia->pivot->hora_fin,
+                'dia_id' => (int) $dia->id,
+                'hora_inicio' => $dia->pivot->hora_inicio ? substr($dia->pivot->hora_inicio, 0, 5) : null,
+                'hora_fin' => $dia->pivot->hora_fin ? substr($dia->pivot->hora_fin, 0, 5) : null,
             ];
         })->toArray();
     }
