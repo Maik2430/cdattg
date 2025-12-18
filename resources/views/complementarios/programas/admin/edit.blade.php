@@ -533,10 +533,19 @@
     <script type="application/json" id="dias-existentes-data">
         @json($diasSeleccionados ?? [])
     </script>
+    <script type="application/json" id="dias-semana-data">
+        @json(
+            collect($diasSemana ?? [])->map(fn ($d) => [
+                'id' => (int) $d->id,
+                'nombre' => (string) ($d->parametro->name ?? ''),
+            ])->values()
+        )
+    </script>
     <script>
         // Datos del servidor
         const rapsSeleccionados = JSON.parse(document.getElementById('raps-seleccionados-data').textContent);
         const diasExistentes = JSON.parse(document.getElementById('dias-existentes-data').textContent);
+        const diasSemana = JSON.parse(document.getElementById('dias-semana-data')?.textContent || '[]');
 
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof $ !== 'undefined' && $.fn.select2) {
@@ -661,7 +670,7 @@
             // Inicializar gestor de días y horarios
             let diasHorariosManager = null;
             if (typeof DiasHorariosManager !== 'undefined') {
-                diasHorariosManager = new DiasHorariosManager('dias-horarios-container', diasExistentes);
+                diasHorariosManager = new DiasHorariosManager('dias-horarios-container', diasExistentes, diasSemana);
             }
 
             // Validación del formulario

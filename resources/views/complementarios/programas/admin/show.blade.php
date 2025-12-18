@@ -335,7 +335,7 @@
                                             @foreach($programa->diasFormacion as $dia)
                                             <span class="badge badge-modern" style="background-color: #00794d; color: white;">
                                                 <i class="fas fa-calendar-day mr-1"></i>
-                                                {{ $dia->name ?? 'Día' }}
+                                                {{ $dia->parametro->name ?? 'Día' }}
                                                 <small class="ml-1">({{ $dia->pivot->hora_inicio }} - {{ $dia->pivot->hora_fin }})</small>
                                             </span>
                                             @endforeach

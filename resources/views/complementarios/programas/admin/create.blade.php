@@ -513,6 +513,14 @@
 
 @section('js')
     @vite(['resources/js/complementarios/dias-horarios.js'])
+    <script type="application/json" id="dias-semana-data">
+        @json(
+            collect($diasSemana ?? [])->map(fn ($d) => [
+                'id' => (int) $d->id,
+                'nombre' => (string) ($d->parametro->name ?? ''),
+            ])->values()
+        )
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Lógica de selección desde catálogo SENA
@@ -704,7 +712,8 @@
             // Inicializar gestor de días y horarios
             let diasHorariosManager = null;
             if (typeof DiasHorariosManager !== 'undefined') {
-                diasHorariosManager = new DiasHorariosManager('dias-horarios-container');
+                const diasSemana = JSON.parse(document.getElementById('dias-semana-data')?.textContent || '[]');
+                diasHorariosManager = new DiasHorariosManager('dias-horarios-container', [], diasSemana);
             }
 
             // Validación ligera del formulario: delegar en validación HTML5/Laravel
