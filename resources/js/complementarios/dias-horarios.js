@@ -8,17 +8,19 @@
  */
 
 /**
- * Configuración de días de la semana con sus IDs correspondientes
- * @constant {Array<Object>}
+ * Días por defecto (fallback). En producción se deben inyectar desde backend
+ * usando IDs de `parametros_temas` (tema DIAS).
+ *
+ * @constant {Array<{id:number,nombre:string}>}
  */
-const DIAS_SEMANA = [
-    { id: 12, nombre: 'Lunes' },
-    { id: 13, nombre: 'Martes' },
-    { id: 14, nombre: 'Miércoles' },
-    { id: 15, nombre: 'Jueves' },
-    { id: 16, nombre: 'Viernes' },
-    { id: 17, nombre: 'Sábado' },
-    { id: 18, nombre: 'Domingo' }
+const DIAS_SEMANA_FALLBACK = [
+    { id: 0, nombre: 'Lunes' },
+    { id: 0, nombre: 'Martes' },
+    { id: 0, nombre: 'Miércoles' },
+    { id: 0, nombre: 'Jueves' },
+    { id: 0, nombre: 'Viernes' },
+    { id: 0, nombre: 'Sábado' },
+    { id: 0, nombre: 'Domingo' }
 ];
 
 /**
@@ -43,10 +45,11 @@ class DiasHorariosManager {
      * @param {string} containerId - ID del contenedor donde se renderizará el componente
      * @param {Array<Object>} diasExistentes - Días existentes para edición (opcional)
      */
-    constructor(containerId, diasExistentes = []) {
+    constructor(containerId, diasExistentes = [], diasSemana = null) {
         this.containerId = containerId;
         this.container = document.getElementById(containerId);
         this.diasExistentes = this.mapearDiasExistentes(diasExistentes);
+        this.diasSemana = this.normalizarDiasSemana(diasSemana);
         
         if (!this.container) {
             console.error(`No se encontró el contenedor con ID: ${containerId}`);
@@ -54,6 +57,22 @@ class DiasHorariosManager {
         }
         
         this.inicializar();
+    }
+
+    /**
+     * Normaliza la lista de días recibida del backend.
+     *
+     * @param {Array<{id:number,nombre:string}>|null} diasSemana
+     * @returns {Array<{id:number,nombre:string}>}
+     */
+    normalizarDiasSemana(diasSemana) {
+        if (!Array.isArray(diasSemana) || diasSemana.length === 0) {
+            return DIAS_SEMANA_FALLBACK;
+        }
+
+        return diasSemana
+            .filter((d) => d && Number.isInteger(d.id) && typeof d.nombre === 'string')
+            .map((d) => ({ id: d.id, nombre: d.nombre }));
     }
 
     /**
@@ -124,7 +143,7 @@ class DiasHorariosManager {
     renderizar() {
         let html = '<div class="dias-horarios-wrapper">';
         
-        DIAS_SEMANA.forEach(dia => {
+        this.diasSemana.forEach(dia => {
             const diaExistente = this.diasExistentes[dia.id];
             const opcionSeleccionada = diaExistente 
                 ? this.determinarOpcionHorario(diaExistente.hora_inicio, diaExistente.hora_fin)
@@ -238,7 +257,7 @@ class DiasHorariosManager {
             return;
         }
         
-        DIAS_SEMANA.forEach(dia => {
+        this.diasSemana.forEach(dia => {
             const diaExistente = this.diasExistentes[dia.id];
             if (!diaExistente) {
                 return;
@@ -281,7 +300,7 @@ class DiasHorariosManager {
     obtenerDiasSeleccionados() {
         const dias = [];
         
-        DIAS_SEMANA.forEach(dia => {
+        this.diasSemana.forEach(dia => {
             const row = this.container.querySelector(`[data-dia-id="${dia.id}"]`);
             if (!row) {
                 return;
@@ -372,7 +391,7 @@ class DiasHorariosManager {
 // Exportar para uso global
 if (typeof window !== 'undefined') {
     window.DiasHorariosManager = DiasHorariosManager;
-    window.DIAS_SEMANA = DIAS_SEMANA;
+    window.DIAS_SEMANA_FALLBACK = DIAS_SEMANA_FALLBACK;
     window.HORARIOS_PREDEFINIDOS = HORARIOS_PREDEFINIDOS;
 }
 
