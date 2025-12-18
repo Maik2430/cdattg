@@ -6,7 +6,6 @@ use App\Models\Ambiente;
 use App\Models\Competencia;
 use App\Models\GuiasAprendizaje;
 use App\Models\JornadaFormacion;
-use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\ResultadosAprendizaje;
 use App\Models\User;
@@ -80,7 +79,14 @@ class ComplementarioOfertado extends Model
 
     public function diasFormacion()
     {
-        return $this->belongsToMany(Parametro::class, 'complementarios_ofertados_dias_formacion', 'complementario_id', 'dia_id')
+        // dia_id apunta a parametros_temas (Tema: DIAS)
+        return $this->belongsToMany(
+            ParametroTema::class,
+            'complementarios_ofertados_dias_formacion',
+            'complementario_id',
+            'dia_id'
+        )
+            ->with('parametro')
                     ->withPivot('hora_inicio', 'hora_fin');
     }
 
