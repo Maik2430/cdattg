@@ -157,7 +157,7 @@ class CatalogoComplementarioImportService
             ),
             'red_tecnologica' => $this->toNullableString($this->obtenerValor($row, $mapaColumnas, 'RED TECNOLÓGICA')),
             'red_conocimiento' => $this->toNullableString($this->obtenerValor($row, $mapaColumnas, 'RED DE CONOCIMIENTO')),
-            'modalidad' => $this->toNullableString($this->obtenerValor($row, $mapaColumnas, 'MODALIDAD')),
+            'modalidad_id' => $this->convertirModalidadAId($this->obtenerValor($row, $mapaColumnas, 'MODALIDAD')),
             'apuesta_prioritaria' => $this->toNullableString($this->obtenerValor($row, $mapaColumnas, 'APUESTAS PRIORITARIAS')),
             'tipo_permiso' => $this->toNullableString($this->obtenerValor($row, $mapaColumnas, 'TIPO PERMISO')),
             'multiple_inscripcion' => $this->toBoolSiNo(
@@ -276,6 +276,42 @@ class CatalogoComplementarioImportService
         $existente->save();
 
         return 1;
+    }
+
+    /**
+     * Convierte el string de modalidad a modalidad_id (ParametroTema)
+     * 
+     * @param mixed $modalidadString
+     * @return int|null
+     */
+    private function convertirModalidadAId(mixed $modalidadString): ?int
+    {
+        if ($modalidadString === null || $modalidadString === '') {
+            return null;
+        }
+
+        $modalidadNormalizada = mb_strtoupper(trim((string) $modalidadString));
+        
+        // Mapeo de valores de modalidad string a parametro_id
+        $mapeoModalidad = [
+            'PRESENCIAL' => 18,
+            'VIRTUAL' => 19,
+            'MIXTA' => 20,
+        ];
+
+        $parametroId = $mapeoModalidad[$modalidadNormalizada] ?? null;
+        
+        if (!$parametroId) {
+            return null;
+        }
+
+        // Buscar el ParametroTema correspondiente (Tema ID 5 = MODALIDADES DE FORMACION)
+        $parametroTema = DB::table('parametros_temas')
+            ->where('tema_id', 5)
+            ->where('parametro_id', $parametroId)
+            ->first();
+
+        return $parametroTema?->id;
     }
 }
 
