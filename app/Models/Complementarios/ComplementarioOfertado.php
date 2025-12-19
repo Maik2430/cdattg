@@ -30,10 +30,7 @@ class ComplementarioOfertado extends Model
     protected $fillable = [
         'catalogo_id',
         'codigo',
-        'nombre',
         'justificacion',
-        'requisitos_ingreso',
-        'duracion',
         'cupos',
         'estado_id',
         'modalidad_id',
@@ -223,6 +220,60 @@ class ComplementarioOfertado extends Model
             'CUPOS LLENOS' => 'bg-danger',
             default => 'bg-secondary',
         };
+    }
+
+    /**
+     * Accessor para obtener el nombre desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->nombre
+     */
+    public function getNombreAttribute(): ?string
+    {
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->denominacion;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            return $this->catalogo?->denominacion;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Accessor para obtener la duración desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->duracion
+     */
+    public function getDuracionAttribute(): ?int
+    {
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->duracion_horas;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            return $this->catalogo?->duracion_horas;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Accessor para obtener los requisitos de ingreso desde el catálogo
+     * Mantiene compatibilidad hacia atrás con código que usa $complementario->requisitos_ingreso
+     */
+    public function getRequisitosIngresoAttribute(): ?string
+    {
+        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
+            return $this->catalogo?->requisitos_ingreso;
+        }
+        
+        if ($this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            return $this->catalogo?->requisitos_ingreso;
+        }
+        
+        return null;
     }
 
     public function getIconoAttribute()
