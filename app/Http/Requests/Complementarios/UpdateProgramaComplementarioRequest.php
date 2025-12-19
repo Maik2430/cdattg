@@ -18,11 +18,10 @@ class UpdateProgramaComplementarioRequest extends FormRequest
         return [
             'catalogo_id' => 'nullable|exists:complementarios_catalogo,id',
             'codigo' => 'required_without:catalogo_id|string|unique:complementarios_ofertados,codigo,' . $programaId,
-            // nombre, duracion y requisitos_ingreso ahora se obtienen del catálogo
+            // nombre, duracion, requisitos_ingreso y modalidad ahora se obtienen del catálogo
             'justificacion' => 'required|string|max:600',
             'cupos' => 'required|integer|min:1',
             'estado' => 'required|integer|in:0,1,2',
-            'modalidad_id' => 'required|exists:parametros_temas,id',
             'jornada_id' => 'required|exists:jornadas_formacion,id',
             'ambiente_id' => 'required|exists:ambientes,id',
             'ambiente_comentario' => 'nullable|string|max:500',
@@ -71,7 +70,7 @@ class UpdateProgramaComplementarioRequest extends FormRequest
         $validated = parent::validated($key, $default);
         
         // Eliminar campos que ya no existen en la tabla (se obtienen del catálogo)
-        unset($validated['nombre'], $validated['duracion'], $validated['requisitos_ingreso']);
+        unset($validated['nombre'], $validated['duracion'], $validated['requisitos_ingreso'], $validated['modalidad_id']);
         
         if (isset($validated['dias']) && is_array($validated['dias'])) {
             $validated['dias'] = collect($validated['dias'])
