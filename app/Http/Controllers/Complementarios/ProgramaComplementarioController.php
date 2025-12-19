@@ -266,30 +266,12 @@ class ProgramaComplementarioController extends Controller
         $atributos = collect($payload)->only([
             'catalogo_id',
             'codigo',
-            'nombre',
             'justificacion',
-            'requisitos_ingreso',
-            'duracion',
             'cupos',
-            'modalidad_id',
             'jornada_id',
             'ambiente_id',
             'ambiente_comentario',
         ])->toArray();
-
-        // Si no se proporcionó modalidad_id, establecer presencial por defecto
-        if (empty($atributos['modalidad_id'])) {
-            $modalidadPresencial = \App\Models\ParametroTema::query()
-                ->where('tema_id', 5) // MODALIDADES DE FORMACION
-                ->whereHas('parametro', function ($query) {
-                    $query->where('id', 18); // PRESENCIAL
-                })
-                ->first();
-            
-            if ($modalidadPresencial) {
-                $atributos['modalidad_id'] = $modalidadPresencial->id;
-            }
-        }
 
         // Si se seleccionó un programa del catálogo, sobrescribir datos básicos
         if (!empty($payload['catalogo_id'])) {
@@ -300,11 +282,6 @@ class ProgramaComplementarioController extends Controller
             if ($catalogo !== null) {
                 $atributos['catalogo_id'] = $catalogo->id;
                 $atributos['codigo'] = $catalogo->prf_codigo;
-                $atributos['nombre'] = $catalogo->denominacion;
-                $atributos['duracion'] = $catalogo->duracion_horas;
-                if (!empty($catalogo->requisitos_ingreso)) {
-                    $atributos['requisitos_ingreso'] = $catalogo->requisitos_ingreso;
-                }
             }
         }
 
