@@ -34,20 +34,18 @@ class ProgramaFormacion extends Model
         'horas_totales' => 'integer',
         'horas_etapa_lectiva' => 'integer',
         'horas_etapa_productiva' => 'integer',
+        'codigo' => 'string',
     ];
 
-    protected static function boot()
+    // Mutators para mayúsculas (sin interferir con status)
+    public function setNombreAttribute($value)
     {
-        parent::boot();
+        $this->attributes['nombre'] = strtoupper($value);
+    }
 
-        static::creating(function ($programa) {
-            $programa->status = $programa->status ?? true;
-        });
-
-        static::saving(function ($programa) {
-            $programa->nombre = strtoupper($programa->nombre);
-            $programa->codigo = strtoupper($programa->codigo);
-        });
+    public function setCodigoAttribute($value)
+    {
+        $this->attributes['codigo'] = strtoupper($value);
     }
 
     // Relaciones de auditoría

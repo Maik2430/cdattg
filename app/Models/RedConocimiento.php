@@ -9,6 +9,8 @@ class RedConocimiento extends Model
 {
     use HasFactory;
 
+    protected $table = 'red_conocimientos';
+
     /**
      * Atributos asignables.
      *

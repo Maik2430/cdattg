@@ -370,6 +370,12 @@ class RolePermissionSeeder extends Seeder
             'EDITAR PROGRAMA DE FORMACION',
             'ELIMINAR PROGRAMA DE FORMACION',
             'CAMBIAR ESTADO PROGRAMA DE FORMACION',
+            'programa.index',
+            'programa.show',
+            'programa.search',
+            'programa.create',
+            'programa.edit',
+            'programa.delete',
         ];
     }
 
@@ -483,8 +489,12 @@ class RolePermissionSeeder extends Seeder
             $this->getPermisosAprendices(),
             $this->getPermisosInventarioAdministrador(),
             [
-                'VER PROGRAMAS DE FORMACION',
-                'VER PROGRAMA DE FORMACION',
+                'programa.index',
+                'programa.show',
+                'programa.search',
+                'programa.create',
+                'programa.edit',
+                'programa.delete',
                 self::PERMISO_VER_NOTIFICACION,
                 'VER ESTADISTICAS',
                 self::PERMISO_VER_PROGRAMA_COMPLEMENTARIO,
@@ -513,8 +523,10 @@ class RolePermissionSeeder extends Seeder
                 'GESTIONAR DIAS FICHA',
                 'GESTIONAR APRENDICES FICHA',
                 'CAMBIAR ESTADO FICHA',
-                'VER PROGRAMAS DE FORMACION',
-                'VER PROGRAMA DE FORMACION',
+                'programa.index',
+                'programa.show',
+                'programa.search',
+                'programa.create',
             ],
             $this->getPermisosResultadosAprendizaje(),
             [
@@ -575,7 +587,17 @@ class RolePermissionSeeder extends Seeder
      */
     private function getPermisosCoordinador(): array
     {
-        return $this->getPermisosInventarioBasicos();
+        return array_merge(
+            $this->getPermisosInventarioBasicos(),
+            [
+                'programa.index',
+                'programa.show',
+                'programa.search',
+                'programa.create',
+                'programa.edit',
+                'programa.delete',
+            ]
+        );
     }
 
     /**

@@ -9,6 +9,7 @@ export default defineConfig({
                 'style': 'resources/css/style.css',
                 'temas_css': 'resources/css/temas.css',
                 'parametros_css': 'resources/css/parametros.css',
+                'programas_css': 'resources/css/programas.css',
                 'instructores_css': 'resources/css/instructores.css',
                 'guias_aprendizaje_css': 'resources/css/guias_aprendizaje.css',
                 'resultados_aprendizaje_css': 'resources/css/resultados-aprendizaje.css',
