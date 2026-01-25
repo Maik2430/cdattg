@@ -15,7 +15,7 @@ class ProgramaIndex extends Component
     use WithPagination;
 
     public $search = '';
-    public $perPage = 15;
+    public $perPage = 10;  // Valor por defecto más razonable
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
     
@@ -27,7 +27,7 @@ class ProgramaIndex extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
-        'perPage' => ['except' => 15],
+        'perPage' => ['except' => 10],  // Cambiar el except también
     ];
 
     protected $listeners = [

@@ -14,6 +14,10 @@ export default defineConfig({
                 'guias_aprendizaje_css': 'resources/css/guias_aprendizaje.css',
                 'resultados_aprendizaje_css': 'resources/css/resultados-aprendizaje.css',
                 'dias_formacion_css': 'resources/css/dias-formacion.css',
+                'competencias_css': 'resources/css/competencias.css',
+                'global_notifications_css': 'resources/css/global-notifications.css',
+                'global_modals_css': 'resources/css/global-modals.css',
+                'footer_css': 'resources/css/footer.css',
                 'registro_css': 'resources/css/pages/registro.css',
                 'dashboard_superadmin': 'resources/css/dashboards/dashboard-superadmin.css',
                 'caracter_selecter': 'resources/css/Asistencia/caracter_selecter.css',
@@ -65,6 +69,9 @@ export default defineConfig({
                 'gestion-especializada': 'resources/js/pages/gestion-especializada.js',
                 'permisos': 'resources/js/pages/permisos.js',
                 'personas-form': 'resources/js/personas/form.js',
+                'competencias_index': 'resources/js/pages/competencias-index.js',
+                'resultados_aprendizaje_index': 'resources/js/pages/resultados-aprendizaje-index.js',
+                'global_notifications': 'resources/js/global-notifications.js',
                 'confirm-delete-modal': 'resources/js/modules/confirm-delete-modal.js',
                 'bootstrap': 'resources/js/bootstrap.js',
             },
@@ -73,7 +80,7 @@ export default defineConfig({
     ],
     server: {
         host: '0.0.0.0',  // Escucha en todas las interfaces de red
-        port: 5174,
+        port: 5173,
         strictPort: true,
         watch: {
             ignored: [

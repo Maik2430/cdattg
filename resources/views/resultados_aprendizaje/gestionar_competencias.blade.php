@@ -1,274 +1,342 @@
 @extends('adminlte::page')
 
-@section('plugins.Select2', true)
-
-@section('title', 'Gestionar Competencias - RAP')
-
-@section('content_header')
-    <div class="content-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 10px; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-sm-8">
-                    <h1 class="m-0" style="color: white; font-weight: 700; font-size: 2rem;">
-                        <i class="fas fa-link"></i> Gestionar Competencias
-                    </h1>
-                    <p class="mt-2 mb-0" style="color: rgba(255,255,255,0.9); font-size: 1.1rem;">
-                        {{ $resultadoAprendizaje->codigo }} - {{ $resultadoAprendizaje->nombre }}
-                    </p>
-                </div>
-                <div class="col-sm-4 text-right">
-                    <a href="{{ route('resultados-aprendizaje.show', $resultadoAprendizaje->id) }}" 
-                       class="btn btn-light btn-lg shadow-sm">
-                        <i class="fas fa-arrow-left"></i> Volver
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        .content-header h1 { text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .btn-light:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease; }
-    </style>
-@stop
-
-@section('content')
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    <div class="row">
-        <!-- Competencias Asignadas -->
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success">
-                    <h3 class="card-title text-white">
-                        <i class="fas fa-check-circle"></i> Competencias Asignadas
-                    </h3>
-                </div>
-                <div class="card-body">
-                    @if($competenciasAsignadas->isEmpty())
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> No hay competencias asignadas aún.
-                        </div>
-                    @else
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Nombre</th>
-                                        <th width="100" class="text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($competenciasAsignadas as $competencia)
-                                        <tr>
-                                            <td><span class="badge badge-info">{{ $competencia->codigo }}</span></td>
-                                            <td>{{ $competencia->nombre }}</td>
-                                            <td class="text-center">
-                                                <form action="{{ route('resultados-aprendizaje.desasociarCompetencia', [$resultadoAprendizaje->id, $competencia->id]) }}" 
-                                                      method="POST" 
-                                                      class="d-inline"
-                                                      onsubmit="return confirm('¿Está seguro de desasociar esta competencia?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Desasociar">
-                                                        <i class="fas fa-unlink"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div class="mt-3">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle"></i> 
-                                Total: <strong>{{ $competenciasAsignadas->count() }}</strong> competencia(s) asignada(s)
-                            </small>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <!-- Competencias Disponibles -->
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary">
-                    <h3 class="card-title text-white">
-                        <i class="fas fa-plus-circle"></i> Competencias Disponibles
-                    </h3>
-                </div>
-                <div class="card-body">
-                    @if($competenciasDisponibles->isEmpty())
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle"></i> No hay más competencias disponibles para asignar.
-                        </div>
-                    @else
-                        <form action="{{ route('resultados-aprendizaje.asociarCompetencia', $resultadoAprendizaje->id) }}" 
-                              method="POST" 
-                              id="formAsociarCompetencia">
-                            @csrf
-                            
-                            <div class="form-group">
-                                <label for="competencia_id">
-                                    Seleccionar Competencia <span class="text-danger">*</span>
-                                </label>
-                                <select name="competencia_id" 
-                                        id="competencia_id" 
-                                        class="form-control select2" 
-                                        required
-                                        data-placeholder="Seleccione una competencia...">
-                                    <option value="">-- Seleccione una competencia --</option>
-                                    @foreach($competenciasDisponibles as $competencia)
-                                        <option value="{{ $competencia->id }}">
-                                            {{ $competencia->codigo }} - {{ $competencia->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('competencia_id')
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-success btn-block">
-                                    <i class="fas fa-link"></i> Asociar Competencia
-                                </button>
-                            </div>
-                        </form>
-
-                        <div class="mt-3">
-                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                                <table class="table table-hover table-sm table-striped">
-                                    <thead class="thead-light sticky-top">
-                                        <tr>
-                                            <th>Código</th>
-                                            <th>Nombre</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($competenciasDisponibles as $competencia)
-                                            <tr>
-                                                <td><span class="badge badge-secondary">{{ $competencia->codigo }}</span></td>
-                                                <td>{{ $competencia->nombre }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle"></i> 
-                                Total: <strong>{{ $competenciasDisponibles->count() }}</strong> competencia(s) disponible(s)
-                            </small>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Información del RAP -->
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info">
-                    <h3 class="card-title text-white">
-                        <i class="fas fa-graduation-cap"></i> Información del Resultado de Aprendizaje
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <strong><i class="fas fa-barcode"></i> Código:</strong><br>
-                            <span class="badge badge-primary badge-lg">{{ $resultadoAprendizaje->codigo }}</span>
-                        </div>
-                        <div class="col-md-5">
-                            <strong><i class="fas fa-tag"></i> Nombre:</strong><br>
-                            {{ $resultadoAprendizaje->nombre }}
-                        </div>
-                        <div class="col-md-2">
-                            <strong><i class="fas fa-clock"></i> Duración:</strong><br>
-                            {{ formatear_horas($resultadoAprendizaje->duracion) }} horas
-                        </div>
-                        <div class="col-md-2">
-                            <strong><i class="fas fa-toggle-on"></i> Estado:</strong><br>
-                            @if($resultadoAprendizaje->status)
-                                <span class="badge badge-success">Activo</span>
-                            @else
-                                <span class="badge badge-danger">Inactivo</span>
-                            @endif
-                        </div>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <strong><i class="fas fa-calendar-alt"></i> Fecha Inicio:</strong><br>
-                            {{ $resultadoAprendizaje->fecha_inicio ? $resultadoAprendizaje->fecha_inicio->format('d/m/Y') : 'N/A' }}
-                        </div>
-                        <div class="col-md-6">
-                            <strong><i class="fas fa-calendar-check"></i> Fecha Fin:</strong><br>
-                            {{ $resultadoAprendizaje->fecha_fin ? $resultadoAprendizaje->fecha_fin->format('d/m/Y') : 'N/A' }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@stop
+@section('title', $resultadoAprendizaje->codigo . ' - ' . $resultadoAprendizaje->nombre)
 
 @section('css')
-    {{-- Select2 cargado por AdminLTE nativo --}}
-    <style>
-        .card {
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-        }
-        .card-header {
-            border-radius: 10px 10px 0 0 !important;
-            font-weight: 600;
-        }
-        .table-responsive {
-            border-radius: 5px;
-        }
-        .badge-lg {
-            font-size: 1rem;
-            padding: 0.5rem 1rem;
-        }
-        .sticky-top {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #f8f9fa;
-        }
-        .select2-container--bootstrap4 .select2-selection {
-            border-radius: 5px;
-        }
-    </style>
-@stop
-
-@section('js')
-    @vite(['resources/js/pages/gestion-especializada.js'])
+    @vite(['resources/css/competencias.css'])
 @endsection
 
+@section('content_header')
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-header-left">
+                <div class="admin-header-icon" style="opacity: 0.6; font-size: 1.2rem;">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="admin-header-text">
+                    <h1 class="admin-header-title">{{ $resultadoAprendizaje->codigo }} · {{ $resultadoAprendizaje->nombre }}</h1>
+                    <p class="admin-header-subtitle">
+                        {{ $resultadoAprendizaje->programaFormacion->red->nombre ?? 'Sin red' }} · 
+                        {{ $resultadoAprendizaje->programaFormacion->nivel->nombre ?? 'Sin nivel' }} · 
+                        {{ formatear_horas($resultadoAprendizaje->duracion) }} horas · 
+                        <span class="badge badge-{{ $resultadoAprendizaje->status ? 'success' : 'danger' }}">
+                            {{ $resultadoAprendizaje->status ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <nav aria-label="breadcrumb" class="admin-breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('verificarLogin') }}">
+                            <i class="fas fa-home me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('resultados-aprendizaje.index') }}">
+                            <i class="fas fa-graduation-cap me-1"></i>Resultados de Aprendizaje
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-link me-1"></i>{{ $resultadoAprendizaje->codigo }}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+@endsection
+
+@section('content')
+    <div class="page-container">
+        <div class="main-card">
+            <x-session-alerts />
+            
+            <!-- Componente Livewire para manejar acciones y datos -->
+            <livewire:resultados-aprendizaje.gestionar-competencias-handler />
+        </div>
+    </div>
+@endsection
+
+@section('footer')
+    @include('layouts.footer')
+@endsection
+
+@section('js')
+    @vite(['resources/js/pages/resultados-aprendizaje-index.js'])
+@endsection
+
+@if(session('success'))
+    <script>
+        $(document).ready(function() {
+            Livewire.dispatch('notify', {
+                type: 'success',
+                message: '{{ session('success') }}'
+            });
+        });
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        $(document).ready(function() {
+            Livewire.dispatch('notify', {
+                type: 'error',
+                message: '{{ session('error') }}'
+            });
+        });
+    </script>
+@endif
+
+<style>
+/* Header mejorado - Guía de acción clara */
+.page-header-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.header-left {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.header-text h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.header-subtitle {
+    margin-top: 2px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.header-meta {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.header-meta .dot {
+    color: #d1d5db;
+}
+
+.header-actions .btn {
+    white-space: nowrap;
+}
+
+.btn-outline-secondary {
+    color: #6b7280;
+    border-color: #d1d5db;
+    background: #ffffff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-secondary:hover {
+    background: #f9fafb;
+    color: #374151;
+    border-color: #9ca3af;
+}
+
+/* Contenedor con ancho máximo para reducir vacío */
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Franja de contexto MUY sutil */
+.context-bar {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 8px 0 16px;
+    padding: 0 4px;
+}
+
+.context-bar span {
+    margin-right: 6px;
+}
+
+/* Acción guía arriba */
+.page-hint {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+/* Columnas con identidad mínima */
+.competencias-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 8px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+/* Diferenciar columnas - Asignadas más estables */
+.competencias-panel:first-child {
+    background: #f9fafb;
+    box-shadow: none;
+}
+
+/* Disponibles más accionables */
+.competencias-panel:last-child {
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.competencias-header {
+    padding: 12px 16px;
+    font-weight: 600;
+    background: #f1f3f4;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 14px;
+}
+
+.competencias-body {
+    flex: 1;                 /* 🔥 CLAVE */
+    overflow-y: auto;        /* 🔥 CLAVE */
+    max-height: 420px;       /* 🔥 CLAVE */
+    padding: 8px 0;
+}
+
+/* Scroll bonito (opcional) */
+.competencias-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.competencias-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.competencias-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Item con separadores suaves - Ritmo visual */
+.competencia-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px dashed #e5e7eb;
+    transition: background-color 0.2s ease;
+    overflow: visible; /* ✅ Evita recorte de hovers */
+}
+
+.competencia-item:hover {
+    background-color: #f9fafb;
+}
+
+.competencia-item:last-child {
+    border-bottom: none;
+}
+
+.competencia-code {
+    font-size: 12px;
+    color: #6b7280;
+    margin-right: 8px;
+    font-weight: 500;
+    min-width: 60px;
+}
+
+.competencia-name {
+    font-size: 14px;
+    color: #374151;
+    flex: 1;
+}
+
+/* Botones de acción - Tamaño congelado ERP limpio */
+.btn-action {
+    font-size: 12px;
+    padding: 4px 12px; /* ✅ Padding fijo */
+    border: 1px solid;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease; /* ✅ Solo color y bg */
+    border-radius: 4px;
+    min-width: 80px; /* ✅ Ancho mínimo para evitar saltos */
+    text-align: center;
+    white-space: nowrap; /* ✅ Evita saltos de línea */
+}
+
+.btn-add {
+    color: #059669;
+    border-color: #059669;
+    font-weight: 500;
+}
+
+.btn-add:hover {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.btn-remove {
+    color: #dc2626;
+    border-color: #dc2626;
+    min-width: 70px; /* ✅ Un poco más pequeño para Quitar */
+}
+
+.btn-remove:hover {
+    background-color: #dc2626;
+    color: white;
+}
+
+/* Empty states explícitos - CLAVE UX */
+.empty-state {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 14px;
+    padding: 24px 16px;
+}
+
+.empty-state p {
+    margin: 0 0 4px 0;
+    font-weight: 500;
+}
+
+.empty-state small {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Empty hint elegante - CLAVE para sensación de soledad */
+.empty-hint {
+    margin-top: 12px;
+    color: #9ca3af;
+    font-size: 13px;
+    text-align: center;
+    padding: 0 16px 16px;
+}
+</style>

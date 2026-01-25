@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AmbienteController;
 use App\Http\Controllers\Api\UbicacionPublicApiController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AsistenciaAprendicesController;
 use App\Http\Controllers\BloqueController;
 use App\Http\Controllers\CaracterizacionController;
@@ -62,6 +63,14 @@ Route::post('authenticate', [LoginController::class, 'authenticate']);
 Route::post('logout', [LogoutController::class, 'logout']);
 Route::get('/user', function (Request $request) {
     return $request->user();
+});
+
+// ==========================================
+// RUTAS DE USUARIO Y PERMISOS
+// ==========================================
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user/permissions', [UserController::class, 'permissions']);
 });
 
 // ==========================================

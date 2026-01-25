@@ -1,0 +1,364 @@
+/* ===== FOOTER GENERAL - APLICACIÓN SENA ===== */
+/* ESTILOS CON ALTA ESPECIFICIDAD PARA EVITAR SOBRESCRITURA */
+
+.app-footer {
+    border-top: 1px solid #e5e7eb !important;
+    background: #ffffff !important;
+    font-size: 12.5px !important;
+    color: #4b5563 !important;
+    margin-top: auto !important;
+    padding: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+.footer-container {
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 20px 24px !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    align-items: center !important;
+    gap: 16px !important;
+    box-sizing: border-box !important;
+}
+
+/* ===== MARCA SENA ===== */
+.footer-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
+}
+
+.footer-brand img {
+    height: 36px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+
+.footer-brand strong {
+    display: block !important;
+    font-size: 14px !important;
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+    margin-bottom: 2px !important;
+    text-transform: none !important;
+}
+
+.footer-brand span {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+    font-weight: 400 !important;
+    text-transform: none !important;
+}
+
+/* ===== REDES SOCIALES ===== */
+.footer-social {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+}
+
+.footer-social > span {
+    display: block !important;
+    font-weight: 500 !important;
+    color: #374151 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 0 !important;
+}
+
+.social-links {
+    display: flex !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+}
+
+.social-links a {
+    color: #2563eb !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+    background: rgba(37, 99, 235, 0.05) !important;
+    border: 1px solid rgba(37, 99, 235, 0.1) !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+}
+
+.social-links a:hover {
+    background: rgba(37, 99, 235, 0.1) !important;
+    text-decoration: none !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2) !important;
+    color: #1d4ed8 !important;
+}
+
+.social-links a:focus {
+    outline: 2px solid #2563eb !important;
+    outline-offset: 2px !important;
+}
+
+.social-links a:active {
+    transform: translateY(0) !important;
+}
+
+/* ===== INFORMACIÓN META ===== */
+.footer-meta {
+    text-align: right !important;
+    font-size: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    box-sizing: border-box !important;
+}
+
+.footer-meta span {
+    display: block !important;
+    color: #6b7280 !important;
+    font-weight: 400 !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+}
+
+.footer-meta span:first-child {
+    font-weight: 500 !important;
+    color: #374151 !important;
+}
+
+/* ===== PIE DE PÁGINA INFERIOR ===== */
+.footer-bottom {
+    border-top: 1px solid #f1f5f9 !important;
+    padding: 12px !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    color: #9ca3af !important;
+    background: #fafbfc !important;
+    margin: 0 !important;
+    font-weight: 400 !important;
+    box-sizing: border-box !important;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+    .footer-container {
+        grid-template-columns: 1fr !important;
+        text-align: center !important;
+        gap: 20px !important;
+        padding: 20px 16px !important;
+    }
+    
+    .footer-brand {
+        justify-content: center !important;
+    }
+    
+    .footer-social {
+        text-align: center !important;
+    }
+    
+    .footer-meta {
+        text-align: center !important;
+        align-items: center !important;
+    }
+    
+    .social-links {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        padding: 16px 12px !important;
+        gap: 16px !important;
+    }
+    
+    .footer-brand img {
+        height: 32px !important;
+    }
+    
+    .footer-brand strong {
+        font-size: 13px !important;
+    }
+    
+    .footer-brand span {
+        font-size: 11px !important;
+    }
+    
+    .footer-social > span {
+        font-size: 11px !important;
+    }
+    
+    .social-links a {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 14px !important;
+    }
+    
+    .footer-meta {
+        font-size: 11px !important;
+    }
+    
+    .footer-bottom {
+        padding: 10px !important;
+        font-size: 11px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-container {
+        padding: 12px 8px !important;
+        gap: 12px !important;
+    }
+    
+    .footer-brand img {
+        height: 28px !important;
+    }
+    
+    .footer-brand strong {
+        font-size: 12px !important;
+    }
+    
+    .footer-brand span {
+        font-size: 10px !important;
+    }
+    
+    .social-links {
+        gap: 8px !important;
+    }
+    
+    .social-links a {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+    }
+    
+    .footer-meta {
+        font-size: 10px !important;
+    }
+    
+    .footer-bottom {
+        padding: 8px !important;
+        font-size: 10px !important;
+    }
+}
+
+/* ===== ESTADOS ESPECIALES ===== */
+/* Dark mode support (si se implementa en el futuro) */
+@media (prefers-color-scheme: dark) {
+    .app-footer {
+        background: #1f2937 !important;
+        border-top-color: #374151 !important;
+        color: #d1d5db !important;
+    }
+    
+    .footer-brand strong {
+        color: #f9fafb !important;
+    }
+    
+    .footer-brand span {
+        color: #9ca3af !important;
+    }
+    
+    .footer-social > span {
+        color: #d1d5db !important;
+    }
+    
+    .social-links a {
+        background: rgba(59, 130, 246, 0.2) !important;
+        border-color: rgba(59, 130, 246, 0.3) !important;
+        color: #60a5fa !important;
+    }
+    
+    .social-links a:hover {
+        background: rgba(59, 130, 246, 0.3) !important;
+        color: #93c5fd !important;
+    }
+    
+    .footer-meta span {
+        color: #9ca3af !important;
+    }
+    
+    .footer-meta span:first-child {
+        color: #d1d5db !important;
+    }
+    
+    .footer-bottom {
+        background: #111827 !important;
+        border-top-color: #374151 !important;
+        color: #6b7280 !important;
+    }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+/* Focus visible para navegación por teclado */
+.social-links a:focus-visible {
+    outline: 2px solid #2563eb !important;
+    outline-offset: 2px !important;
+    border-radius: 6px !important;
+}
+
+/* ===== ANIMACIONES SUAVES ===== */
+.social-links a {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ===== IMPRESIÓN ===== */
+@media print {
+    .app-footer {
+        background: white !important;
+        color: black !important;
+        border-top: 1px solid black !important;
+    }
+    
+    .social-links {
+        display: none !important;
+    }
+    
+    .footer-bottom {
+        background: white !important;
+        color: black !important;
+        border-top: 1px solid black !important;
+    }
+}
+
+/* ===== FORZAR ESTILOS EN CASO DE CONFLICTO ===== */
+/* Asegurar que los estilos del footer siempre prevalezcan */
+footer.app-footer,
+footer .footer-container,
+footer .footer-brand,
+footer .footer-social,
+footer .footer-meta,
+footer .footer-bottom,
+footer .social-links,
+footer .social-links a {
+    all: unset !important;
+    /* Resetear y luego aplicar estilos */
+}
+
+/* Reaplicar estilos con !important */
+footer.app-footer {
+    border-top: 1px solid #e5e7eb !important;
+    background: #ffffff !important;
+    font-size: 12.5px !important;
+    color: #4b5563 !important;
+    margin-top: auto !important;
+    padding: 0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+}

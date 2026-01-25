@@ -40,54 +40,27 @@ class CompetenciaController extends Controller
         $this->middleware('can:GESTIONAR RESULTADOS COMPETENCIA')->only(['gestionarResultados', 'asociarResultado', 'asociarResultados', 'desasociarResultado']);
     }
 
-    public function index(Request $request)
+    public function index()
     {
         try {
-            $query = Competencia::with(['userCreate', 'userEdit', 'programasFormacion']);
+            // Ya no necesitamos pasar datos, Livewire se encarga
+            return view('competencias.index');
+        } catch (\Exception $e) {
+            Log::error('Error al cargar vista de competencias: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al cargar competencias.');
+        }
+    }
 
-            // Filtro de búsqueda por código o nombre
-            if ($request->filled('search')) {
-                $searchTerm = $request->search;
-                $query->where(function($q) use ($searchTerm) {
-                    $q->where('codigo', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('descripcion', 'LIKE', "%{$searchTerm}%");
-                });
-            }
-
-            // Filtro por estado
-            if ($request->filled('status')) {
-                $query->where('status', $request->status);
-            }
-
-            // Filtro por rango de fechas
-            if ($request->filled('fecha_inicio')) {
-                $query->whereDate('fecha_inicio', '>=', $request->fecha_inicio);
-            }
-
-            if ($request->filled('fecha_fin')) {
-                $query->whereDate('fecha_fin', '<=', $request->fecha_fin);
-            }
-
-            // Filtro por duración
-            if ($request->filled('duracion_min')) {
-                $query->where('duracion', '>=', $request->duracion_min);
-            }
-
-            if ($request->filled('duracion_max')) {
-                $query->where('duracion', '<=', $request->duracion_max);
-            }
-
-            $query->orderBy('codigo', 'asc');
-
-            $competencias = $query->paginate(10)->withQueryString();
-            $programas = ProgramaFormacion::orderBy('nombre')->get(['id', 'codigo', 'nombre']);
+    public function show($id)
+    {
+        try {
+            $competencia = Competencia::with(['userCreate', 'userEdit', 'programasFormacion', 'resultadosCompetencia'])
+                ->findOrFail($id);
             
-            return view('competencias.index', compact('competencias', 'programas'));
-            
-        } catch (Exception $e) {
-            Log::error('Error al obtener lista de competencias: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error al cargar las competencias.');
+            return view('competencias.show', compact('competencia'));
+        } catch (\Exception $e) {
+            Log::error('Error al mostrar competencia: ' . $e->getMessage());
+            return redirect()->route('competencias.index')->with('error', 'Competencia no encontrada');
         }
     }
 
@@ -153,25 +126,6 @@ class CompetenciaController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Error al crear la competencia. Intente nuevamente.');
-        }
-    }
-
-    public function show(Competencia $competencia)
-    {
-        try {
-            $competencia->load(['resultadosCompetencia.rap', 'userCreate', 'userEdit']);
-
-            // Contar resultados de aprendizaje asociados
-            $cantidadRAPs = $competencia->resultadosCompetencia->count();
-
-            return view('competencias.show', compact('competencia', 'cantidadRAPs'));
-
-        } catch (Exception $e) {
-            Log::error('Error al ver detalle de competencia: ' . $e->getMessage(), [
-                'competencia_id' => $competencia->id
-            ]);
-
-            return redirect()->back()->with('error', 'Error al cargar la competencia.');
         }
     }
 
@@ -513,36 +467,8 @@ class CompetenciaController extends Controller
     public function gestionarResultados(Competencia $competencia)
     {
         try {
-            // Cargar resultados asignados con sus relaciones
-            $resultadosAsignados = $competencia->resultadosAprendizaje()
-                ->with(['userCreate', 'userEdit'])
-                ->orderBy('codigo')
-                ->get();
-
-            // Obtener IDs de resultados ya asignados
-            $idsAsignados = $resultadosAsignados->pluck('id')->toArray();
-
-            // Buscar resultados disponibles (no asignados y activos)
-            $resultadosDisponibles = ResultadosAprendizaje::whereNotIn('id', $idsAsignados)
-                ->where('status', 1)
-                ->orderBy('codigo')
-                ->get();
-
-            // Estadísticas
-            $totalAsignados = $resultadosAsignados->count();
-            $totalDisponibles = $resultadosDisponibles->count();
-            $duracionTotal = $resultadosAsignados->sum(function($resultado) {
-                return $resultado->pivot->duracion ?? 0;
-            });
-            
-            return view('competencias.gestionar-resultados', compact(
-                'competencia',
-                'resultadosAsignados',
-                'resultadosDisponibles',
-                'totalAsignados',
-                'totalDisponibles',
-                'duracionTotal'
-            ));
+            // Simplemente devolver la vista con el componente Livewire
+            return view('competencias.gestionar-resultados', compact('competencia'));
 
         } catch (Exception $e) {
             Log::error('Error al gestionar resultados de competencia: ' . $e->getMessage(), [

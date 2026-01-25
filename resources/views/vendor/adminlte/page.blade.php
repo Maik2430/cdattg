@@ -6,6 +6,8 @@
 @section('adminlte_css')
     @stack('css')
     @yield('css')
+    <!-- Global Notifications CSS -->
+    @vite(['resources/css/global-notifications.css'])
 @stop
 
 @section('classes_body', $layoutHelper->makeBodyClasses())
@@ -13,6 +15,9 @@
 @section('body_data', $layoutHelper->makeBodyData())
 
 @section('body')
+    <!-- Notify Container Global -->
+    <div id="notify-container"></div>
+    
     <div class="wrapper">
 
         {{-- Preloader Animation (fullscreen mode) --}}
@@ -48,9 +53,25 @@
         @endif
 
     </div>
+    
+    {{-- Global Modals Container --}}
+    @include('layouts.partials.global-modals')
 @stop
 
 @section('adminlte_js')
     @stack('js')
     @yield('js')
+    <!-- Global Notifications CSS -->
+    @vite(['resources/css/global-notifications.css'])
+    <!-- Global Modals CSS -->
+    @vite(['resources/css/global-modals.css'])
+    <!-- Footer CSS -->
+    @vite(['resources/css/footer.css'])
+    <!-- Global Notifications JS -->
+    @vite(['resources/js/global-notifications.js'])
+    <!-- Global Modals JS -->
+    @vite(['resources/js/global-modals.js'])
+    <!-- Debug Permissions JS -->
+    @vite(['resources/js/debug-permissions.js'])
 @stop
+

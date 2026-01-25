@@ -503,7 +503,10 @@ class RolePermissionSeeder extends Seeder
                 'VER INGRESO SALIDA',
                 'ASIGNACION DE INSTRUCTORES',
             ],
-            $this->getPermisosGuiasAprendizaje()
+            $this->getPermisosGuiasAprendizaje(),
+            // Agregar permisos de resultados de aprendizaje y competencias
+            $this->getPermisosResultadosAprendizaje(),
+            $this->getPermisosCompetencias()
         );
     }
 
@@ -596,7 +599,10 @@ class RolePermissionSeeder extends Seeder
                 'programa.create',
                 'programa.edit',
                 'programa.delete',
-            ]
+            ],
+            // Agregar permisos de resultados de aprendizaje y competencias
+            $this->getPermisosResultadosAprendizaje(),
+            $this->getPermisosCompetencias()
         );
     }
 

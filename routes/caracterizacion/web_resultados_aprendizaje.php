@@ -9,7 +9,7 @@ Route::resource('resultados-aprendizaje', ResultadosAprendizajeController::class
 Route::get('/resultados-aprendizaje-search', [ResultadosAprendizajeController::class, 'search'])
     ->name('resultados-aprendizaje.search');
 
-Route::middleware('can:EDITAR RESULTADO APRENDIZAJE')->group(function () {
+Route::middleware(['auth', 'can:EDITAR RESULTADO APRENDIZAJE'])->group(function () {
     Route::put('/resultados-aprendizaje/{resultadoAprendizaje}/cambiar-estado', [ResultadosAprendizajeController::class, 'cambiarEstado'])
         ->name('resultados-aprendizaje.cambiarEstado');
 

@@ -35,11 +35,10 @@ class RedConocimientoController extends Controller
     public function index()
     {
         try {
-            $redesConocimiento = $this->redService->listar(10);
-            $regionales = Regional::where('status', 1)->get();
-            return view('red_conocimiento.index', compact('redesConocimiento', 'regionales'));
+            // Ya no necesitamos pasar datos, Livewire se encarga
+            return view('red_conocimiento.index');
         } catch (\Exception $e) {
-            Log::error('Error al listar redes de conocimiento: ' . $e->getMessage());
+            Log::error('Error al cargar vista de redes de conocimiento: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error al cargar redes de conocimiento.');
         }
     }

@@ -62,6 +62,9 @@
 
     {{-- Custom Stylesheets (post AdminLTE) --}}
     @yield('adminlte_css')
+    
+    {{-- CSS Globales de la aplicación --}}
+    @include('layouts.partials.global-styles')
 
     {{-- Favicon optimizado --}}
     @include('layouts.partials.optimized-favicons')
