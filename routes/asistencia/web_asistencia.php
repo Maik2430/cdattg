@@ -20,7 +20,8 @@ Route::middleware(['permission:VER PROGRAMA DE CARACTERIZACION|TOMAR ASISTENCIA'
 Route::middleware(['permission:TOMAR ASISTENCIA'])->group(function () {
     Route::get('asistence/web', [AsistenceQrController::class, 'index'])->name('asistence.web');
     Route::post('/asistence/store', [AsistenceQrController::class, 'store'])->name('asistence.store');
-    Route::get('asistence/caracterSelected/{caracterizacion}/{evidencia}', [AsistenceQrController::class, 'caracterSelected'])->name('asistence.caracterSelected');
+    Route::get('asistence/caracterSelected/{caracterizacion}', [AsistenceQrController::class, 'caracterSelected'])->name('asistence.caracterSelected');
+    Route::get('asistence/caracterSelected/{caracterizacion}/{evidencia_id}', [AsistenceQrController::class, 'caracterSelected'])->name('asistence.caracterSelected.withEvidencia');
     Route::get('/asistence/web/list/{ficha}/{jornada}', [AsistenceQrController::class, 'getAsistenceWebList'])->name('asistence.weblist');
     Route::get('/asistence/exit/{identificacion}/{ingreso}/{fecha}', [AsistenceQrController::class, 'redirectAprenticeExit'])->name('asistence.webexit');
     Route::get('/asistence/entrance/{identificacion}/{ingreso}/{fecha}', [AsistenceQrController::class, 'redirectAprenticeEntrance'])->name('asistence.webentrance');
@@ -30,6 +31,9 @@ Route::middleware(['permission:TOMAR ASISTENCIA'])->group(function () {
     Route::post('/asistence/finalizar-asistencia', [AsistenceQrController::class, 'finalizar_asistencia'])->name('asistence.finalizarAsistencia');
     Route::post('/asistence/agregar-actividad', [AsistenceQrController::class, 'agregar_actividad'])->name('asistence.agregarActividad');
     Route::put('/asistence/terminar-actividad', [AsistenceQrController::class, 'terminar_actividad'])->name('asistence.terminarActividad');
+    
+    // Rutas para gestión de evidencias (asistencia QR)
+    Route::post('/evidencias/store-simple', [AsistenceQrController::class, 'storeEvidencia'])->name('evidencias.store.simple');
 });
 
 

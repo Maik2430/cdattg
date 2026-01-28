@@ -182,7 +182,7 @@
     @endif
     
     @if(auth()->user()->can('EDITAR FICHA DE CARACTERIZACION'))
-        <button wire:click="editFicha({{ $ficha->id }})" 
+        <button wire:click="openEditModal({{ $ficha->id }})" 
                 class="btn-action btn-edit"
                 title="Editar ficha">
             <i class="fas fa-edit"></i>
@@ -194,6 +194,14 @@
                 class="btn-action btn-users"
                 title="Gestionar aprendices">
             <i class="fas fa-users"></i>
+        </button>
+    @endif
+    
+    @if(auth()->user()->can('GESTIONAR INSTRUCTORES FICHA'))
+        <button wire:click="openGestionarInstructoresDirect({{ $ficha->id }})" 
+                class="btn-action btn-instructor"
+                title="Gestionar instructores">
+            <i class="fas fa-chalkboard-teacher"></i>
         </button>
     @endif
     
@@ -614,6 +622,254 @@
                                         <button class="btn-modal btn-success" disabled>
                                             <i class="fas fa-user-plus mr-2"></i>
                                             Asignar Seleccionadas
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+                
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <!-- Footer vacío - solo el botón de cerrar en el header -->
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Modal Gestionar Instructores -->
+    @if ($showGestionarInstructoresModal && $selectedFichaInstructores)
+        <div class="modal-overlay" wire:click="closeGestionarInstructoresModal">
+            <div class="modal-container modal-xl" wire:click.stop>
+                
+                <!-- Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-chalkboard-teacher mr-2"></i>
+                        Gestionar Instructores - Ficha: {{ $selectedFichaInstructores->ficha }}
+                    </h5>
+                    <button class="modal-close" wire:click="closeGestionarInstructoresModal">✕</button>
+                </div>
+                
+                <!-- Body -->
+                <div class="modal-body">
+                    <!-- Sección: Instructores Asignados -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Instructores Asignados</h6>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <!-- Tabla de instructores asignados -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-user-check mr-2"></i> 
+                                        Lista de Instructores
+                                    </h6>
+                                    <span class="badge-modern badge-info">{{ $selectedFichaInstructores->instructorFicha->count() ?? 0 }}</span>
+                                </div>
+                                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                                    @if($selectedFichaInstructores->instructorFicha->count() > 0)
+                                        <table class="table table-hover table-sm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th width="40px">
+                                                        <input type="checkbox" wire:model.live="selectAllInstructoresAsignados" class="form-check-input">
+                                                    </th>
+                                                    <th>Documento</th>
+                                                    <th>Nombre Completo</th>
+                                                    <th>Tipo</th>
+                                                    <th>Estado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($selectedFichaInstructores->instructorFicha ?? [] as $asignacion)
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" 
+                                                                    wire:model.live="selectedInstructoresAsignados" 
+                                                                    value="{{ $asignacion->id }}" 
+                                                                    class="form-check-input">
+                                                        </td>
+                                                        <td>{{ $asignacion->instructor->persona->numero_documento }}</td>
+                                                        <td>
+                                                            <strong>
+                                                                {{ $asignacion->instructor->persona->primer_nombre }} {{ $asignacion->instructor->persona->primer_apellido }}
+                                                                @if($asignacion->instructor->persona->segundo_nombre)
+                                                                    {{ $asignacion->instructor->persona->segundo_nombre }}
+                                                                @endif
+                                                                @if($asignacion->instructor->persona->segundo_apellido)
+                                                                    {{ $asignacion->instructor->persona->segundo_apellido }}
+                                                                @endif
+                                                            </strong>
+                                                        </td>
+                                                        <td>
+                                                            @if($selectedFichaInstructores->instructor_id == $asignacion->instructor_id)
+                                                                <span class="badge-modern badge-primary">Principal</span>
+                                                            @else
+                                                                <span class="badge-modern badge-secondary">Auxiliar</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if($asignacion->instructor->persona->status)
+                                                                <span class="badge-modern badge-success">Activo</span>
+                                                            @else
+                                                                <span class="badge-modern badge-danger">Inactivo</span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <div class="empty-state">
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                            <h4>No hay instructores asignados</h4>
+                                            <p>Utiliza el panel de la derecha para asignar instructores.</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <!-- Panel de instructores disponibles -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-user-plus mr-2"></i> 
+                                        Instructores Disponibles
+                                    </h6>
+                                    <span class="badge-modern badge-success">{{ $instructoresDisponibles->count() ?? 0 }}</span>
+                                </div>
+                                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                                    @if(($instructoresDisponibles->count() ?? 0) > 0)
+                                        <!-- Búsqueda -->
+                                        <div class="mb-3">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Buscar instructor..." wire:model.live="searchInstructor">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-search"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Tabla -->
+                                        <table class="table table-hover table-sm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="text-center" width="40px">
+                                                        <input type="checkbox" 
+                                                                wire:model.live="selectAllInstructores" 
+                                                                class="form-check-input">
+                                                    </th>
+                                                    <th>Documento</th>
+                                                    <th>Nombre</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($instructoresDisponibles as $instructor)
+                                                    @if(!empty($searchInstructor) ? str_contains(strtolower($instructor->persona->primer_nombre . ' ' . $instructor->persona->primer_apellido . ' ' . $instructor->persona->numero_documento), strtolower($searchInstructor)) : true)
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                <input type="checkbox" 
+                                                                        wire:model.live="selectedInstructores" 
+                                                                        value="{{ $instructor->id }}" 
+                                                                        class="form-check-input">
+                                                            </td>
+                                                            <td>{{ $instructor->persona->numero_documento }}</td>
+                                                            <td>
+                                                                {{ $instructor->persona->primer_nombre }} {{ $instructor->persona->primer_apellido }}
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <div class="empty-state">
+                                            <i class="fas fa-user-slash"></i>
+                                            <h4>No hay instructores disponibles</h4>
+                                            <p>Todos los instructores ya están asignados o están inactivos.</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Información de la Ficha -->
+                    <div class="modal-section">
+                        <h6 class="section-title">Información de la Ficha</h6>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Programa de Formación</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                    {{ $selectedFichaInstructores->programaFormacion->nombre ?? 'N/A' }}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Red de Conocimiento</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                    {{ $selectedFichaInstructores->programaFormacion->redConocimiento->nombre ?? 'N/A' }}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Jornada</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                    {{ $selectedFichaInstructores->jornadaFormacion->parametro->name ?? 'N/A' }}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Total Horas</div>
+                                <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                    {{ $selectedFichaInstructores->total_horas ?? 'N/A' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección: Acciones -->
+                    @if(($instructoresDisponibles->count() ?? 0) > 0 || ($selectedFichaInstructores->instructorFicha->count() ?? 0) > 0)
+                        <div class="modal-section">
+                            <h6 class="section-title">Acciones</h6>
+                            <div style="display: grid; gap: 16px;">
+                                <!-- Información de selección -->
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                                    <div>
+                                        <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Instructores Seleccionados</div>
+                                        <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                            <span class="badge-modern badge-primary">{{ count($selectedInstructores) }}</span> de 
+                                            <span class="badge-modern badge-info">{{ $instructoresDisponibles->count() }}</span> disponibles
+                                        </div>
+                                    </div>
+                                    @if(($selectedFichaInstructores->instructorFicha->count() ?? 0) > 0)
+                                        <div>
+                                            <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-bottom: 4px;">Instructores Asignados Seleccionados</div>
+                                            <div style="font-size: 14px; color: #1f2937; font-weight: 500;">
+                                                <span class="badge-modern badge-warning">{{ count($selectedInstructoresAsignados) }}</span> de 
+                                                <span class="badge-modern badge-info">{{ $selectedFichaInstructores->instructorFicha->count() }}</span> asignados
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                
+                                <!-- Botones de acción -->
+                                <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                                    @if(count($selectedInstructoresAsignados) > 0)
+                                        <button wire:click="desasignarInstructores" class="btn-modal btn-danger">
+                                            <i class="fas fa-user-minus mr-2"></i>
+                                            Desasignar Seleccionados
+                                        </button>
+                                    @endif
+                                    @if(count($selectedInstructores) > 0)
+                                        <button wire:click="asignarInstructores" class="btn-modal btn-success">
+                                            <i class="fas fa-user-plus mr-2"></i>
+                                            Asignar Seleccionados
+                                        </button>
+                                    @else
+                                        <button class="btn-modal btn-success" disabled>
+                                            <i class="fas fa-user-plus mr-2"></i>
+                                            Asignar Seleccionados
                                         </button>
                                     @endif
                                 </div>

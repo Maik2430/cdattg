@@ -6,6 +6,7 @@ use App\Repositories\InstructorFichaCaracterizacionRepository;
 use App\Repositories\InstructorRepository;
 use App\Repositories\PersonaRepository;
 use App\Repositories\ParametroRepository;
+use Illuminate\Support\Facades\Log;
 
 class AsistenceQrService
 {
@@ -30,13 +31,33 @@ class AsistenceQrService
 
     public function getInstructorFichaIndex($user)
     {
+        // Log para debugging
+        Log::info('=== DEBUG ASISTENCEQRSERVICE GETINSTRUCTORFICHAINDEX ===');
+        Log::info('User persona_id: ' . ($user->persona_id ?? 'NULL'));
+        
         $instructor = $this->instructorRepository->getInstructor($user->persona_id);
+        
+        Log::info('Instructor encontrado: ' . ($instructor ? 'SI' : 'NO'));
+        if ($instructor) {
+            Log::info('Instructor ID: ' . $instructor->id);
+            Log::info('Instructor persona_id: ' . $instructor->persona_id);
+        }
 
         if (!$instructor) {
+            Log::warning('No se encontró instructor para el usuario');
             return null;
         }
 
-        return $this->instructorFichaCaracterizacionRepository->getInstructorFichaCaracterizacion($instructor->id);
+        $fichas = $this->instructorFichaCaracterizacionRepository->getInstructorFichaCaracterizacion($instructor->id);
+        
+        Log::info('Fichas obtenidas del repositorio: ' . ($fichas ? 'TIENE DATOS' : 'NULL'));
+        if ($fichas) {
+            Log::info('Cantidad de fichas desde repositorio: ' . $fichas->count());
+        }
+        
+        Log::info('=== FIN DEBUG SERVICE ===');
+        
+        return $fichas;
     }
 
     public function getDiasFormacion()
@@ -53,6 +74,10 @@ class AsistenceQrService
      */
     public function obtenerDatosCaracterizacion(int $caracterizacionId, $user): array
     {
+        Log::info('=== DEBUG OBTENER DATOS CARACTERIZACION ===');
+        Log::info('Caracterizacion ID: ' . $caracterizacionId);
+        Log::info('User ID: ' . ($user ? $user->id : 'NULL'));
+        
         $fichaCaracterizacion = \App\Models\FichaCaracterizacion::with([
             'diasFormacion.dia',
             'programaFormacion',
@@ -60,13 +85,22 @@ class AsistenceQrService
             'jornadaFormacion.parametro'
         ])->find($caracterizacionId);
 
+        Log::info('FichaCaracterizacion encontrada: ' . ($fichaCaracterizacion ? 'SI' : 'NO'));
+        if ($fichaCaracterizacion) {
+            Log::info('FichaCaracterizacion ID: ' . $fichaCaracterizacion->id);
+            Log::info('FichaCaracterizacion ficha: ' . ($fichaCaracterizacion->ficha ?? 'NULL'));
+        }
+
         if (!$fichaCaracterizacion) {
+            Log::error('FichaCaracterizacion NO encontrada, retornando null');
             return [
                 'fichaCaracterizacion' => null,
                 'aprendices' => collect(),
                 'horarioHoy' => null,
             ];
         }
+
+        Log::info('=== FIN DEBUG OBTENER DATOS ===');
 
         // Obtener horario de hoy
         $diaHoy = now()->dayOfWeek;
@@ -97,7 +131,14 @@ class AsistenceQrService
         }
 
         // Obtener aprendices con asistencias
+        Log::info('Obteniendo aprendices de la ficha: ' . $fichaCaracterizacion->id);
         $aprendicesFicha = \App\Models\Aprendiz::where('ficha_caracterizacion_id', $fichaCaracterizacion->id)->get();
+        Log::info('Cantidad de aprendices encontrados: ' . $aprendicesFicha->count());
+        
+        foreach ($aprendicesFicha as $index => $aprendiz) {
+            Log::info("Aprendiz {$index}: ID={$aprendiz->id}, documento=" . ($aprendiz->persona->numero_documento ?? 'SIN PERSONA'));
+        }
+        
         $aprendizPersonaConAsistencia = collect();
         $fechaActual = \Carbon\Carbon::now()->format('Y-m-d');
 

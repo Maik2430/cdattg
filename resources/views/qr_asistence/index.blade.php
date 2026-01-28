@@ -71,6 +71,7 @@
                                     </div>
                                 </div>
                             </div>
+                            {{-- Comentado: Lógica para calcular número de actividad
                             @php
                                 $numeroActividad = 1;
                             @endphp
@@ -82,6 +83,8 @@
                                     $numeroActividad++;
                                 @endphp
                             @endforeach
+                            --}}
+                            {{-- Comentado: Sección de información de competencias y guías de aprendizaje
                             <div class="row g-4">
                                 <div class="col-md-4">
                                     <div class="info-box bg-white shadow-sm rounded">
@@ -126,9 +129,10 @@
                                     </div>
                                 </div>
                             </div>
+                            --}}
                         </div>
                     </div>
-                    <div class="card shadow-sm mb-4 no-hover" id="qr-scanner-card" style="display: none;">
+                    <div class="card shadow-sm mb-4 no-hover" id="qr-scanner-card">
                         <div class="card-header bg-white py-3 d-flex align-items-center">
                             <h5 class="card-title m-0 font-weight-bold text-primary d-flex align-items-center flex-grow-1">
                                 <i class="fas fa-qrcode mr-2"></i> Escanear QR
@@ -184,6 +188,37 @@
                                 <i class="fas fa-users mr-2"></i> Listado de Aprendices
                             </h6>
                         </div>
+                        <!-- Registro manual de asistencia -->
+                        <div class="card-body border-bottom">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-keyboard"></i>
+                                        </span>
+                                        <input type="text" 
+                                               id="manual-document-input" 
+                                               class="form-control" 
+                                               placeholder="Ingrese número de documento manualmente..."
+                                               maxlength="20">
+                                        <button class="btn btn-primary" 
+                                                id="manual-register-btn"
+                                                type="button">
+                                            <i class="fas fa-user-check mr-1"></i> Registrar Asistencia
+                                        </button>
+                                    </div>
+                                    <small class="text-muted mt-1 d-block">
+                                        Use esta opción si el escáner QR falla o para registro manual de asistencia
+                                    </small>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="text-muted small">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Escaneo QR: Automático | Manual: Ingrese documento
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-borderless table-striped mb-0">
@@ -235,16 +270,14 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Botón para finalizar asistencia, redirige a caracter_selected -->
-                    <form action="{{ route('asistence.terminarActividad') }} " method="POST">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" name="evidencia_id" value="{{ $evidencia->id }}">
-                        <input type="hidden" name="caracterizacion" value="{{ $caracterizacion->id }}">
-                        <button type="submit" class="btn btn-success btn-block py-2 font-weight-bold mb-3">
-                            <i class="fas fa-check-circle mr-1"></i> Finalizar asistencia
-                        </button>
-                    </form>
+                    <!-- Botón para finalizar asistencia -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <button type="button" id="finalizarAsistenciaBtn" class="btn btn-success btn-block py-2 font-weight-bold mb-3">
+                                <i class="fas fa-check-circle mr-1"></i> Finalizar asistencia
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -262,6 +295,76 @@
         window.csrfToken = '{{ csrf_token() }}';
         window.apiVerifyDocumentRoute = '{{ route('api.verifyDocument') }}';
         window.horarioHoy = @json($horarioHoy);
+        
+        // Datos de la vista
+        window.fichaId = {{ $fichaCaracterizacion->id }};
+        window.caracterizacionId = '{{ $caracterizacion->id }}';
+        window.evidenciaId = '{{ $evidencia->id }}';
+        
+        // Manejar finalización de asistencia
+        document.addEventListener('DOMContentLoaded', function() {
+            const finalizarBtn = document.getElementById('finalizarAsistenciaBtn');
+            
+            if (finalizarBtn) {
+                finalizarBtn.addEventListener('click', function() {
+                    if (confirm('¿Está seguro de finalizar la asistencia? Esta acción generará un reporte PDF y bloqueará el registro hasta el día siguiente.')) {
+                        finalizarAsistencia();
+                    }
+                });
+            }
+            
+            function finalizarAsistencia() {
+                const btn = document.getElementById('finalizarAsistenciaBtn');
+                const originalText = btn.innerHTML;
+                
+                // Deshabilitar botón y mostrar loading
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Finalizando...';
+                
+                fetch('{{ route('asistence.finalizarAsistencia') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': window.csrfToken
+                    },
+                    body: JSON.stringify({
+                        ficha_id: window.fichaId,
+                        caracterizacion_id: window.caracterizacionId,
+                        evidencia_id: window.evidenciaId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Mostrar mensaje de éxito
+                        alert('Asistencia finalizada correctamente. Se generó un reporte PDF.');
+                        
+                        // Descargar PDF
+                        if (data.pdf_url) {
+                            const link = document.createElement('a');
+                            link.href = data.pdf_url;
+                            link.download = data.pdf_url.split('/').pop();
+                            link.target = '_blank';
+                            link.click();
+                        }
+                        
+                        // Redirigir a la vista de selección de fichas
+                        window.location.href = data.redirect_url;
+                    } else {
+                        alert('Error al finalizar la asistencia: ' + (data.message || 'Error desconocido'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al finalizar asistencia:', error);
+                    alert('Error de comunicación al finalizar la asistencia.');
+                })
+                .finally(() => {
+                    // Restaurar botón
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                });
+            }
+        });
     </script>
     @vite(['resources/js/Asistencia/index-qr.js'])
 @endsection

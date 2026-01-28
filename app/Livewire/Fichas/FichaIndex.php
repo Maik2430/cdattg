@@ -43,6 +43,17 @@ class FichaIndex extends Component
     public $selectedAprendicesAsignados = [];
     public $selectAllAprendicesAsignados = false;
     
+    // Propiedades para gestión de instructores
+    public $showGestionarInstructoresModal = false;
+    public $selectedFichaInstructores = null;
+    public $instructoresDisponibles = [];
+    public $selectedInstructores = [];
+    public $selectAllInstructores = false;
+    public $searchInstructor = '';
+    public $instructoresAsignados = [];
+    public $selectedInstructoresAsignados = [];
+    public $selectAllInstructoresAsignados = false;
+    
     // Datos para filtros
     public $programas;
     public $regionales;
@@ -413,6 +424,367 @@ class FichaIndex extends Component
             'count' => count($this->selectedPersonas),
             'personas_disponibles_count' => count($this->personasDisponibles)
         ]);
+    }
+
+    // Métodos para gestión de instructores
+    public function openGestionarInstructoresDirect($fichaId)
+    {
+        \Log::info('=== INICIO GESTIÓN INSTRUCTORES ===');
+        \Log::info('Abriendo gestión de instructores - Ficha ID: ' . $fichaId);
+        
+        // Cargar la ficha con todas las relaciones necesarias como lo hace el controlador original
+        $this->selectedFichaInstructores = \App\Models\FichaCaracterizacion::with([
+            'instructor.persona',
+            'instructorFicha.instructor.persona',
+            'instructorFicha.instructorFichaDias.dia',
+            'diasFormacion.dia',
+            'programaFormacion.redConocimiento',
+            'sede.regional',
+            'jornadaFormacion.parametro'
+        ])->find($fichaId);
+        
+        if ($this->selectedFichaInstructores) {
+            \Log::info('Ficha cargada para gestión de instructores:', [
+                'ficha_id' => $this->selectedFichaInstructores->id,
+                'ficha_codigo' => $this->selectedFichaInstructores->ficha,
+                'programa' => $this->selectedFichaInstructores->programaFormacion->nombre ?? 'N/A',
+                'instructores_asignados_count' => $this->selectedFichaInstructores->instructorFicha->count()
+            ]);
+            
+            // Obtener instructores ya asignados a esta ficha como lo hace el controlador
+            $this->instructoresAsignados = $this->selectedFichaInstructores->instructorFicha()
+                ->with(['competencia', 'resultadosAprendizaje'])
+                ->with(['instructor.persona', 'instructorFichaDias.dia'])
+                ->get();
+            
+            // Cargar instructores disponibles
+            $this->loadInstructoresDisponibles();
+            
+            // Resetear selecciones
+            $this->reset(['selectedInstructores', 'selectAllInstructores', 'searchInstructor', 'selectedInstructoresAsignados', 'selectAllInstructoresAsignados']);
+            
+            $this->showGestionarInstructoresModal = true;
+            
+            \Log::info('Modal de gestión de instructores abierta');
+        } else {
+            \Log::error('No se pudo cargar la ficha para gestión de instructores');
+            $this->dispatch('notify', [
+                'type' => 'error', 
+                'message' => 'No se pudo cargar la información de la ficha'
+            ]);
+        }
+        
+        \Log::info('=== FIN GESTIÓN INSTRUCTORES ===');
+    }
+
+    public function closeGestionarInstructoresModal()
+    {
+        $this->showGestionarInstructoresModal = false;
+        $this->reset([
+            'selectedFichaInstructores', 
+            'instructoresDisponibles', 
+            'selectedInstructores', 
+            'selectAllInstructores', 
+            'searchInstructor',
+            'instructoresAsignados',
+            'selectedInstructoresAsignados',
+            'selectAllInstructoresAsignados'
+        ]);
+    }
+
+    private function loadInstructoresDisponibles()
+    {
+        if ($this->selectedFichaInstructores) {
+            \Log::info('=== CARGANDO INSTRUCTORES DISPONIBLES ===');
+            \Log::info('Ficha seleccionada:', [
+                'ficha_id' => $this->selectedFichaInstructores->id, 
+                'ficha_codigo' => $this->selectedFichaInstructores->ficha
+            ]);
+            
+            // Obtener instructores que no están asignados a esta ficha
+            // Usando la misma lógica que el controlador original
+            $instructoresAsignadosIds = $this->selectedFichaInstructores->instructorFicha->pluck('instructor_id')->toArray();
+            
+            $this->instructoresDisponibles = \App\Models\Instructor::whereHas('persona', function($query) {
+                    $query->where('status', 1);
+                })
+                ->whereNotIn('instructors.id', $instructoresAsignadosIds) // Especificar la tabla explícitamente
+                ->with('persona')
+                ->ordenarPorNombre() // Usar el scope del modelo para ordenar
+                ->get();
+            
+            \Log::info('Instructores disponibles cargados:', [
+                'count' => $this->instructoresDisponibles->count(),
+                'instructores' => $this->instructoresDisponibles->take(5)->map(function($instructor) {
+                    return [
+                        'id' => $instructor->id,
+                        'nombre_completo' => $instructor->persona->primer_nombre . ' ' . $instructor->persona->primer_apellido,
+                        'numero_documento' => $instructor->persona->numero_documento,
+                        'tipo_documento' => $instructor->persona->tipo_documento
+                    ];
+                })->toArray()
+            ]);
+            
+            // Verificar también todos los instructores activos para comparación
+            $totalInstructoresActivos = \App\Models\Instructor::whereHas('persona', function($query) {
+                $query->where('status', 1);
+            })->count();
+            
+            \Log::info('Total instructores activos en sistema:', [
+                'count' => $totalInstructoresActivos
+            ]);
+            
+            // Verificar instructores actuales de esta ficha
+            $totalInstructoresFicha = $this->selectedFichaInstructores->instructorFicha->count();
+            
+            \Log::info('Instructores actuales de esta ficha:', [
+                'ficha_id' => $this->selectedFichaInstructores->id,
+                'count' => $totalInstructoresFicha,
+                'instructores' => $this->selectedFichaInstructores->instructorFicha->take(3)->map(function($asignacion) {
+                    return [
+                        'id' => $asignacion->id,
+                        'instructor_id' => $asignacion->instructor_id,
+                        'nombre_completo' => $asignacion->instructor->persona->primer_nombre . ' ' . $asignacion->instructor->persona->primer_apellido,
+                        'numero_documento' => $asignacion->instructor->persona->numero_documento
+                    ];
+                })->toArray()
+            ]);
+            
+            // Verificar la cuenta matemática
+            \Log::info('Verificación matemática:', [
+                'total_instructores_activos' => $totalInstructoresActivos,
+                'instructores_en_ficha' => $totalInstructoresFicha,
+                'instructores_disponibles_esperados' => $totalInstructoresActivos - $totalInstructoresFicha,
+                'instructores_disponibles_reales' => $this->instructoresDisponibles->count(),
+                'diferencia' => ($totalInstructoresActivos - $totalInstructoresFicha) - $this->instructoresDisponibles->count()
+            ]);
+            
+            \Log::info('=== FIN CARGA INSTRUCTORES DISPONIBLES ===');
+        }
+    }
+
+    public function updatedSelectAllInstructores()
+    {
+        if ($this->selectAllInstructores) {
+            $this->selectedInstructores = $this->instructoresDisponibles->pluck('id')->toArray();
+        } else {
+            $this->selectedInstructores = [];
+        }
+    }
+
+    public function updatedSelectAllInstructoresAsignados()
+    {
+        if ($this->selectAllInstructoresAsignados) {
+            $this->selectedInstructoresAsignados = $this->selectedFichaInstructores->instructorFicha->pluck('id')->toArray();
+        } else {
+            $this->selectedInstructoresAsignados = [];
+        }
+    }
+
+    public function updatedSearchInstructor()
+    {
+        // La búsqueda se filtra en la vista con el condicional
+    }
+
+    public function asignarInstructores()
+    {
+        // Guardar el conteo antes de limpiar la selección
+        $conteoInstructores = count($this->selectedInstructores);
+        
+        \Log::info('=== INICIO ASIGNACIÓN INSTRUCTORES ===');
+        \Log::info('Datos antes de asignar:', [
+            'selectedInstructores' => $this->selectedInstructores,
+            'count' => $conteoInstructores,
+            'ficha_id' => $this->selectedFichaInstructores?->id
+        ]);
+
+        if (empty($this->selectedInstructores)) {
+            \Log::info('No hay instructores seleccionados - abortando');
+            $this->dispatch('notify', ['type' => 'warning', 'message' => 'Seleccione al menos un instructor para asignar']);
+            return;
+        }
+
+        try {
+            \DB::beginTransaction();
+            
+            \Log::info('Iniciando transacción DB para asignar instructores');
+            
+            // Preparar datos para cada instructor seleccionado
+            $instructoresData = [];
+            foreach ($this->selectedInstructores as $index => $instructorId) {
+                \Log::info('Asignando instructor ' . ($index + 1) . ':', ['instructor_id' => $instructorId]);
+                
+                $instructoresData[] = [
+                    'instructor_id' => $instructorId,
+                    'ficha_caracterizacion_id' => $this->selectedFichaInstructores->id,
+                    'fecha_inicio' => $this->selectedFichaInstructores->fecha_inicio,
+                    'fecha_fin' => $this->selectedFichaInstructores->fecha_fin,
+                    'total_horas_instructor' => $this->selectedFichaInstructores->total_horas ?? 0,
+                    'estado' => 1,
+                    'user_create_id' => auth()->id(),
+                    'user_edit_id' => auth()->id(),
+                ];
+            }
+            
+            // Usar el servicio especializado para la asignación
+            $asignacionService = app(\App\Services\AsignacionInstructorService::class);
+            $resultado = $asignacionService->asignarInstructores(
+                $instructoresData,
+                $this->selectedFichaInstructores->id,
+                $this->selectedFichaInstructores->instructor_id ?? null,
+                auth()->id()
+            );
+            
+            \DB::commit();
+            
+            \Log::info('Transacción confirmada - ' . $conteoInstructores . ' instructores asignados');
+            \Log::info('Resultado del servicio:', $resultado);
+            
+            // Recargar la ficha para actualizar los instructores asignados
+            $this->selectedFichaInstructores = \App\Models\FichaCaracterizacion::with([
+                'instructor.persona',
+                'instructorFicha.instructor.persona',
+                'instructorFicha.instructorFichaDias.dia',
+                'diasFormacion.dia',
+                'programaFormacion.redConocimiento',
+                'sede.regional',
+                'jornadaFormacion.parametro'
+            ])->find($this->selectedFichaInstructores->id);
+            
+            // Recargar instructores asignados
+            $this->instructoresAsignados = $this->selectedFichaInstructores->instructorFicha()
+                ->with(['competencia', 'resultadosAprendizaje'])
+                ->with(['instructor.persona', 'instructorFichaDias.dia'])
+                ->get();
+            
+            // Recargar instructores disponibles
+            $this->loadInstructoresDisponibles();
+            
+            // Limpiar selección
+            $this->reset(['selectedInstructores', 'selectAllInstructores']);
+            
+            // Forzar refresh de la vista
+            $this->dispatch('refreshComponent');
+            $this->dispatch('$refresh');
+            
+            $this->dispatch('notify', [
+                'type' => 'success', 
+                'message' => $conteoInstructores . ' instructores asignados exitosamente'
+            ]);
+            
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Error al asignar instructores:', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'selectedInstructores' => $this->selectedInstructores,
+                'ficha_id' => $this->selectedFichaInstructores?->id
+            ]);
+            $this->dispatch('notify', [
+                'type' => 'error', 
+                'message' => 'Error al asignar instructores: ' . $e->getMessage()
+            ]);
+        }
+        
+        \Log::info('=== FIN ASIGNACIÓN INSTRUCTORES ===');
+    }
+
+    public function desasignarInstructores()
+    {
+        // Guardar el conteo antes de limpiar la selección
+        $conteoInstructores = count($this->selectedInstructoresAsignados);
+        
+        if (empty($this->selectedInstructoresAsignados)) {
+            $this->dispatch('notify', [
+                'type' => 'warning', 
+                'message' => 'Seleccione al menos un instructor para desasignar'
+            ]);
+            return;
+        }
+
+        try {
+            \DB::beginTransaction();
+            
+            \Log::info('=== INICIO DESASIGNACIÓN INSTRUCTORES ===');
+            \Log::info('Instructores a desasignar:', [
+                'selectedInstructoresAsignados' => $this->selectedInstructoresAsignados,
+                'count' => $conteoInstructores,
+                'ficha_id' => $this->selectedFichaInstructores?->id
+            ]);
+            
+            foreach ($this->selectedInstructoresAsignados as $asignacionId) {
+                \Log::info('Desasignando asignación:', ['asignacion_id' => $asignacionId]);
+                
+                // Eliminar la asignación del instructor
+                $asignacion = \App\Models\InstructorFichaCaracterizacion::find($asignacionId);
+                if ($asignacion) {
+                    // Verificar que no sea el instructor principal
+                    if ($this->selectedFichaInstructores->instructor_id == $asignacion->instructor_id) {
+                        \Log::warning('No se puede desasignar al instructor principal:', [
+                            'asignacion_id' => $asignacionId,
+                            'instructor_id' => $asignacion->instructor_id
+                        ]);
+                        continue;
+                    }
+                    
+                    $asignacion->delete();
+                }
+            }
+            
+            \DB::commit();
+            
+            \Log::info('Transacción confirmada - ' . $conteoInstructores . ' instructores desasignados');
+            
+            // Recargar la ficha para actualizar los instructores asignados
+            $this->selectedFichaInstructores = \App\Models\FichaCaracterizacion::with([
+                'instructor.persona',
+                'instructorFicha.instructor.persona',
+                'instructorFicha.instructorFichaDias.dia',
+                'diasFormacion.dia',
+                'programaFormacion.redConocimiento',
+                'sede.regional',
+                'jornadaFormacion.parametro'
+            ])->find($this->selectedFichaInstructores->id);
+            
+            // Recargar instructores asignados
+            $this->instructoresAsignados = $this->selectedFichaInstructores->instructorFicha()
+                ->with(['competencia', 'resultadosAprendizaje'])
+                ->with(['instructor.persona', 'instructorFichaDias.dia'])
+                ->get();
+            
+            // Recargar instructores disponibles
+            $this->loadInstructoresDisponibles();
+            
+            // Limpiar selección
+            $this->reset(['selectedInstructoresAsignados', 'selectAllInstructoresAsignados']);
+            
+            // Forzar refresh de la vista
+            $this->dispatch('refreshComponent');
+            $this->dispatch('$refresh');
+            
+            $this->dispatch('notify', [
+                'type' => 'success', 
+                'message' => $conteoInstructores . ' instructores desasignados exitosamente'
+            ]);
+            
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Error al desasignar instructores:', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'selectedInstructoresAsignados' => $this->selectedInstructoresAsignados,
+                'ficha_id' => $this->selectedFichaInstructores?->id
+            ]);
+            $this->dispatch('notify', [
+                'type' => 'error', 
+                'message' => 'Error al desasignar instructores: ' . $e->getMessage()
+            ]);
+        }
+        
+        \Log::info('=== FIN DESASIGNACIÓN INSTRUCTORES ===');
     }
 
     public function asignarAprendices()

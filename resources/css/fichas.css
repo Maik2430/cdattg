@@ -295,6 +295,16 @@ Basado en el diseño de aprendices.
     color: white;
 }
 
+.vista-fichas .btn-instructor {
+    background: #6f42c1;
+    color: white;
+}
+
+.vista-fichas .btn-instructor:hover {
+    background: #5a32a3;
+    color: white;
+}
+
 /* Alineación de checkboxes en tablas */
 .vista-fichas .table td.text-center {
     vertical-align: middle !important;

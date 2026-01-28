@@ -9,20 +9,19 @@ function cuandoElDocumentoEsteListo(funcionAEjecutar) {
 }
 
 cuandoElDocumentoEsteListo(function() {
-    // Solo inicializar el escáner si hay clases programadas
-    if (window.horarioHoy) {
-        // Usa Html5QrcodeScanner que maneja la UI automáticamente
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-lector", {
-                fps: 25,
-                qrbox: 180,
-                aspectRatio: 1,
-                // Si tienes múltiples cámaras y quieres especificar una
-                // videoConstraints: { facingMode: { exact: "environment" } }
-            },
-            /* verbose= */
-            false
-        );
+    // Inicializar el escáner siempre sin condiciones
+    // Usa Html5QrcodeScanner que maneja la UI automáticamente
+    const html5QrcodeScanner = new Html5QrcodeScanner(
+        "qr-lector", {
+            fps: 25,
+            qrbox: 180,
+            aspectRatio: 1,
+            // Si tienes múltiples cámaras y quieres especificar una
+            // videoConstraints: { facingMode: { exact: "environment" } }
+        },
+        /* verbose= */
+        false
+    );
 
         const qrFeedbackMessages = document.querySelector('.qr-feedback-messages');
         // Obtener el id de la ficha desde un data-attribute para JS puro
@@ -128,5 +127,73 @@ cuandoElDocumentoEsteListo(function() {
 
         // Inicia el escáner
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-    }
+        
+        // Funcionalidad de registro manual
+        const manualDocumentInput = document.getElementById('manual-document-input');
+        const manualRegisterBtn = document.getElementById('manual-register-btn');
+        
+        if (manualDocumentInput && manualRegisterBtn) {
+            manualRegisterBtn.addEventListener('click', function() {
+                const documento = manualDocumentInput.value.trim();
+                
+                if (!documento) {
+                    showFeedback('Por favor ingrese un número de documento', 'warning');
+                    return;
+                }
+                
+                // Deshabilitar botón para evitar múltiples clics
+                manualRegisterBtn.disabled = true;
+                manualRegisterBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Procesando...';
+                
+                // Llamar a la misma API que el escáner QR
+                fetch(window.apiVerifyDocumentRoute, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': window.csrfToken
+                    },
+                    body: JSON.stringify({
+                        numero_documento: documento,
+                        ficha_id: fichaId,
+                        evidencia_id: evidenciaId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'registered') {
+                        showFeedback(data.message, 'success');
+                        updateLearnerRow(data.aprendiz_data.numero_documento, data.hora_ingreso);
+                        manualDocumentInput.value = ''; // Limpiar campo
+                    } else if (data.status === 'exit_registered') {
+                        showFeedback(data.message, 'success');
+                        updateLearnerRow(data.aprendiz_data.numero_documento, data.hora_ingreso, data.hora_salida);
+                        manualDocumentInput.value = '';
+                    } else if (data.status === 'attendance_complete') {
+                        showFeedback(data.message, 'info');
+                        updateLearnerRow(data.aprendiz_data.numero_documento, data.hora_ingreso, data.hora_salida || null);
+                        manualDocumentInput.value = '';
+                    } else if (data.status === 'not_found' || data.status === 'not_a_learner' || data.status === 'not_in_ficha' || data.status === 'not_assigned_instructor') {
+                        showFeedback(data.message, 'danger');
+                    } else {
+                        showFeedback(data.message || 'Error desconocido al procesar el documento.', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error de comunicación con el servidor:', error);
+                    showFeedback('Error de comunicación con el servidor.', 'danger');
+                })
+                .finally(() => {
+                    // Rehabilitar botón
+                    manualRegisterBtn.disabled = false;
+                    manualRegisterBtn.innerHTML = '<i class="fas fa-user-check mr-1"></i> Registrar Asistencia';
+                });
+            });
+            
+            // Permitir registrar con Enter
+            manualDocumentInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    manualRegisterBtn.click();
+                }
+            });
+        }
 });
