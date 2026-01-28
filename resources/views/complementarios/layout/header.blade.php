@@ -32,22 +32,23 @@
             <div class="mx-auto"></div>
             <ul class="navbar-nav">
                 @auth
+                @if(Auth::user()->persona)
                 <li class="nav-item dropdown user-menu">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                         <div class="user-avatar-circle">
-                            {{ substr(Auth::user()->persona->primer_nombre, 0, 1) }}
-                            {{ substr(Auth::user()->persona->primer_apellido, 0, 1) }}
+                            {{ substr(Auth::user()->persona->primer_nombre ?? 'U', 0, 1) }}
+                            {{ substr(Auth::user()->persona->primer_apellido ?? 'S', 0, 1) }}
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <li class="user-header text-center"
                             style="background-color: #ffffff; border-left: 4px solid #007bff;">
                             <div class="user-avatar-circle-large mb-2">
-                                {{ substr(Auth::user()->persona->primer_nombre, 0, 1) }}
-                                {{ substr(Auth::user()->persona->primer_apellido, 0, 1) }}
+                                {{ substr(Auth::user()->persona->primer_nombre ?? 'U', 0, 1) }}
+                                {{ substr(Auth::user()->persona->primer_apellido ?? 'S', 0, 1) }}
                             </div>
                             <p class="mb-1 text-dark">
-                                {{ Auth::user()->persona->primer_nombre }} {{ Auth::user()->persona->primer_apellido }}
+                                {{ Auth::user()->persona->primer_nombre ?? 'Usuario' }} {{ Auth::user()->persona->primer_apellido ?? 'Sistema' }}
                             </p>
                             <p class="mb-0">
                                 <small class="text-dark">
@@ -65,6 +66,39 @@
                         </li>
                     </ul>
                 </li>
+                @else
+                <li class="nav-item dropdown user-menu">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <div class="user-avatar-circle">
+                            US
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <li class="user-header text-center"
+                            style="background-color: #ffffff; border-left: 4px solid #007bff;">
+                            <div class="user-avatar-circle-large mb-2">
+                                US
+                            </div>
+                            <p class="mb-1 text-dark">
+                                Usuario Sistema
+                            </p>
+                            <p class="mb-0">
+                                <small class="text-dark">
+                                    {{ ucfirst(strtolower(Auth::user()->getRoleNames()->first())) }}
+                                </small>
+                            </p>
+                        </li>
+                        <li class="user-footer">
+                            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-primary btn-flat btn-block">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                @endif
                 @else
                 <li class="nav-item me-4">
                     <a class="nav-link text-dark" href="{{ url('/login') }}">
