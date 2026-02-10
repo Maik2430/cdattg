@@ -6,22 +6,28 @@ export default defineConfig({
         laravel({
             input: {
                 // CSS files
+                'app_css': 'resources/css/app.css',
                 'style': 'resources/css/style.css',
                 'temas_css': 'resources/css/temas.css',
                 'parametros_css': 'resources/css/parametros.css',
                 'programas_css': 'resources/css/programas.css',
+                'programas_publicos_css': 'resources/css/programas_publicos.css',
                 'aprendices_css': 'resources/css/aprendices.css',
                 'instructores_css': 'resources/css/instructores.css',
                 'guias_aprendizaje_css': 'resources/css/guias-aprendizaje.css',
                 'resultados_aprendizaje_css': 'resources/css/resultados-aprendizaje.css',
                 'dias_formacion_css': 'resources/css/dias-formacion.css',
+                'fichas_css': 'resources/css/fichas.css',
                 'competencias_css': 'resources/css/competencias.css',
+                'red_conocimiento_css': 'resources/css/red-conocimiento.css',
+                'livewire_loading_css': 'resources/css/livewire-loading.css',
                 'global_notifications_css': 'resources/css/global-notifications.css',
                 'global_modals_css': 'resources/css/global-modals.css',
                 'footer_css': 'resources/css/footer.css',
                 'registro_css': 'resources/css/pages/registro.css',
                 'dashboard_superadmin': 'resources/css/dashboards/dashboard-superadmin.css',
                 'caracter_selecter': 'resources/css/Asistencia/caracter_selecter.css',
+                'index_qr_css': 'resources/css/Asistencia/index_qr.css',
                 // Inventario CSS files
                 'inventario_base_css': 'resources/css/inventario/shared/base.css',
                 'inventario_card_css': 'resources/css/inventario/card.css',
