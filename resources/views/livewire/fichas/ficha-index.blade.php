@@ -65,12 +65,14 @@
             </select>
         </div>
 
+        @haspermission('CREAR FICHA DE CARACTERIZACION')
         <div class="actions-container">
             <button wire:click="openCreateModal" class="btn-primary-modern">
                 <i class="fas fa-plus"></i>
                 Nueva Ficha
             </button>
         </div>
+        @endhaspermission
     </div>
 
     <!-- Indicador de carga -->
