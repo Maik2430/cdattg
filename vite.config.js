@@ -12,7 +12,7 @@ export default defineConfig({
                 'programas_css': 'resources/css/programas.css',
                 'aprendices_css': 'resources/css/aprendices.css',
                 'instructores_css': 'resources/css/instructores.css',
-                'guias_aprendizaje_css': 'resources/css/guias_aprendizaje.css',
+                'guias_aprendizaje_css': 'resources/css/guias-aprendizaje.css',
                 'resultados_aprendizaje_css': 'resources/css/resultados-aprendizaje.css',
                 'dias_formacion_css': 'resources/css/dias-formacion.css',
                 'competencias_css': 'resources/css/competencias.css',
