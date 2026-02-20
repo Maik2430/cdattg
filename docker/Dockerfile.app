@@ -41,17 +41,22 @@ RUN set -eux; \
 # =========================================
 # === Stage 2: Node / Vite (assets)
 # =========================================
-FROM node:20-bullseye AS assets_builder
+FROM node:20-bullseye-slim AS assets_builder
 
 ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV
 
 WORKDIR /app
 
+# --- Verificar que npm esté disponible ---
+RUN set -eux; \
+    npm --version || (echo "npm no encontrado, instalando..." && apt-get update && apt-get install -y npm && npm --version);
+
 # --- Dependencias Node ---
 COPY package.json package-lock.json ./
 
 RUN set -eux; \
+    npm --version; \
     if [ -f package-lock.json ] && [ -s package-lock.json ]; then \
         npm ci || (echo "⚠️ npm ci falló, usando npm install como fallback..."; npm install); \
     else \
