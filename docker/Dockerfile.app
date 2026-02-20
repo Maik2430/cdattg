@@ -41,7 +41,7 @@ RUN set -eux; \
 # =========================================
 # === Stage 2: Node / Vite (assets)
 # =========================================
-FROM node:20-bullseye-slim AS assets_builder
+FROM node:20-bullseye AS assets_builder
 
 ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV

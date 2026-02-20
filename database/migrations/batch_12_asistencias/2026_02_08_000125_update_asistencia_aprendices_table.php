@@ -12,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('asistencia_aprendices', function (Blueprint $table) {
-            // Eliminar la relación directa con evidencias
-            $table->dropForeign(['evidencia_id']);
-            $table->dropColumn('evidencia_id');
-            
-            // Agregar la relación con asistencias
-            $table->foreignId('asistencia_id')->nullable()->after('aprendiz_ficha_id')->constrained('asistencias')->onDelete('cascade');
-            
+            // Eliminar la relación directa con evidencias solo si existe (evidencia_id se agrega en batch_14)
+            if (Schema::hasColumn('asistencia_aprendices', 'evidencia_id')) {
+                $table->dropForeign(['evidencia_id']);
+                $table->dropColumn('evidencia_id');
+            }
+
+            // Agregar la relación con asistencias (solo si no existe ya)
+            if (! Schema::hasColumn('asistencia_aprendices', 'asistencia_id')) {
+                $table->foreignId('asistencia_id')->nullable()->after('aprendiz_ficha_id')->constrained('asistencias')->onDelete('cascade');
+            }
+
             // Agregar índices para optimización
             $table->index(['asistencia_id', 'aprendiz_ficha_id']);
             $table->index(['asistencia_id', 'hora_ingreso']);
