@@ -250,6 +250,8 @@ class FichaCaracterizacionController extends Controller
                     }
                 }
 
+                $ficha->syncInstructorLiderToPivot();
+
                 DB::commit();
 
                 Log::info('Ficha de caracterización creada exitosamente', [
@@ -401,6 +403,7 @@ class FichaCaracterizacionController extends Controller
             $ficha->user_edit_id = Auth::id();
 
             if ($ficha->save()) {
+                $ficha->syncInstructorLiderToPivot();
                 DB::commit();
 
                 Log::info('Ficha de caracterización actualizada exitosamente', [
