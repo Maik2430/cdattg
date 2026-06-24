@@ -220,9 +220,40 @@ return [
         'dependencias' => [
             'batch_01_permisos',
         ],
+        'tablas' => [
+            'reporte_salida_automatica',
+        ],
+        'orden' => 18,
     ],
-    'tablas' => [
-        'reporte_salida_automatica'
+
+    'batch_19_evaluacion_formativa' => [
+        'descripcion' => 'Evaluación Formativa - Ítems evaluables, rúbricas, entregas y planes de mejoramiento',
+        'dependencias' => [
+            'batch_01_sistema_base',
+            'batch_03_parametros',
+            'batch_08_fichas',
+            'batch_09_instructores_aprendices',
+            'batch_13_competencias',
+        ],
+        'tablas' => [
+            'item_evaluable',
+            'entregas',
+            'adjuntos_entrega',
+            'rubricas',
+            'criterios',
+            'rubricas_criterios',
+            'criterios_rubricas_item_evaluable',
+            'entregas_calificaciones_criterios',
+            'evaluaciones',
+            'actividades_aprendizaje',
+            'planes_mejoramiento',
+            'detalles_plan_mejoramiento',
+            'rap_item_evaluable',
+            'materiales_apoyo',
+            'item_materiales_apoyo',
+            'fichas_item_evaluable',
+            'aprendices_raps',
+        ],
+        'orden' => 19,
     ],
-    'orden' => 18,
 ];

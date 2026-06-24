@@ -49,6 +49,7 @@ class MigrateModule extends Command
         'batch_16_inventario' => 'Módulo de inventario',
         'batch_17_complementarios' => 'Módulo de Complementarios (cursos complementarios, aspirantes, caracterización)',
         'batch_18_entrada_salida' => 'Módulo de Entradas y Salidas',
+        'batch_19_evaluacion_formativa' => 'Evaluación Formativa (ítems evaluables, rúbricas, entregas, planes de mejoramiento)',
     ];
 
     /**
@@ -78,7 +79,7 @@ class MigrateModule extends Command
             return 1;
         }
 
-        return $this->migrateSingleModule($module);
+        return $this->migrateSingleBatch($module);
     }
 
     /**
