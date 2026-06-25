@@ -31,4 +31,16 @@ trait Seguimiento
     {
         return $this->userUpdate();
     }
+
+    // Relación con el usuario que eliminó el registro
+    public function userDelete()
+    {
+        return $this->belongsTo(User::class, 'user_delete_id');
+    }
+
+    // Alias de userDelete() para compatibilidad
+    public function eliminador()
+    {
+        return $this->userDelete();
+    }
 }
