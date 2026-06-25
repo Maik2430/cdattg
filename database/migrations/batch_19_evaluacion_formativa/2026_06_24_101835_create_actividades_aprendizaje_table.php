@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreign('item_id')->references('item_id')->on('item_evaluable')->onDelete('cascade');
             $table->foreignId('tipo_evaluacion')->constrained('parametros_temas'); // FK al catálogo de tipos (Conocimiento, Desempeño, Producto)
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

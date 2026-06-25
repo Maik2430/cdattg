@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('rubricas_criterios_id')->constrained('rubricas_criterios');
             $table->double('peso_porcentual', 8, 2);
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

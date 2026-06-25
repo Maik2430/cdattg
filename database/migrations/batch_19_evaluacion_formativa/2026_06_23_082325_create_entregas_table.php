@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('estado')->constrained('parametros');
             $table->text('observacion_instructor')->nullable();
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

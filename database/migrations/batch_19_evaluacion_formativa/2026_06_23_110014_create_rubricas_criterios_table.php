@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('rubrica_id')->constrained('rubricas');
             $table->foreignId('criterio_id')->constrained('criterios');
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

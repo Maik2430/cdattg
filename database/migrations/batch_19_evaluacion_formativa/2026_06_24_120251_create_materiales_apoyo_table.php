@@ -25,7 +25,7 @@ return new class extends Migration
             $table->bigInteger('tamano_bytes');
             $table->boolean('estado')->default(true);
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

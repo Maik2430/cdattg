@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('item_origen_id')->references('item_id')->on('item_evaluable')->onDelete('cascade');            
             $table->boolean('estado')->default(true);
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

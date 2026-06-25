@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('estado')->constrained('parametros');
             $table->foreignId('tipo_actividad')->constrained('parametros_temas');
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

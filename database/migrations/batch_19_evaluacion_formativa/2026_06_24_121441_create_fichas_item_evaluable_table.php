@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('estado');
             $table->foreign('estado')->references('id')->on('parametros_temas')->onDelete('cascade');
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

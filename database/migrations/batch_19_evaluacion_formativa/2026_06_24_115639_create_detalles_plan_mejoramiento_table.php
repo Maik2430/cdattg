@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('criterios_deficientes');
             $table->foreign('criterios_deficientes')->references('id')->on('entregas_calificaciones_criterios')->onDelete('cascade');
             $table->foreignId('user_create_id')->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');
+            $table->foreignId('user_update_id')->nullable()->constrained('users');
             $table->foreignId('user_delete_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
