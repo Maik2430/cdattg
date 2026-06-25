@@ -97,6 +97,7 @@ Route::middleware('web')->group(function () {
 $loadRouteFolders(['autenticacion/public']);
 
 $protectedRouteFolders = [
+    'aitg',
     'actividades',
     'asistencia',
     'autenticacion/private',
