@@ -1,4 +1,4 @@
-{{-- Sección 3: puntos adicionales del plan --}}
+{{-- Sección 4: puntos adicionales del plan --}}
 <div class="aitg-card aitg-card--warning">
     <div class="aitg-card__header">
         <div class="aitg-card__title-wrap">

@@ -2,11 +2,12 @@
 
 namespace App\Services\Aitg;
 
+use App\Models\Aitg\ChecklistPlan;
 use App\Models\Aitg\PerfilPlan;
 use App\Models\Aitg\PlanContratacion;
 use App\Models\Aitg\PuntoAdicional;
 
-/** Sincroniza perfiles y puntos adicionales de un plan AITG. */
+/** Sincroniza perfiles, checklist y puntos adicionales de un plan AITG. */
 class AitgPlanSyncService
 {
     /** @param array<int, array<string, mixed>> $perfilesData */
@@ -51,6 +52,42 @@ class AitgPlanSyncService
         }
 
         $plan->perfiles()->whereNotIn('id', $idsMantener)->delete();
+    }
+
+    /** @param array<int, array<string, mixed>> $checklistData */
+    public function syncChecklist(PlanContratacion $plan, array $checklistData): void
+    {
+        $idsMantener = [];
+
+        foreach (array_values($checklistData) as $index => $row) {
+            $descripcion = trim((string) ($row['descripcion_criterio'] ?? ''));
+            if ($descripcion === '') {
+                continue;
+            }
+
+            $consecutivo = $index + 1;
+            $payload = [
+                'consecutivo' => $consecutivo,
+                'descripcion_criterio' => $descripcion,
+                'orden' => $consecutivo,
+            ];
+
+            if (! empty($row['id'])) {
+                $item = ChecklistPlan::where('plan_contratacion_id', $plan->id)
+                    ->where('id', $row['id'])
+                    ->first();
+                if ($item) {
+                    $item->update($payload);
+                    $idsMantener[] = $item->id;
+                    continue;
+                }
+            }
+
+            $nuevo = $plan->checklist()->create($payload);
+            $idsMantener[] = $nuevo->id;
+        }
+
+        $plan->checklist()->whereNotIn('id', $idsMantener)->delete();
     }
 
     /** @param array<int, array<string, mixed>> $puntosData */

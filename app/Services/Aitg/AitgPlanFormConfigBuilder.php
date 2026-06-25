@@ -30,9 +30,18 @@ class AitgPlanFormConfigBuilder
             ])->values()->all();
         }
 
+        $checklist = old('checklist');
+        if ($checklist === null && $plan) {
+            $checklist = $plan->checklist->map(fn ($item) => [
+                'id' => $item->id,
+                'descripcion_criterio' => $item->descripcion_criterio,
+            ])->values()->all();
+        }
+
         return [
             'tipoRegistro' => old('tipo_registro_perfil', $plan?->tipo_registro_perfil ?? 'directo'),
             'perfiles' => $perfiles ?? [],
+            'checklist' => $checklist ?? [],
             'puntos' => $puntos ?? [],
         ];
     }

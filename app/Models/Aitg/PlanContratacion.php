@@ -67,6 +67,11 @@ class PlanContratacion extends Model
         return $this->hasMany(PerfilPlan::class, 'plan_contratacion_id')->orderBy('consecutivo');
     }
 
+    public function checklist(): HasMany
+    {
+        return $this->hasMany(ChecklistPlan::class, 'plan_contratacion_id')->orderBy('consecutivo');
+    }
+
     public function puntosAdicionales(): HasMany
     {
         return $this->hasMany(PuntoAdicional::class, 'plan_contratacion_id')->orderBy('consecutivo');

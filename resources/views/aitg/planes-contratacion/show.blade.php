@@ -98,6 +98,30 @@
             </div>
         </div>
 
+        <div class="aitg-card aitg-card--info mb-4">
+            <div class="aitg-card__header">
+                <div class="aitg-card__title-wrap">
+                    <span class="aitg-card__icon aitg-card__icon--info"><i class="fas fa-tasks"></i></span>
+                    <h3 class="aitg-card__title">Checklist</h3>
+                </div>
+            </div>
+            <div class="aitg-card__body">
+                @forelse($plan->checklist as $item)
+                    <div class="card mb-3 aitg-checklist-block">
+                        <div class="card-header py-2">
+                            <span class="badge badge-info mr-2">{{ $item->consecutivo }}</span>
+                            <strong>Checklist {{ $item->consecutivo }}</strong>
+                        </div>
+                        <div class="card-body py-2">
+                            <p class="mb-0"><strong>Criterio:</strong> {{ $item->descripcion_criterio }}</p>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-muted mb-0">No hay ítems de checklist registrados.</p>
+                @endforelse
+            </div>
+        </div>
+
         <div class="aitg-card aitg-card--warning">
             <div class="aitg-card__header">
                 <div class="aitg-card__title-wrap">

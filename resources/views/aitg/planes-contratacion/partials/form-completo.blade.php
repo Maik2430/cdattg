@@ -25,6 +25,7 @@
     ])
 
     @include('aitg.planes-contratacion.partials.form.seccion-perfiles')
+    @include('aitg.planes-contratacion.partials.form.seccion-checklist')
     @include('aitg.planes-contratacion.partials.form.seccion-puntos')
 
     @include('aitg.planes-contratacion.partials.form.acciones-formulario', [

@@ -55,6 +55,9 @@ class StorePlanContratacionRequest extends FormRequest
                 'min:0',
                 'required_if:perfiles.*.incluye_experiencia,1,true',
             ],
+            'checklist' => ['nullable', 'array'],
+            'checklist.*.id' => ['nullable', 'integer'],
+            'checklist.*.descripcion_criterio' => ['required_with:checklist', 'string', 'max:2000'],
             'puntos_adicionales' => ['nullable', 'array'],
             'puntos_adicionales.*.id' => ['nullable', 'integer'],
             'puntos_adicionales.*.descripcion' => ['required_with:puntos_adicionales', 'string', 'max:500'],
@@ -66,6 +69,7 @@ class StorePlanContratacionRequest extends FormRequest
     {
         return [
             'perfiles.*.descripcion_criterio.required_with' => 'La descripción del criterio es obligatoria en cada bloque de perfil.',
+            'checklist.*.descripcion_criterio.required_with' => 'La descripción del criterio es obligatoria en cada bloque del checklist.',
             'perfiles.*.descripcion_criterio_programa.required' => 'La descripción del criterio (programa) es obligatoria en registro directo.',
             'perfiles.*.experiencia_relacionada_meses.required_if' => 'Indique los meses de experiencia relacionada.',
             'perfiles.*.experiencia_docencia_meses.required_if' => 'Indique los meses de experiencia en docencia.',

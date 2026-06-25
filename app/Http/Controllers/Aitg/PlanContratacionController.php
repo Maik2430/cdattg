@@ -59,11 +59,12 @@ class PlanContratacionController extends Controller
         try {
             $plan = DB::transaction(function () use ($request) {
                 $plan = PlanContratacion::create([
-                    ...collect($request->validated())->except(['perfiles', 'puntos_adicionales'])->all(),
+                    ...collect($request->validated())->except(['perfiles', 'checklist', 'puntos_adicionales'])->all(),
                     'user_create_id' => Auth::id(),
                     'user_update_id' => Auth::id(),
                 ]);
                 $this->syncService->syncPerfiles($plan, $request->input('perfiles', []));
+                $this->syncService->syncChecklist($plan, $request->input('checklist', []));
                 $this->syncService->syncPuntosAdicionales($plan, $request->input('puntos_adicionales', []));
 
                 return $plan;
@@ -80,7 +81,7 @@ class PlanContratacionController extends Controller
 
     public function show(PlanContratacion $plan): View
     {
-        $plan->load(['regional', 'competencia', 'perfiles', 'puntosAdicionales']);
+        $plan->load(['regional', 'competencia', 'perfiles', 'checklist', 'puntosAdicionales']);
 
         return view('aitg.planes-contratacion.show', [
             'plan' => $plan,
@@ -90,7 +91,7 @@ class PlanContratacionController extends Controller
 
     public function edit(PlanContratacion $plan): View
     {
-        $plan->load(['perfiles', 'puntosAdicionales']);
+        $plan->load(['perfiles', 'checklist', 'puntosAdicionales']);
 
         return view('aitg.planes-contratacion.edit', array_merge($this->formData($plan), ['plan' => $plan]));
     }
@@ -100,10 +101,11 @@ class PlanContratacionController extends Controller
         try {
             DB::transaction(function () use ($request, $plan) {
                 $plan->update([
-                    ...collect($request->validated())->except(['perfiles', 'puntos_adicionales'])->all(),
+                    ...collect($request->validated())->except(['perfiles', 'checklist', 'puntos_adicionales'])->all(),
                     'user_update_id' => Auth::id(),
                 ]);
                 $this->syncService->syncPerfiles($plan, $request->input('perfiles', []));
+                $this->syncService->syncChecklist($plan, $request->input('checklist', []));
                 $this->syncService->syncPuntosAdicionales($plan, $request->input('puntos_adicionales', []));
             });
 

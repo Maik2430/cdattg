@@ -20,6 +20,10 @@
     border-left: 4px solid var(--aitg-orange); /* Acento naranja puntos */
 }
 
+.aitg-card--info {
+    border-left: 4px solid var(--aitg-info); /* Acento checklist */
+}
+
 .aitg-card__header {
     display: flex; /* Título y botón en fila */
     align-items: center; /* Centrado vertical */
@@ -58,6 +62,11 @@
 .aitg-card__icon--warning {
     background: var(--aitg-orange-light); /* Fondo naranja claro */
     color: var(--aitg-orange); /* Icono naranja */
+}
+
+.aitg-card__icon--info {
+    background: var(--aitg-info-light);
+    color: var(--aitg-info);
 }
 
 .aitg-card__title {
@@ -100,4 +109,18 @@
 .aitg-btn-add--warning:hover {
     background: var(--aitg-orange); /* Hover relleno naranja */
     color: #fff; /* Texto blanco al hover */
+}
+
+.aitg-btn-add--info {
+    color: var(--aitg-info);
+    border-color: var(--aitg-info);
+}
+
+.aitg-btn-add--info:hover {
+    background: var(--aitg-info);
+    color: #fff;
+}
+
+.aitg-checklist-block {
+    border-left: 3px solid var(--aitg-info);
 }

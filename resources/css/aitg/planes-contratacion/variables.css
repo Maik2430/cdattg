@@ -6,6 +6,8 @@
     --aitg-green-light: #e9f7ef; /* Fondo icono perfiles */
     --aitg-orange: #e67e22; /* Acento sección puntos adicionales */
     --aitg-orange-light: #fef5eb; /* Fondo icono puntos */
+    --aitg-info: #17a2b8; /* Acento sección checklist */
+    --aitg-info-light: #e8f6f8; /* Fondo icono checklist */
     --aitg-border: #dee2e6; /* Borde de tarjetas */
     --aitg-muted: #6c757d; /* Texto de ayuda */
     --aitg-radius: 0.5rem; /* Radio de esquinas */
