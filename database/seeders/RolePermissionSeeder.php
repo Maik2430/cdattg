@@ -62,6 +62,7 @@ class RolePermissionSeeder extends Seeder
             $this->getPermisosCompetencias(),
             $this->getPermisosComplementarios(),
             $this->getPermisosControlSeguimiento(),
+            $this->getPermisosAitg(),
             $this->getPermisosGenerales(),
             $this->getPermisosGuiasAprendizaje()
         );
@@ -457,6 +458,19 @@ class RolePermissionSeeder extends Seeder
     }
 
     /**
+     * Permisos del módulo AITG
+     */
+    private function getPermisosAitg(): array
+    {
+        return [
+            'VER PLAN CONTRATACION',
+            'CREAR PLAN CONTRATACION',
+            'EDITAR PLAN CONTRATACION',
+            'ELIMINAR PLAN CONTRATACION',
+        ];
+    }
+
+    /**
      * Permisos generales del sistema
      */
     private function getPermisosGenerales(): array
@@ -507,7 +521,8 @@ class RolePermissionSeeder extends Seeder
             $this->getPermisosGuiasAprendizaje(),
             // Agregar permisos de resultados de aprendizaje y competencias
             $this->getPermisosResultadosAprendizaje(),
-            $this->getPermisosCompetencias()
+            $this->getPermisosCompetencias(),
+            $this->getPermisosAitg()
         );
     }
 

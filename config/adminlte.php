@@ -866,6 +866,33 @@ return [
         ],
 
         // ========================================
+        // AITG
+        // ========================================
+        [
+            'header' => 'AITG',
+            'can' => 'VER PLAN CONTRATACION',
+        ],
+        [
+            'text' => 'Talento y Gestión',
+            'icon' => 'fas fa-fw fa-users-cog',
+            'can' => 'VER PLAN CONTRATACION',
+            'submenu' => [
+                [
+                    'text' => 'Planes de Contratación',
+                    'url' => 'aitg/planes-contratacion',
+                    'icon' => 'fas fa-fw fa-file-contract',
+                    'can' => 'VER PLAN CONTRATACION',
+                ],
+                [
+                    'text' => 'Crear Plan',
+                    'url' => 'aitg/planes-contratacion/create',
+                    'icon' => 'fas fa-fw fa-plus-circle',
+                    'can' => 'CREAR PLAN CONTRATACION',
+                ],
+            ],
+        ],
+
+        // ========================================
         // CONFIGURACIÓN DEL SISTEMA
         // ========================================
         [
