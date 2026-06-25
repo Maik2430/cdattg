@@ -17,7 +17,7 @@ class CriterioRubricaItemEvaluable extends Model
         'rubricas_criterios_id',
         'peso_porcentual',
         'user_create_id',
-        'user_edit_id',
+        'user_update_id',
         'user_delete_id',
     ];
 

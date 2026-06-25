@@ -17,7 +17,7 @@ class RapItemEvaluable extends Model
         'rap_id',
         'estado',
         'user_create_id',
-        'user_edit_id',
+        'user_update_id',
         'user_delete_id',
     ];
 

@@ -19,7 +19,7 @@ class Entrega extends Model
         'estado',
         'observacion_instructor',
         'user_create_id',
-        'user_edit_id',
+        'user_update_id',
         'user_delete_id',
     ];
 

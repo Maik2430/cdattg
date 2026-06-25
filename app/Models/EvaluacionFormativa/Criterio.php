@@ -15,7 +15,7 @@ class Criterio extends Model
     protected $fillable = [
         'nombre',
         'user_create_id',
-        'user_edit_id',
+        'user_update_id',
         'user_delete_id',
     ];
 

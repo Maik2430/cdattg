@@ -16,7 +16,7 @@ class ItemMaterialApoyo extends Model
         'item_id',
         'material_apoyo_id',
         'user_create_id',
-        'user_edit_id',
+        'user_update_id',
         'user_delete_id',
     ];
 
