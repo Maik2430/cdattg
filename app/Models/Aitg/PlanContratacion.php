@@ -2,7 +2,7 @@
 
 namespace App\Models\Aitg;
 
-use App\Models\ProgramaFormacion;
+use App\Models\Competencia;
 use App\Models\Regional;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +32,7 @@ class PlanContratacion extends Model
     protected $table = 'aitg_planes_contratacion';
 
     protected $fillable = [
-        'programa_formacion_id',
+        'competencia_id',
         'tipo_registro_perfil',
         'modalidad',
         'regional_id',
@@ -52,9 +52,9 @@ class PlanContratacion extends Model
         'tope_global' => 'decimal:2',
     ];
 
-    public function programaFormacion(): BelongsTo
+    public function competencia(): BelongsTo
     {
-        return $this->belongsTo(ProgramaFormacion::class, 'programa_formacion_id');
+        return $this->belongsTo(Competencia::class, 'competencia_id');
     }
 
     public function regional(): BelongsTo

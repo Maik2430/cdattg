@@ -23,7 +23,7 @@ class StorePlanContratacionRequest extends FormRequest
         $tipo = $this->input('tipo_registro_perfil', 'directo');
 
         return [
-            'programa_formacion_id' => ['required', 'integer', 'exists:programas_formacion,id'],
+            'competencia_id' => ['required', 'integer', 'exists:competencias,id'],
             'tipo_registro_perfil' => ['required', Rule::in(array_keys(PlanContratacion::TIPOS_REGISTRO_PERFIL))],
             'modalidad' => ['required', Rule::in(array_keys(PlanContratacion::MODALIDADES))],
             'regional_id' => ['required', 'integer', 'exists:regionals,id'],

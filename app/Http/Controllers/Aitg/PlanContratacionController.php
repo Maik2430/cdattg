@@ -33,11 +33,11 @@ class PlanContratacionController extends Controller
 
     public function index(Request $request): View
     {
-        $query = PlanContratacion::with(['regional', 'programaFormacion'])->orderByDesc('created_at');
+        $query = PlanContratacion::with(['regional', 'competencia'])->orderByDesc('created_at');
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('periodo', 'like', "%{$search}%")
-                    ->orWhereHas('programaFormacion', fn ($pq) => $pq->where('nombre', 'like', "%{$search}%"));
+                    ->orWhereHas('competencia', fn ($cq) => $cq->where('nombre', 'like', "%{$search}%"));
             });
         }
         if ($estado = $request->input('estado')) {
@@ -80,7 +80,7 @@ class PlanContratacionController extends Controller
 
     public function show(PlanContratacion $plan): View
     {
-        $plan->load(['regional', 'programaFormacion.nivelFormacion', 'perfiles', 'puntosAdicionales']);
+        $plan->load(['regional', 'competencia', 'perfiles', 'puntosAdicionales']);
 
         return view('aitg.planes-contratacion.show', [
             'plan' => $plan,
@@ -135,7 +135,7 @@ class PlanContratacionController extends Controller
         return [
             'regionales' => Regional::where('status', 1)->orderBy('nombre')->get(),
             'nivelesFormacion' => $this->catalogoService->nivelesFormacion(),
-            'programas' => $this->catalogoService->programasActivos(),
+            'competencias' => $this->catalogoService->competenciasActivas(),
             'aitgFormConfig' => $this->formConfigBuilder->build($plan),
         ];
     }

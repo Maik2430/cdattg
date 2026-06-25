@@ -4,6 +4,7 @@ namespace App\Services\Aitg;
 
 use App\Models\Aitg\PlanContratacion;
 use App\Models\Parametro;
+use App\Models\Competencia;
 use App\Models\ProgramaFormacion;
 use Illuminate\Support\Collection;
 
@@ -18,6 +19,15 @@ class AitgCatalogoService
             ->where('status', 1)
             ->orderBy('name')
             ->get(['id', 'name']);
+    }
+
+    public function competenciasActivas(): Collection
+    {
+        return Competencia::query()
+            ->select(['id', 'codigo', 'nombre'])
+            ->where('status', 1)
+            ->orderBy('nombre')
+            ->get();
     }
 
     public function programasActivos(): Collection
