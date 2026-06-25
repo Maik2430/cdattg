@@ -12,15 +12,17 @@ class AitgPlanGastronomiaDemoSeeder extends Seeder
     {
         $fx = new AitgFixtureHelper();
 
-        $programaPrincipal = $fx->programa(
-            'GESTION HOTELERA Y GASTRONOMIA',
-            'TECNÓLOGO',
-            '228601'
-        );
+        $competencia = $fx->competencia('GESTIÓN EN PROCESOS GASTRONÓMICOS', '240201');
+
+        if ($fx->planDemoExiste('Demo Anexo 2 - Alternativas Gastronomía y Hotelería.')) {
+            $this->command?->info('→ Plan demo Gastronomía ya existe, se omite.');
+
+            return;
+        }
 
         $fx->crearPlan(
             [
-                'programa_formacion_id' => $programaPrincipal->id,
+                'competencia_id' => $competencia->id,
                 'tipo_registro_perfil' => 'alternativa',
                 'modalidad' => 'regular',
                 'periodo' => '2026-1',

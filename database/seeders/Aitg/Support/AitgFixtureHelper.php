@@ -5,6 +5,7 @@ namespace Database\Seeders\Aitg\Support;
 use App\Models\Aitg\PerfilPlan;
 use App\Models\Aitg\PlanContratacion;
 use App\Models\Aitg\PuntoAdicional;
+use App\Models\Competencia;
 use App\Models\ProgramaFormacion;
 use App\Models\RedConocimiento;
 use App\Models\Regional;
@@ -65,6 +66,26 @@ class AitgFixtureHelper
         return $this->redId;
     }
 
+    public function competencia(string $nombre, string $codigo = ''): Competencia
+    {
+        $existente = Competencia::where('nombre', strtoupper($nombre))->first();
+        if ($existente) {
+            return $existente;
+        }
+
+        return Competencia::create([
+            'codigo' => preg_match('/^\d+$/', $codigo) ? $codigo : (string) random_int(100000, 999999),
+            'nombre' => strtoupper($nombre),
+            'descripcion' => 'Competencia demo AITG',
+            'duracion' => 40,
+            'fecha_inicio' => now()->startOfYear(),
+            'fecha_fin' => now()->endOfYear(),
+            'status' => 1,
+            'user_create_id' => $this->userId(),
+            'user_edit_id' => $this->userId(),
+        ]);
+    }
+
     public function programa(string $nombre, string $nivelNombre, string $codigo): ProgramaFormacion
     {
         $existente = ProgramaFormacion::where('nombre', strtoupper($nombre))->first();
@@ -105,8 +126,32 @@ class AitgFixtureHelper
         ];
     }
 
+    public function planDemoExiste(string $observaciones): bool
+    {
+        return PlanContratacion::where('observaciones', $observaciones)->exists();
+    }
+
+    /** Asigna competencia demo a planes creados antes de la migración. */
+    public function repararPlanesSinCompetencia(): int
+    {
+        $competenciaId = Competencia::where('status', 1)->orderBy('nombre')->value('id');
+
+        if (! $competenciaId) {
+            return 0;
+        }
+
+        return PlanContratacion::whereNull('competencia_id')->update([
+            'competencia_id' => $competenciaId,
+            'user_update_id' => $this->userId(),
+        ]);
+    }
+
     public function crearPlan(array $planData, array $perfiles, array $puntos): PlanContratacion
     {
+        if (! empty($planData['observaciones']) && $this->planDemoExiste($planData['observaciones'])) {
+            return PlanContratacion::where('observaciones', $planData['observaciones'])->firstOrFail();
+        }
+
         $plan = PlanContratacion::create([
             ...$planData,
             'regional_id' => $this->regionalId(),

@@ -12,11 +12,17 @@ class AitgPlanAgropecuarioDemoSeeder extends Seeder
     {
         $fx = new AitgFixtureHelper();
 
-        $prog1 = $fx->programa('INGENIERO AGRONOMO', 'PROFESIONAL UNIVERSITARIO', '228801');
+        $competencia = $fx->competencia('INGLES', '240801');
+
+        if ($fx->planDemoExiste('Demo Anexo 2 - Registro directo Agropecuario.')) {
+            $this->command?->info('→ Plan demo Agropecuario ya existe, se omite.');
+
+            return;
+        }
 
         $fx->crearPlan(
             [
-                'programa_formacion_id' => $prog1->id,
+                'competencia_id' => $competencia->id,
                 'tipo_registro_perfil' => 'directo',
                 'modalidad' => 'regular',
                 'periodo' => '2026-1',

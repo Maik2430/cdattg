@@ -12,15 +12,17 @@ class AitgPlanAutomotrizDemoSeeder extends Seeder
     {
         $fx = new AitgFixtureHelper();
 
-        $programaPrincipal = $fx->programa(
-            'MECATRONICA AUTOMOTRIZ',
-            'TECNÓLOGO',
-            '228701'
-        );
+        $competencia = $fx->competencia('DIAGNÓSTICO DE SISTEMAS AUTOMOTRICES', '228701');
+
+        if ($fx->planDemoExiste('Demo Anexo 2 - Opciones Mecatrónica Automotriz.')) {
+            $this->command?->info('→ Plan demo Automotriz ya existe, se omite.');
+
+            return;
+        }
 
         $fx->crearPlan(
             [
-                'programa_formacion_id' => $programaPrincipal->id,
+                'competencia_id' => $competencia->id,
                 'tipo_registro_perfil' => 'opcion',
                 'modalidad' => 'regular',
                 'periodo' => '2026-1',

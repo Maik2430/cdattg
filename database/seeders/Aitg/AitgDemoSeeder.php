@@ -15,6 +15,7 @@ class AitgDemoSeeder extends Seeder
         $this->command?->info('🌱 Creando datos demo AITG...');
 
         $this->call([
+            AitgCompetenciasDemoSeeder::class,
             AitgPlanGastronomiaDemoSeeder::class,
             AitgPlanAutomotrizDemoSeeder::class,
             AitgPlanAgropecuarioDemoSeeder::class,
