@@ -10,6 +10,7 @@ export default defineConfig({
                 'style': 'resources/css/style.css',
                 'temas_css': 'resources/css/temas.css',
                 'parametros_css': 'resources/css/parametros.css',
+                'aitg_planes_contratacion_css': 'resources/css/aitg/planes-contratacion/app.css',
                 'programas_css': 'resources/css/programas.css',
                 'programas_publicos_css': 'resources/css/programas_publicos.css',
                 'aprendices_css': 'resources/css/aprendices.css',
@@ -58,6 +59,7 @@ export default defineConfig({
                 'logout': 'resources/js/logout.js',
                 'municipios': 'resources/js/municipios.js',
                 'parametros': 'resources/js/parametros.js',
+                'aitg_plan_contratacion_form': 'resources/js/aitg/planes-contratacion/index.js',
                 'red-conocimiento': 'resources/js/red-conocimiento.js',
                 'tema': 'resources/js/tema.js',
                 // Asistencia files
