@@ -1,0 +1,103 @@
+/* Tarjetas de sección del formulario AITG */
+.aitg-card {
+    background: #fff; /* Fondo blanco de tarjeta */
+    border: 1px solid var(--aitg-border); /* Borde sutil */
+    border-radius: var(--aitg-radius); /* Esquinas redondeadas */
+    box-shadow: var(--aitg-shadow); /* Sombra profesional */
+    margin-bottom: 1.25rem; /* Separación entre secciones */
+    overflow: hidden; /* Recorta bordes internos */
+}
+
+.aitg-card--primary {
+    border-left: 4px solid var(--aitg-blue); /* Acento azul izquierdo */
+}
+
+.aitg-card--success {
+    border-left: 4px solid var(--aitg-green); /* Acento verde perfiles */
+}
+
+.aitg-card--warning {
+    border-left: 4px solid var(--aitg-orange); /* Acento naranja puntos */
+}
+
+.aitg-card__header {
+    display: flex; /* Título y botón en fila */
+    align-items: center; /* Centrado vertical */
+    justify-content: space-between; /* Título izq, acción der */
+    padding: 1rem 1.25rem; /* Relleno del encabezado */
+    border-bottom: 1px solid var(--aitg-border); /* Línea separadora */
+    background: #fff; /* Fondo blanco */
+}
+
+.aitg-card__title-wrap {
+    display: flex; /* Icono + texto */
+    align-items: center; /* Alineación vertical */
+    gap: 0.75rem; /* Espacio icono-texto */
+}
+
+.aitg-card__icon {
+    width: 2.5rem; /* Ancho del contenedor icono */
+    height: 2.5rem; /* Alto del contenedor icono */
+    border-radius: 0.45rem; /* Esquinas del icono */
+    display: inline-flex; /* Centra icono FA */
+    align-items: center; /* Centrado vertical icono */
+    justify-content: center; /* Centrado horizontal icono */
+    font-size: 1.1rem; /* Tamaño del icono */
+}
+
+.aitg-card__icon--primary {
+    background: var(--aitg-blue-light); /* Fondo azul claro */
+    color: var(--aitg-blue); /* Icono azul */
+}
+
+.aitg-card__icon--success {
+    background: var(--aitg-green-light); /* Fondo verde claro */
+    color: var(--aitg-green); /* Icono verde */
+}
+
+.aitg-card__icon--warning {
+    background: var(--aitg-orange-light); /* Fondo naranja claro */
+    color: var(--aitg-orange); /* Icono naranja */
+}
+
+.aitg-card__title {
+    font-size: 1.05rem; /* Título de sección */
+    font-weight: 600; /* Semi-negrita */
+    color: #343a40; /* Texto oscuro */
+    margin: 0; /* Sin margen */
+}
+
+.aitg-card__body {
+    padding: 1.25rem; /* Relleno del cuerpo */
+}
+
+.aitg-card__hint {
+    color: var(--aitg-muted); /* Texto descriptivo */
+    font-size: 0.875rem; /* Tamaño pequeño */
+    margin-bottom: 1rem; /* Separación con bloques dinámicos */
+}
+
+.aitg-btn-add {
+    font-weight: 600; /* Texto del botón agregar */
+    border-width: 1.5px; /* Borde visible outline */
+}
+
+.aitg-btn-add--success {
+    color: var(--aitg-green); /* Texto verde */
+    border-color: var(--aitg-green); /* Borde verde */
+}
+
+.aitg-btn-add--success:hover {
+    background: var(--aitg-green); /* Hover relleno verde */
+    color: #fff; /* Texto blanco al hover */
+}
+
+.aitg-btn-add--warning {
+    color: var(--aitg-orange); /* Texto naranja */
+    border-color: var(--aitg-orange); /* Borde naranja */
+}
+
+.aitg-btn-add--warning:hover {
+    background: var(--aitg-orange); /* Hover relleno naranja */
+    color: #fff; /* Texto blanco al hover */
+}

@@ -1,0 +1,60 @@
+/* Campos y bloques dinámicos del formulario AITG */
+.aitg-form .form-group label {
+    font-weight: 600; /* Etiquetas más legibles */
+    color: #495057; /* Color de etiqueta */
+    font-size: 0.875rem; /* Tamaño de etiqueta */
+}
+
+.aitg-form .form-control {
+    border-radius: 0.35rem; /* Inputs redondeados */
+    border-color: #ced4da; /* Borde estándar */
+}
+
+.aitg-form .form-control:focus {
+    border-color: var(--aitg-blue); /* Borde al enfocar */
+    box-shadow: 0 0 0 0.15rem rgba(30, 79, 140, 0.15); /* Halo azul suave */
+}
+
+.aitg-form .form-text {
+    font-size: 0.8rem; /* Texto de ayuda */
+    color: var(--aitg-muted); /* Color ayuda */
+}
+
+.aitg-perfil-block {
+    border: 1px solid var(--aitg-border); /* Borde del bloque perfil */
+    border-left: 3px solid var(--aitg-blue); /* Acento lateral */
+    border-radius: var(--aitg-radius); /* Esquinas */
+    background: #fafbfc; /* Fondo ligeramente distinto */
+    margin-bottom: 1rem; /* Separación entre bloques */
+}
+
+.aitg-perfil-block .card-header {
+    background: #fff; /* Encabezado del bloque */
+    border-bottom: 1px solid var(--aitg-border); /* Separador */
+}
+
+.aitg-punto-block {
+    background: #fff; /* Fondo fila punto */
+    border: 1px solid var(--aitg-border); /* Borde fila */
+    border-radius: var(--aitg-radius); /* Esquinas */
+    padding: 0.75rem 0.5rem; /* Relleno interno */
+    margin-bottom: 0.75rem; /* Separación entre puntos */
+}
+
+.aitg-exp-panel {
+    background: #f8f9fa;
+    border: 1px dashed var(--aitg-border);
+    border-radius: var(--aitg-radius);
+    padding: 0.75rem 0.5rem 0;
+    margin-top: 0.25rem;
+}
+
+.aitg-empty-state {
+    text-align: center; /* Mensaje vacío centrado */
+    color: var(--aitg-muted); /* Texto gris */
+    font-size: 0.875rem; /* Tamaño pequeño */
+    padding: 1.5rem 1rem; /* Relleno del estado vacío */
+    border: 1px dashed var(--aitg-border); /* Borde punteado */
+    border-radius: var(--aitg-radius); /* Esquinas */
+    background: #fafbfc; /* Fondo suave */
+}

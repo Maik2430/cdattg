@@ -1,0 +1,13 @@
+/* Variables de diseño AITG — Planes de Contratación (wireframe alta fidelidad) */
+:root {
+    --aitg-blue: #1e4f8c; /* Azul institucional del título */
+    --aitg-blue-light: #e8f0fa; /* Fondo suave de iconos azules */
+    --aitg-green: #28a745; /* Acento sección perfiles */
+    --aitg-green-light: #e9f7ef; /* Fondo icono perfiles */
+    --aitg-orange: #e67e22; /* Acento sección puntos adicionales */
+    --aitg-orange-light: #fef5eb; /* Fondo icono puntos */
+    --aitg-border: #dee2e6; /* Borde de tarjetas */
+    --aitg-muted: #6c757d; /* Texto de ayuda */
+    --aitg-radius: 0.5rem; /* Radio de esquinas */
+    --aitg-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Sombra ligera */
+}

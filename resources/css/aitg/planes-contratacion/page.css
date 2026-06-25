@@ -1,0 +1,38 @@
+/* Encabezado y layout de página AITG */
+.aitg-page-header {
+    padding: 1.25rem 0 0.75rem; /* Espaciado superior del encabezado */
+}
+
+.aitg-page-header__title {
+    color: var(--aitg-blue); /* Título principal azul oscuro */
+    font-size: 1.75rem; /* Tamaño del título */
+    font-weight: 700; /* Negrita del título */
+    margin-bottom: 0.15rem; /* Separación con subtítulo */
+}
+
+.aitg-page-header__subtitle {
+    color: var(--aitg-muted); /* Subtítulo gris */
+    font-size: 0.95rem; /* Tamaño del subtítulo */
+    margin-bottom: 0; /* Sin margen inferior */
+}
+
+.aitg-content {
+    background: #f4f6f9; /* Fondo gris claro del módulo */
+    padding: 0 0 2rem; /* Espacio inferior del contenido */
+}
+
+.aitg-form-actions {
+    display: flex; /* Botones en fila */
+    flex-wrap: wrap; /* Adaptable en móvil */
+    gap: 0.75rem; /* Separación entre botones */
+    padding-top: 0.5rem; /* Espacio sobre acciones */
+}
+
+.aitg-form-actions .btn-primary {
+    min-width: 9rem; /* Ancho mínimo botón guardar */
+    font-weight: 600; /* Texto del botón principal */
+}
+
+.aitg-form-actions .btn-outline-secondary {
+    min-width: 7rem; /* Ancho mínimo botón cancelar */
+}

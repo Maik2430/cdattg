@@ -1,0 +1,5 @@
+/* Punto de entrada CSS — Módulo AITG Planes de Contratación */
+@import './variables.css';
+@import './page.css';
+@import './cards.css';
+@import './form.css';
