@@ -324,6 +324,13 @@ return [
     */
 
     'menu' => [
+        [
+            'text' => 'Conviértete en Instructor SENA',
+            'url' => 'aitg/banco-instructores',
+            'icon' => 'fas fa-rocket',
+            'topnav_right' => true,
+            'can' => 'VER BANCO INSTRUCTOR AITG',
+        ],
         // Navbar items:
         [
             'type' => 'navbar-search',
@@ -870,13 +877,25 @@ return [
         // ========================================
         [
             'header' => 'AITG',
-            'can' => 'VER PLAN CONTRATACION',
+            'can' => ['VER PLAN CONTRATACION', 'VER BANCO INSTRUCTOR AITG', 'VER SOLICITUD BANCO AITG'],
         ],
         [
             'text' => 'Talento y Gestión',
             'icon' => 'fas fa-fw fa-users-cog',
-            'can' => 'VER PLAN CONTRATACION',
+            'can' => ['VER PLAN CONTRATACION', 'VER SOLICITUD BANCO AITG', 'VER TIPO ARCHIVO AITG'],
             'submenu' => [
+                [
+                    'text' => 'Banco de Instructores',
+                    'url' => 'aitg/banco-instructores',
+                    'icon' => 'fas fa-fw fa-id-card',
+                    'can' => 'VER BANCO INSTRUCTOR AITG',
+                ],
+                [
+                    'text' => 'Validar solicitudes',
+                    'url' => 'aitg/validacion-banco',
+                    'icon' => 'fas fa-fw fa-check-double',
+                    'can' => 'VER SOLICITUD BANCO AITG',
+                ],
                 [
                     'text' => 'Planes de Contratación',
                     'url' => 'aitg/planes-contratacion',
@@ -888,6 +907,18 @@ return [
                     'url' => 'aitg/planes-contratacion/create',
                     'icon' => 'fas fa-fw fa-plus-circle',
                     'can' => 'CREAR PLAN CONTRATACION',
+                ],
+                [
+                    'text' => 'Tipos de archivo',
+                    'url' => 'aitg/tipos-archivo',
+                    'icon' => 'fas fa-fw fa-file-alt',
+                    'can' => 'VER TIPO ARCHIVO AITG',
+                ],
+                [
+                    'text' => 'Motivos de rechazo',
+                    'url' => 'aitg/motivos-rechazo',
+                    'icon' => 'fas fa-fw fa-times-circle',
+                    'can' => 'VER MOTIVO RECHAZO AITG',
                 ],
             ],
         ],

@@ -52,6 +52,7 @@ class MigrateModule extends Command
         'batch_17_complementarios' => 'Módulo de Complementarios (cursos complementarios, aspirantes, caracterización)',
         'batch_18_entrada_salida' => 'Módulo de Entradas y Salidas',
         'batch_19_aitg' => 'Módulo AITG (Planes de Contratación)',
+        'batch_20_aitg_banco' => 'Módulo AITG (Banco de Instructores)',
     ];
 
     /**

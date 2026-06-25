@@ -39,6 +39,8 @@ class RolePermissionSeeder extends Seeder
             'visitante' => Role::firstOrCreate(['name' => 'VISITANTE']),
             'aprendiz' => Role::firstOrCreate(['name' => 'APRENDIZ']),
             'aspirante' => Role::firstOrCreate(['name' => 'ASPIRANTE']),
+            'aspirante_instructor' => Role::firstOrCreate(['name' => 'ASPIRANTE INSTRUCTOR']),
+            'validador_aitg' => Role::firstOrCreate(['name' => 'VALIDADOR AITG']),
             'proveedor' => Role::firstOrCreate(['name' => 'PROVEEDOR']),
         ];
     }
@@ -63,6 +65,7 @@ class RolePermissionSeeder extends Seeder
             $this->getPermisosComplementarios(),
             $this->getPermisosControlSeguimiento(),
             $this->getPermisosAitg(),
+            $this->getPermisosAitgBanco(),
             $this->getPermisosGenerales(),
             $this->getPermisosGuiasAprendizaje()
         );
@@ -91,6 +94,12 @@ class RolePermissionSeeder extends Seeder
 
         // ASPIRANTE
         $roles['aspirante']->syncPermissions($this->getPermisosAspirante());
+
+        // ASPIRANTE INSTRUCTOR
+        $roles['aspirante_instructor']->syncPermissions($this->getPermisosAspiranteInstructor());
+
+        // VALIDADOR AITG
+        $roles['validador_aitg']->syncPermissions($this->getPermisosValidadorAitg());
 
         // VISITANTE
         $roles['visitante']->syncPermissions($this->getPermisosVisitante());
@@ -471,6 +480,28 @@ class RolePermissionSeeder extends Seeder
     }
 
     /**
+     * Permisos del submódulo Banco de Instructores AITG
+     */
+    private function getPermisosAitgBanco(): array
+    {
+        return [
+            'VER BANCO INSTRUCTOR AITG',
+            'SUBIR DOCUMENTO BANCO AITG',
+            'ELIMINAR DOCUMENTO BANCO AITG',
+            'VER SOLICITUD BANCO AITG',
+            'VALIDAR DOCUMENTO BANCO AITG',
+            'VER TIPO ARCHIVO AITG',
+            'CREAR TIPO ARCHIVO AITG',
+            'EDITAR TIPO ARCHIVO AITG',
+            'ELIMINAR TIPO ARCHIVO AITG',
+            'VER MOTIVO RECHAZO AITG',
+            'CREAR MOTIVO RECHAZO AITG',
+            'EDITAR MOTIVO RECHAZO AITG',
+            'ELIMINAR MOTIVO RECHAZO AITG',
+        ];
+    }
+
+    /**
      * Permisos generales del sistema
      */
     private function getPermisosGenerales(): array
@@ -522,7 +553,8 @@ class RolePermissionSeeder extends Seeder
             // Agregar permisos de resultados de aprendizaje y competencias
             $this->getPermisosResultadosAprendizaje(),
             $this->getPermisosCompetencias(),
-            $this->getPermisosAitg()
+            $this->getPermisosAitg(),
+            $this->getPermisosAitgBanco()
         );
     }
 
@@ -610,11 +642,11 @@ class RolePermissionSeeder extends Seeder
      */
     private function getPermisosAspirante(): array
     {
-        return [
+        return array_merge([
             self::PERMISO_VER_PROGRAMA_COMPLEMENTARIO,
             self::PERMISO_VER_PERFIL,
             self::PERMISO_EDITAR_PERSONA,
-        ];
+        ], $this->getPermisosBancoInstructorAspirante());
     }
 
     /**
@@ -622,9 +654,33 @@ class RolePermissionSeeder extends Seeder
      */
     private function getPermisosVisitante(): array
     {
-        return [
+        return array_merge([
             self::PERMISO_VER_PERFIL,
             self::PERMISO_EDITAR_PERSONA,
+        ], $this->getPermisosBancoInstructorAspirante());
+    }
+
+    /** Permisos de aspirante externo en el Banco de Instructores */
+    private function getPermisosBancoInstructorAspirante(): array
+    {
+        return [
+            'VER BANCO INSTRUCTOR AITG',
+            'SUBIR DOCUMENTO BANCO AITG',
+            'ELIMINAR DOCUMENTO BANCO AITG',
+        ];
+    }
+
+    private function getPermisosAspiranteInstructor(): array
+    {
+        return $this->getPermisosBancoInstructorAspirante();
+    }
+
+    private function getPermisosValidadorAitg(): array
+    {
+        return [
+            'VER BANCO INSTRUCTOR AITG',
+            'VER SOLICITUD BANCO AITG',
+            'VALIDAR DOCUMENTO BANCO AITG',
         ];
     }
 
