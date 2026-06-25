@@ -1,12 +1,9 @@
-{{-- CSS Globales para toda la aplicación - SOLO UNO GLOBAL --}}
-{{-- CSS base de la aplicación --}}
-@vite(['resources/css/style.css'])
+{{-- CSS globales: stylesheet directo en producción (sin preload innecesario) --}}
+<x-vite-stylesheet paths="resources/css/style.css" />
 
-{{-- Estilos adicionales que puedan existir --}}
 @yield('global_styles')
 
 <style>
-/* Fix simple para AdminLTE - SOLO lo necesario */
 .content-wrapper {
     min-height: auto !important;
 }

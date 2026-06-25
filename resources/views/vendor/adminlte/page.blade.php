@@ -6,8 +6,11 @@
 @section('adminlte_css')
     @stack('css')
     @yield('css')
-    <!-- Global Notifications CSS -->
-    @vite(['resources/css/global-notifications.css'])
+    <x-vite-stylesheet :paths="[
+        'resources/css/global-notifications.css',
+        'resources/css/global-modals.css',
+        'resources/css/footer.css',
+    ]" />
 @stop
 
 @section('classes_body', $layoutHelper->makeBodyClasses())
@@ -61,15 +64,9 @@
 @section('adminlte_js')
     @stack('js')
     @yield('js')
-    <!-- Global Notifications CSS -->
-    @vite(['resources/css/global-notifications.css'])
-    <!-- Global Modals CSS -->
-    @vite(['resources/css/global-modals.css'])
-    <!-- Footer CSS -->
-    @vite(['resources/css/footer.css'])
-    <!-- Global Notifications JS -->
-    @vite(['resources/js/global-notifications.js'])
-    <!-- Global Modals JS -->
-    @vite(['resources/js/global-modals.js'])
+    @vite([
+        'resources/js/global-notifications.js',
+        'resources/js/global-modals.js',
+    ])
 @stop
 
