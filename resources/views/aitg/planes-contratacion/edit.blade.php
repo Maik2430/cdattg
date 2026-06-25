@@ -33,7 +33,7 @@
             'submitLabel' => 'Guardar cambios',
             'regionales' => $regionales,
             'nivelesFormacion' => $nivelesFormacion,
-            'programas' => $programas,
+            'competencias' => $competencias,
             'aitgFormConfig' => $aitgFormConfig,
         ])
     </div>

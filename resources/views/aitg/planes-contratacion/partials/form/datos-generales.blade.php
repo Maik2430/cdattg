@@ -1,4 +1,4 @@
-@props(['plan' => null, 'programas' => collect(), 'regionales' => collect()])
+@props(['plan' => null, 'competencias' => collect(), 'regionales' => collect()])
 
 {{-- Sección 1: datos generales del plan --}}
 <div class="aitg-card aitg-card--primary">
@@ -11,18 +11,18 @@
     <div class="aitg-card__body">
         <div class="row">
             <div class="col-lg-6 form-group">
-                <label for="programa_formacion_id">Nombre del programa <span class="text-danger">*</span></label>
-                <select name="programa_formacion_id" id="programa_formacion_id"
-                    class="form-control @error('programa_formacion_id') is-invalid @enderror" required>
-                    <option value="">Seleccione el programa principal...</option>
-                    @foreach($programas as $programa)
-                        <option value="{{ $programa->id }}" @selected(old('programa_formacion_id', $plan?->programa_formacion_id) == $programa->id)>
-                            {{ $programa->nombre }} ({{ $programa->codigo }})
+                <label for="competencia_id">Competencia <span class="text-danger">*</span></label>
+                <select name="competencia_id" id="competencia_id"
+                    class="form-control @error('competencia_id') is-invalid @enderror" required>
+                    <option value="">Seleccione la competencia...</option>
+                    @foreach($competencias as $competencia)
+                        <option value="{{ $competencia->id }}" @selected(old('competencia_id', $plan?->competencia_id) == $competencia->id)>
+                            {{ $competencia->nombre }} ({{ $competencia->codigo }})
                         </option>
                     @endforeach
                 </select>
-                <small class="form-text">Seleccione el programa principal asociado al plan (Gestión Académica).</small>
-                @error('programa_formacion_id')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                <small class="form-text">Seleccione la competencia asociada al plan (Gestión Académica). Ej.: Inglés.</small>
+                @error('competencia_id')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
             </div>
             <div class="col-md-3 form-group">
                 <label for="modalidad">Modalidad <span class="text-danger">*</span></label>

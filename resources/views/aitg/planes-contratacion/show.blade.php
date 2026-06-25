@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', ($plan->programaFormacion->nombre ?? 'Plan') . ' - AITG')
+@section('title', ($plan->competencia->nombre ?? 'Plan') . ' - AITG')
 
 @section('css')
     <x-vite-stylesheet paths="resources/css/aitg/planes-contratacion/app.css" />
@@ -8,7 +8,7 @@
 
 @section('content_header')
     @include('aitg.planes-contratacion.partials.layout.page-header', [
-        'title' => $plan->programaFormacion->nombre ?? 'Plan de contratación',
+        'title' => $plan->competencia->nombre ?? 'Plan de contratación',
         'subtitle' => 'Vista detallada · ' . $plan->tipo_registro_perfil_label,
         'breadcrumb' => [
             ['label' => 'Inicio', 'url' => route('verificarLogin'), 'icon' => 'fa-home'],
@@ -46,7 +46,7 @@
             </div>
             <div class="aitg-card__body">
                 <div class="row">
-                    <div class="col-md-4"><strong>Programa:</strong> {{ $plan->programaFormacion->nombre ?? 'N/A' }}</div>
+                    <div class="col-md-4"><strong>Competencia:</strong> {{ $plan->competencia->nombre ?? 'N/A' }}</div>
                     <div class="col-md-2"><strong>Modalidad:</strong> {{ $plan->modalidad_label }}</div>
                     <div class="col-md-2"><strong>Regional:</strong> {{ $plan->regional->nombre ?? 'N/A' }}</div>
                     <div class="col-md-2"><strong>Período:</strong> {{ $plan->periodo }}</div>

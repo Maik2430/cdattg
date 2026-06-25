@@ -2,7 +2,7 @@
     'plan' => null,
     'regionales' => collect(),
     'nivelesFormacion' => collect(),
-    'programas' => collect(),
+    'competencias' => collect(),
     'submitLabel' => 'Guardar plan',
     'formAction' => '',
     'formMethod' => 'POST',
@@ -20,7 +20,7 @@
 
     @include('aitg.planes-contratacion.partials.form.datos-generales', [
         'plan' => $plan,
-        'programas' => $programas,
+        'competencias' => $competencias,
         'regionales' => $regionales,
     ])
 

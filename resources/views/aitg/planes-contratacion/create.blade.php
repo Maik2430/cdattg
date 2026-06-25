@@ -32,7 +32,7 @@
             'submitLabel' => 'Crear plan',
             'regionales' => $regionales,
             'nivelesFormacion' => $nivelesFormacion,
-            'programas' => $programas,
+            'competencias' => $competencias,
             'aitgFormConfig' => $aitgFormConfig,
         ])
     </div>

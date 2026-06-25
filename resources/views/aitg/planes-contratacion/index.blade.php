@@ -41,7 +41,7 @@
             <div class="aitg-card__body">
                 <form method="GET" class="row mb-3">
                     <div class="col-md-4">
-                        <input type="text" name="search" class="form-control" placeholder="Buscar por programa o período..."
+                        <input type="text" name="search" class="form-control" placeholder="Buscar por competencia o período..."
                             value="{{ request('search') }}">
                     </div>
                     <div class="col-md-3">
@@ -60,7 +60,7 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>#</th>
-                                <th>Programa</th>
+                                <th>Competencia</th>
                                 <th>Modalidad</th>
                                 <th>Regional</th>
                                 <th>Período</th>
@@ -73,7 +73,7 @@
                             @forelse($planes as $key => $plan)
                                 <tr>
                                     <td>{{ $planes->firstItem() + $key }}</td>
-                                    <td>{{ $plan->programaFormacion->nombre ?? 'N/A' }}</td>
+                                    <td>{{ $plan->competencia->nombre ?? 'N/A' }}</td>
                                     <td>{{ $plan->modalidad_label }}</td>
                                     <td>{{ $plan->regional->nombre ?? 'N/A' }}</td>
                                     <td>{{ $plan->periodo }}</td>
