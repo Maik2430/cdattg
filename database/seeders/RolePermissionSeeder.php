@@ -66,6 +66,8 @@ class RolePermissionSeeder extends Seeder
             $this->getPermisosControlSeguimiento(),
             $this->getPermisosAitg(),
             $this->getPermisosAitgBanco(),
+            $this->getPermisosAitgConvocatoria(),
+            $this->getPermisosAitgEvaluacionSeleccion(),
             $this->getPermisosGenerales(),
             $this->getPermisosGuiasAprendizaje()
         );
@@ -502,6 +504,32 @@ class RolePermissionSeeder extends Seeder
     }
 
     /**
+     * Permisos del submódulo Convocatorias AITG
+     */
+    private function getPermisosAitgConvocatoria(): array
+    {
+        return [
+            'VER CONVOCATORIA AITG',
+            'CREAR CONVOCATORIA AITG',
+            'EDITAR CONVOCATORIA AITG',
+            'ELIMINAR CONVOCATORIA AITG',
+        ];
+    }
+
+    /**
+     * Permisos del submódulo Evaluación y Selección AITG
+     */
+    private function getPermisosAitgEvaluacionSeleccion(): array
+    {
+        return [
+            'VER EVALUACION AITG',
+            'EVALUAR POSTULACION AITG',
+            'VER SELECCION AITG',
+            'SELECCIONAR INSTRUCTOR AITG',
+        ];
+    }
+
+    /**
      * Permisos generales del sistema
      */
     private function getPermisosGenerales(): array
@@ -554,7 +582,9 @@ class RolePermissionSeeder extends Seeder
             $this->getPermisosResultadosAprendizaje(),
             $this->getPermisosCompetencias(),
             $this->getPermisosAitg(),
-            $this->getPermisosAitgBanco()
+            $this->getPermisosAitgBanco(),
+            $this->getPermisosAitgConvocatoria(),
+            $this->getPermisosAitgEvaluacionSeleccion()
         );
     }
 
@@ -681,6 +711,10 @@ class RolePermissionSeeder extends Seeder
             'VER BANCO INSTRUCTOR AITG',
             'VER SOLICITUD BANCO AITG',
             'VALIDAR DOCUMENTO BANCO AITG',
+            'VER EVALUACION AITG',
+            'EVALUAR POSTULACION AITG',
+            'VER SELECCION AITG',
+            'SELECCIONAR INSTRUCTOR AITG',
         ];
     }
 
