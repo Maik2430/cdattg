@@ -12,6 +12,7 @@ class ValidacionDocumento extends Model
 
     protected $fillable = [
         'documento_id',
+        'postulacion_archivo_id',
         'validador_user_id',
         'resultado',
         'motivo_rechazo_id',
@@ -31,6 +32,11 @@ class ValidacionDocumento extends Model
     public function validador(): BelongsTo
     {
         return $this->belongsTo(User::class, 'validador_user_id');
+    }
+
+    public function postulacionArchivo(): BelongsTo
+    {
+        return $this->belongsTo(PostulacionArchivo::class, 'postulacion_archivo_id');
     }
 
     public function motivoRechazo(): BelongsTo

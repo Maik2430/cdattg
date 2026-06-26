@@ -15,20 +15,51 @@ class TipoArchivo extends Model
         'codigo',
         'nombre',
         'descripcion',
+        'categoria',
         'extensiones_permitidas',
         'tamano_max_kb',
         'es_obligatorio',
+        'permite_multiples',
+        'regla_visibilidad',
+        'fase_carga',
         'orden',
         'activo',
         'user_create_id',
         'user_update_id',
     ];
 
+    public const CATEGORIAS = [
+        'obligatorios_base' => 'Documentos obligatorios base',
+        'formacion_academica' => 'Formación académica',
+        'experiencia' => 'Experiencia laboral y docente',
+        'antecedentes' => 'Antecedentes',
+        'requisitos_sena' => 'Requisitos SENA',
+        'puntos_adicionales' => 'Puntos adicionales',
+    ];
+
+    public const REGLAS_VISIBILIDAD = [
+        'siempre' => 'Siempre visible',
+        'requiere_perfil' => 'Requiere perfil seleccionado',
+        'requiere_exp_relacionada' => 'Si el perfil incluye experiencia relacionada',
+        'requiere_exp_docente' => 'Si el perfil incluye experiencia docente',
+    ];
+
+    public const FASES_CARGA = [
+        'inicial' => 'Postulación (validación inicial)',
+        'post_seleccion' => 'Formalización y firma de contrato',
+    ];
+
     protected $casts = [
         'extensiones_permitidas' => 'array',
         'es_obligatorio' => 'boolean',
+        'permite_multiples' => 'boolean',
         'activo' => 'boolean',
     ];
+
+    public function scopePorCategoria($query)
+    {
+        return $query->orderBy('categoria')->orderBy('orden');
+    }
 
     public function scopeActivos($query)
     {

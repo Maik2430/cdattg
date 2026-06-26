@@ -78,6 +78,11 @@ class Competencia extends Model
             ->withPivot('user_create_id', 'user_edit_id');
     }
 
+    public function aitgPlanes()
+    {
+        return $this->hasMany(\App\Models\Aitg\PlanContratacion::class, 'competencia_id');
+    }
+
     // ========================================
     // SCOPES
     // ========================================
