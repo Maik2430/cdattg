@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\PostTooLargeException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -30,6 +31,16 @@ class Handler extends ExceptionHandler
     }
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof PostTooLargeException) {
+            $mensaje = 'El archivo es demasiado grande. Use PDF de máximo 10 MB y suba un documento a la vez.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $mensaje], 413);
+            }
+
+            return back()->with('error', $mensaje);
+        }
+
         if ($exception instanceof AuthorizationException) {
             // En testing, devolver 403 directamente
             // Verificar tanto 'testing' como si estamos en un test de PHPUnit

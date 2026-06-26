@@ -17,7 +17,7 @@ class Authenticate extends Middleware
             return null;
         }
 
-        return route('verificarLogin');
+        return url('/login?intended=' . urlencode($request->fullUrl()));
     }
 
     /**

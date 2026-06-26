@@ -192,6 +192,11 @@ class LoginController extends Controller
      */
     private function redirigirDespuesLogin(Request $request, User $user)
     {
+        $intended = $request->input('intended') ?: $request->query('intended');
+        if ($intended && $this->isValidInternalUrl($intended)) {
+            return redirect($intended)->with('success', '¡Sesión Iniciada!');
+        }
+
         $redirect = $request->input('redirect') ?: $request->query('redirect');
 
         if ($redirect) {
@@ -204,6 +209,15 @@ class LoginController extends Controller
         }
 
         return redirect('/home')->with('success', '¡Sesión Iniciada!');
+    }
+
+    private function isValidInternalUrl(string $url): bool
+    {
+        if (str_starts_with($url, '/')) {
+            return ! str_starts_with($url, '//');
+        }
+
+        return str_starts_with($url, url('/'));
     }
 
     public function verificarLogin()

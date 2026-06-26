@@ -131,6 +131,7 @@
         @csrf
         {{-- Campo hidden para el parámetro de redirección --}}
         <input type="hidden" name="redirect" value="{{ request()->query('redirect') }}">
+        <input type="hidden" name="intended" value="{{ request()->query('intended') }}">
 
         {{-- Email field --}}
         <div class="input-group mb-3">
