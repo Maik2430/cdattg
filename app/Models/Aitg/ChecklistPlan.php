@@ -12,13 +12,18 @@ class ChecklistPlan extends Model
     protected $fillable = [
         'plan_contratacion_id',
         'consecutivo',
+        'nombre',
         'descripcion_criterio',
+        'puntaje',
+        'es_obligatorio',
         'orden',
     ];
 
     protected $casts = [
         'consecutivo' => 'integer',
         'orden' => 'integer',
+        'puntaje' => 'decimal:2',
+        'es_obligatorio' => 'boolean',
     ];
 
     public function plan(): BelongsTo

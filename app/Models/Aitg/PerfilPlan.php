@@ -17,6 +17,10 @@ class PerfilPlan extends Model
         'incluye_experiencia',
         'experiencia_relacionada_meses',
         'experiencia_docencia_meses',
+        'requiere_documento',
+        'documento_nombre',
+        'documento_descripcion',
+        'documento_es_obligatorio',
     ];
 
     protected $casts = [
@@ -24,6 +28,8 @@ class PerfilPlan extends Model
         'incluye_experiencia' => 'boolean',
         'experiencia_relacionada_meses' => 'integer',
         'experiencia_docencia_meses' => 'integer',
+        'requiere_documento' => 'boolean',
+        'documento_es_obligatorio' => 'boolean',
     ];
 
     public function plan(): BelongsTo

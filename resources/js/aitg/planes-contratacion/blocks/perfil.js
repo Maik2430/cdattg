@@ -49,6 +49,24 @@ function attachExperienciaToggle(block) {
     sync();
 }
 
+function attachDocumentoToggle(block) {
+    const checkbox = block.querySelector('.aitg-requiere-doc');
+    const panel = block.querySelector('.aitg-doc-panel');
+    if (! checkbox || ! panel) {
+        return;
+    }
+
+    const sync = () => {
+        panel.classList.toggle('d-none', ! checkbox.checked);
+        panel.querySelectorAll('input, textarea, select').forEach((el) => {
+            el.disabled = ! checkbox.checked;
+        });
+    };
+
+    checkbox.addEventListener('change', sync);
+    sync();
+}
+
 /** Crea bloque de perfil con criterios en texto libre. */
 export function createPerfilBlock(container, tipoRegistro, onRemove, data = {}) {
     const index = container.querySelectorAll('.aitg-perfil-block').length;
@@ -101,10 +119,39 @@ export function createPerfilBlock(container, tipoRegistro, onRemove, data = {}) 
                         name="perfiles[${index}][experiencia_docencia_meses]" value="${data.experiencia_docencia_meses ?? 0}" ${incluyeExp ? '' : 'disabled'}>
                 </div>
             </div>
+            <hr class="my-2">
+            <p class="small text-muted mb-2"><i class="fas fa-file-pdf"></i> Documento PDF que el aspirante subirá al elegir esta alternativa:</p>
+            <div class="custom-control custom-checkbox mb-2">
+                <input type="checkbox" class="custom-control-input aitg-requiere-doc" id="req_doc_${index}"
+                    data-name-template="perfiles[__INDEX__][requiere_documento]" name="perfiles[${index}][requiere_documento]" value="1"
+                    ${(data.requiere_documento ?? true) ? 'checked' : ''}>
+                <label class="custom-control-label" for="req_doc_${index}">Habilitar carga de PDF para esta alternativa</label>
+            </div>
+            <div class="row aitg-doc-panel">
+                <div class="col-md-6 form-group">
+                    <label class="small">Nombre del documento</label>
+                    <input type="text" class="form-control form-control-sm" data-name-template="perfiles[__INDEX__][documento_nombre]"
+                        name="perfiles[${index}][documento_nombre]" value="${data.documento_nombre ?? 'Certificación del perfil'}" maxlength="255">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label class="small d-block">¿Obligatorio?</label>
+                    <select class="form-control form-control-sm" data-name-template="perfiles[__INDEX__][documento_es_obligatorio]"
+                        name="perfiles[${index}][documento_es_obligatorio]">
+                        <option value="0" ${!(data.documento_es_obligatorio ?? false) ? 'selected' : ''}>No (opcional)</option>
+                        <option value="1" ${(data.documento_es_obligatorio ?? false) ? 'selected' : ''}>Sí (obligatorio)</option>
+                    </select>
+                </div>
+                <div class="col-12 form-group mb-0">
+                    <label class="small">Instrucción para el aspirante</label>
+                    <textarea rows="2" class="form-control form-control-sm" data-name-template="perfiles[__INDEX__][documento_descripcion]"
+                        name="perfiles[${index}][documento_descripcion]" placeholder="Ej.: Suba su título o certificación en PDF.">${data.documento_descripcion ?? 'Suba el PDF que acredite esta alternativa.'}</textarea>
+                </div>
+            </div>
         </div>
     `;
 
     attachExperienciaToggle(div);
+    attachDocumentoToggle(div);
     div.querySelector('.aitg-remove-block')?.addEventListener('click', () => onRemove(div));
 
     return div;

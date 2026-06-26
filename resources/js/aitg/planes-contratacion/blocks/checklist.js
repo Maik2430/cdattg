@@ -16,12 +16,36 @@ export function createChecklistBlock(container, onRemove, data = {}) {
         </div>
         <div class="card-body py-2">
             ${data.id ? `<input type="hidden" data-name-template="checklist[__INDEX__][id]" name="checklist[${index}][id]" value="${data.id}">` : ''}
-            <div class="form-group mb-0">
+            <div class="form-group mb-2">
+                <label class="small mb-1">Nombre del criterio <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" data-name-template="checklist[__INDEX__][nombre]"
+                    name="checklist[${index}][nombre]" required maxlength="255"
+                    value="${data.nombre ?? ''}" placeholder="Ej: Certificado SENA">
+            </div>
+            <div class="form-group mb-2">
                 <label class="small mb-1">Descripción del criterio <span class="text-danger">*</span></label>
                 <textarea rows="2" class="form-control" data-name-template="checklist[__INDEX__][descripcion_criterio]"
-                    name="checklist[${index}][descripcion_criterio]" required placeholder="Describa el criterio de evaluación para seleccionar a la persona...">${data.descripcion_criterio ?? ''}</textarea>
-                <small class="form-text">Este criterio se usará para evaluar y seleccionar al candidato.</small>
+                    name="checklist[${index}][descripcion_criterio]" required placeholder="Describa el requisito documental...">${data.descripcion_criterio ?? ''}</textarea>
             </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-0">
+                        <label class="small mb-1">Puntaje</label>
+                        <input type="number" step="0.01" min="0" class="form-control" data-name-template="checklist[__INDEX__][puntaje]"
+                            name="checklist[${index}][puntaje]" value="${data.puntaje ?? 10}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-0">
+                        <label class="small mb-1 d-block">Obligatorio</label>
+                        <select class="form-control" data-name-template="checklist[__INDEX__][es_obligatorio]" name="checklist[${index}][es_obligatorio]">
+                            <option value="1" ${(data.es_obligatorio ?? true) ? 'selected' : ''}>Sí</option>
+                            <option value="0" ${!(data.es_obligatorio ?? true) ? 'selected' : ''}>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <small class="form-text mt-2">Este criterio se usará en la evaluación documental y el puntaje se calculará automáticamente.</small>
         </div>
     `;
 

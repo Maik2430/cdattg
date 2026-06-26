@@ -34,7 +34,10 @@ class AitgPlanFormConfigBuilder
         if ($checklist === null && $plan) {
             $checklist = $plan->checklist->map(fn ($item) => [
                 'id' => $item->id,
+                'nombre' => $item->nombre,
                 'descripcion_criterio' => $item->descripcion_criterio,
+                'puntaje' => $item->puntaje,
+                'es_obligatorio' => $item->es_obligatorio,
             ])->values()->all();
         }
 

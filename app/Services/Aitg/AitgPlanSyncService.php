@@ -34,6 +34,10 @@ class AitgPlanSyncService
                 'experiencia_docencia_meses' => $incluyeExperiencia
                     ? (int) ($row['experiencia_docencia_meses'] ?? 0)
                     : null,
+                'requiere_documento' => filter_var($row['requiere_documento'] ?? true, FILTER_VALIDATE_BOOLEAN),
+                'documento_nombre' => trim((string) ($row['documento_nombre'] ?? '')) ?: null,
+                'documento_descripcion' => trim((string) ($row['documento_descripcion'] ?? '')) ?: null,
+                'documento_es_obligatorio' => filter_var($row['documento_es_obligatorio'] ?? false, FILTER_VALIDATE_BOOLEAN),
             ];
 
             if (! empty($row['id'])) {
@@ -66,9 +70,13 @@ class AitgPlanSyncService
             }
 
             $consecutivo = $index + 1;
+            $nombre = trim((string) ($row['nombre'] ?? ''));
             $payload = [
                 'consecutivo' => $consecutivo,
+                'nombre' => $nombre !== '' ? $nombre : mb_substr($descripcion, 0, 255),
                 'descripcion_criterio' => $descripcion,
+                'puntaje' => (float) ($row['puntaje'] ?? 10),
+                'es_obligatorio' => filter_var($row['es_obligatorio'] ?? true, FILTER_VALIDATE_BOOLEAN),
                 'orden' => $consecutivo,
             ];
 
