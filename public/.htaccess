@@ -19,3 +19,8 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Límite de carga (Apache/Laragon). Nginx/Docker: ver docker/nginx.conf
+<IfModule mod_core.c>
+    LimitRequestBody 134217728
+</IfModule>
