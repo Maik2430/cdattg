@@ -53,6 +53,14 @@ class MigrateModule extends Command
         'batch_18_entrada_salida' => 'Módulo de Entradas y Salidas',
         'batch_19_aitg' => 'Módulo AITG (Planes de Contratación)',
         'batch_20_aitg_banco' => 'Módulo AITG (Banco de Instructores)',
+        'batch_21_aitg_convocatoria' => 'Módulo AITG (Convocatorias)',
+        'batch_22_aitg_convocatoria_reglas' => 'Módulo AITG (Reglas convocatoria)',
+        'batch_23_aitg_validacion' => 'Módulo AITG (Validación documental)',
+        'batch_24_aitg_evaluacion' => 'Módulo AITG (Evaluación)',
+        'batch_25_aitg_postulacion_unique' => 'Módulo AITG (Postulación unique)',
+        'batch_26_aitg_postulacion_items' => 'Módulo AITG (Ítems postulación)',
+        'batch_27_aitg_perfil_documento' => 'Módulo AITG (Documento por perfil / planilla)',
+        'batch_28_aitg_banco_competencia' => 'Módulo AITG (Banco por competencia)',
     ];
 
     /**
@@ -83,7 +91,7 @@ class MigrateModule extends Command
             return 1;
         }
 
-        return $this->migrateSingleModule($module);
+        return $this->migrateSingleBatch($module);
     }
 
     /**
