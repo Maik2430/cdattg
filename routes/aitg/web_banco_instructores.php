@@ -9,18 +9,30 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('aitg')->name('aitg.')->group(function () {
     Route::prefix('banco-instructores')->name('banco-instructores.')->group(function () {
         Route::get('/', [BancoInstructorController::class, 'index'])->name('index');
-        Route::post('/documentos', [BancoInstructorController::class, 'store'])->name('documentos.store');
-        Route::post('/enviar-revision', [BancoInstructorController::class, 'enviarRevision'])->name('enviar-revision');
-        Route::get('/documentos/{documento}/descargar', [BancoInstructorController::class, 'download'])->name('documentos.download');
-        Route::delete('/documentos/{documento}', [BancoInstructorController::class, 'destroy'])->name('documentos.destroy');
+        Route::get('/competencia/{competencia}', [BancoInstructorController::class, 'postulacion'])->name('postulacion');
+        Route::post('/competencia/{competencia}/documentos', [BancoInstructorController::class, 'store'])->name('documentos.store');
+        Route::post('/competencia/{competencia}/documentos-lote', [BancoInstructorController::class, 'storeLote'])->name('documentos.lote');
+        Route::delete('/competencia/{competencia}/documentos/{postulacionArchivo}', [BancoInstructorController::class, 'destroyDocumento'])->name('documentos.destroy');
+        Route::post('/competencia/{competencia}/reutilizar', [BancoInstructorController::class, 'reutilizar'])->name('reutilizar');
+        Route::post('/competencia/{competencia}/enviar-revision', [BancoInstructorController::class, 'enviarRevision'])->name('enviar-revision');
+        Route::delete('/competencia/{competencia}/postulacion', [BancoInstructorController::class, 'destroyPostulacion'])->name('postulacion.destroy');
+        Route::get('/archivos/{archivo}/ver', [BancoInstructorController::class, 'verArchivo'])->name('archivos.ver');
+        Route::get('/archivos/{archivo}/stream', [BancoInstructorController::class, 'streamArchivo'])->name('archivos.stream');
+        Route::get('/archivos/{archivo}/descargar', [BancoInstructorController::class, 'downloadArchivo'])->name('archivos.download');
     });
 
     Route::prefix('validacion-banco')->name('validacion-banco.')->middleware('can:VER SOLICITUD BANCO AITG')->group(function () {
         Route::get('/', [ValidacionBancoController::class, 'index'])->name('index');
-        Route::get('/{solicitud}', [ValidacionBancoController::class, 'show'])->name('show');
-        Route::post('/documentos/{documento}/validar', [ValidacionBancoController::class, 'validar'])
+        Route::get('/{postulacion}', [ValidacionBancoController::class, 'show'])->name('show');
+        Route::post('/archivos/{archivoPostulacion}/validar', [ValidacionBancoController::class, 'validar'])
             ->middleware('can:VALIDAR DOCUMENTO BANCO AITG')
-            ->name('documentos.validar');
+            ->name('archivos.validar');
+        Route::post('/{postulacion}/validar-lote', [ValidacionBancoController::class, 'validarLote'])
+            ->middleware('can:VALIDAR DOCUMENTO BANCO AITG')
+            ->name('validar-lote');
+        Route::post('/{postulacion}/devolver', [ValidacionBancoController::class, 'devolver'])
+            ->middleware('can:VALIDAR DOCUMENTO BANCO AITG')
+            ->name('devolver');
     });
 
     Route::resource('tipos-archivo', TipoArchivoController::class)

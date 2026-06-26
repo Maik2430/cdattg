@@ -1,0 +1,22 @@
+/* Banco de Talento AITG */
+.aitg-banco-plan-result {
+    border: 1px solid var(--aitg-border);
+    border-left: 4px solid var(--aitg-blue);
+    border-radius: var(--aitg-radius);
+    padding: 1rem 1.25rem;
+    background: #fff;
+}
+
+.aitg-banco-seccion .aitg-card__header {
+    background: var(--aitg-info-light);
+}
+
+.aitg-perfil-radio:hover {
+    background: var(--aitg-green-light);
+}
+
+.aitg-doc-upload:last-child {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
