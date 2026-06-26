@@ -50,9 +50,10 @@ class AitgPlanGastronomiaDemoSeeder extends Seeder
                 ),
             ],
             [
-                ['descripcion' => 'Certificar cursos de formación en pedagogía mínimo 40 horas', 'puntaje_adicional' => 5],
-                ['descripcion' => 'Certificación de competencia laboral vigente en orientación formativos presenciales', 'puntaje_adicional' => 5],
-            ]
+                ['descripcion' => 'Curso de Pedagogía (40 horas)', 'puntaje_adicional' => 5],
+                ['descripcion' => 'Certificación Internacional de Inglés', 'puntaje_adicional' => 10],
+            ],
+            $fx->checklistDemoEstandar()
         );
 
         $this->command?->info('✓ Plan demo Gastronomía (alternativas) creado.');

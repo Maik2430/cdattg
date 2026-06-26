@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Aitg\Support;
 
+use App\Models\Aitg\ChecklistPlan;
 use App\Models\Aitg\PerfilPlan;
 use App\Models\Aitg\PlanContratacion;
 use App\Models\Aitg\PuntoAdicional;
@@ -115,7 +116,11 @@ class AitgFixtureHelper
         bool $incluyeExperiencia,
         int $experienciaRelacionada = 0,
         int $experienciaDocencia = 0,
-        ?string $descripcionPrograma = null
+        ?string $descripcionPrograma = null,
+        bool $requiereDocumento = true,
+        ?string $documentoNombre = null,
+        ?string $documentoDescripcion = null,
+        bool $documentoEsObligatorio = false,
     ): array {
         return [
             'descripcion_criterio' => $descripcionCriterio,
@@ -123,6 +128,10 @@ class AitgFixtureHelper
             'incluye_experiencia' => $incluyeExperiencia,
             'experiencia_relacionada_meses' => $incluyeExperiencia ? $experienciaRelacionada : 0,
             'experiencia_docencia_meses' => $incluyeExperiencia ? $experienciaDocencia : 0,
+            'requiere_documento' => $requiereDocumento,
+            'documento_nombre' => $documentoNombre ?? 'Certificación del perfil',
+            'documento_descripcion' => $documentoDescripcion ?? 'Suba el PDF que acredite esta alternativa.',
+            'documento_es_obligatorio' => $documentoEsObligatorio,
         ];
     }
 
@@ -146,7 +155,56 @@ class AitgFixtureHelper
         ]);
     }
 
-    public function crearPlan(array $planData, array $perfiles, array $puntos): PlanContratacion
+    /** Fila de checklist documental del plan. */
+    public function checklistItem(
+        string $nombre,
+        string $descripcion,
+        float $puntaje = 10,
+        bool $obligatorio = true
+    ): array {
+        return [
+            'nombre' => $nombre,
+            'descripcion_criterio' => $descripcion,
+            'puntaje' => $puntaje,
+            'es_obligatorio' => $obligatorio,
+        ];
+    }
+
+    /** Checklist estándar demo (Gastronomía / pruebas). */
+    public function checklistDemoEstandar(): array
+    {
+        return [
+            $this->checklistItem('Certificado SENA', 'Cargue el certificado expedido por el SENA.', 10),
+            $this->checklistItem('Diploma Profesional', 'Cargue su diploma profesional en PDF.', 20),
+            $this->checklistItem('Certificación Laboral', 'Cargue certificación de experiencia laboral.', 20),
+            $this->checklistItem('Curso Integridad', 'Cargue el curso de integridad institucional.', 10),
+        ];
+    }
+
+    public function sincronizarChecklistPlan(PlanContratacion $plan, array $items, bool $forzarCompleto = false): void
+    {
+        if ($plan->checklist()->exists() && ! $forzarCompleto) {
+            return;
+        }
+
+        if ($forzarCompleto) {
+            $plan->checklist()->delete();
+        }
+
+        foreach ($items as $index => $row) {
+            ChecklistPlan::create([
+                'plan_contratacion_id' => $plan->id,
+                'consecutivo' => $index + 1,
+                'nombre' => $row['nombre'],
+                'descripcion_criterio' => $row['descripcion_criterio'],
+                'puntaje' => $row['puntaje'] ?? 10,
+                'es_obligatorio' => $row['es_obligatorio'] ?? true,
+                'orden' => $index + 1,
+            ]);
+        }
+    }
+
+    public function crearPlan(array $planData, array $perfiles, array $puntos, array $checklist = []): PlanContratacion
     {
         if (! empty($planData['observaciones']) && $this->planDemoExiste($planData['observaciones'])) {
             return PlanContratacion::where('observaciones', $planData['observaciones'])->firstOrFail();
@@ -168,6 +226,10 @@ class AitgFixtureHelper
                 'incluye_experiencia' => $perfil['incluye_experiencia'] ?? false,
                 'experiencia_relacionada_meses' => $perfil['incluye_experiencia'] ? ($perfil['experiencia_relacionada_meses'] ?? 0) : 0,
                 'experiencia_docencia_meses' => $perfil['incluye_experiencia'] ? ($perfil['experiencia_docencia_meses'] ?? 0) : 0,
+                'requiere_documento' => $perfil['requiere_documento'] ?? true,
+                'documento_nombre' => $perfil['documento_nombre'] ?? 'Certificación del perfil',
+                'documento_descripcion' => $perfil['documento_descripcion'] ?? 'Suba el PDF que acredite esta alternativa.',
+                'documento_es_obligatorio' => $perfil['documento_es_obligatorio'] ?? false,
             ]);
         }
 
@@ -181,6 +243,8 @@ class AitgFixtureHelper
             ]);
         }
 
-        return $plan;
+        $this->sincronizarChecklistPlan($plan, $checklist ?: $this->checklistDemoEstandar());
+
+        return $plan->fresh(['checklist', 'puntosAdicionales', 'perfiles']);
     }
 }
