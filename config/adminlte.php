@@ -877,37 +877,79 @@ return [
         // ========================================
         [
             'header' => 'AITG',
-            'can' => ['VER PLAN CONTRATACION', 'VER BANCO INSTRUCTOR AITG', 'VER SOLICITUD BANCO AITG'],
         ],
         [
-            'text' => 'Talento y Gestión',
-            'icon' => 'fas fa-fw fa-users-cog',
-            'can' => ['VER PLAN CONTRATACION', 'VER SOLICITUD BANCO AITG', 'VER TIPO ARCHIVO AITG'],
+            'text' => 'Convocatorias instructores',
+            'icon' => 'fas fa-fw fa-bullhorn',
             'submenu' => [
                 [
-                    'text' => 'Banco de Instructores',
-                    'url' => 'aitg/banco-instructores',
-                    'icon' => 'fas fa-fw fa-id-card',
-                    'can' => 'VER BANCO INSTRUCTOR AITG',
+                    'text' => 'Ver convocatorias',
+                    'url' => 'aitg/convocatorias/publicas',
+                    'icon' => 'fas fa-fw fa-list',
                 ],
                 [
-                    'text' => 'Validar solicitudes',
-                    'url' => 'aitg/validacion-banco',
-                    'icon' => 'fas fa-fw fa-check-double',
-                    'can' => 'VER SOLICITUD BANCO AITG',
+                    'text' => 'Gestión de convocatorias',
+                    'url' => 'aitg/convocatorias',
+                    'icon' => 'fas fa-fw fa-cogs',
+                    'can' => 'VER CONVOCATORIA AITG',
+                ],
+            ],
+        ],
+        [
+            'text' => 'Banco de Talento',
+            'url' => 'aitg/banco-instructores',
+            'icon' => 'fas fa-fw fa-id-card',
+            'can' => 'VER BANCO INSTRUCTOR AITG',
+        ],
+        [
+            'text' => 'Validar solicitudes',
+            'url' => 'aitg/validacion-banco',
+            'icon' => 'fas fa-fw fa-check-double',
+            'can' => 'VER SOLICITUD BANCO AITG',
+        ],
+        [
+            'text' => 'Evaluación y Selección',
+            'icon' => 'fas fa-fw fa-clipboard-check',
+            'can' => ['VER EVALUACION AITG', 'VER SELECCION AITG'],
+            'submenu' => [
+                [
+                    'text' => 'Evaluación documental',
+                    'url' => 'aitg/evaluacion',
+                    'icon' => 'fas fa-fw fa-tasks',
+                    'can' => 'VER EVALUACION AITG',
                 ],
                 [
-                    'text' => 'Planes de Contratación',
+                    'text' => 'Selección de instructor',
+                    'url' => 'aitg/seleccion',
+                    'icon' => 'fas fa-fw fa-user-check',
+                    'can' => 'VER SELECCION AITG',
+                ],
+            ],
+        ],
+        [
+            'text' => 'Planes de contratación',
+            'icon' => 'fas fa-fw fa-file-contract',
+            'can' => ['VER PLAN CONTRATACION', 'CREAR PLAN CONTRATACION'],
+            'submenu' => [
+                [
+                    'text' => 'Ver planes',
                     'url' => 'aitg/planes-contratacion',
-                    'icon' => 'fas fa-fw fa-file-contract',
+                    'icon' => 'fas fa-fw fa-list',
                     'can' => 'VER PLAN CONTRATACION',
                 ],
                 [
-                    'text' => 'Crear Plan',
+                    'text' => 'Crear plan',
                     'url' => 'aitg/planes-contratacion/create',
                     'icon' => 'fas fa-fw fa-plus-circle',
                     'can' => 'CREAR PLAN CONTRATACION',
                 ],
+            ],
+        ],
+        [
+            'text' => 'Catálogos AITG',
+            'icon' => 'fas fa-fw fa-book',
+            'can' => ['VER TIPO ARCHIVO AITG', 'VER MOTIVO RECHAZO AITG'],
+            'submenu' => [
                 [
                     'text' => 'Tipos de archivo',
                     'url' => 'aitg/tipos-archivo',
