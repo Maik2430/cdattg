@@ -28,6 +28,17 @@
                         <i class="fas fa-graduation-cap me-1"></i> Programas
                     </a>
                 </li>
+                <li class="nav-item">
+                    @auth
+                        <a class="nav-link text-dark" href="{{ route('aitg.convocatorias.publicas.index') }}">
+                            <i class="fas fa-bullhorn me-1"></i> Convocatorias instructores
+                        </a>
+                    @else
+                        <a class="nav-link text-dark" href="{{ url('/login?intended=' . urlencode(route('aitg.convocatorias.publicas.index'))) }}">
+                            <i class="fas fa-bullhorn me-1"></i> Convocatorias instructores
+                        </a>
+                    @endauth
+                </li>
             </ul>
             <div class="mx-auto"></div>
             <ul class="navbar-nav">
@@ -100,8 +111,13 @@
                 </li>
                 @endif
                 @else
+                @php
+                    $loginUrl = request()->is('aitg/convocatorias/publicas*')
+                        ? url('/login?intended=' . urlencode(url()->full()))
+                        : url('/login');
+                @endphp
                 <li class="nav-item me-4">
-                    <a class="nav-link text-dark" href="{{ url('/login') }}">
+                    <a class="nav-link text-dark" href="{{ $loginUrl }}">
                         <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
                     </a>
                 </li>

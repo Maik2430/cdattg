@@ -59,6 +59,29 @@
             </div>
         </section>
 
+        <div class="container-fluid px-2 px-md-4 mb-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-xl-10">
+                    <a href="{{ auth()->check() ? route('aitg.convocatorias.publicas.index') : url('/login?intended=' . urlencode(route('aitg.convocatorias.publicas.index'))) }}" class="card border-0 shadow-sm text-decoration-none text-dark d-block" data-show-preloader>
+                        <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between py-4">
+                            <div class="d-flex align-items-center mb-3 mb-md-0">
+                                <span class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mr-3" style="width: 56px; height: 56px;">
+                                    <i class="fas fa-bullhorn fa-lg"></i>
+                                </span>
+                                <div>
+                                    <h2 class="h4 mb-1 font-weight-bold">Convocatorias para instructores SENA</h2>
+                                    <p class="mb-0 text-muted">Consulte procesos abiertos, postúlese y gestione su Banco de Talento documental.</p>
+                                </div>
+                            </div>
+                            <span class="btn btn-success align-self-start align-self-md-center">
+                                Ver convocatorias <i class="fas fa-arrow-right ml-1"></i>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Alertas de sesión -->
         <div class="container-fluid px-2 px-md-4">
             <div class="row justify-content-center">
