@@ -1,0 +1,23 @@
+.aitg-convocatoria-card {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.aitg-convocatoria-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+}
+
+.aitg-convocatoria-card.border-left-success {
+    border-left: 4px solid var(--aitg-green);
+}
+
+.aitg-convocatoria-card.border-left-warning {
+    border-left: 4px solid var(--aitg-orange);
+}
+
+.aitg-convocatoria-card.border-left-info {
+    border-left: 4px solid var(--aitg-info);
+}
+
+.aitg-convocatoria-card.border-left-secondary {
+    border-left: 4px solid #6c757d;
+}
