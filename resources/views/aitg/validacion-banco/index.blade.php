@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Validación Banco de Instructores - AITG')
+@section('title', 'Validación Banco de Talento - AITG')
 
 @section('css')
     <x-vite-stylesheet paths="resources/css/aitg/planes-contratacion/app.css" />
@@ -8,8 +8,8 @@
 
 @section('content_header')
     @include('aitg.planes-contratacion.partials.layout.page-header', [
-        'title' => 'Validación de solicitudes',
-        'subtitle' => 'Banco de Instructores · Revisión de documentos',
+        'title' => 'Validación de postulaciones',
+        'subtitle' => 'Banco de Talento · Revisión de soportes por plan',
         'breadcrumb' => [
             ['label' => 'Inicio', 'url' => route('verificarLogin'), 'icon' => 'fa-home'],
             ['label' => 'AITG', 'icon' => 'fa-users-cog'],
@@ -31,7 +31,7 @@
                     <div class="col-md-4">
                         <select name="estado" class="form-control">
                             <option value="">Todos los estados</option>
-                            @foreach(\App\Models\Aitg\Banco\SolicitudBanco::ESTADOS as $val => $label)
+                            @foreach(\App\Models\Aitg\Banco\PostulacionPlan::ESTADOS as $val => $label)
                                 @if($val !== 'borrador')
                                     <option value="{{ $val }}" @selected(request('estado') === $val)>{{ $label }}</option>
                                 @endif
@@ -47,33 +47,41 @@
                             <tr>
                                 <th>#</th>
                                 <th>Aspirante</th>
-                                <th>Documento</th>
+                                <th>Competencia / Plan</th>
                                 <th>Estado</th>
+                                <th>Fase</th>
                                 <th>Enviada</th>
                                 <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($solicitudes as $solicitud)
+                            @forelse($postulaciones as $postulacion)
                                 <tr>
-                                    <td>{{ $solicitud->id }}</td>
-                                    <td>{{ trim(($solicitud->user->persona->primer_nombre ?? '') . ' ' . ($solicitud->user->persona->primer_apellido ?? '')) ?: $solicitud->user->email }}</td>
-                                    <td>{{ $solicitud->user->persona?->numero_documento ?? '—' }}</td>
-                                    <td><span class="badge badge-info">{{ $solicitud->estado_label }}</span></td>
-                                    <td>{{ $solicitud->fecha_envio?->format('d/m/Y H:i') ?? '—' }}</td>
+                                    <td>{{ $postulacion->id }}</td>
+                                    <td>
+                                        {{ trim(($postulacion->user->persona->primer_nombre ?? '') . ' ' . ($postulacion->user->persona->primer_apellido ?? '')) ?: $postulacion->user->email }}
+                                        <br><small class="text-muted">{{ $postulacion->user->persona?->numero_documento ?? '—' }}</small>
+                                    </td>
+                                    <td>
+                                        <strong>{{ $postulacion->plan->competencia->nombre ?? '—' }}</strong>
+                                        <br><small class="text-muted">Plan #{{ $postulacion->plan_contratacion_id }}</small>
+                                    </td>
+                                    <td><span class="badge badge-info">{{ $postulacion->estado_label }}</span></td>
+                                    <td><small>{{ $postulacion->faseDocumentalLabel() }}</small></td>
+                                    <td>{{ $postulacion->fecha_envio?->format('d/m/Y H:i') ?? '—' }}</td>
                                     <td class="text-center">
-                                        <a href="{{ route('aitg.validacion-banco.show', $solicitud) }}" class="btn btn-sm btn-primary">
+                                        <a href="{{ route('aitg.validacion-banco.show', $postulacion) }}" class="btn btn-sm btn-primary">
                                             <i class="fas fa-search"></i> Revisar
                                         </a>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="6" class="text-center text-muted">No hay solicitudes pendientes.</td></tr>
+                                <tr><td colspan="7" class="text-center text-muted">No hay postulaciones pendientes.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                {{ $solicitudes->links() }}
+                {{ $postulaciones->links() }}
             </div>
         </div>
     </div>

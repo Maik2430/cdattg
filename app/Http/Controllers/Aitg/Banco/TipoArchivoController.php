@@ -24,7 +24,8 @@ class TipoArchivoController extends Controller
     public function index(): View
     {
         return view('aitg.tipos-archivo.index', [
-            'tipos' => TipoArchivo::orderBy('orden')->paginate(15),
+            'tiposInicial' => TipoArchivo::where('fase_carga', 'inicial')->orderBy('orden')->get(),
+            'tiposPostSeleccion' => TipoArchivo::where('fase_carga', 'post_seleccion')->orderBy('orden')->get(),
         ]);
     }
 
@@ -39,6 +40,8 @@ class TipoArchivoController extends Controller
             ...$request->validated(),
             'extensiones_permitidas' => $this->parseExtensiones($request->input('extensiones_permitidas')),
             'es_obligatorio' => $request->boolean('es_obligatorio', true),
+            'permite_multiples' => $request->boolean('permite_multiples', false),
+            'regla_visibilidad' => $request->input('regla_visibilidad', 'siempre'),
             'activo' => $request->boolean('activo', true),
             'user_create_id' => Auth::id(),
             'user_update_id' => Auth::id(),
@@ -59,6 +62,8 @@ class TipoArchivoController extends Controller
             ...$request->validated(),
             'extensiones_permitidas' => $this->parseExtensiones($request->input('extensiones_permitidas')),
             'es_obligatorio' => $request->boolean('es_obligatorio'),
+            'permite_multiples' => $request->boolean('permite_multiples'),
+            'regla_visibilidad' => $request->input('regla_visibilidad', 'siempre'),
             'activo' => $request->boolean('activo'),
             'user_update_id' => Auth::id(),
         ]);
