@@ -8,15 +8,3 @@ profile:
   name: qodana.recommended
 include:
   - name: CheckDependencyLicenses
-# Excluir ruido de terceros y datos masivos para que el reporte refleje deuda real del proyecto
-exclude:
-  - name: All
-    paths:
-      - public/vendor
-      - node_modules
-      - vendor
-      - storage
-      - bootstrap/cache
-      - public/build
-      - database/seeders/MunicipioSeeder.php
-      - database/seeders/AmbienteSeeder.php
