@@ -27,6 +27,9 @@ class AsignacionInstructorService
     {
         DB::beginTransaction();
 
+        // Inicializado antes del try para estar disponible en el bloque catch aunque falle findOrFail
+        $instructorIdConError = null;
+
         try {
             $ficha = FichaCaracterizacion::with(['programaFormacion.redConocimiento', 'diasFormacion', 'jornadaFormacion.parametro'])->findOrFail($fichaId);
             
@@ -426,61 +429,14 @@ class AsignacionInstructorService
             return (int) round($totalHoras);
             
         } catch (\Exception $e) {
-            Log::error('Error calculando horas automáticas', [
+            Log::error('Error calculando horas automáticas, se usa el valor por defecto', [
                 'ficha_id' => $fichaId,
                 'instructor_data' => $instructorData,
-                'error' => $e->getMessage()
-            ]);
-
-            // 4. Obtener horas por jornada desde ficha_dias_formacion
-            $horasPorJornada = 6.5; // Valor por defecto
-
-            if ($ficha->diasFormacion && $ficha->diasFormacion->isNotEmpty()) {
-                // Obtener el primer día de formación para tomar las horas (asumiendo que todos tienen las mismas horas)
-                $primerDia = $ficha->diasFormacion->first();
-                if ($primerDia && $primerDia->hora_inicio && $primerDia->hora_fin) {
-                    $horasPorJornada = $this->convertirTiempoAHoras(
-                        $primerDia->hora_inicio,
-                        $primerDia->hora_fin
-                    );
-
-                    Log::info('🕒 Horas obtenidas de ficha_dias_formacion', [
-                        'ficha_id' => $fichaId,
-                        'hora_inicio' => $primerDia->hora_inicio,
-                        'hora_fin' => $primerDia->hora_fin,
-                        'horas_calculadas' => $horasPorJornada
-                    ]);
-                }
-            } else {
-                Log::warning('Ficha sin días de formación configurados, usando valor por defecto', [
-                    'ficha_id' => $fichaId,
-                    'horas_por_defecto' => $horasPorJornada
-                ]);
-            }
-
-            // 5. Calcular horas totales
-            $horasTotales = $diasFormacionPorSemana * $horasPorJornada * $semanas;
-
-            Log::info('🔢 CÁLCULO AUTOMÁTICO DE HORAS', [
-                'ficha_id' => $fichaId,
-                'fecha_inicio' => $fechaInicio->format('Y-m-d'),
-                'fecha_fin' => $fechaFin->format('Y-m-d'),
-                'semanas' => $semanas,
-                'dias_por_semana' => $diasFormacionPorSemana,
-                'horas_por_jornada' => $horasPorJornada,
-                'horas_totales_calculadas' => $horasTotales
-            ]);
-
-            return (int) round($horasTotales);
-
-        } catch (\Exception $e) {
-            Log::error('Error calculando horas automáticas', [
-                'ficha_id' => $fichaId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            // Fallback: retornar un valor por defecto
+            // Fallback seguro: mismo valor por defecto usado cuando no hay días configurados
             return 40; // 40 horas por defecto
         }
     }
