@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('asistencias', function (Blueprint $table) {
             $table->id();
             
-            // Relación con la evidencia
-            $table->foreignId('evidencia_id')->nullable()->constrained('evidencias')->onDelete('cascade');
+            // Relación con la evidencia (FK se agrega en batch_14 cuando exista la tabla evidencias)
+            $table->unsignedBigInteger('evidencia_id')->nullable();
             
             // Relación con la ficha del instructor
             $table->foreignId('instructor_ficha_id')->nullable()->constrained('instructor_fichas_caracterizacion')->onDelete('cascade');

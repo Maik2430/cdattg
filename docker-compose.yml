@@ -18,6 +18,13 @@ services:
       - ${COMPOSE_ENV_FILE:-.env}
     environment:
       WAIT_FOR_DB: ${WAIT_FOR_DB:-true}
+      # Modo Docker: la BD se resuelve por nombre de servicio (prioridad sobre .env del host).
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: ${DB_DATABASE:-cdattg}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      APP_URL: http://localhost
       RUN_MIGRATIONS: ${RUN_MIGRATIONS:-false}
       RUN_MIGRATIONS_FRESH: ${RUN_MIGRATIONS_FRESH:-false}
       RUN_SEEDERS: ${RUN_SEEDERS:-false}

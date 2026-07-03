@@ -80,6 +80,22 @@ up:
 	@echo "🔄 Iniciando contenedores (APP_ENV=$(APP_ENV_VALUE), perfil=$(CURRENT_PROFILE))..."
 	$(ENV_ARGS) $(DOCKER_COMPOSE) --env-file $(ENV_FILE) --profile $(CURRENT_PROFILE) up -d
 
+## 🐳 Modo Docker completo (app + nginx + BD) → http://localhost
+up-docker:
+	@echo "🐳 Iniciando modo Docker (http://localhost)..."
+	$(DEV_ENV_ARGS) $(DOCKER_COMPOSE) --env-file $(ENV_FILE) --profile local up -d db app nginx
+
+## 💻 Modo host: solo BD en Docker (app con php artisan serve en :8000)
+up-host-db:
+	@echo "💻 Iniciando solo BD para modo host (http://localhost:8000)..."
+	$(DEV_ENV_ARGS) $(DOCKER_COMPOSE) --env-file $(ENV_FILE) --profile local up -d db
+	$(DEV_ENV_ARGS) $(DOCKER_COMPOSE) --env-file $(ENV_FILE) --profile local stop app nginx frontend 2>/dev/null || true
+
+## 🛑 Detener app Docker (deja BD activa para modo host)
+stop-docker-app:
+	@echo "🛑 Deteniendo app/nginx Docker (BD sigue activa)..."
+	$(DEV_ENV_ARGS) $(DOCKER_COMPOSE) --env-file $(ENV_FILE) --profile local stop app nginx frontend 2>/dev/null || true
+
 ## 🔴 Detener contenedores activos
 stop:
 	@echo "🛑 Deteniendo contenedores..."
@@ -133,6 +149,9 @@ help:
 	@echo "  make dev          → Entorno local (Laravel + Vite + Redis + MySQL)"
 	@echo "  make test         → Entorno testing (CI/CD, migraciones fresh)"
 	@echo "  make prod         → Entorno producción (optimizaciones activas)"
+	@echo "  make up-docker     → Modo Docker completo (http://localhost)"
+	@echo "  make up-host-db    → Solo BD Docker para modo host (:8000)"
+	@echo "  make stop-docker-app → Apagar app/nginx Docker (BD activa)"
 	@echo "  make up           → Iniciar contenedores"
 	@echo "  make stop         → Detener todos los contenedores"
 	@echo "  make restart      → Reiniciar contenedores"
@@ -144,5 +163,5 @@ help:
 	@echo "  make ps           → Ver estado de los contenedores"
 	@echo ""
 
-.PHONY: dev test prod stop restart clean rebuild logs artisan test-artisan shell ps help
+.PHONY: dev test prod stop restart clean rebuild logs artisan test-artisan shell ps help up-docker up-host-db stop-docker-app
 

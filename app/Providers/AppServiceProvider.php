@@ -154,9 +154,10 @@ class AppServiceProvider extends ServiceProvider
         AsistenciaAprendiz::observe(AsistenciaAprendizObserver::class);
         AspiranteComplementario::observe(AspiranteComplementarioObserver::class);
 
-        // Cargar migraciones de subdirectorios
+        // Cargar migraciones de subdirectorios (batch_01 … batch_18) en orden natural
         $migrationsPath = database_path('migrations');
-        $directories = glob($migrationsPath . '/*', GLOB_ONLYDIR);
+        $directories = glob($migrationsPath . '/batch_*', GLOB_ONLYDIR) ?: [];
+        natsort($directories);
 
         foreach ($directories as $directory) {
             $this->loadMigrationsFrom($directory);

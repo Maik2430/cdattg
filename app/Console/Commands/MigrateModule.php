@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -81,7 +82,7 @@ class MigrateModule extends Command
             return 1;
         }
 
-        return $this->migrateSingleModule($module);
+        return $this->migrateSingleBatch($module);
     }
 
     /**
@@ -114,6 +115,21 @@ class MigrateModule extends Command
      */
     protected function migrateAll(): int
     {
+        if (!$this->hasPendingMigrations()) {
+            $exitCode = Artisan::call('migrate', ['--force' => true]);
+            $output = trim(Artisan::output());
+
+            if ($output !== '') {
+                $this->line($output);
+            }
+
+            if ($exitCode === 0) {
+                $this->info('✅ Todas las migraciones completadas exitosamente');
+            }
+
+            return $exitCode;
+        }
+
         $this->info('🚀 Ejecutando todas las migraciones por módulos...');
         $this->newLine();
 
@@ -145,7 +161,7 @@ class MigrateModule extends Command
     {
         if (!array_key_exists($batch, $this->batches)) {
             $this->error("❌ El batch '{$batch}' no existe");
-            $this->info('💡 Usa: php artisan migrate:batch --list para ver todos los batches');
+            $this->info('💡 Usa: php artisan migrate:module --list para ver todos los módulos');
             return 1;
         }
 
@@ -251,6 +267,39 @@ class MigrateModule extends Command
             $this->error("❌ Error al limpiar la base de datos: {$e->getMessage()}");
             throw $e;
         }
+    }
+
+    /**
+     * Determina si quedan migraciones pendientes en algún batch.
+     */
+    protected function hasPendingMigrations(): bool
+    {
+        if (!Schema::hasTable('migrations')) {
+            return true;
+        }
+
+        /** @var Migrator $migrator */
+        $migrator = app('migrator');
+        $repository = app('migration.repository');
+
+        foreach (array_keys($this->batches) as $batch) {
+            $path = database_path("migrations/{$batch}");
+
+            if (!is_dir($path)) {
+                continue;
+            }
+
+            $files = $migrator->getMigrationFiles([$path]);
+            $ran = $repository->getRan();
+
+            foreach ($files as $file) {
+                if (!in_array($migrator->getMigrationName($file), $ran, true)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
 
