@@ -1,0 +1,4843 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method App\\Configuration\\UploadLimits\:\:getDocumentLimit\(\) never returns float so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: app/Configuration/UploadLimits.php
+
+		-
+			message: '#^Method App\\Configuration\\UploadLimits\:\:getImageLimit\(\) never returns float so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: app/Configuration/UploadLimits.php
+
+		-
+			message: '#^Method App\\Configuration\\UploadLimits\:\:getImportLimit\(\) never returns float so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: app/Configuration/UploadLimits.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Inventario\\Producto\:\:\$codigo_barras_sena\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Console/Commands/BackfillSenaBarcodes.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/CheckInstructorRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/CheckInstructorRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/CheckInstructorRoles.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/CheckUserPermissions.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Console/Commands/CheckUserPermissions.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Console/Commands/CleanDuplicateRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre_completo\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Console/Commands/CleanDuplicateRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Console/Commands/CleanDuplicateRoles.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Console/Commands/CleanDuplicateRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre_completo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/DebugListadoAprendices.php
+
+		-
+			message: '#^Relation ''aprendizFichas'' is not found in App\\Models\\Aprendiz model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Console/Commands/DebugListadoAprendices.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre_completo" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/DebugListadoAprendices.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/FixInstructorRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/FixInstructorRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/FixInstructorRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ficha\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$jornadaFormacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$jornada_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre_completo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$programaFormacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tipoDocumento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tipo_documento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>ficha" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>jornada_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre_completo" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>numero_documento" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tipo_documento" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Console/Commands/ProbarRelacionesAprendiz.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fichaCaracterizacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/RegistrarAsistenciaPrueba.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/RegistrarAsistenciaPrueba.php
+
+		-
+			message: '#^Property App\\Models\\AsistenciaAprendiz\:\:\$hora_salida \(Carbon\\Carbon\|null\) does not accept string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Console/Commands/RegistrarAsistenciaPrueba.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\ValidarFichasCaracterizacion\:\:generarReporte\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Console/Commands/ValidarFichasCaracterizacion.php
+
+		-
+			message: '#^Call to function is_string\(\) with array will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Console/Commands/VerNotificaciones.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/VerificarRelacionPersona.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre_completo\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Console/Commands/VerificarRelacionPersona.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/VerificarRelacionPersona.php
+
+		-
+			message: '#^Relation ''parametros'' is not found in App\\Models\\Tema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Core/Services/CacheService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ResultadosAprendizaje\:\:\$competencias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ComplementarioApiController.php
+
+		-
+			message: '#^Relation ''competencias'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Api/ComplementarioApiController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/ComplementarioApiController.php
+
+		-
+			message: '#^Parameter \#1 \$aprendiz of method App\\Services\\AprendizService\:\:formatearParaApi\(\) expects App\\Models\\Aprendiz, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/AprendizController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:competencias\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/AsignacionInstructorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AsistenciaAprendiz\:\:\$aprendiz_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Asistencia\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Asistencia\>\:\:\$evidencia\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RegistroActividades\:\:\$descripcion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RegistroActividades\:\:\$fecha\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RegistroActividades\:\:\$ficha_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RegistroActividades\:\:\$titulo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ficha_caracterizacion_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\InstructorFichaCaracterizacion\:\:obtenerClaseActual\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getNombreCompletoAttribute\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Cannot call method format\(\) on null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Class Barryvdh\\DomPDF\\Facade\\Pdf referenced with incorrect case\: Barryvdh\\DomPDF\\Facade\\PDF\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$id$#'
+			identifier: parameter.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Relation ''caracterizacion'' is not found in App\\Models\\AsistenciaAprendiz model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between App\\Models\\AsistenciaAprendiz and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\AsistenciaAprendiz\> and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 2
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Asistencia\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Asistencia\>\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Variable \$asistenciaAprendiz might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Http/Controllers/AsistenceQrController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AsistenciaAprendiz\:\:\$novedad_salida\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenciaAprendicesController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ParametroTema\:\:\$hora_fin\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/AsistenciaAprendicesController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ParametroTema\:\:\$hora_inicio\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/AsistenciaAprendicesController.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Controllers\\AsistenciaAprendicesController\:\:validateHour\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenciaAprendicesController.php
+
+		-
+			message: '#^Relation ''caracterizacion'' is not found in App\\Models\\AsistenciaAprendiz model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/AsistenciaAprendicesController.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/AsistenciaAprendicesController.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/AsistenciaAprendicesController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Asistencia\:\:\$asistenciaAprendices\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AsistenciaConsultaController.php
+
+		-
+			message: '#^Class Barryvdh\\DomPDF\\Facade\\Pdf referenced with incorrect case\: Barryvdh\\DomPDF\\Facade\\PDF\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Http/Controllers/AsistenciaConsultaController.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Http/Controllers/AsistenciaConsultaController.php
+
+		-
+			message: '#^Relation ''instructorFicha'' is not found in App\\Models\\Asistencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/AsistenciaConsultaController.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/AsistenciaConsultaController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>aprendicesTodos" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/AsistenciaConsultaController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>ficha" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/AsistenciaConsultaController.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/AsistenciaConsultaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tema\:\:\$parametros\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Http/Controllers/Auth/RegisterController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sede_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Access to property \$ficha_id on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Access to property \$instructor_persona_id on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Access to property \$jornada_id on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Access to property \$programa_formacion_id on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Access to property \$sede_id on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Call to method save\(\) on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Call to static method findOrFail\(\) on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Call to static method with\(\) on an unknown class App\\Models\\CaracterizacionPrograma\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 3
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Instantiated class App\\Models\\CaracterizacionPrograma not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Variable \$asistencias in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: app/Http/Controllers/CaracterizacionController.php
+
+		-
+			message: '#^Relation ''regional'' is not found in App\\Models\\CentroFormacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Http/Controllers/CentroFormacionController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/CentroFormacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Competencia\:\:\$programasFormacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Competencia\:\:\$resultadosCompetencia\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Competencia\:\:\$userCreate\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Relation ''programasFormacion'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Relation ''resultadosCompetencia'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Relation ''userCreate'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Relation ''userEdit'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between 1 and 1 will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 2
+			path: app/Http/Controllers/CompetenciaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$departamento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/AspiranteComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$municipio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/AspiranteComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$pais\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/AspiranteComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$tipoDocumento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/AspiranteComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$tipoGenero\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/AspiranteComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tema\:\:\$parametros\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/AspiranteComplementarioController.php
+
+		-
+			message: '#^Parameter \#1 \$aspirante of method App\\Repositories\\Complementarios\\AspiranteComplementarioRepository\:\:update\(\) expects App\\Models\\Complementarios\\AspiranteComplementario, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Complementarios/AspiranteComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\AspiranteComplementario\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Complementarios\\AspiranteComplementario\>\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Complementarios/DocumentoComplementarioController.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 4
+			path: app/Http/Controllers/Complementarios/DocumentoComplementarioController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Complementarios/DocumentoComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/PerfilComplementarioController.php
+
+		-
+			message: '#^Relation ''complementario'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Complementarios/PerfilComplementarioController.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Complementarios/PerfilComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$competencias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/ProgramaComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$diasFormacion\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Complementarios/ProgramaComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$guiasAprendizaje\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/ProgramaComplementarioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$raps\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Complementarios/ProgramaComplementarioController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Complementarios/ProgramaComplementarioController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Http/Controllers/Complementarios/ProgramaComplementarioController.php
+
+		-
+			message: '#^Relation ''complementario'' is not found in App\\Models\\Complementarios\\SofiaValidationProgress model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Complementarios/ValidacionSofiaController.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Complementarios/ValidacionSofiaController.php
+
+		-
+			message: '#^Call to an undefined method App\\Repositories\\TemaRepository\:\:invalidarCache\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/ConfiguracionController.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\EntradaSalidaService\:\:eliminar\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/EntradaSalidaController.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\EntradaSalidaService\:\:marcarComoListadas\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/EntradaSalidaController.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\ExportService\:\:exportarEntradaSalidasCSV\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/EntradaSalidaController.php
+
+		-
+			message: '#^Parameter \#1 \$personaId of method App\\Services\\EntradaSalidaService\:\:registrarEntrada\(\) expects int, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/EntradaSalidaController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 8
+			path: app/Http/Controllers/EntradaSalidaController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/EstadisticasController.php
+
+		-
+			message: '#^Call to function compact\(\) contains undefined variable \$resultadosAprendizaje\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Http/Controllers/EvidenciasController.php
+
+		-
+			message: '#^Class App\\Models\\Evidencias referenced with incorrect case\: App\\Models\\evidencias\.$#'
+			identifier: class.nameCase
+			count: 6
+			path: app/Http/Controllers/EvidenciasController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Ambiente\:\:\$piso\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Competencia\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Competencia\>\:\:\$resultadosAprendizaje\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\InstructorFichaCaracterizacion\:\:\$fichaCaracterizacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Persona\>\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$codigo\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$competencias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$dia\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$dia_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_fin\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_inicio\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$hora_fin\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$hora_inicio\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 13
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$instructorFichaDias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$programaFormacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_horas_ficha\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_horas_instructor\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Anonymous function has an unused use \$fechaFin\.$#'
+			identifier: closure.unusedUse
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Anonymous function has an unused use \$fechaInicio\.$#'
+			identifier: closure.unusedUse
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Anonymous function has an unused use \$instructorFicha\.$#'
+			identifier: closure.unusedUse
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Anonymous function should return array\{id\: int, numero_ficha\: string\|null, fecha_inicio\: Carbon\\Carbon\|null, fecha_fin\: Carbon\\Carbon\|null, total_horas\: int\|null, status\: bool, cantidad_aprendices\: int\<0, max\>, programa_formacion\: array\{id\: mixed, nombre\: mixed, codigo\: mixed, nivel_formacion\: mixed\}, \.\.\.\} but returns array\{id\: int, numero_ficha\: string\|null, fecha_inicio\: Carbon\\Carbon\|null, fecha_fin\: Carbon\\Carbon\|null, total_horas\: int\|null, status\: bool, cantidad_aprendices\: int\<0, max\>, programa_formacion\: array\{id\: mixed, nombre\: mixed, codigo\: mixed, nivel_formacion\: mixed\}, \.\.\.\}\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Anonymous function should return array\{id\: int, numero_ficha\: string\|null, fecha_inicio\: Carbon\\Carbon\|null, fecha_fin\: Carbon\\Carbon\|null, total_horas\: int\|null, status\: bool, programa_formacion\: array\{id\: mixed, nombre\: mixed, codigo\: mixed, nivel_formacion\: mixed\}, instructor_principal\: array\{id\: mixed, persona\: array\{id\: mixed, primer_nombre\: mixed, segundo_nombre\: mixed, primer_apellido\: mixed, segundo_apellido\: mixed, tipo_documento\: mixed, numero_documento\: mixed, email\: mixed, \.\.\.\}\}, \.\.\.\} but returns array\{id\: int, numero_ficha\: string\|null, fecha_inicio\: Carbon\\Carbon\|null, fecha_fin\: Carbon\\Carbon\|null, total_horas\: int\|null, status\: bool, programa_formacion\: array\{id\: mixed, nombre\: mixed, codigo\: mixed, nivel_formacion\: mixed\}, instructor_principal\: array\{id\: mixed, persona\: array\{id\: mixed, primer_nombre\: mixed, segundo_nombre\: mixed, primer_apellido\: mixed, segundo_apellido\: mixed, tipo_documento\: mixed, numero_documento\: mixed, email\: mixed, \.\.\.\}\}, \.\.\.\}\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 34
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\FichaCaracterizacionController\:\:fichaTieneAsistencias\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\FichaCaracterizacionController\:\:verificarDisponibilidadInstructores\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$id with type int is incompatible with native type string\.$#'
+			identifier: parameter.phpDocType
+			count: 4
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 10
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Parameter \#1 \$fichaId of method App\\Services\\FichaCaracterizacionValidationService\:\:validarEdicionFicha\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Parameter \#1 \$fichaId of method App\\Services\\FichaCaracterizacionValidationService\:\:validarEliminacionFicha\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Parameter \#1 \$instructorFichaId of method App\\Services\\InstructorFichaDiasService\:\:asignarDiasInstructor\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Parameter \#1 \$instructorFichaId of method App\\Services\\InstructorFichaDiasService\:\:obtenerDiasAsignados\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Parameter \#2 \$fichaId of method App\\Services\\AsignacionInstructorService\:\:asignarInstructores\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Relation ''fichaCaracterizacion'' is not found in App\\Models\\InstructorFichaCaracterizacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 6
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Relation ''parametrosTemas'' is not found in App\\Models\\Parametro model\.$#'
+			identifier: larastan.relationExistence
+			count: 5
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Relation ''piso'' is not found in App\\Models\\Ambiente model\.$#'
+			identifier: larastan.relationExistence
+			count: 5
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Relation ''resultadosAprendizaje'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Relation ''user'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Http/Controllers/FichaCaracterizacionController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ResultadosAprendizaje\:\:\$competencias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/GuiaAprendizajeController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ResultadosAprendizaje\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ResultadosAprendizaje\>\:\:\$competencias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/GuiaAprendizajeController.php
+
+		-
+			message: '#^Relation ''competencias'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/GuiaAprendizajeController.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/GuiaAprendizajeController.php
+
+		-
+			message: '#^Relation ''resultadosAprendizaje'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 8
+			path: app/Http/Controllers/GuiaAprendizajeController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/GuiaAprendizajeController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/HomeController.php
+
+		-
+			message: '#^Relation ''aspirantes'' is not found in App\\Models\\Complementarios\\ComplementarioOfertado model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/HomeController.php
+
+		-
+			message: '#^Relation ''modalidad'' is not found in App\\Models\\Complementarios\\ComplementarioOfertado model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/HomeController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\FichaCaracterizacion\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\FichaCaracterizacion\>\:\:\$regional_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ParametroTema\:\:\$parametro\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Persona\>\:\:\$fecha_de_nacimiento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Persona\>\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$edad\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_de_nacimiento\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_inicio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ficha\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Offset ''idioma'' on non\-empty\-array\<mixed, mixed\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Relation ''instructor'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 17
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Relation ''parametros'' is not found in App\\Models\\Tema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 9
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Http/Controllers/InstructorController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/AprobacionController.php
+
+		-
+			message: '#^Instanceof between Illuminate\\Support\\Collection and Illuminate\\Support\\Collection will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Inventario/AprobacionController.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/Inventario/AprobacionController.php
+
+		-
+			message: '#^Result of \|\| is always false\.$#'
+			identifier: booleanOr.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/Inventario/AprobacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$orden\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/DevolucionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_create_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/DevolucionController.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Http/Controllers/Inventario/OrdenController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cantidad\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$codigo_barras\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_vencimiento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$imagen\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$imagen_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Inventario/ProductoController.php
+
+		-
+			message: '#^Relation ''departamento'' is not found in App\\Models\\Municipio model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/ProveedorController.php
+
+		-
+			message: '#^Relation ''user'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/Inventario/ProveedorController.php
+
+		-
+			message: '#^Call to static method destroy\(\) on an unknown class App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/JornadaController.php
+
+		-
+			message: '#^Call to static method findOrFail\(\) on an unknown class App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/JornadaController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$fecha_de_nacimiento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/LoginController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/LoginController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$tipoDocumento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/LoginController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$tipoGenero\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/LoginController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Municipio\:\:\$user_edit_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/MunicipioController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/MunicipioController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/MunicipioController.php
+
+		-
+			message: '#^Parameter \$request of method App\\Http\\Controllers\\PaisController\:\:store\(\) has invalid type App\\Http\\Requests\\StorePaisRequest\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/PaisController.php
+
+		-
+			message: '#^Parameter \$request of method App\\Http\\Controllers\\PaisController\:\:update\(\) has invalid type App\\Http\\Requests\\UpdatePaisRequest\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/PaisController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tema\:\:\$parametros\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/ParametroController.php
+
+		-
+			message: '#^Class App\\Http\\Requests\\UpdateparametroRequest referenced with incorrect case\: App\\Http\\Requests\\UpdateParametroRequest\.$#'
+			identifier: class.nameCase
+			count: 2
+			path: app/Http/Controllers/ParametroController.php
+
+		-
+			message: '#^Relation ''parametros'' is not found in App\\Models\\Tema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/ParametroController.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/PermisoController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/PermisoController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Controllers/PersonaController.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Http/Controllers/PersonaController.php
+
+		-
+			message: '#^Relation ''parametros'' is not found in App\\Models\\Tema model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Http/Controllers/PersonaController.php
+
+		-
+			message: '#^Relation ''user'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/PersonaController.php
+
+		-
+			message: '#^Variable \$response on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 2
+			path: app/Http/Controllers/PersonaController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$celular\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/PersonaImportController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/PersonaImportController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$error_message\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/PersonaImportController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$issue_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/PersonaImportController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/PersonaImportController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$row_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/PersonaImportController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/PersonaImportController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ProfileController.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$request with type Illuminate\\Http\\Request is not subtype of native type App\\Http\\Requests\\StoreProgramaFormacionRequest\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: app/Http/Controllers/ProgramaFormacionController.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$request with type Illuminate\\Http\\Request is not subtype of native type App\\Http\\Requests\\UpdateProgramaFormacionRequest\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: app/Http/Controllers/ProgramaFormacionController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Http/Controllers/ProgramaFormacionController.php
+
+		-
+			message: '#^Relation ''temas'' is not found in App\\Models\\Parametro model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/ProgramaFormacionController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Http/Controllers/RedConocimientoController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 0 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/RedConocimientoController.php
+
+		-
+			message: '#^Relation ''departamento'' is not found in App\\Models\\Regional model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/RegionalController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/RegionalController.php
+
+		-
+			message: '#^Parameter \$registroActividades of method App\\Http\\Controllers\\RegistroActividadesController\:\:show\(\) has invalid type App\\Http\\Controllers\\RegistroActividades\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/RegistroActividadesController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fichaCaracterizacion\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/RegistroAsistenciaController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/RegistroAsistenciaController.php
+
+		-
+			message: '#^Property App\\Models\\AsistenciaAprendiz\:\:\$hora_salida \(Carbon\\Carbon\|null\) does not accept string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Http/Controllers/RegistroAsistenciaController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/ReporteController.php
+
+		-
+			message: '#^Relation ''competencias'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Http/Controllers/ResultadosAprendizajeController.php
+
+		-
+			message: '#^Relation ''userCreate'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/ResultadosAprendizajeController.php
+
+		-
+			message: '#^Relation ''userEdit'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Controllers/ResultadosAprendizajeController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/ResultadosAprendizajeController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/TemaController.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\UserService\:\:agregarRoles\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/UserController.php
+
+		-
+			message: '#^Call to an undefined method App\\Services\\UserService\:\:cambiarEstado\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/UserController.php
+
+		-
+			message: '#^Parameter \#2 \$values of method Symfony\\Component\\HttpFoundation\\ResponseHeaderBag\:\:set\(\) expects array\<string\>\|string\|null, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Middleware/ApiRateLimiter.php
+
+		-
+			message: '#^Return type \(void\) of method App\\Http\\Middleware\\Authenticate\:\:unauthenticated\(\) should be compatible with return type \(never\) of method Illuminate\\Auth\\Middleware\\Authenticate\:\:unauthenticated\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: app/Http/Middleware/Authenticate.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Competencia\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Competencia\>\:\:\$resultadosAprendizaje\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\InstructorFichaCaracterizacion\:\:\$instructorFichaDias\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$competencias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ficha\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$regional_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\AsignarInstructoresRequest\:\:validarDisponibilidadHoraria\(\) returns void but does not have any side effects\.$#'
+			identifier: void.pure
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\AsignarInstructoresRequest\:\:validarEspecialidadesRequeridas\(\) returns void but does not have any side effects\.$#'
+			identifier: void.pure
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\AsignarInstructoresRequest\:\:validarInstructorPrincipalEnLista\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\AsignarInstructoresRequest\:\:validarInstructorPrincipalEnLista\(\) returns void but does not have any side effects\.$#'
+			identifier: void.pure
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Relation ''resultadosAprendizaje'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/AsignarInstructoresRequest.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/Complementarios/StoreProgramaComplementarioRequest.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/Complementarios/UpdateProgramaComplementarioRequest.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Requests/Complementarios/UpdateProgramaComplementarioRequest.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Http/Requests/Complementarios/ValidarSofiaRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Persona\>\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/CreateInstructorRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Persona\>\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/CreateInstructorRequest.php
+
+		-
+			message: '#^Relation ''instructor'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/CreateInstructorRequest.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/CreateInstructorRequest.php
+
+		-
+			message: '#^Relation ''user'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/CreateInstructorRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ficha\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/InstructorRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/InstructorRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Ambiente\:\:\$piso\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/StoreFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/StoreFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/StoreFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Offset 12\|13\|14\|15\|16\|17\|18 on array\{12\: ''LUNES'', 13\: ''MARTES'', 14\: ''MIÉRCOLES'', 15\: ''JUEVES'', 16\: ''VIERNES'', 17\: ''SÁBADO'', 18\: ''DOMINGO''\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Http/Requests/StoreFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Relation ''piso'' is not found in App\\Models\\Ambiente model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/StoreFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/StoreFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Ambiente\:\:\$piso\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/UpdateFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/UpdateFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/UpdateFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Relation ''piso'' is not found in App\\Models\\Ambiente model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/UpdateFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Requests/UpdateFichaCaracterizacionRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AprendizResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/AprendizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AprendizResource\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/AprendizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AprendizResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/AprendizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AprendizResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/AprendizResource.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Resources/AprendizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$apellidos\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$hora_ingreso\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$hora_salida\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$nombres\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$novedad_entrada\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$novedad_salida\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$numero_identificacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\AsistenciaResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/AsistenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CompetenciaResource\:\:\$codigo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CompetenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CompetenciaResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CompetenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CompetenciaResource\:\:\$descripcion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CompetenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CompetenciaResource\:\:\$duracion_horas\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CompetenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CompetenciaResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CompetenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CompetenciaResource\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CompetenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CompetenciaResource\:\:\$resultadosAprendizaje\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CompetenciaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FichaResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FichaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FichaResource\:\:\$fecha_fin\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FichaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FichaResource\:\:\$fecha_inicio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FichaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FichaResource\:\:\$ficha\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FichaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FichaResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FichaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FichaResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FichaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FichaResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FichaResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorResource\:\:\$experiencia_laboral\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorResource\:\:\$instructorFichas\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/InstructorResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ResultadoAprendizajeResource\:\:\$codigo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ResultadoAprendizajeResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ResultadoAprendizajeResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ResultadoAprendizajeResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ResultadoAprendizajeResource\:\:\$descripcion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ResultadoAprendizajeResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ResultadoAprendizajeResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ResultadoAprendizajeResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ResultadoAprendizajeResource\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ResultadoAprendizajeResource.php
+
+		-
+			message: '#^Relation ''userCreate'' is not found in App\\Models\\Parametro model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Inventario/Repositories/Categoria/CategoriaRepository.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Inventario/Repositories/Devolucion/DevolucionRepository.php
+
+		-
+			message: '#^Cannot instantiate interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator\.$#'
+			identifier: new.interface
+			count: 1
+			path: app/Inventario/Repositories/Marca/MarcaRepository.php
+
+		-
+			message: '#^Relation ''userCreate'' is not found in App\\Models\\Parametro model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Inventario/Repositories/Marca/MarcaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$unreadNotifications\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Inventario/Repositories/Notification/NotificationRepository.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Inventario/Repositories/ParametroTema/ParametroTemaRepository.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Inventario/Repositories/Producto/ProductoRepository.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Inventario/Repositories/Producto/ProductoRepository.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cantidad\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$descripcion_orden\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$producto\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$userCreate\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Instanceof between Illuminate\\Database\\Eloquent\\Collection and Illuminate\\Database\\Eloquent\\Collection will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Parameter \#1 \$detalleOrden of method App\\Inventario\\Interfaces\\Repositories\\Orden\\DetalleOrdenRepositoryInterface\:\:actualizar\(\) expects App\\Models\\Inventario\\DetalleOrden, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Parameter \#1 \$items of static method Illuminate\\Support\\Collection\<\(int\|string\),mixed\>\:\:make\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Parameter \#1 \$orden of method App\\Inventario\\Interfaces\\Repositories\\Orden\\OrdenRepositoryInterface\:\:actualizar\(\) expects App\\Models\\Inventario\\Orden, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Parameter \#1 \$producto of method App\\Inventario\\Interfaces\\Repositories\\Producto\\ProductoRepositoryInterface\:\:actualizar\(\) expects App\\Models\\Inventario\\Producto, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Parameter \#1 \$producto of method App\\Inventario\\Interfaces\\Repositories\\Producto\\ProductoRepositoryInterface\:\:actualizarStock\(\) expects App\\Models\\Inventario\\Producto, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Parameter \#1 \$producto of method App\\Inventario\\Interfaces\\Services\\StockValidatorServiceInterface\:\:validarStockSuficiente\(\) expects App\\Models\\Inventario\\Producto, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Parameter \#1 \$producto of method App\\Inventario\\Interfaces\\Services\\StockValidatorServiceInterface\:\:verificarYNotificarCambioStock\(\) expects App\\Models\\Inventario\\Producto, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Parameter \#2 \$detalleOrden of method App\\Inventario\\Services\\Aprobacion\\AprobacionService\:\:construirDescripcionRechazo\(\) expects App\\Models\\Inventario\\DetalleOrden, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Inventario/Services/Aprobacion/AprobacionService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Inventario/Services/Notification/NotificationService.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$limit \(int\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Inventario/Services/Notification/UserNotificationService.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$perPage \(int\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Inventario/Services/Notification/UserNotificationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cantidad\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Inventario/Services/Orden/OrdenService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Inventario/Services/Orden/OrdenService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$producto\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Inventario/Services/Orden/OrdenService.php
+
+		-
+			message: '#^Parameter \#1 \$key of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:every\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: bool\)\|Illuminate\\Database\\Eloquent\\Model\|string, Closure\(App\\Models\\Inventario\\DetalleOrden\)\: bool given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Inventario/Services/Orden/OrdenService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\AspiranteComplementario\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Jobs/ValidarDocumentoJob.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Jobs/ValidarDocumentoJob.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Jobs/VerificarPrestamosProximosJob.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Jobs/VerificarPrestamosProximosJob.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getCantidadPendiente\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Jobs/VerificarPrestamosProximosJob.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Jobs/VerificarPrestamosProximosJob.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$barrio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$departamento_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$direccion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$municipio_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$municipios\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$segundo_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$segundo_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$telefono\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Aprendices\\AprendizForm\:\:\$tipo_documento_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Method App\\Livewire\\Aprendices\\AprendizForm\:\:prepareDataForService\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Livewire/Aprendices/AprendizForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Aprendices/AprendizIndex.php
+
+		-
+			message: '#^Relation ''instructorFicha'' is not found in App\\Models\\Asistencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Livewire/Asistencia/AsistenciaConsultaIndex.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Asistencia/AsistenciaConsultaIndex.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Competencias/CompetenciaForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Competencias\\CompetenciaIndex\:\:\$page\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Livewire/Competencias/CompetenciaIndex.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Competencia\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Competencia\>\:\:\$programasFormacion\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Competencias/CompetenciaIndex.php
+
+		-
+			message: '#^Relation ''programasFormacion'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Livewire/Competencias/CompetenciaIndex.php
+
+		-
+			message: '#^Relation ''resultadosAprendizaje'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/Competencias/CompetenciaIndex.php
+
+		-
+			message: '#^Relation ''resultadosCompetencia'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/Competencias/CompetenciaIndex.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ParametroTema\:\:\$parametro\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Livewire/CreateInstructor.php
+
+		-
+			message: '#^Offset ''idioma'' on non\-empty\-array\<mixed, mixed\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Livewire/CreateInstructor.php
+
+		-
+			message: '#^Relation ''instructor'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/CreateInstructor.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 9
+			path: app/Livewire/CreateInstructor.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Livewire/CreateInstructor.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: app/Livewire/CreateInstructor.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ParametroTema\:\:\$parametro\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaForm.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Livewire/Fichas/FichaForm.php
+
+		-
+			message: '#^Relation ''parametrosTemas'' is not found in App\\Models\\Parametro model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/Fichas/FichaForm.php
+
+		-
+			message: '#^Relation ''regional'' is not found in App\\Models\\Sede model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/Fichas/FichaForm.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/Fichas/FichaForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Fichas\\FichaIndex\:\:\$fichas\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$persona_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tipo_documento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Instructor\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Livewire/Fichas/FichaIndex.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/GuiasAprendizaje/GestionarRelacionesHandler.php
+
+		-
+			message: '#^Relation ''guiaAprendizajes'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/GuiasAprendizaje/GestionarRelacionesHandler.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/GuiasAprendizaje/GestionarResultados.php
+
+		-
+			message: '#^Relation ''resultadosAprendizaje'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/GuiasAprendizaje/GestionarResultados.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\GuiasAprendizaje\\GuiaAprendizajeIndex\:\:\$page\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/GuiasAprendizaje/GuiaAprendizajeIndex.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\GuiasAprendizaje\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\GuiasAprendizaje\>\:\:\$actividades\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/GuiasAprendizaje/GuiaAprendizajeIndex.php
+
+		-
+			message: '#^Relation ''actividades'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Livewire/GuiasAprendizaje/GuiaAprendizajeIndex.php
+
+		-
+			message: '#^Relation ''resultadosAprendizaje'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 6
+			path: app/Livewire/GuiasAprendizaje/GuiaAprendizajeIndex.php
+
+		-
+			message: '#^Relation ''userCreate'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Livewire/GuiasAprendizaje/GuiaAprendizajeIndex.php
+
+		-
+			message: '#^Relation ''userEdit'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Livewire/GuiasAprendizaje/GuiaAprendizajeIndex.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$sede_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/IngresoSalidaComponent.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ParametroTema\:\:\$parametro\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Livewire/Instructores/InstructorForm.php
+
+		-
+			message: '#^Relation ''instructor'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/Instructores/InstructorForm.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Livewire/Instructores/InstructorForm.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-empty\-string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Livewire/Instructores/InstructorForm.php
+
+		-
+			message: '#^Method App\\Livewire\\Instructores\\InstructorIndex\:\:obtenerEspecialidadesFormateadas\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Livewire/Instructores/InstructorIndex.php
+
+		-
+			message: '#^Relation ''instructor'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/Instructores/InstructorIndex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$celular\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$error_message\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$issue_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$row_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Offset ''completed''\|''failed''\|''pending''\|''processing'' on array\{pending\: ''PENDIENTE'', processing\: ''PROCESANDO\.\.\.'', completed\: ''COMPLETADO'', failed\: ''FALLIDO''\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Offset ''completed''\|''failed''\|''pending''\|''processing'' on array\{pending\: ''secondary'', processing\: ''info'', completed\: ''success'', failed\: ''danger''\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Livewire/PersonaImportComponent.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/ResultadosAprendizaje/GestionarCompetencias.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/ResultadosAprendizaje/GestionarCompetenciasHandler.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ResultadosAprendizaje\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ResultadosAprendizaje\>\:\:\$competencias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/ResultadosAprendizaje/ResultadoAprendizajeForm.php
+
+		-
+			message: '#^Relation ''competencias'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Livewire/ResultadosAprendizaje/ResultadoAprendizajeForm.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\ResultadosAprendizaje\\ResultadoAprendizajeIndex\:\:\$page\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/ResultadosAprendizaje/ResultadoAprendizajeIndex.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ResultadosAprendizaje\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ResultadosAprendizaje\>\:\:\$guiasAprendizaje\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/ResultadosAprendizaje/ResultadoAprendizajeIndex.php
+
+		-
+			message: '#^Relation ''competencias'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 7
+			path: app/Livewire/ResultadosAprendizaje/ResultadoAprendizajeIndex.php
+
+		-
+			message: '#^Relation ''guiasAprendizaje'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Livewire/ResultadosAprendizaje/ResultadoAprendizajeIndex.php
+
+		-
+			message: '#^Relation ''userCreate'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Livewire/ResultadosAprendizaje/ResultadoAprendizajeIndex.php
+
+		-
+			message: '#^Relation ''userEdit'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Livewire/ResultadosAprendizaje/ResultadoAprendizajeIndex.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Ambiente\:\:\$piso\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Ambiente.php
+
+		-
+			message: '#^Class App\\Models\\ComplementarioOfertado not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Ambiente.php
+
+		-
+			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:hasMany\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Ambiente.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Models/Aprendiz.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, \$this\(App\\Models\\Aprendiz\)\>\:\:through\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Aprendiz.php
+
+		-
+			message: '#^Call to an undefined static method Illuminate\\Database\\Eloquent\\Model\:\:hasPermissionTo\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Models/Aprendiz.php
+
+		-
+			message: '#^Call to an undefined static method Illuminate\\Database\\Eloquent\\Model\:\:hasRole\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Models/Aprendiz.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Aprendiz\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Aprendiz.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$fechaInicio \(Carbon\\Carbon\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Models/AsignacionInstructorLog.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$fechaFin \(Carbon\\Carbon\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Models/AsignacionInstructorLog.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#8 \$datosAnteriores \(array\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Models/AsignacionInstructorLog.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#9 \$datosNuevos \(array\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Models/AsignacionInstructorLog.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: app/Models/AsignacionInstructorLog.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Models/Asistencia.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Competencia\:\:\$resultadosCompetencia\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Competencia.php
+
+		-
+			message: '#^Call to function is_null\(\) with Carbon\\Carbon will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 2
+			path: app/Models/Competencia.php
+
+		-
+			message: '#^Result of && is always true\.$#'
+			identifier: booleanAnd.alwaysTrue
+			count: 1
+			path: app/Models/Competencia.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between bool and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Competencia.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 2
+			path: app/Models/Competencia.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Complementarios\\AspiranteComplementario\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Complementarios/AspiranteComplementario.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioCatalogo\:\:\$modalidad_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Complementarios/ComplementarioCatalogo.php
+
+		-
+			message: '#^Cannot access property \$parametro on string\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Models/Complementarios/ComplementarioCatalogo.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$catalogo\.$#'
+			identifier: property.notFound
+			count: 10
+			path: app/Models/Complementarios/ComplementarioOfertado.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ParametroTema\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ParametroTema\>\:\:\$parametro\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Complementarios/ComplementarioOfertado.php
+
+		-
+			message: '#^Cannot access property \$parametro on int\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Models/Complementarios/ComplementarioOfertado.php
+
+		-
+			message: '#^Class App\\Models\\JornadaFormacion not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Complementarios/ComplementarioOfertado.php
+
+		-
+			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Complementarios/ComplementarioOfertado.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Models/Complementarios/ComplementarioOfertado.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:activa\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Evidencias.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:finalizada\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Evidencias.php
+
+		-
+			message: '#^Class App\\Models\\Ambientes not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Evidencias.php
+
+		-
+			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Evidencias.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/FichaCaracterizacion.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo referenced with incorrect case\: Illuminate\\Database\\Eloquent\\Relations\\belongsTo\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Models/FichaCaracterizacion.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Relations\\HasMany referenced with incorrect case\: Illuminate\\Database\\Eloquent\\Relations\\hasMany\.$#'
+			identifier: class.nameCase
+			count: 2
+			path: app/Models/FichaCaracterizacion.php
+
+		-
+			message: '#^Method App\\Models\\FichaCaracterizacion\:\:duracionEnDias\(\) should return int but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/FichaCaracterizacion.php
+
+		-
+			message: '#^Method App\\Models\\FichaCaracterizacion\:\:duracionEnMeses\(\) should return int but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/FichaCaracterizacion.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between float and 0 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/FichaCaracterizacion.php
+
+		-
+			message: '#^Method App\\Models\\GuiasAprendizaje\:\:diasDesdeCreacion\(\) should return int but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/GuiasAprendizaje.php
+
+		-
+			message: '#^Method App\\Models\\GuiasAprendizaje\:\:diasDesdeUltimaActualizacion\(\) should return int but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/GuiasAprendizaje.php
+
+		-
+			message: '#^Class App\\Models\\GuiaAprendizaje not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/GuiasResultados.php
+
+		-
+			message: '#^Class App\\Models\\Rap not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/GuiasResultados.php
+
+		-
+			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Models/GuiasResultados.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_nacimiento\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$segundo_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$segundo_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Models/Instructor.php
+
+		-
+			message: '#^Class App\\Models\\asistenciaAprendices not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/InstructorFichaCaracterizacion.php
+
+		-
+			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/InstructorFichaCaracterizacion.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_devolucion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Inventario/DetalleOrden.php
+
+		-
+			message: '#^Parameter \#1 \$key of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:contains\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: bool\)\|Illuminate\\Database\\Eloquent\\Model\|int\|string, Closure\(App\\Models\\Inventario\\Devolucion\)\: bool given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Inventario/DetalleOrden.php
+
+		-
+			message: '#^Variable \$suma on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: app/Models/Inventario/DetalleOrden.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$orden\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Inventario/Devolucion.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:devolverStock\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Inventario/Devolucion.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:esConsumible\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Inventario/Devolucion.php
+
+		-
+			message: '#^Method App\\Models\\Inventario\\Notificacion\:\:getReadAtAttribute\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Inventario/Notificacion.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$parametro\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Inventario/Producto.php
+
+		-
+			message: '#^Relation ''temas'' is not found in App\\Models\\Parametro model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Models/Inventario/Producto.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Municipio.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Models/Persona.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Persona.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Persona.php
+
+		-
+			message: '#^Dead catch \- Exception is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: app/Models/Persona.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Persona\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Persona.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between mixed and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Persona.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$timestamp_entrada\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/PersonaIngresoSalida.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$timestamp_salida\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/PersonaIngresoSalida.php
+
+		-
+			message: '#^Method App\\Models\\PersonaIngresoSalida\:\:tiempoDentro\(\) should return int\|null but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/PersonaIngresoSalida.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$competencia\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Models/ProgramaFormacion.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\Regional, \$this\(App\\Models\\ProgramaFormacion\)\>\:\:through\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/ProgramaFormacion.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\Regional\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Regional.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\User\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/DevolucionRegistradaNotification.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Notifications/DevolucionRegistradaNotification.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Notifications/DevolucionRegistradaNotification.php
+
+		-
+			message: '#^Property App\\Notifications\\DevolucionRegistradaNotification\:\:\$detalleOrden \(App\\Models\\Inventario\\DetalleOrden\|null\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Notifications/DevolucionRegistradaNotification.php
+
+		-
+			message: '#^Property App\\Notifications\\DevolucionRegistradaNotification\:\:\$producto \(App\\Models\\Inventario\\Producto\|null\) does not accept Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Notifications/DevolucionRegistradaNotification.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Notifications/DevolucionRegistradaNotification.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Observers/AprendizObserver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Observers/AprendizObserver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$competencias\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Observers/AspiranteComplementarioObserver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$diasFormacion\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Observers/AspiranteComplementarioObserver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$guiasAprendizaje\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Observers/AspiranteComplementarioObserver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$raps\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Observers/AspiranteComplementarioObserver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Observers/InstructorObserver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Observers/InstructorObserver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Policies/AprendizPolicy.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\Aprendiz\:\:fichasCaracterizacion\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Policies/AprendizPolicy.php
+
+		-
+			message: '#^Class App\\Models\\Evidencias referenced with incorrect case\: App\\Models\\evidencias\.$#'
+			identifier: class.nameCase
+			count: 6
+			path: app/Policies/EvidenciasPolicy.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Policies/FichaCaracterizacionPolicy.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Policies/GuiaAprendizajePolicy.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Policies/InstructorPolicy.php
+
+		-
+			message: '#^Class App\\Models\\Parametro referenced with incorrect case\: App\\Models\\parametro\.$#'
+			identifier: class.nameCase
+			count: 6
+			path: app/Policies/ParametroPolicy.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Google\\Client and ''setIncludeGrantedSc…'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Class Illuminate\\Notifications\\Channels\\DatabaseChannel@anonymous/Providers/NotificationServiceProvider\.php\:28 does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
+			count: 1
+			path: app/Providers/NotificationServiceProvider.php
+
+		-
+			message: '#^Relation ''piso'' is not found in App\\Models\\Ambiente model\.$#'
+			identifier: larastan.relationExistence
+			count: 5
+			path: app/Repositories/AmbienteRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\AprendizRepository\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Repositories/AprendizRepository.php
+
+		-
+			message: '#^Relation ''usuario'' is not found in App\\Models\\AsignacionInstructorLog model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/AsignacionInstructorLogRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\AsistenciaAprendizRepository\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Repositories/AsistenciaAprendizRepository.php
+
+		-
+			message: '#^Relation ''caracterizacion'' is not found in App\\Models\\AsistenciaAprendiz model\.$#'
+			identifier: larastan.relationExistence
+			count: 9
+			path: app/Repositories/AsistenciaAprendizRepository.php
+
+		-
+			message: '#^Relation ''regional'' is not found in App\\Models\\CentroFormacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/CentroFormacionRepository.php
+
+		-
+			message: '#^Relation ''sedes'' is not found in App\\Models\\CentroFormacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/CentroFormacionRepository.php
+
+		-
+			message: '#^Relation ''competencia'' is not found in App\\Models\\CompetenciaPrograma model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/CompetenciaProgramaRepository.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:competenciaActual\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Repositories/CompetenciaRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\AspiranteComplementario\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Repositories/Complementarios/AspiranteComplementarioRepository.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 10
+			path: app/Repositories/Complementarios/AspiranteComplementarioRepository.php
+
+		-
+			message: '#^Relation ''catalogo'' is not found in App\\Models\\Complementarios\\ComplementarioOfertado model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/Complementarios/ComplementarioOfertadoRepository.php
+
+		-
+			message: '#^Relation ''parametros'' is not found in App\\Models\\Tema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Repositories/ConfiguracionRepository.php
+
+		-
+			message: '#^Relation ''fichas'' is not found in App\\Models\\DiasFormacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/DiasFormacionRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\EntradaSalidaRepository\:\:registrarSalida\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Repositories/EntradaSalidaRepository.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\EntradaSalida model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/EntradaSalidaRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\EvidenciaGuiaAprendizajeRepository\:\:calificar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Repositories/EvidenciaGuiaAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''aprendiz'' is not found in App\\Models\\EvidenciaGuiaAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/EvidenciaGuiaAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''evidencia'' is not found in App\\Models\\EvidenciaGuiaAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/EvidenciaGuiaAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''guiaAprendizaje'' is not found in App\\Models\\EvidenciaGuiaAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/EvidenciaGuiaAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''guiasAprendizaje'' is not found in App\\Models\\Evidencias model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/EvidenciasRepository.php
+
+		-
+			message: '#^Relation ''diaFormacion'' is not found in App\\Models\\FichaDiasFormacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/FichaDiasFormacionRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\FichaRepository\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Repositories/FichaRepository.php
+
+		-
+			message: '#^Relation ''guiaAprendizaje'' is not found in App\\Models\\GuiaAprendizajeRap model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/GuiaAprendizajeRapRepository.php
+
+		-
+			message: '#^Relation ''resultadoAprendizaje'' is not found in App\\Models\\GuiaAprendizajeRap model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/GuiaAprendizajeRapRepository.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Repositories/GuiasAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''programaFormacion'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/GuiasAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''resultadosAprendizaje'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/GuiasAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''guiaAprendizaje'' is not found in App\\Models\\GuiasResultados model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/GuiasResultadosRepository.php
+
+		-
+			message: '#^Relation ''diaFormacion'' is not found in App\\Models\\InstructorFichaDias model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/InstructorFichaDiasRepository.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Repositories/InstructorFichaRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\InstructorFichaRepository\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Repositories/InstructorFichaRepository.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Repositories/JornadaFormacionRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\JornadaFormacionRepository\:\:encontrarPorNombre\(\) has invalid return type App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Repositories/JornadaFormacionRepository.php
+
+		-
+			message: '#^Relation ''temas'' is not found in App\\Models\\Parametro model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/ParametroRepository.php
+
+		-
+			message: '#^Relation ''tipoDocumento'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/PersonaRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\RegistroActividadesRepository\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Repositories/RegistroActividadesRepository.php
+
+		-
+			message: '#^Relation ''instructor'' is not found in App\\Models\\RegistroActividades model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Repositories/RegistroActividadesRepository.php
+
+		-
+			message: '#^Relation ''competencia'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/ResultadosAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''guiasAprendizaje'' is not found in App\\Models\\ResultadosAprendizaje model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/ResultadosAprendizajeRepository.php
+
+		-
+			message: '#^Relation ''resultadoAprendizaje'' is not found in App\\Models\\ResultadosCompetencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/ResultadosCompetenciaRepository.php
+
+		-
+			message: '#^Relation ''municipio'' is not found in App\\Models\\Sede model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Repositories/SedeRepository.php
+
+		-
+			message: '#^Relation ''regional'' is not found in App\\Models\\Sede model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Repositories/SedeRepository.php
+
+		-
+			message: '#^Relation ''parametros'' is not found in App\\Models\\Tema model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Repositories/TemaRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\UserRepository\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Repositories/UserRepository.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Repositories/UserRepository.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Regional\:\:\$sedes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AmbienteService.php
+
+		-
+			message: '#^Method App\\Services\\AmbienteService\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/AmbienteService.php
+
+		-
+			message: '#^Relation ''piso'' is not found in App\\Models\\Ambiente model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Services/AmbienteService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AprendizRoleService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Services/AprendizRoleService.php
+
+		-
+			message: '#^Parameter \#1 \$persona of method App\\Services\\AprendizRoleService\:\:createUserForPersona\(\) expects App\\Models\\Persona, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/AprendizRoleService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/AprendizService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\FichaCaracterizacion\:\:\$regional_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\InstructorFichaCaracterizacion\:\:\$instructorFichaDias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_fin\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_inicio\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$instructor_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_horas_instructor\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:instructorFichaDias\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:resultadosAprendizaje\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Dead catch \- Exception is already caught above\.$#'
+			identifier: catch.alreadyCaught
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$fechaInicio \(Carbon\\Carbon\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$fechaFin \(Carbon\\Carbon\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Method App\\Services\\AsignacionInstructorService\:\:verificarAsistenciasRegistradas\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Offset ''advertencias'' on array\{instructor\: App\\Models\\Instructor, disponible\: bool, habilitado\: bool, razones_no_disponible\: array, mensaje_no_disponible\: string\|null, conflictos\: mixed, advertencias\: mixed\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Offset ''razones_no…'' on array\{instructor\: App\\Models\\Instructor, disponible\: bool, habilitado\: bool, razones_no_disponible\: array, mensaje_no_disponible\: string\|null, conflictos\: mixed, advertencias\: mixed\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Relation ''instructorFichaDias'' is not found in App\\Models\\InstructorFichaCaracterizacion model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Undefined variable\: \$diasFormacionPorSemana$#'
+			identifier: variable.undefined
+			count: 2
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Undefined variable\: \$fechaFin$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Undefined variable\: \$fechaInicio$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Undefined variable\: \$ficha$#'
+			identifier: variable.undefined
+			count: 3
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Undefined variable\: \$semanas$#'
+			identifier: variable.undefined
+			count: 2
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Variable \$diasParaServicio in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 2
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Variable \$instructorIdConError might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: app/Services/AsignacionInstructorService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AsistenciaAprendiz\:\:\$formatted_hora_ingreso\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AsistenceQrService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AsistenciaAprendiz\:\:\$formatted_hora_salida\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AsistenceQrService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$aprendiz_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AsistenceQrService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$asistenciaHoy\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AsistenceQrService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$hora_fin\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AsistenceQrService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$hora_inicio\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AsistenceQrService.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: app/Services/AsistenceQrService.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: app/Services/AsistenceQrService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AsistenciaAprendiz\:\:\$apellidos\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AsistenciaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AsistenciaAprendiz\:\:\$nombres\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AsistenciaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AsistenciaAprendiz\:\:\$numero_identificacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AsistenciaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Login\:\:\$fecha_hora\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AuditoriaService.php
+
+		-
+			message: '#^Method App\\Services\\BloqueService\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/BloqueService.php
+
+		-
+			message: '#^Relation ''sede'' is not found in App\\Models\\Bloque model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/BloqueService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/BusquedaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusquedaService.php
+
+		-
+			message: '#^Call to an undefined method App\\Repositories\\InstructorRepository\:\:buscarInstructores\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/BusquedaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ficha\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CalendarioService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre_completo\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/CarnetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$numero_documento\.$#'
+			identifier: property.notFound
+			count: 8
+			path: app/Services/CarnetService.php
+
+		-
+			message: '#^Call to an undefined static method Endroid\\QrCode\\QrCode\:\:format\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 2
+			path: app/Services/CarnetService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Competencia\:\:\$resultadosAprendizaje\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CompetenciaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$codigo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CompetenciaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CompetenciaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CompetenciaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$resultadosAprendizaje\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CompetenciaService.php
+
+		-
+			message: '#^Relation ''programasFormacion'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/CompetenciaService.php
+
+		-
+			message: '#^Relation ''resultadosAprendizaje'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/CompetenciaService.php
+
+		-
+			message: '#^Relation ''resultadosCompetencia'' is not found in App\\Models\\Competencia model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/CompetenciaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$tipoDocumento\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Complementarios/AspiranteDocumentoService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Complementarios/AspiranteManagementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$observaciones\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/AspiranteManagementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/Complementarios/AspiranteManagementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$persona_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Complementarios/AspiranteManagementService.php
+
+		-
+			message: '#^Parameter \#1 \$aspirante of method App\\Repositories\\Complementarios\\AspiranteComplementarioRepository\:\:update\(\) expects App\\Models\\Complementarios\\AspiranteComplementario, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Complementarios/AspiranteManagementService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$jornada_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/ComplementarioService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\ComplementarioOfertado\:\:\$modalidad_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/ComplementarioService.php
+
+		-
+			message: '#^Call to function compact\(\) contains undefined variable \$diasSemana\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Services/Complementarios/ComplementarioService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\|string\)\: App\\Models\\Complementarios\\ComplementarioOfertado, Closure\(App\\Models\\Complementarios\\ComplementarioOfertado\)\: App\\Models\\Complementarios\\ComplementarioOfertado given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Complementarios/ComplementarioService.php
+
+		-
+			message: '#^Relation ''parametro'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Services/Complementarios/ComplementarioService.php
+
+		-
+			message: '#^Relation ''piso'' is not found in App\\Models\\Ambiente model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/Complementarios/ComplementarioService.php
+
+		-
+			message: '#^Relation ''tema'' is not found in App\\Models\\ParametroTema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/Complementarios/ComplementarioService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Complementarios/ComplementarioService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$aceptados\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/EstadisticaComplementarioService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/EstadisticaComplementarioService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pendientes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/EstadisticaComplementarioService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tasa_aceptacion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/EstadisticaComplementarioService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_aspirantes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/EstadisticaComplementarioService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/Complementarios/EstadisticaComplementarioService.php
+
+		-
+			message: '#^Relation ''complementario'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/Complementarios/EstadisticaComplementarioService.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Services/Complementarios/EstadisticaComplementarioService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Complementarios/InscripcionComplementarioService.php
+
+		-
+			message: '#^Method App\\Services\\Complementarios\\InscripcionComplementarioService\:\:convertirParametrosAParametrosTemas\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Services/Complementarios/InscripcionComplementarioService.php
+
+		-
+			message: '#^Method App\\Services\\Complementarios\\InscripcionComplementarioService\:\:generarNombreArchivo\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Services/Complementarios/InscripcionComplementarioService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Complementarios/InscripcionComplementarioService.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Services/Complementarios/Sofia/SofiaParametrosHelper.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Complementarios\\AspiranteComplementario\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/Complementarios/Sofia/SofiaValidationService.php
+
+		-
+			message: '#^Relation ''persona'' is not found in App\\Models\\Complementarios\\AspiranteComplementario model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Services/Complementarios/Sofia/SofiaValidationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_fin\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\EntradaSalida\:\:\$hora_entrada\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/EntradaSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Ambiente\:\:\$piso\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/FichaCaracterizacionValidationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/FichaCaracterizacionValidationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/FichaCaracterizacionValidationService.php
+
+		-
+			message: '#^Relation ''competencias'' is not found in App\\Models\\Instructor model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/FichaCaracterizacionValidationService.php
+
+		-
+			message: '#^Relation ''piso'' is not found in App\\Models\\Ambiente model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/FichaCaracterizacionValidationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Services/InfraestructuraService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/InfraestructuraService.php
+
+		-
+			message: '#^Call to an undefined method App\\Repositories\\AmbienteRepository\:\:estaDisponible\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Services/InfraestructuraService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/InfraestructuraService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\InstructorFichaCaracterizacion\:\:\$instructorFichaDias\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/InstructorBusinessRulesService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ficha\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/InstructorBusinessRulesService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/InstructorBusinessRulesService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$instructor_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/InstructorBusinessRulesService.php
+
+		-
+			message: '#^Elseif condition is always false\.$#'
+			identifier: elseif.alwaysFalse
+			count: 1
+			path: app/Services/InstructorBusinessRulesService.php
+
+		-
+			message: '#^Variable \$especialidades on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: app/Services/InstructorBusinessRulesService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\InstructorFichaCaracterizacion\:\:\$instructorFichaDias\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/InstructorFichaDiasService.php
+
+		-
+			message: '#^Property App\\Models\\InstructorFichaCaracterizacion\:\:\$total_horas_instructor \(int\|null\) does not accept float\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Services/InstructorFichaDiasService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Persona\>\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/InstructorService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Persona\>\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/InstructorService.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Services/InstructorService.php
+
+		-
+			message: '#^Method App\\Services\\InstructorService\:\:obtenerParaSelect\(\) should return Illuminate\\Database\\Eloquent\\Collection but returns Illuminate\\Support\\Collection\<int, array\<string, mixed\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/InstructorService.php
+
+		-
+			message: '#^Relation ''instructor'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/InstructorService.php
+
+		-
+			message: '#^Relation ''user'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/InstructorService.php
+
+		-
+			message: '#^Variable \$modalidadesIds on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: app/Services/InstructorService.php
+
+		-
+			message: '#^Call to static method all\(\) on an unknown class App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/JornadaFormacionService.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/JornadaFormacionService.php
+
+		-
+			message: '#^Call to static method find\(\) on an unknown class App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/JornadaFormacionService.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Services/JornadaFormacionService.php
+
+		-
+			message: '#^Method App\\Services\\JornadaFormacionService\:\:crear\(\) has invalid return type App\\Models\\JornadaFormacion\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/JornadaFormacionService.php
+
+		-
+			message: '#^Method App\\Services\\ParametroService\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/ParametroService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Tema\:\:\$parametros\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaImportService.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: app/Services/PersonaImportService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$fecha\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$fecha_entrada\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$hora\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$hora_entrada\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$hora_salida\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$observaciones\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$persona_id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$sede_id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$timestamp_entrada\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$timestamp_salida\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$tipo_persona\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\PersonaIngresoSalida\:\:\$total\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre_completo\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sede\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$segundo_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$segundo_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Parameter \#1 \$array of function usort contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of static method Illuminate\\Database\\Connection\:\:transaction\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function usort contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Relation ''user'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/PersonaIngresoSalidaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Persona\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$id$#'
+			identifier: parameter.notFound
+			count: 1
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^PHPDoc tag @return with type bool is incompatible with native type App\\Models\\Persona\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Relation ''departamento'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Relation ''instructor'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Relation ''municipio'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Relation ''pais'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Relation ''tipoDocumento'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Relation ''tipoGenero'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Relation ''user'' is not found in App\\Models\\Persona model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Services/PersonaService.php
+
+		-
+			message: '#^Method App\\Services\\PisoService\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/PisoService.php
+
+		-
+			message: '#^Relation ''bloque'' is not found in App\\Models\\Piso model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/PisoService.php
+
+		-
+			message: '#^Method App\\Services\\RedConocimientoService\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/RedConocimientoService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$guiasAprendizaje\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/RegistroActividadesServices.php
+
+		-
+			message: '#^Relation ''parametrosTemas'' is not found in App\\Models\\Parametro model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/RegistroActividadesServices.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$estado\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReporteService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ficha\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReporteService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReporteService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$persona\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/ReporteService.php
+
+		-
+			message: '#^Method App\\Services\\SedeService\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/SedeService.php
+
+		-
+			message: '#^Relation ''municipio'' is not found in App\\Models\\Sede model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/SedeService.php
+
+		-
+			message: '#^Relation ''regional'' is not found in App\\Models\\Sede model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/SedeService.php
+
+		-
+			message: '#^Call to an undefined method App\\Repositories\\TemaRepository\:\:invalidarCache\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: app/Services/TemaService.php
+
+		-
+			message: '#^Method App\\Services\\TemaService\:\:actualizar\(\) should return bool but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/TemaService.php
+
+		-
+			message: '#^Relation ''parametros'' is not found in App\\Models\\Tema model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/TemaService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/UbicacionService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/UbicacionService.php
+
+		-
+			message: '#^Anonymous function should return array\{id\: mixed, nombre\: mixed, departamentos\: Illuminate\\Support\\Collection\<\(int\|string\), array\{id\: mixed, nombre\: mixed, municipios_count\: int\<0, max\>\}\>\} but returns array\{id\: mixed, nombre\: mixed, departamentos\: Illuminate\\Support\\Collection\<\(int\|string\), array\{id\: mixed, nombre\: mixed, municipios_count\: int\<0, max\>\}\>\}\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/UbicacionService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 2
+			path: app/Services/UbicacionService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Ambiente\:\:\$piso\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ValidationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_apellido\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ValidationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$primer_nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ValidationService.php
+
+		-
+			message: '#^Relation ''piso'' is not found in App\\Models\\Ambiente model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Services/ValidationService.php
