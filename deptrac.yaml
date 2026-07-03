@@ -1,0 +1,53 @@
+##
+# Configuración inicial de Deptrac para CDATTG.
+#
+# Objetivo: hacer visible la arquitectura por capas Controller -> Service -> Repository -> Model
+# y detectar dependencias que la rompan. En esta fase es SOLO de medición/reporte:
+# no se mueve código y las violaciones existentes quedan registradas en deptrac-baseline.yaml.
+#
+# Capas y regla de dependencia permitida (una capa solo puede depender de las inferiores):
+#   Controller -> Service, Repository, Model
+#   Service    -> Repository, Model
+#   Repository -> Model
+#   Model      -> (ninguna)
+##
+deptrac:
+  paths:
+    - ./app
+
+  layers:
+    - name: Controller
+      collectors:
+        - type: directory
+          value: app/Http/Controllers/.*
+
+    - name: Service
+      collectors:
+        - type: directory
+          value: app/Services/.*
+        - type: directory
+          value: app/Inventario/Services/.*
+
+    - name: Repository
+      collectors:
+        - type: directory
+          value: app/Repositories/.*
+        - type: directory
+          value: app/Inventario/Repositories/.*
+
+    - name: Model
+      collectors:
+        - type: directory
+          value: app/Models/.*
+
+  ruleset:
+    Controller:
+      - Service
+      - Repository
+      - Model
+    Service:
+      - Repository
+      - Model
+    Repository:
+      - Model
+    Model: ~
