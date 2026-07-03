@@ -1,4 +1,4 @@
-const horarioHoy = window.horarioHoy;
+let horarioHoy = window.horarioHoy;
 
 function cuandoElDocumentoEsteListo(funcionAEjecutar) {
     if (document.readyState === 'complete' || document.readyState === 'interactive') {

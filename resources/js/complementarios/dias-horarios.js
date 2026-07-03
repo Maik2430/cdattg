@@ -13,7 +13,7 @@
  *
  * @constant {Array<{id:number,nombre:string}>}
  */
-const DIAS_SEMANA_FALLBACK = [
+let DIAS_SEMANA_FALLBACK = [
     { id: 0, nombre: 'Lunes' },
     { id: 0, nombre: 'Martes' },
     { id: 0, nombre: 'Miércoles' },
@@ -27,7 +27,7 @@ const DIAS_SEMANA_FALLBACK = [
  * Horarios predefinidos disponibles
  * @constant {Object}
  */
-const HORARIOS_PREDEFINIDOS = {
+let HORARIOS_PREDEFINIDOS = {
     '00': { inicio: null, fin: null, label: 'Sin formación' },
     '1': { inicio: '07:00', fin: '13:00', label: '07:00 - 13:00' },
     '2': { inicio: '08:00', fin: '12:00', label: '08:00 - 12:00' },
