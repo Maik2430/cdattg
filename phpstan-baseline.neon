@@ -3625,12 +3625,6 @@ parameters:
 			path: app/Repositories/GuiaAprendizajeRapRepository.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: app/Repositories/GuiasAprendizajeRepository.php
-
-		-
 			message: '#^Relation ''programaFormacion'' is not found in App\\Models\\GuiasAprendizaje model\.$#'
 			identifier: larastan.relationExistence
 			count: 1
@@ -3677,6 +3671,12 @@ parameters:
 			identifier: class.notFound
 			count: 2
 			path: app/Repositories/JornadaFormacionRepository.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Repositories/MunicipioRepository.php
 
 		-
 			message: '#^Relation ''temas'' is not found in App\\Models\\Parametro model\.$#'

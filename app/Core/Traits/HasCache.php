@@ -9,7 +9,7 @@ trait HasCache
     /**
      * Instancia del servicio de caché
      *
-     * @var CacheService
+     * @var CacheService|null
      */
     protected $cacheService;
 

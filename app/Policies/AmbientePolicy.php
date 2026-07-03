@@ -4,63 +4,74 @@ namespace App\Policies;
 
 use App\Models\Ambiente;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AmbientePolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Otorga acceso total al SUPER ADMINISTRADOR antes de evaluar cada permiso.
+     */
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->hasRole('SUPER ADMINISTRADOR')) {
+            return true;
+        }
+
+        return null;
+    }
+
+    /**
+     * Determina si el usuario puede ver el listado de ambientes.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->can('VER AMBIENTE');
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determina si el usuario puede ver un ambiente concreto.
      */
     public function view(User $user, Ambiente $ambiente): bool
     {
-        //
+        return $user->can('VER AMBIENTE');
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determina si el usuario puede crear ambientes.
      */
     public function create(User $user): bool
     {
-        //
+        return $user->can('CREAR AMBIENTE');
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determina si el usuario puede actualizar un ambiente.
      */
     public function update(User $user, Ambiente $ambiente): bool
     {
-        //
+        return $user->can('EDITAR AMBIENTE');
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determina si el usuario puede eliminar un ambiente.
      */
     public function delete(User $user, Ambiente $ambiente): bool
     {
-        //
+        return $user->can('ELIMINAR AMBIENTE');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determina si el usuario puede restaurar un ambiente.
      */
     public function restore(User $user, Ambiente $ambiente): bool
     {
-        //
+        return $user->can('ELIMINAR AMBIENTE');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determina si el usuario puede eliminar permanentemente un ambiente.
      */
     public function forceDelete(User $user, Ambiente $ambiente): bool
     {
-        //
+        return $user->can('ELIMINAR AMBIENTE');
     }
 }

@@ -4,63 +4,74 @@ namespace App\Policies;
 
 use App\Models\Regional;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class RegionalPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Otorga acceso total al SUPER ADMINISTRADOR antes de evaluar cada permiso.
+     */
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->hasRole('SUPER ADMINISTRADOR')) {
+            return true;
+        }
+
+        return null;
+    }
+
+    /**
+     * Determina si el usuario puede ver el listado de regionales.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->can('VER REGIONAL');
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determina si el usuario puede ver una regional concreta.
      */
     public function view(User $user, Regional $regional): bool
     {
-        //
+        return $user->can('VER REGIONAL');
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determina si el usuario puede crear regionales.
      */
     public function create(User $user): bool
     {
-        //
+        return $user->can('CREAR REGIONAL');
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determina si el usuario puede actualizar una regional.
      */
     public function update(User $user, Regional $regional): bool
     {
-        //
+        return $user->can('EDITAR REGIONAL');
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determina si el usuario puede eliminar una regional.
      */
     public function delete(User $user, Regional $regional): bool
     {
-        //
+        return $user->can('ELIMINAR REGIONAL');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determina si el usuario puede restaurar una regional.
      */
     public function restore(User $user, Regional $regional): bool
     {
-        //
+        return $user->can('ELIMINAR REGIONAL');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determina si el usuario puede eliminar permanentemente una regional.
      */
     public function forceDelete(User $user, Regional $regional): bool
     {
-        //
+        return $user->can('ELIMINAR REGIONAL');
     }
 }

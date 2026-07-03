@@ -4,63 +4,74 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\parametro;
-use Illuminate\Auth\Access\Response;
 
 class ParametroPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Otorga acceso total al SUPER ADMINISTRADOR antes de evaluar cada permiso.
+     */
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->hasRole('SUPER ADMINISTRADOR')) {
+            return true;
+        }
+
+        return null;
+    }
+
+    /**
+     * Determina si el usuario puede ver el listado de parámetros.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->can('VER PARAMETRO');
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determina si el usuario puede ver un parámetro concreto.
      */
     public function view(User $user, parametro $parametro): bool
     {
-        //
+        return $user->can('VER PARAMETRO');
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determina si el usuario puede crear parámetros.
      */
     public function create(User $user): bool
     {
-        //
+        return $user->can('CREAR PARAMETRO');
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determina si el usuario puede actualizar un parámetro.
      */
     public function update(User $user, parametro $parametro): bool
     {
-        //
+        return $user->can('EDITAR PARAMETRO');
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determina si el usuario puede eliminar un parámetro.
      */
     public function delete(User $user, parametro $parametro): bool
     {
-        //
+        return $user->can('ELIMINAR PARAMETRO');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determina si el usuario puede restaurar un parámetro.
      */
     public function restore(User $user, parametro $parametro): bool
     {
-        //
+        return $user->can('ELIMINAR PARAMETRO');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determina si el usuario puede eliminar permanentemente un parámetro.
      */
     public function forceDelete(User $user, parametro $parametro): bool
     {
-        //
+        return $user->can('ELIMINAR PARAMETRO');
     }
 }
