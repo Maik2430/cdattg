@@ -41,7 +41,8 @@ class Producto extends Model
     ];
 
     protected $casts = [
-        'fecha_vencimiento' => 'datetime'
+        'fecha_vencimiento' => 'datetime',
+        'cantidad' => 'integer'
     ];
 
     protected static function booted() : void
