@@ -1,4 +1,5 @@
 @php
+    /** @var \App\Models\Persona $persona */
     $isActive = (int) $persona->status === 1;
 @endphp
 

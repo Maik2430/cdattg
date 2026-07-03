@@ -7,6 +7,7 @@
     
     <div class="content">
         @php
+            /** @var int $diasRestantes */
             $urgencia = match($diasRestantes) {
                 3 => 'Te recordamos que',
                 2 => 'Atención:',

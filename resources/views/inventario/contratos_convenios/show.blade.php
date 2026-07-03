@@ -1,5 +1,9 @@
 @extends('inventario.layouts.base')
 
+@php
+    /** @var \App\Models\Inventario\ContratoConvenio $contratoConvenio */
+@endphp
+
 @section('title', 'Ver Contrato/Convenio')
 
 @include('inventario._components.common-css')

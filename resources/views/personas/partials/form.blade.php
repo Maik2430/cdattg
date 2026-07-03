@@ -1,4 +1,5 @@
 @php
+    /** @var \App\Models\Persona|null $persona */
     $isEdit = isset($persona);
     $fechaNacimientoValor = old('fecha_nacimiento');
     if ($isEdit && !$fechaNacimientoValor && $persona->fecha_nacimiento) {

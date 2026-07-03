@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@php
+    /** @var \App\Models\Competencia $competencia */
+@endphp
+
 @section('css')
     @vite(['resources/css/competencias.css'])
     <style>

@@ -1,5 +1,8 @@
 @php
     use Illuminate\Support\Str;
+    /** @var string $archivoNombre */
+    /** @var int|null $importacionId */
+    /** @var string $estado */
 @endphp
 
 <div class="row gy-4">

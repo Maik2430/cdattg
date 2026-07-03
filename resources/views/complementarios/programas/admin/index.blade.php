@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@php
+    /** @var \Illuminate\Support\Collection $programas */
+@endphp
+
 @section('plugins.Datatables', true)
 {{-- SweetAlert2 activado globalmente en config/adminlte.php --}}
 

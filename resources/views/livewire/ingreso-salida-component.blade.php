@@ -1,4 +1,7 @@
 <div>
+    @php
+        /** @var string $tipoMensaje */
+    @endphp
     {{-- Búsqueda de Persona --}}
     <div class="card card-outline card-primary shadow-sm mb-3">
         <div class="card-header">

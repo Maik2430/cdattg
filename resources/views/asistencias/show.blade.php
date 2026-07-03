@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@php
+    /** @var \App\Models\Asistencia $asistencia */
+@endphp
+
 @section('title', 'Detalle de Asistencia')
 
 @section('css')

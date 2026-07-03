@@ -132,6 +132,8 @@
 </head>
 <body>
     @php
+        /** @var \App\Models\Asistencia $asistencia */
+        /** @var \Illuminate\Support\Collection $aprendicesTabla */
         $ficha = $asistencia->instructorFicha;
         $programa = $ficha?->programaFormacion;
         $instructorPersona = $ficha?->instructor?->persona;

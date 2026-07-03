@@ -7,6 +7,7 @@
     @include('complementarios.layout.header')
 
     @php
+        /** @var int|string|null $aspirante_id */
         $aspiranteEmail = $aspirante_id
             ? strtolower(optional(optional(\App\Models\Complementarios\AspiranteComplementario::find($aspirante_id))->persona)->email)
             : 'N/A';

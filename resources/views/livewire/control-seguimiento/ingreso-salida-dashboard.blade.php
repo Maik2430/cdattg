@@ -1,4 +1,7 @@
 <div wire:init="cargarDatos" id="dashboard-ingreso-salida">
+    @php
+        /** @var array $estadisticasPorHora */
+    @endphp
     {{-- Estadísticas Generales --}}
     <div class="row mb-4">
         <div class="col-12">

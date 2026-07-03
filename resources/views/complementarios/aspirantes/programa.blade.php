@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@php
+    /** @var \Illuminate\Support\Collection $aspirantes */
+@endphp
+
 @section('plugins.Datatables', true)
 @section('title', 'Aspirantes - ' . $programa->nombre)
 

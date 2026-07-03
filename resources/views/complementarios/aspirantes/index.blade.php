@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@php
+    /** @var \Illuminate\Support\Collection $programas */
+@endphp
+
 @section('title', 'Gestión de Aspirantes')
 
 @section('content_header')

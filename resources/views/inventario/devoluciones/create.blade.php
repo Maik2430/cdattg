@@ -34,6 +34,7 @@
                                 <div class="col-md-6">
                                     <h6>Producto</h6>
                                     @php
+                                        /** @var \App\Models\Inventario\DetalleOrden $detalleOrden */
                                         $producto = $detalleOrden->producto;
                                         $productoNombre = $producto?->name ?? 'N/A';
                                         $productoDescripcion = $producto?->descripcion ?? '';

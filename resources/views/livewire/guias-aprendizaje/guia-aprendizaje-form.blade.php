@@ -1,4 +1,7 @@
 <div class="modal-erp-container">
+    @php
+        /** @var iterable $resultadosAprendizaje */
+    @endphp
     <form wire:submit="save">
         <!-- Contenido principal -->
         <div class="modal-body-erp">

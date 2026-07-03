@@ -2,6 +2,7 @@
 @section('title', 'Programas Complementarios | SENA')
 
 @php
+    /** @var \Illuminate\Support\Collection $programas */
     $modalidades = $programas->pluck('modalidad_nombre')->filter()->unique()->sort()->values();
     $jornadas = $programas->pluck('jornada_nombre')->filter()->unique()->sort()->values();
     $estados = $programas->pluck('estado_label')->filter()->unique()->sort()->values();

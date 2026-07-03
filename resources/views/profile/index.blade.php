@@ -1,5 +1,10 @@
 @extends('adminlte::page')
 
+@php
+    /** @var \App\Models\Persona|null $persona */
+    /** @var \Illuminate\Support\Collection $rolesAsignados */
+@endphp
+
 @section('css')
     @vite(['resources/css/parametros.css'])
 @endsection

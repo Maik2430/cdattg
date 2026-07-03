@@ -6,6 +6,7 @@
     </style>
     <!-- Imagen clickeable para expandir -->
     @php
+        /** @var \App\Models\Inventario\Producto $producto */
         $imagenProducto = $producto->imagen ? asset($producto->imagen) : asset('img/inventario/producto-default.png');
     @endphp
     <button type="button"
