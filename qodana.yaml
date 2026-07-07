@@ -20,3 +20,41 @@ exclude:
       - public/build
       - database/seeders/MunicipioSeeder.php
       - database/seeders/AmbienteSeeder.php
+
+  # ---------------------------------------------------------------------------
+  # Falsos positivos verificados (Fase 1 - Critical). Se acotan por inspección y
+  # archivo concreto para no ocultar hallazgos reales del mismo tipo en otros
+  # sitios. Cada exclusión corresponde a código que funciona correctamente pero
+  # que Qodana marca por no interpretar Laravel/Symfony/Blade.
+  # ---------------------------------------------------------------------------
+
+  # self::SUCCESS / self::FAILURE son constantes heredadas de
+  # Symfony\Component\Console\Command\Command (SUCCESS=0, FAILURE=1), que Laravel
+  # extiende. El código es correcto; Qodana no resuelve la constante heredada.
+  - name: PhpUndefinedClassConstantInspection
+    paths:
+      - app/Console/Commands/CheckUploadLimitsCommand.php
+      - app/Console/Commands/SincronizarInstructorLiderEnPivot.php
+      - app/Console/Commands/RefactorSonarQubeCommand.php
+      - app/Console/Commands/BackfillSenaBarcodes.php
+      - app/Console/Commands/Complementarios/ValidarSofiaCommand.php
+
+  # Componentes Blade cuyas variables provienen de @props([...]); Qodana no
+  # interpreta la directiva @props y las marca como indefinidas.
+  - name: PhpUndefinedVariableInspection
+    paths:
+      - resources/views/complementarios/components/card-programas.blade.php
+      - resources/views/inventario/_components/cart-widget.blade.php
+      - resources/views/components/cards/header.blade.php
+
+  # El catch llama a abort(500, ...), que lanza una excepción y nunca retorna;
+  # todos los caminos están cubiertos. Qodana no reconoce abort() como never.
+  - name: PhpInconsistentReturnPointsInspection
+    paths:
+      - app/Http/Controllers/Complementarios/EstadisticaComplementarioController.php
+
+  # window.X = X solo lee variables declaradas con let para exponerlas de forma
+  # global; no reasigna ninguna constante.
+  - name: JSConstantReassignment
+    paths:
+      - resources/js/complementarios/dias-horarios.js
