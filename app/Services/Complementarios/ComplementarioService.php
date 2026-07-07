@@ -154,6 +154,15 @@ class ComplementarioService
             ->with('parametro')
             ->get();
 
+        // Días de la semana (Tema-Parámetro id 4: LUNES a SÁBADO). La vista
+        // los consume como objetos ParametroTema (->id y ->parametro->name),
+        // igual que $modalidades.
+        $diasSemana = ParametroTema::query()
+            ->where('tema_id', 4)
+            ->with('parametro')
+            ->orderBy('id')
+            ->get();
+
         $jornadas = ParametroTema::whereHas('tema', function($q) {
             $q->where('name', 'LIKE', '%JORNADAS%');
         })->whereHas('parametro', function($query) {
