@@ -14,6 +14,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Modelo de producto de inventario.
+ *
+ * Se declara el tipo de la columna 'cantidad' (bigInteger no nulo, casteada a
+ * entero en $casts) para que el análisis estático conozca su tipo. Eloquent no
+ * expone los tipos de las columnas de forma estática, por lo que sin esta
+ * anotación las operaciones aritméticas y los parámetros tipados sobre
+ * $producto->cantidad se marcan como incompatibles.
+ *
+ * @property int $cantidad Cantidad en stock.
+ */
 class Producto extends Model
 {
     use HasFactory, Seguimiento;
