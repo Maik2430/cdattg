@@ -39,7 +39,7 @@ class ValidarSofiaCommand extends Command
 
         if ($aspirantes->isEmpty()) {
             $this->info('No hay aspirantes que necesiten validacion.');
-            return self::SUCCESS;
+            return Command::SUCCESS;
         }
 
         $totalAspirantes = $aspirantes->count();
@@ -75,6 +75,6 @@ class ValidarSofiaCommand extends Command
         $this->info("Registrados: {$exitosos}");
         $this->info("Errores: {$errores}");
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 }

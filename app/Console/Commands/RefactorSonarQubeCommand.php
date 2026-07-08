@@ -39,7 +39,7 @@ class RefactorSonarQubeCommand extends Command
         // Validar que solo se ejecute en desarrollo
         if (!app()->environment(['local', 'development', 'testing'])) {
             $this->error('❌ Este comando solo puede ejecutarse en entorno de desarrollo');
-            return self::FAILURE;
+            return Command::FAILURE;
         }
 
         $dryRun = $this->option('dry-run');
@@ -61,7 +61,7 @@ class RefactorSonarQubeCommand extends Command
 
         if (!file_exists($fullPath)) {
             $this->error("❌ La ruta {$targetPath} no existe");
-            return self::FAILURE;
+            return Command::FAILURE;
         }
 
         $files = $this->findPhpFiles($fullPath);
@@ -83,7 +83,7 @@ class RefactorSonarQubeCommand extends Command
 
         $this->printReport($dryRun);
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 
     /**

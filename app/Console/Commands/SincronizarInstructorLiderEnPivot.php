@@ -36,6 +36,6 @@ class SincronizarInstructorLiderEnPivot extends Command
         }
 
         $this->info("Listo. Registros creados: {$creados}");
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 }
