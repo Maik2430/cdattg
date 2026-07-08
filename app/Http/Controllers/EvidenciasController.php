@@ -5,10 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreevidenciasRequest;
 use App\Http\Requests\UpdateevidenciasRequest;
 use App\Models\evidencias;
+use App\Models\InstructorFichaCaracterizacion;
 use App\Models\ResultadosAprendizaje;
+use App\Services\RegistroActividadesServices;
 
 class EvidenciasController extends Controller
 {
+    public function __construct(
+        private readonly RegistroActividadesServices $registroActividadesServices
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -20,10 +26,16 @@ class EvidenciasController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($caracterizacion)
+    public function create(InstructorFichaCaracterizacion $caracterizacion)
     {
+        try {
+            $actividades = $this->registroActividadesServices->getActividades($caracterizacion);
+            $rapActual = $caracterizacion->resultadosAprendizaje->first();
 
-        return view('registro_actividades.create', compact('caracterizacion'));
+            return view('registro_actividades.create', compact('caracterizacion', 'rapActual', 'actividades'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
