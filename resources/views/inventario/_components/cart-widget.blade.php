@@ -1,6 +1,7 @@
 @props(['producto'])
 
 @php
+    /** @var \App\Models\Inventario\Producto $producto */
     if ($producto->cantidad <= 5) {
         $badgeClass = 'danger';
     } elseif ($producto->cantidad <= 10) {

@@ -1,10 +1,10 @@
 {{--
     Componente: Card con Header
     Uso:
-    <x-cards.header 
-        title="Título de la Card" 
-        icon="fas fa-users" 
-        color="success" 
+    <x-cards.header
+        title="Título de la Card"
+        icon="fas fa-users"
+        color="success"
         badge="5"
         :shadow="true">
         <!-- Contenido de la card -->
@@ -22,6 +22,7 @@
 ])
 
 @php
+    /** @var string $color */
     $borderColor = '#007bff'; // default
     switch($color) {
         case 'primary':
@@ -46,7 +47,7 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => 'card detail-card no-hover ' . ($shadow ? 'shadow-sm' : '')]) }}>
-    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center" 
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center"
          style="{{ $borderTop ? 'border-top: 3px solid ' . $borderColor . ';' : '' }}">
         <h5 class="card-title m-0 font-weight-bold text-{{ $color }}">
             @if($icon)

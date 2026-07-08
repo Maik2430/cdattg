@@ -1,6 +1,7 @@
 @props(['programa'])
 
 @php
+    /** @var \App\Models\Complementarios\ComplementarioOfertado $programa */
     $modalidad = $programa->modalidad_nombre ?? optional($programa->modalidad->parametro)->name;
     $jornada = $programa->jornada_nombre ?? optional($programa->jornada)->jornada;
     $estadoBadge = $programa->estado_label ?? 'Disponible';
