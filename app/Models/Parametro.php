@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ParametroTema;
 
+/**
+ * @property string $name
+ */
 class Parametro extends Model
 {
     use HasFactory;

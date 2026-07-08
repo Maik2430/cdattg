@@ -4,7 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read Parametro|null $parametro
+ * @property-read Tema|null $tema
+ */
 class ParametroTema extends Model
 {
     use HasFactory;
@@ -19,12 +24,14 @@ class ParametroTema extends Model
         'user_edit_id',
     ];
 
-    public function parametro()
+    /** @return BelongsTo<Parametro, $this> */
+    public function parametro(): BelongsTo
     {
         return $this->belongsTo(Parametro::class);
     }
 
-    public function tema()
+    /** @return BelongsTo<Tema, $this> */
+    public function tema(): BelongsTo
     {
         return $this->belongsTo(Tema::class);
     }
