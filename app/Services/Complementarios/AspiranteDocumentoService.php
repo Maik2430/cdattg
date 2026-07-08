@@ -2,12 +2,12 @@
 
 namespace App\Services\Complementarios;
 
+use Exception;
 use App\Exceptions\Complementarios\GoogleDriveException;
 use App\Models\Persona;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use setasign\Fpdi\Fpdi;
 
 class AspiranteDocumentoService
 {
@@ -164,7 +164,7 @@ class AspiranteDocumentoService
                 ]);
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::warning("Error verificando existencia de archivo: {$fileName}", [
                 'error' => $e->getMessage()
             ]);
@@ -255,7 +255,7 @@ class AspiranteDocumentoService
             $files = Storage::disk('google')->files('documentos_aspirantes');
             Log::info("Total de archivos en Google Drive: " . count($files));
             return $files;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error al listar archivos en Google Drive: " . $e->getMessage());
             throw new GoogleDriveException('Error al acceder a Google Drive: ' . $e->getMessage(), 0, $e);
         }

@@ -2,10 +2,11 @@
 
 namespace App\Services\Complementarios;
 
+use Exception;
+use App\Models\Complementarios\SofiaValidationProgress;
 use App\Exceptions\ProgramaNoEncontradoException;
 use App\Exceptions\ProcesarDocumentoIdentidadException;
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Persona;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
@@ -70,7 +71,7 @@ class AspiranteManagementService
             if ($programa->catalogo_id) {
                 $programa->loadMissing(['catalogo.modalidad.parametro']);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Si falla cargar la relación, continuar sin ella (la vista maneja esto con optional())
         }
 
@@ -81,10 +82,10 @@ class AspiranteManagementService
         $existingProgress = null;
         if (!app()->environment('testing')) {
             try {
-                $existingProgress = \App\Models\Complementarios\SofiaValidationProgress::where('complementario_id', $programaId)
+                $existingProgress = SofiaValidationProgress::where('complementario_id', $programaId)
                     ->whereIn('status', [284, 285]) // PENDING (284) o PROCESSING (285)
                     ->first();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Si hay un error, continuar sin progreso
                 \Log::debug("No se pudo verificar progreso de validación: " . $e->getMessage());
             }
@@ -159,7 +160,7 @@ class AspiranteManagementService
 
             return $resultado;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error agregando aspirante: ' . $e->getMessage(), [
                 'complementario_id' => $complementarioId,
                 'numero_documento' => $numeroDocumento,
@@ -228,7 +229,7 @@ class AspiranteManagementService
                 'Aspirante rechazado exitosamente. ' . $personaNombre . ' (' . $numeroDocumento . ') ha sido marcado como rechazado en el programa.'
             );
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error rechazando aspirante: ' . $e->getMessage(), [
                 'complementario_id' => $complementarioId,
                 'aspirante_id' => $aspiranteId,
@@ -302,7 +303,7 @@ class AspiranteManagementService
                 'errores' => $resultados['errores']
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error validando documentos: ' . $e->getMessage(), [
                 'complementario_id' => $complementarioId,
                 'user_id' => Auth::id(),
@@ -320,7 +321,7 @@ class AspiranteManagementService
     /**
      * Procesar validación de documentos
      */
-    private function procesarValidacionDocumentos(Collection $aspirantes, $files, AspiranteDocumentoService $documentoService): array
+    private function procesarValidacionDocumentos(Collection $aspirantes, array $files, AspiranteDocumentoService $documentoService): array
     {
         $totalAspirantes = $aspirantes->count();
         $conDocumento = 0;
@@ -342,7 +343,7 @@ class AspiranteManagementService
                     $sinDocumento++;
                 }
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $errores++;
                 Log::error("Error validando documento para aspirante {$aspirante->id}", [
                     'aspirante_id' => $aspirante->id,
@@ -441,7 +442,7 @@ class AspiranteManagementService
                 'documento_identidad_path' => $upload['path'],
                 'documento_identidad_nombre' => $upload['name'],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al guardar el documento de identidad del aspirante', [
                 'aspirante_id' => $aspirante->id,
                 'persona_id' => $persona->id,

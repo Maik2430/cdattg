@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Complementarios;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Exception;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Services\Complementarios\EstadisticaComplementarioService;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class EstadisticaComplementarioController extends Controller
 {
-    protected $estadisticaService;
+    protected EstadisticaComplementarioService $estadisticaService;
 
     public function __construct(EstadisticaComplementarioService $estadisticaService)
     {
@@ -24,7 +25,7 @@ class EstadisticaComplementarioController extends Controller
     /**
      * Mostrar dashboard de estadísticas
      */
-    public function estadisticas()
+    public function estadisticas(): Factory|View
     {
         $departamentos = Departamento::select('id', 'departamento')->get();
         $municipios = Municipio::select('id', 'municipio')->get();
@@ -56,7 +57,7 @@ class EstadisticaComplementarioController extends Controller
     {
         try {
             return $this->estadisticaService->exportarProgramasDemandaExcel();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error en controlador al exportar programas con mayor demanda', [
                 'error' => $e->getMessage(),
                 'user_id' => auth()->id(),

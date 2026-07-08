@@ -2,6 +2,7 @@
 
 namespace App\Services\Complementarios\Sofia;
 
+use Exception;
 use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Support\Facades\Log;
 
@@ -205,7 +206,7 @@ class SofiaValidationProcessor
         try {
             $this->validationService->checkServiceHealth();
             Log::info('Health check del servicio Playwright completado al inicio del proceso');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::warning('No se pudo verificar health del servicio Playwright al inicio', [
                 'error' => $e->getMessage()
             ]);

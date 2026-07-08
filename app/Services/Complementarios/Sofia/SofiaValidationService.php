@@ -2,6 +2,7 @@
 
 namespace App\Services\Complementarios\Sofia;
 
+use Exception;
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Services\AuditoriaService;
 use App\Models\Complementarios\SofiaValidationProgress;
@@ -74,7 +75,7 @@ class SofiaValidationService
                 'duration' => $duration
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->handleValidationError(
                 $e,
                 $aspirante,
@@ -92,7 +93,7 @@ class SofiaValidationService
     {
         return AspiranteComplementario::with('persona')
             ->where('complementario_id', $complementarioId)
-            ->whereHas('persona', function($query) {
+            ->whereHas('persona', function($query): void {
                 $query->whereIn('estado_sofia', [277, 279]); // NO REGISTRADO (277) o REQUIERE CAMBIO (279)
             })
             ->get();
@@ -164,7 +165,7 @@ class SofiaValidationService
      * Manejar error de validación
      */
     private function handleValidationError(
-        \Exception $e,
+        Exception $e,
         AspiranteComplementario $aspirante,
         string $cedula,
         int $complementarioId,

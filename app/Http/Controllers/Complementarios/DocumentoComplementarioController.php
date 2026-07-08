@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Complementarios;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Exception;
+use App\Models\Parametro;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Complementarios\ComplementarioOfertado;
@@ -19,7 +23,7 @@ class DocumentoComplementarioController extends Controller
     /**
      * Mostrar formulario para subir documentos
      */
-    public function formularioDocumentos(Request $request, $id)
+    public function formularioDocumentos(Request $request, $id): Factory|View
     {
         $programa = ComplementarioOfertado::findOrFail($id);
 
@@ -123,7 +127,7 @@ class DocumentoComplementarioController extends Controller
                 'Puede iniciar sesión con su correo electrónico y número de documento como contraseña.'
             );
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al subir documento: ' . $e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString()
@@ -135,7 +139,7 @@ class DocumentoComplementarioController extends Controller
     /**
      * Procesar documentos (método legacy)
      */
-    public function procesarDocumentos()
+    public function procesarDocumentos(): Factory|View
     {
         $tiposDocumento = $this->complementarioService->getTiposDocumento();
         return view('complementarios.inscripciones.processing', compact('tiposDocumento'));
@@ -164,7 +168,7 @@ class DocumentoComplementarioController extends Controller
                 $file = $request->file('documento_identidad');
 
                 // Obtener el nombre del tipo de documento
-                $tipoDocumento = \App\Models\Parametro::find($request->tipo_documento);
+                $tipoDocumento = Parametro::find($request->tipo_documento);
                 $tipoDocumentoName = $tipoDocumento ? str_replace(' ', '_', $tipoDocumento->name) : 'DOC';
                 $numeroDocumento = $request->numero_documento;
                 $timestamp = now()->format('d-m-y-H-i-s');
@@ -190,7 +194,7 @@ class DocumentoComplementarioController extends Controller
 
             return back()->with('error', 'No se pudo procesar el archivo.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al procesar documento: ' . $e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString()

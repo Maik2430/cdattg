@@ -2,20 +2,19 @@
 
 namespace App\Services\Complementarios;
 
-use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\Complementarios\ComplementarioOfertado;
+use Exception;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\PersonaRepository;
 use App\Services\Complementarios\AspiranteDocumentoService;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use setasign\Fpdi\Fpdi;
 
 class AspiranteComplementarioService
 {
-    protected $documentoService;
-    protected $aspiranteRepository;
-    protected $personaRepository;
+    protected AspiranteDocumentoService $documentoService;
+    protected AspiranteComplementarioRepository $aspiranteRepository;
+    protected PersonaRepository $personaRepository;
 
     public function __construct(
         AspiranteDocumentoService $documentoService,
@@ -54,7 +53,7 @@ class AspiranteComplementarioService
     /**
      * Procesar descarga de documentos
      */
-    public function procesarDescargaDocumentos($aspirantes, $pdf, $tempDir)
+    public function procesarDescargaDocumentos($aspirantes, $pdf, $tempDir): array
     {
         $archivosAgregados = 0;
         $archivosTemporales = [];
@@ -66,7 +65,7 @@ class AspiranteComplementarioService
                     $archivosAgregados++;
                     $archivosTemporales[] = $resultado['archivo_temporal'];
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->logErrorProcesamientoDocumento($aspirante, $e);
                 continue;
             }
@@ -81,19 +80,19 @@ class AspiranteComplementarioService
     /**
      * Procesar documento individual
      */
-    private function procesarDocumentoIndividual($aspirante, $pdf, $tempDir, $indice)
+    private function procesarDocumentoIndividual($aspirante, $pdf, string $tempDir, int $indice): array
     {
         $persona = $aspirante->persona;
         $patron = $this->documentoService->construirPatronBusqueda($persona);
 
         $matchingFile = $this->documentoService->encontrarArchivoEnGoogleDrive($patron);
 
-        if (!$matchingFile || !\Illuminate\Support\Facades\Storage::disk('google')->exists($matchingFile)) {
+        if (!$matchingFile || !Storage::disk('google')->exists($matchingFile)) {
             $this->logArchivoNoEncontrado($aspirante, $persona);
             return ['exito' => false];
         }
 
-        $fileContent = \Illuminate\Support\Facades\Storage::disk('google')->get($matchingFile);
+        $fileContent = Storage::disk('google')->get($matchingFile);
         $tempFilePath = $tempDir . '/temp_' . $indice . '_' . $persona->numero_documento . '.pdf';
 
         file_put_contents($tempFilePath, $fileContent);
@@ -108,7 +107,7 @@ class AspiranteComplementarioService
     /**
      * Generar archivo PDF final
      */
-    public function generarArchivoPDF($programa, $pdf, $tempDir, $archivosTemporales)
+    public function generarArchivoPDF($programa, $pdf, string $tempDir, $archivosTemporales): BinaryFileResponse
     {
         $pdfFileName = 'cedulas_' . str_replace(' ', '_', $programa->nombre) . '_' .
             now()->format('Y-m-d_H-i-s') . '.pdf';
@@ -124,7 +123,7 @@ class AspiranteComplementarioService
     /**
      * Log de archivo no encontrado
      */
-    private function logArchivoNoEncontrado($aspirante, $persona)
+    private function logArchivoNoEncontrado($aspirante, $persona): void
     {
         Log::warning('Archivo no encontrado en Google Drive', [
             'aspirante_id' => $aspirante->id,
@@ -136,7 +135,7 @@ class AspiranteComplementarioService
     /**
      * Log de error procesando documento
      */
-    private function logErrorProcesamientoDocumento($aspirante, \Exception $e)
+    private function logErrorProcesamientoDocumento($aspirante, Exception $e): void
     {
         Log::error('Error procesando archivo PDF: ' . $e->getMessage(), [
             'aspirante_id' => $aspirante->id,
@@ -148,7 +147,7 @@ class AspiranteComplementarioService
     /**
      * Procesar validación de documentos
      */
-    public function procesarValidacionDocumentos($aspirantes, $files)
+    public function procesarValidacionDocumentos($aspirantes, $files): array
     {
         $totalAspirantes = $aspirantes->count();
         $conDocumento = 0;
@@ -170,7 +169,7 @@ class AspiranteComplementarioService
                 } else {
                     $sinDocumento++;
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $errores++;
                 Log::error("Error validando documento para aspirante {$aspirante->id}", [
                     'aspirante_id' => $aspirante->id,

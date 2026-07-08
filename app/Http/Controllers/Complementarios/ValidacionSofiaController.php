@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Complementarios;
 
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Complementarios\SofiaValidationProgress;
@@ -45,7 +47,7 @@ class ValidacionSofiaController extends Controller
                 'progress_id' => $progress->id
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->handleException($complementarioId, $e);
         }
     }
@@ -77,7 +79,7 @@ class ValidacionSofiaController extends Controller
     {
         $count = AspiranteComplementario::with('persona')
             ->where('complementario_id', $complementarioId)
-            ->whereHas('persona', function ($query) {
+            ->whereHas('persona', function ($query): void {
                 $query->whereIn('estado_sofia', [277, 279]); // NO REGISTRADO (277) o REQUIERE CAMBIO (279)
             })
             ->count();
@@ -89,7 +91,7 @@ class ValidacionSofiaController extends Controller
     /**
      * Verificar si hay aspirantes para validar
      */
-    private function checkAspirantesCount(int $aspirantesCount, $complementarioId): ?\Illuminate\Http\JsonResponse
+    private function checkAspirantesCount(int $aspirantesCount, $complementarioId): ?JsonResponse
     {
         if ($aspirantesCount === 0) {
             Log::warning("No hay aspirantes que necesiten validación para programa {$complementarioId}");
@@ -104,7 +106,7 @@ class ValidacionSofiaController extends Controller
     /**
      * Verificar si ya hay una validación en progreso
      */
-    private function checkExistingProgress($complementarioId): ?\Illuminate\Http\JsonResponse
+    private function checkExistingProgress($complementarioId): ?JsonResponse
     {
         $existingProgress = SofiaValidationProgress::where('complementario_id', $complementarioId)
             ->whereIn('status', [284, 285]) // PENDING (284) o PROCESSING (285)
@@ -164,9 +166,9 @@ class ValidacionSofiaController extends Controller
     /**
      * Manejar todas las excepciones
      */
-    private function handleException($complementarioId, \Exception $e): \Illuminate\Http\JsonResponse
+    private function handleException($complementarioId, Exception $e): JsonResponse
     {
-        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+        if ($e instanceof ModelNotFoundException) {
             Log::error("Programa no encontrado: {$complementarioId}", ['exception' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
@@ -212,7 +214,7 @@ class ValidacionSofiaController extends Controller
                 ]
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener el progreso: ' . $e->getMessage()

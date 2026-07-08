@@ -67,10 +67,8 @@ class AspiranteComplementario extends Model
 
     /**
      * Get the status label.
-     *
-     * @return string
      */
-    public function getEstadoLabelAttribute()
+    public function getEstadoLabelAttribute(): string
     {
         return match($this->estado) {
             1 => 'En proceso',

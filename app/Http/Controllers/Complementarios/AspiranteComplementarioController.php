@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers\Complementarios;
 
+use Exception;
+use Log;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Persona;
+use App\Models\ParametroTema;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complementarios\StoreAspiranteRequest;
 use App\Http\Requests\Complementarios\UpdateAspiranteRequest;
@@ -69,8 +75,8 @@ class AspiranteComplementarioController extends Controller
         try {
             $data = $this->aspiranteManagementService->obtenerAspirantesPorProgramaId($programa);
             return view('complementarios.aspirantes.programa', $data);
-        } catch (\Exception $e) {
-            \Log::error("Error en programa() método: " . $e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error("Error en programa() método: " . $e->getMessage(), [
                 'programa_id' => $programa,
                 'trace' => $e->getTraceAsString()
             ]);
@@ -116,10 +122,10 @@ class AspiranteComplementarioController extends Controller
     {
         try {
             return $this->exportService->exportarAspirantesExcel($complementarioId);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error exportando aspirantes a Excel: ' . $e->getMessage(), [
                 'complementario_id' => $complementarioId,
-                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'user_id' => Auth::id(),
                 'exception' => $e->getTraceAsString()
             ]);
 
@@ -137,7 +143,7 @@ class AspiranteComplementarioController extends Controller
     {
         try {
             return $this->exportService->descargarCedulas($complementarioId);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
@@ -315,11 +321,11 @@ class AspiranteComplementarioController extends Controller
 
             return response()->json($resultado, $statusCode);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error en store() al agregar aspirante: ' . $e->getMessage(), [
                 'programa' => $programaId ?? null,
                 'numero_documento' => $request->validated()['numero_documento'] ?? null,
-                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'user_id' => Auth::id(),
                 'exception' => $e->getTraceAsString()
             ]);
 
@@ -337,7 +343,7 @@ class AspiranteComplementarioController extends Controller
      *
      * @param CreateAspiranteRequest $request Request validado con todos los datos de la persona
      * @param int $programa ID del programa complementario
-     * @return \Illuminate\Http\RedirectResponse|JsonResponse Respuesta según el tipo de request
+     * @return RedirectResponse|JsonResponse Respuesta según el tipo de request
      */
     public function storeNewAspirante(CreateAspiranteRequest $request, int $programa)
     {
@@ -348,8 +354,6 @@ class AspiranteComplementarioController extends Controller
     /**
      * Procesar la creación de un nuevo aspirante
      *
-     * @param CreateAspiranteRequest $request
-     * @param int $programa
      * @return array Resultado de la operación
      */
     private function procesarCreacionAspirante(CreateAspiranteRequest $request, int $programa): array
@@ -389,11 +393,11 @@ class AspiranteComplementarioController extends Controller
 
             return $resultado;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error en storeNewAspirante() al crear aspirante: ' . $e->getMessage(), [
                 'programa' => $programa,
                 'numero_documento' => $request->validated()['numero_documento'] ?? null,
-                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'user_id' => Auth::id(),
                 'exception' => $e->getTraceAsString()
             ]);
 
@@ -407,9 +411,6 @@ class AspiranteComplementarioController extends Controller
 
     /**
      * Validar programa y verificar que la persona no exista
-     *
-     * @param int $programa
-     * @param string $numeroDocumento
      */
     private function validarProgramaYPersona(int $programa, string $numeroDocumento): ?array
     {
@@ -436,11 +437,8 @@ class AspiranteComplementarioController extends Controller
 
     /**
      * Crear persona desde datos validados
-     *
-     * @param array $validated
-     * @return \App\Models\Persona
      */
-    private function crearPersonaDesdeValidacion(array $validated): \App\Models\Persona
+    private function crearPersonaDesdeValidacion(array $validated): Persona
     {
         $tipoDocumentoId = $validated['tipo_documento_id'] ?? $validated['tipo_documento'] ?? null;
 
@@ -477,7 +475,7 @@ class AspiranteComplementarioController extends Controller
     {
         // Convertir tipo_documento (parametro_id) a parametros_temas.id
         if (isset($data['tipo_documento'])) {
-            $parametroTema = \App\Models\ParametroTema::where('tema_id', 2) // TIPO DE DOCUMENTO
+            $parametroTema = ParametroTema::where('tema_id', 2) // TIPO DE DOCUMENTO
                 ->where('parametro_id', $data['tipo_documento'])
                 ->first();
 
@@ -488,7 +486,7 @@ class AspiranteComplementarioController extends Controller
 
         // Convertir genero (parametro_id) a parametros_temas.id
         if (isset($data['genero'])) {
-            $parametroTema = \App\Models\ParametroTema::where('tema_id', 3) // GENERO
+            $parametroTema = ParametroTema::where('tema_id', 3) // GENERO
                 ->where('parametro_id', $data['genero'])
                 ->first();
 
@@ -499,7 +497,7 @@ class AspiranteComplementarioController extends Controller
 
         // Convertir nivel_escolaridad_id (parametro_id) a parametros_temas.id
         if (isset($data['nivel_escolaridad_id'])) {
-            $parametroTema = \App\Models\ParametroTema::where('tema_id', 23) // NIVEL-ESCOLARIDAD
+            $parametroTema = ParametroTema::where('tema_id', 23) // NIVEL-ESCOLARIDAD
                 ->where('parametro_id', $data['nivel_escolaridad_id'])
                 ->first();
 
@@ -514,12 +512,9 @@ class AspiranteComplementarioController extends Controller
     /**
      * Formatear respuesta según el tipo de request
      *
-     * @param \Illuminate\Http\Request $request
-     * @param array $resultado
-     * @param int $programa
-     * @return \Illuminate\Http\RedirectResponse|JsonResponse
+     * @return RedirectResponse|JsonResponse
      */
-    private function formatearRespuesta(\Illuminate\Http\Request $request, array $resultado, int $programa)
+    private function formatearRespuesta(Request $request, array $resultado, int $programa)
     {
         $statusCode = $resultado['status_code'] ?? 200;
         $success = $resultado['success'] ?? false;
@@ -587,7 +582,7 @@ class AspiranteComplementarioController extends Controller
                 \Illuminate\Support\Facades\Log::info('Aspirante actualizado exitosamente', [
                     'aspirante_id' => $aspirante,
                     'complementario_id' => $programa,
-                    'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                    'user_id' => Auth::id(),
                     'updated_fields' => array_keys($updateData)
                 ]);
             }
@@ -597,11 +592,11 @@ class AspiranteComplementarioController extends Controller
                 'message' => 'Aspirante actualizado exitosamente.',
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Illuminate\Support\Facades\Log::error('Error en update() al actualizar aspirante: ' . $e->getMessage(), [
                 'programa' => $programa,
                 'aspirante' => $aspirante,
-                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'user_id' => Auth::id(),
                 'exception' => $e->getTraceAsString()
             ]);
 
@@ -624,7 +619,7 @@ class AspiranteComplementarioController extends Controller
                 'success' => true,
                 'estadisticas' => $estadisticas
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener estadísticas de exclusión: ' . $e->getMessage()

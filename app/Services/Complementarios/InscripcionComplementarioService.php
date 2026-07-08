@@ -2,25 +2,23 @@
 
 namespace App\Services\Complementarios;
 
+use Exception;
+use App\Models\Tema;
 use App\Exceptions\ProcesarDocumentoIdentidadException;
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\Complementarios\ComplementarioOfertado;
 use App\Models\Departamento;
 use App\Models\Pais;
 use App\Models\Persona;
-use App\Models\User;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
 use App\Repositories\TemaRepository;
 use App\Services\Complementarios\AspiranteDocumentoService;
 use App\Services\UserService;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -31,7 +29,7 @@ class InscripcionComplementarioService
         private readonly AspiranteComplementarioRepository $aspiranteRepository,
         private readonly ComplementarioOfertadoRepository $programaRepository,
         private readonly TemaRepository $temaRepository,
-        private readonly \App\Services\Complementarios\ComplementarioService $complementarioService,
+        private readonly ComplementarioService $complementarioService,
         private readonly AspiranteDocumentoService $documentoService,
         private readonly UserService $userService
     ) {}
@@ -73,7 +71,7 @@ class InscripcionComplementarioService
                 ->route('inscripcion.general')
                 ->with('success', '¡Registro exitoso! Sus datos han sido guardados correctamente.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error en inscripción general: ' . $e->getMessage(), [
                 'data' => $data,
                 'exception' => $e->getTraceAsString()
@@ -173,7 +171,7 @@ class InscripcionComplementarioService
                 );
             });
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error en inscripción a programa: ' . $e->getMessage(), [
                 'programa_id' => $programaId,
                 'data' => $data,
@@ -204,47 +202,6 @@ class InscripcionComplementarioService
     private function procesarPersona(array $data): Persona
     {
         return $this->personaRepository->createOrUpdate($data);
-    }
-
-    /**
-     * Convertir parametro_id a parametros_temas.id para tipo_documento, genero y nivel_escolaridad_id
-     */
-    private function convertirParametrosAParametrosTemas(array $data): array
-    {
-        // Convertir tipo_documento (parametro_id) a parametros_temas.id
-        if (isset($data['tipo_documento'])) {
-            $parametroTema = \App\Models\ParametroTema::where('tema_id', 2) // TIPO DE DOCUMENTO
-                ->where('parametro_id', $data['tipo_documento'])
-                ->first();
-
-            if ($parametroTema) {
-                $data['tipo_documento'] = $parametroTema->id;
-            }
-        }
-
-        // Convertir genero (parametro_id) a parametros_temas.id
-        if (isset($data['genero'])) {
-            $parametroTema = \App\Models\ParametroTema::where('tema_id', 3) // GENERO
-                ->where('parametro_id', $data['genero'])
-                ->first();
-
-            if ($parametroTema) {
-                $data['genero'] = $parametroTema->id;
-            }
-        }
-
-        // Convertir nivel_escolaridad_id (parametro_id) a parametros_temas.id
-        if (isset($data['nivel_escolaridad_id'])) {
-            $parametroTema = \App\Models\ParametroTema::where('tema_id', 23) // NIVEL-ESCOLARIDAD
-                ->where('parametro_id', $data['nivel_escolaridad_id'])
-                ->first();
-
-            if ($parametroTema) {
-                $data['nivel_escolaridad_id'] = $parametroTema->id;
-            }
-        }
-
-        return $data;
     }
 
     /**
@@ -289,7 +246,7 @@ class InscripcionComplementarioService
                 // Mantener estado "En proceso" (1) - el estado 2 no existe
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al procesar documento: ' . $e->getMessage(), [
                 'aspirante_id' => $aspirante->id,
                 'exception' => $e->getTraceAsString()
@@ -300,22 +257,6 @@ class InscripcionComplementarioService
 
             throw new ProcesarDocumentoIdentidadException('Error al procesar el documento de identidad');
         }
-    }
-
-    /**
-     * Generar nombre único para el archivo
-     */
-    private function generarNombreArchivo(Persona $persona, $file): string
-    {
-        $tipoDocumento = $persona->tipoDocumento?->name ?? 'DOC';
-        $numeroDocumento = $persona->numero_documento;
-        $timestamp = now()->format('d-m-y-H-i-s');
-        $extension = $file->getClientOriginalExtension();
-
-        // Reemplazar espacios por guiones bajos
-        $tipoDocumento = str_replace(' ', '_', $tipoDocumento);
-
-        return "{$tipoDocumento}_{$numeroDocumento}_{$timestamp}.{$extension}";
     }
 
     /**
@@ -368,9 +309,9 @@ class InscripcionComplementarioService
     /**
      * Construir payload de tema
      */
-    private function buildTemaPayload($tema = null, $fallback = null): object
+    private function buildTemaPayload(?Tema $tema = null, $fallback = null): object
     {
-        if ($tema && $tema->parametros?->count()) {
+        if ($tema !== null && $tema->parametros()->exists()) {
             return $tema;
         }
 

@@ -2,6 +2,9 @@
 
 namespace App\Services\Complementarios\Sofia;
 
+use App\Models\Tema;
+use Exception;
+use Log;
 use App\Models\Parametro;
 use Illuminate\Support\Facades\Cache;
 
@@ -108,7 +111,7 @@ class SofiaParametrosHelper
             return self::obtenerIdsDirectamente();
         }
 
-        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
+        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function (): array {
             return self::obtenerIdsDirectamente();
         });
     }
@@ -169,22 +172,22 @@ class SofiaParametrosHelper
         $userId = null;
         
         try {
-            $temaEstados = \App\Models\Tema::updateOrCreate(
+            $temaEstados = Tema::updateOrCreate(
                 ['name' => 'ESTADOS SOFIA'],
                 ['status' => 1, 'user_create_id' => $userId]
             );
 
-            $temaAcciones = \App\Models\Tema::updateOrCreate(
+            $temaAcciones = Tema::updateOrCreate(
                 ['name' => 'ACCIONES SOFIA'],
                 ['status' => 1, 'user_create_id' => $userId]
             );
 
-            $temaResultados = \App\Models\Tema::updateOrCreate(
+            $temaResultados = Tema::updateOrCreate(
                 ['name' => 'RESULTADOS VALIDACION SOFIA'],
                 ['status' => 1, 'user_create_id' => $userId]
             );
 
-            $temaProgreso = \App\Models\Tema::updateOrCreate(
+            $temaProgreso = Tema::updateOrCreate(
                 ['name' => 'ESTADOS PROGRESO SOFIA'],
                 ['status' => 1, 'user_create_id' => $userId]
             );
@@ -244,8 +247,8 @@ class SofiaParametrosHelper
         
             // Limpiar cache después de crear parámetros
             self::clearCache();
-        } catch (\Exception $e) {
-            \Log::error("Error al crear parámetros de Sofía: " . $e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error("Error al crear parámetros de Sofía: " . $e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString()
             ]);
@@ -274,8 +277,8 @@ class SofiaParametrosHelper
                     self::clearCache();
                     return $parametro->id;
                 }
-            } catch (\Exception $e) {
-                \Log::error("Error al crear parámetros de Sofía en testing: " . $e->getMessage(), [
+            } catch (Exception $e) {
+                Log::error("Error al crear parámetros de Sofía en testing: " . $e->getMessage(), [
                     'exception' => $e,
                     'trace' => $e->getTraceAsString()
                 ]);

@@ -2,6 +2,7 @@
 
 namespace App\Services\Complementarios\Sofia;
 
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\ConnectionException;
@@ -82,7 +83,7 @@ class SofiaHttpClient
                 0,
                 $e
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logValidationError($e, $validateUrl, $cedula);
             throw $e;
         }
@@ -104,7 +105,7 @@ class SofiaHttpClient
             } else {
                 Log::debug('Servicio Playwright esta disponible (health check OK)');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::warning('No se pudo verificar health del servicio Playwright', [
                 'error' => $e->getMessage()
             ]);
@@ -240,7 +241,7 @@ class SofiaHttpClient
     /**
      * Registrar error de validación
      */
-    private function logValidationError(\Exception $e, string $url, string $cedula): void
+    private function logValidationError(Exception $e, string $url, string $cedula): void
     {
         Log::error('Error al validar cedula con servicio Playwright', [
             'cedula' => $cedula,

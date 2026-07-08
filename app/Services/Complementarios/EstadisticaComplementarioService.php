@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Complementarios;
 
+use Illuminate\Database\Eloquent\Collection;
+use Exception;
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\Complementarios\ComplementarioOfertado;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Repositories\PersonaRepository;
@@ -40,7 +41,7 @@ class EstadisticaComplementarioService
         $distribucionProgramas = $this->aspiranteRepository->getDistribucionPorProgramas();
 
         $programasDemanda = $this->programaRepository->getProgramasConMayorDemanda(10)
-            ->map(function($programa) {
+            ->map(function($programa): array {
                 return [
                     'programa' => $programa->nombre,
                     'total_aspirantes' => $programa->total_aspirantes,
@@ -73,13 +74,13 @@ class EstadisticaComplementarioService
         }
 
         if (isset($filtros['departamento_id'])) {
-            $query->whereHas('persona', function($q) use ($filtros) {
+            $query->whereHas('persona', function($q) use ($filtros): void {
                 $q->where('departamento_id', $filtros['departamento_id']);
             });
         }
 
         if (isset($filtros['municipio_id'])) {
-            $query->whereHas('persona', function($q) use ($filtros) {
+            $query->whereHas('persona', function($q) use ($filtros): void {
                 $q->where('municipio_id', $filtros['municipio_id']);
             });
         }
@@ -130,7 +131,7 @@ class EstadisticaComplementarioService
     /**
      * Obtener estadísticas por género
      */
-    public function obtenerEstadisticasPorGenero()
+    public function obtenerEstadisticasPorGenero(): Collection
     {
         return $this->personaRepository->getEstadisticasPorGenero();
     }
@@ -138,7 +139,7 @@ class EstadisticaComplementarioService
     /**
      * Obtener estadísticas por rango de edad
      */
-    public function obtenerEstadisticasPorEdad()
+    public function obtenerEstadisticasPorEdad(): Collection
     {
         return $this->personaRepository->getEstadisticasPorEdad();
     }
@@ -249,7 +250,7 @@ class EstadisticaComplementarioService
             $fileName = 'programas_mayor_demanda_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
 
             // Crear respuesta de descarga
-            $response = new StreamedResponse(function () use ($spreadsheet) {
+            $response = new StreamedResponse(function () use ($spreadsheet): void {
                 $writer = new Xlsx($spreadsheet);
                 $writer->save('php://output');
             });
@@ -269,7 +270,7 @@ class EstadisticaComplementarioService
 
             return $response;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error exportando programas con mayor demanda a Excel', [
                 'error' => $e->getMessage(),
                 'user_id' => auth()->id(),

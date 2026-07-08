@@ -2,10 +2,15 @@
 
 namespace App\Services\Complementarios;
 
+use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use App\Exceptions\AspirantesSinDocumentosException;
 use App\Exceptions\DescargaDocumentosException;
 use App\Exceptions\ProgramaNoEncontradoException;
-use App\Models\Complementarios\ComplementarioOfertado;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
 use App\Services\Complementarios\AspiranteComplementarioService;
@@ -52,7 +57,7 @@ class AspiranteExportService
             // Crear respuesta de descarga
             return $this->crearRespuestaDescarga($spreadsheet, $fileName);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error exportando aspirantes a Excel: ' . $e->getMessage(), [
                 'complementario_id' => $complementarioId,
                 'user_id' => auth()->id(),
@@ -102,7 +107,7 @@ class AspiranteExportService
                 $resultados['archivos_temporales']
             );
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error descargando cédulas: ' . $e->getMessage(), [
                 'complementario_id' => $complementarioId,
                 'user_id' => auth()->id(),
@@ -116,7 +121,7 @@ class AspiranteExportService
     /**
      * Crear hoja de cálculo con datos de aspirantes
      */
-    private function crearHojaCalculo($aspirantes): Spreadsheet
+    private function crearHojaCalculo(Collection $aspirantes): Spreadsheet
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -134,15 +139,15 @@ class AspiranteExportService
                 'name' => 'Calibri',
             ],
             'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'fillType' => Fill::FILL_SOLID,
                 'startColor' => ['rgb' => 'C4D79B'],
             ],
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
             ],
             'borders' => [
                 'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                    'borderStyle' => Border::BORDER_THICK,
                     'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                 ],
             ],
@@ -193,7 +198,7 @@ class AspiranteExportService
     /**
      * Establecer encabezados de la hoja
      */
-    private function establecerEncabezados($sheet): void
+    private function establecerEncabezados(Worksheet $sheet): void
     {
         $sheet->setCellValue('A2', 'Resultado del Registro (Reservado para el sistema)');
         $sheet->setCellValue('B2', 'Tipo de Identificación');
@@ -212,13 +217,13 @@ class AspiranteExportService
                 'size' => 8,
             ],
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
                 'wrapText' => true,
             ],
             'borders' => [
                 'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                    'borderStyle' => Border::BORDER_THICK,
                     'color' => ['rgb' => self::COLOR_NEGRO_RGB],
                 ],
             ],
@@ -229,7 +234,7 @@ class AspiranteExportService
     /**
      * Llenar datos en la hoja
      */
-    private function llenarDatos($sheet, $aspirantes): void
+    private function llenarDatos(Worksheet $sheet, $aspirantes): void
     {
         $row = 3;
         foreach ($aspirantes as $aspirante) {
@@ -259,7 +264,7 @@ class AspiranteExportService
     /**
      * Convertir tipo de documento a iniciales (CC, TI, etc.)
      */
-    private function convertirTipoDocumentoAIniciales($tipoDocumento)
+    private function convertirTipoDocumentoAIniciales($tipoDocumento): string
     {
         // Limpiar el texto y quitar acentos
         $tipoDocumento = $this->limpiarTexto($tipoDocumento);
@@ -296,7 +301,7 @@ class AspiranteExportService
     /**
      * Limpiar texto quitando acentos y caracteres especiales
      */
-    private function limpiarTexto($texto)
+    private function limpiarTexto($texto): string
     {
         $texto = iconv('UTF-8', 'ASCII//TRANSLIT', $texto);
         $texto = preg_replace('/[^a-zA-Z0-9\s]/', '', $texto);
@@ -317,7 +322,7 @@ class AspiranteExportService
      */
     private function crearRespuestaDescarga(Spreadsheet $spreadsheet, string $fileName): StreamedResponse
     {
-        $response = new StreamedResponse(function () use ($spreadsheet) {
+        $response = new StreamedResponse(function () use ($spreadsheet): void {
             $writer = new Xlsx($spreadsheet);
             $writer->save('php://output');
         });

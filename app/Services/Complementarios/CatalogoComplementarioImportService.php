@@ -2,6 +2,8 @@
 
 namespace App\Services\Complementarios;
 
+use RuntimeException;
+use Throwable;
 use App\Models\Complementarios\ComplementarioCatalogo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +46,7 @@ class CatalogoComplementarioImportService
         $rutaAbsoluta = Storage::disk('local')->path($rutaRelativa);
 
         if (!file_exists($rutaAbsoluta)) {
-            throw new \RuntimeException("No se encontró el archivo de catálogo en {$rutaAbsoluta}.");
+            throw new RuntimeException("No se encontró el archivo de catálogo en {$rutaAbsoluta}.");
         }
 
         $reader = IOFactory::createReaderForFile($rutaAbsoluta);
@@ -82,7 +84,7 @@ class CatalogoComplementarioImportService
             }
 
             DB::commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
 
             Log::error('Error importando catálogo de complementarios', [
@@ -280,9 +282,6 @@ class CatalogoComplementarioImportService
 
     /**
      * Convierte el string de modalidad a modalidad_id (ParametroTema)
-     * 
-     * @param mixed $modalidadString
-     * @return int|null
      */
     private function convertirModalidadAId(mixed $modalidadString): ?int
     {

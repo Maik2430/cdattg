@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Complementarios;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\Complementarios\ComplementarioOfertado;
 use Illuminate\Database\Eloquent\Collection;
 
 class AspiranteComplementarioRepository
@@ -25,7 +25,7 @@ class AspiranteComplementarioRepository
     {
         return AspiranteComplementario::with(['persona.tipoDocumento'])
             ->where('complementario_id', $programaId)
-            ->whereHas('persona', function ($query) {
+            ->whereHas('persona', function ($query): void {
                 $query->where('condocumento', 1);
             })
             ->get()
@@ -42,7 +42,7 @@ class AspiranteComplementarioRepository
         return AspiranteComplementario::with(['persona.tipoDocumento'])
             ->where('complementario_id', $programaId)
             ->where('estado', '!=', 4) // Excluir rechazados
-            ->whereHas('persona', function ($query) {
+            ->whereHas('persona', function ($query): void {
                 $query->where('condocumento', 1);
             })
             ->get()
@@ -59,7 +59,7 @@ class AspiranteComplementarioRepository
         return AspiranteComplementario::with(['persona.tipoDocumento', 'persona.parametroCaracterizacion'])
             ->where('complementario_id', $programaId)
             ->where('estado', '!=', 4) // Excluir rechazados
-            ->whereHas('persona', function ($query) {
+            ->whereHas('persona', function ($query): void {
                 $query->where('condocumento', 1)
                       ->where('estado_sofia', '!=', 277); // Excluir no registrados en SenasofiaPlus (277 = NO REGISTRADO)
             })
@@ -80,21 +80,21 @@ class AspiranteComplementarioRepository
 
         $sinDocumento = AspiranteComplementario::where('complementario_id', $programaId)
             ->where('estado', '!=', 4)
-            ->whereHas('persona', function ($query) {
+            ->whereHas('persona', function ($query): void {
                 $query->where('condocumento', 0);
             })
             ->count();
 
         $noRegistradosSofia = AspiranteComplementario::where('complementario_id', $programaId)
             ->where('estado', '!=', 4)
-            ->whereHas('persona', function ($query) {
+            ->whereHas('persona', function ($query): void {
                 $query->where('estado_sofia', 277); // NO REGISTRADO = 277
             })
             ->count();
 
         $validos = AspiranteComplementario::where('complementario_id', $programaId)
             ->where('estado', '!=', 4)
-            ->whereHas('persona', function ($query) {
+            ->whereHas('persona', function ($query): void {
                 $query->where('condocumento', 1)
                       ->where('estado_sofia', '!=', 277); // Excluir NO REGISTRADO (277)
             })
@@ -208,7 +208,7 @@ class AspiranteComplementarioRepository
      */
     public function getTendenciaInscripciones(int $meses = 6): Collection
     {
-        $isSqlite = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite';
+        $isSqlite = DB::getDriverName() === 'sqlite';
 
         if ($isSqlite) {
             return AspiranteComplementario::selectRaw('

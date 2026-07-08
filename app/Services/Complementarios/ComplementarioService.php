@@ -2,10 +2,13 @@
 
 namespace App\Services\Complementarios;
 
+use App\Models\Complementarios\ComplementarioCatalogo;
+use App\Models\Competencia;
+use App\Models\GuiasAprendizaje;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Exceptions\ProgramaNoEncontradoException;
 use App\Models\Ambiente;
 use App\Models\Complementarios\ComplementarioOfertado;
-use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
 use App\Repositories\Complementarios\AspiranteComplementarioRepository;
 use App\Repositories\Complementarios\ComplementarioOfertadoRepository;
@@ -22,7 +25,7 @@ class ComplementarioService
     /**
      * Obtener icono para un programa complementario
      */
-    public function getIconoForPrograma($nombre)
+    public function getIconoForPrograma(string $nombre): string
     {
         $iconos = [
             'Auxiliar de Cocina' => 'fas fa-utensils',
@@ -39,7 +42,7 @@ class ComplementarioService
     /**
      * Obtener clase CSS para el badge según el estado del programa
      */
-    public function getBadgeClassForEstado($estado)
+    public function getBadgeClassForEstado(int $estado): string
     {
         $badgeClasses = [
             0 => 'bg-secondary', // Sin Oferta
@@ -53,7 +56,7 @@ class ComplementarioService
     /**
      * Obtener label del estado del programa
      */
-    public function getEstadoLabel($estado)
+    public function getEstadoLabel(int $estado): string
     {
         $estados = [
             0 => 'Sin Oferta',
@@ -92,7 +95,7 @@ class ComplementarioService
      */
     public function enriquecerProgramas(Collection $programas): Collection
     {
-        return $programas->map(function (ComplementarioOfertado $programa) {
+        return $programas->map(function (ComplementarioOfertado $programa): ComplementarioOfertado {
             return $this->enriquecerPrograma($programa);
         });
     }
@@ -120,7 +123,7 @@ class ComplementarioService
         }
 
         $programa->diasFormacion()->sync(
-            collect($dias)->mapWithKeys(static function ($dia) {
+            collect($dias)->mapWithKeys(static function (array $dia): array {
                 return [
                     $dia['dia_id'] => [
                         'hora_inicio' => $dia['hora_inicio'],
@@ -136,8 +139,8 @@ class ComplementarioService
      */
     public function obtenerDatosFormulario(): array
     {
-        /** @var \Illuminate\Support\Collection<int, \App\Models\Complementarios\ComplementarioCatalogo> $catalogoProgramas */
-        $catalogoProgramas = \App\Models\Complementarios\ComplementarioCatalogo::query()
+        /** @var \Illuminate\Support\Collection<int, ComplementarioCatalogo> $catalogoProgramas */
+        $catalogoProgramas = ComplementarioCatalogo::query()
             ->where('nivel_formacion', 'CURSO ESPECIAL')
             ->where('activo', true)
             ->orderBy('denominacion')
@@ -163,9 +166,9 @@ class ComplementarioService
             ->orderBy('id')
             ->get();
 
-        $jornadas = ParametroTema::whereHas('tema', function($q) {
+        $jornadas = ParametroTema::whereHas('tema', function($q): void {
             $q->where('name', 'LIKE', '%JORNADAS%');
-        })->whereHas('parametro', function($query) {
+        })->whereHas('parametro', function($query): void {
             $query->where('status', true);
         })->where('status', true)
           ->with('parametro')
@@ -179,13 +182,13 @@ class ComplementarioService
             ->get();
 
         // Obtener competencias activas
-        $competencias = \App\Models\Competencia::query()
+        $competencias = Competencia::query()
             ->activos()
             ->ordenadoPorCodigo()
             ->get(['id', 'codigo', 'nombre']);
 
         // Obtener guías de aprendizaje activas
-        $guias = \App\Models\GuiasAprendizaje::query()
+        $guias = GuiasAprendizaje::query()
             ->activas()
             ->porNombreAsc()
             ->get(['id', 'codigo', 'nombre']);
@@ -230,7 +233,7 @@ class ComplementarioService
     /**
      * Verificar si un usuario ya está inscrito en un programa
      */
-    public function verificarInscripcionExistente($personaId, $programaId)
+    public function verificarInscripcionExistente(int $personaId, int $programaId): bool
     {
         return $this->aspiranteRepository->existeInscripcion($personaId, $programaId);
     }
@@ -238,7 +241,7 @@ class ComplementarioService
     /**
      * Crear aspirante complementario
      */
-    public function crearAspirante($personaId, $programaId, $observaciones = null)
+    public function crearAspirante($personaId, $programaId, $observaciones = null): AspiranteComplementario
     {
         return $this->aspiranteRepository->create([
             'persona_id' => $personaId,
@@ -251,7 +254,7 @@ class ComplementarioService
     /**
      * Actualizar estado del aspirante
      */
-    public function actualizarEstadoAspirante($aspiranteId, $estado)
+    public function actualizarEstadoAspirante(int $aspiranteId, $estado): ?AspiranteComplementario
     {
         $aspirante = $this->aspiranteRepository->findById($aspiranteId);
         $this->aspiranteRepository->update($aspirante, ['estado' => $estado]);
@@ -261,7 +264,7 @@ class ComplementarioService
     /**
      * Obtener estadísticas básicas de un programa
      */
-    public function obtenerEstadisticasPrograma($programaId)
+    public function obtenerEstadisticasPrograma(int $programaId): array
     {
         $programa = $this->programaRepository->findWithRelations($programaId);
 

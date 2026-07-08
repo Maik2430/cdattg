@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Complementarios;
 
+use Exception;
+use App\Models\Complementarios\ComplementarioCatalogo;
+use Illuminate\Database\QueryException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complementarios\StoreProgramaComplementarioRequest;
 use App\Http\Requests\Complementarios\UpdateProgramaComplementarioRequest;
@@ -181,7 +184,7 @@ class ProgramaComplementarioController extends Controller
     {
         $payload = $request->validated();
 
-        DB::transaction(function () use ($payload) {
+        DB::transaction(function () use ($payload): void {
             $atributos = $this->extractProgramaAtributos($payload);
             // NOTA: Las columnas user_create_id y user_edit_id no existen en la tabla
             // Se han removido para evitar el error SQL
@@ -209,7 +212,7 @@ class ProgramaComplementarioController extends Controller
     ): RedirectResponse {
         $payload = $request->validated();
 
-        DB::transaction(function () use ($programa, $payload) {
+        DB::transaction(function () use ($programa, $payload): void {
             $atributos = $this->extractProgramaAtributos($payload);
             // NOTA: La columna user_edit_id no existe en la tabla
             // Se ha removido para evitar el error SQL
@@ -251,7 +254,7 @@ class ProgramaComplementarioController extends Controller
                 'success' => true,
                 'message' => 'Programa eliminado exitosamente.',
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->manejarExcepcion($e);
         }
     }
@@ -275,8 +278,8 @@ class ProgramaComplementarioController extends Controller
 
         // Si se seleccionó un programa del catálogo, sobrescribir datos básicos
         if (!empty($payload['catalogo_id'])) {
-            /** @var \App\Models\Complementarios\ComplementarioCatalogo|null $catalogo */
-            $catalogo = \App\Models\Complementarios\ComplementarioCatalogo::query()
+            /** @var ComplementarioCatalogo|null $catalogo */
+            $catalogo = ComplementarioCatalogo::query()
                 ->find($payload['catalogo_id']);
 
             if ($catalogo !== null) {
@@ -350,18 +353,17 @@ class ProgramaComplementarioController extends Controller
     private function construirMensajeErrorRelaciones(array $relaciones): string
     {
         $mensaje = 'No se puede eliminar el programa porque tiene ' . implode(', ', $relaciones) . '. ';
-        $mensaje .= 'Por favor, elimine estas relaciones primero o cambie el estado del programa a "Sin Oferta".';
         
-        return $mensaje;
+        return $mensaje . 'Por favor, elimine estas relaciones primero o cambie el estado del programa a "Sin Oferta".';
     }
 
     /**
      * Maneja excepciones durante la eliminación.
      */
-    private function manejarExcepcion(\Exception $e): JsonResponse
+    private function manejarExcepcion(Exception $e): JsonResponse
     {
         // Capturar excepción de integridad referencial (código 23000 para violación de restricción de clave foránea)
-        if ($e instanceof \Illuminate\Database\QueryException && $e->getCode() == 23000) {
+        if ($e instanceof QueryException && $e->getCode() == 23000) {
             return response()->json([
                 'success' => false,
                 'message' => 'No se puede eliminar el programa porque tiene registros relacionados en el sistema. Por favor, elimine primero todas las relaciones (aspirantes, competencias, RAPs, guías de aprendizaje, días de formación) o cambie el estado del programa a "Sin Oferta".',
@@ -385,12 +387,11 @@ class ProgramaComplementarioController extends Controller
     /**
      * Mapea los días de formación de un programa a un formato estructurado.
      *
-     * @param ComplementarioOfertado $programa
      * @return array<int, array<string, mixed>>
      */
     private function mapearDiasFormacion(ComplementarioOfertado $programa): array
     {
-        return $programa->diasFormacion->map(static function ($dia) {
+        return $programa->diasFormacion->map(static function ($dia): array {
             // El dia_id en el pivot es el ID del parámetro/día
             // Usamos el ID del modelo relacionado (Parametro)
             return [
@@ -406,7 +407,7 @@ class ProgramaComplementarioController extends Controller
      */
     private function formatearDiasFormacion(ComplementarioOfertado $programa): string
     {
-        return $programa->diasFormacion->map(static function ($dia) {
+        return $programa->diasFormacion->map(static function ($dia): string {
             $nombreDia = $dia->parametro?->name ?? 'Día';
             return $nombreDia . ' (' . $dia->pivot->hora_inicio . ' - ' . $dia->pivot->hora_fin . ')';
         })->implode(', ');
@@ -420,7 +421,7 @@ class ProgramaComplementarioController extends Controller
     private function mapearDiasFormacionPublico(ComplementarioOfertado $programa): array
     {
         return $programa->diasFormacion
-            ->map(static function ($dia) {
+            ->map(static function ($dia): array {
                 return [
                     'dia' => (string) ($dia->parametro?->name ?? 'Día'),
                     'hora_inicio' => $dia->pivot->hora_inicio ? substr((string) $dia->pivot->hora_inicio, 0, 5) : null,

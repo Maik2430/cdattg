@@ -59,7 +59,7 @@ class SofiaValidationProgress extends Model
     /**
      * Calcular el porcentaje de progreso
      */
-    public function getProgressPercentageAttribute()
+    public function getProgressPercentageAttribute(): int|float
     {
         if ($this->total_aspirantes === 0) {
             return 0;
@@ -71,7 +71,7 @@ class SofiaValidationProgress extends Model
     /**
      * Obtener el estado legible
      */
-    public function getStatusLabelAttribute()
+    public function getStatusLabelAttribute(): string
     {
         return match($this->status) {
             284 => 'Pendiente', // PENDING
@@ -85,7 +85,7 @@ class SofiaValidationProgress extends Model
     /**
      * Marcar como iniciado
      */
-    public function markAsStarted()
+    public function markAsStarted(): void
     {
         $this->update([
             'status' => 285, // PROCESSING = 285 según ParametroSeeder
@@ -96,7 +96,7 @@ class SofiaValidationProgress extends Model
     /**
      * Marcar como completado
      */
-    public function markAsCompleted()
+    public function markAsCompleted(): void
     {
         $this->update([
             'status' => 286, // COMPLETED = 286 según ParametroSeeder
@@ -107,7 +107,7 @@ class SofiaValidationProgress extends Model
     /**
      * Marcar como fallido
      */
-    public function markAsFailed($errors = [])
+    public function markAsFailed($errors = []): void
     {
         $this->update([
             'status' => 287, // FAILED = 287 según ParametroSeeder
@@ -119,7 +119,7 @@ class SofiaValidationProgress extends Model
     /**
      * Incrementar contador de procesados
      */
-    public function incrementProcessed($successful = true)
+    public function incrementProcessed($successful = true): void
     {
         $this->increment('processed_aspirantes');
 

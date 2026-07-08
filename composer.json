@@ -75,7 +75,8 @@
         "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
         "deptrac": "vendor/bin/deptrac analyse --no-progress",
         "rector:dry-run": "vendor/bin/rector process --dry-run",
-        "rector:inventario": "vendor/bin/rector process app/Inventario"
+        "rector:inventario": "vendor/bin/rector process app/Inventario",
+        "rector:complementarios": "vendor/bin/rector process app/Services/Complementarios app/Repositories/Complementarios app/Http/Controllers/Complementarios app/Models/Complementarios"
     },
     "extra": {
         "laravel": {

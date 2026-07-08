@@ -2,6 +2,10 @@
 
 namespace App\Repositories\Complementarios;
 
+use App\Models\Tema;
+use App\Models\Parametro;
+use App\Models\ParametroTema;
+use Exception;
 use App\Models\Complementarios\ComplementarioOfertado;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -29,19 +33,19 @@ class ComplementarioOfertadoRepository
         
         // Buscar el ParametroTema correspondiente al estado en el tema ESTADOS (ID 1)
         try {
-            $temaEstado = \App\Models\Tema::find(1); // Tema "ESTADOS"
+            $temaEstado = Tema::find(1); // Tema "ESTADOS"
             
             if ($temaEstado) {
                 // Buscar parámetro por nombre (los estados están en mayúsculas en la BD)
-                $parametro = \App\Models\Parametro::where('name', strtoupper($nombreEstado))->first();
+                $parametro = Parametro::where('name', strtoupper($nombreEstado))->first();
                 
                 if (!$parametro) {
                     // Intentar con el nombre exacto
-                    $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
+                    $parametro = Parametro::where('name', $nombreEstado)->first();
                 }
                 
                 if ($parametro) {
-                    $parametroTema = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
+                    $parametroTema = ParametroTema::where('tema_id', $temaEstado->id)
                         ->where('parametro_id', $parametro->id)
                         ->first();
                     
@@ -50,7 +54,7 @@ class ComplementarioOfertadoRepository
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Si hay error, retornar null
         }
         
@@ -105,7 +109,7 @@ class ComplementarioOfertadoRepository
     {
         $nombreNormalizado = str_replace('-', ' ', $nombre);
         
-        return ComplementarioOfertado::whereHas('catalogo', function ($query) use ($nombreNormalizado) {
+        return ComplementarioOfertado::whereHas('catalogo', function ($query) use ($nombreNormalizado): void {
             $query->where('denominacion', $nombreNormalizado);
         })->first();
     }

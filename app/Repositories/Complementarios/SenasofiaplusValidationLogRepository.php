@@ -2,15 +2,13 @@
 
 namespace App\Repositories\Complementarios;
 
+use Illuminate\Database\Eloquent\Collection;
 use App\Models\Complementarios\SenasofiaplusValidationLog;
 
 class SenasofiaplusValidationLogRepository
 {
     /**
      * Registra un log de validación
-     *
-     * @param array $datos
-     * @return SenasofiaplusValidationLog
      */
     public function registrar(array $datos): SenasofiaplusValidationLog
     {
@@ -20,9 +18,7 @@ class SenasofiaplusValidationLogRepository
     /**
      * Obtiene logs por aspirante
      *
-     * @param int $aspiranteId
-     * @param int $limit
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function obtenerLogsPorAspirante(int $aspiranteId, int $limit = 50)
     {
@@ -31,10 +27,6 @@ class SenasofiaplusValidationLogRepository
 
     /**
      * Obtiene estadísticas de validaciones
-     *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @return array
      */
     public function obtenerEstadisticas(string $fechaInicio, string $fechaFin): array
     {
@@ -44,9 +36,7 @@ class SenasofiaplusValidationLogRepository
     /**
      * Obtiene auditoría completa de validaciones
      *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function obtenerAuditoria(string $fechaInicio, string $fechaFin)
     {
@@ -59,9 +49,7 @@ class SenasofiaplusValidationLogRepository
     /**
      * Obtiene logs con errores
      *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function obtenerLogsConErrores(string $fechaInicio, string $fechaFin)
     {
