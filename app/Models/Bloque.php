@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use PhpParser\Node\Expr\FuncCall;
 
 class Bloque extends Model
 {
@@ -16,7 +15,7 @@ class Bloque extends Model
     {
         parent::boot();
 
-        static::saving(function ($bloque){
+        static::saving(function ($bloque) {
             $bloque->bloque = strtoupper($bloque->bloque);
         });
     }
@@ -25,6 +24,7 @@ class Bloque extends Model
     {
         return $this->belongsTo(Sede::class);
     }
+
     public function piso()
     {
         return $this->hasMany(Piso::class);

@@ -9,13 +9,13 @@ class FichaDiasFormacion extends Model
 {
     use HasFactory;
 
-    protected $table = "ficha_dias_formacion";
+    protected $table = 'ficha_dias_formacion';
 
     protected $fillable = [
-        "ficha_id",
-        "dia_id",
-        "hora_inicio",
-        "hora_fin"
+        'ficha_id',
+        'dia_id',
+        'hora_inicio',
+        'hora_fin',
     ];
 
     public function ficha()
@@ -45,7 +45,7 @@ class FichaDiasFormacion extends Model
      */
     public function calcularHorasDia()
     {
-        if (!$this->hora_inicio || !$this->hora_fin) {
+        if (! $this->hora_inicio || ! $this->hora_fin) {
             return 'Horas no definidas';
         }
 
@@ -53,7 +53,8 @@ class FichaDiasFormacion extends Model
             $inicio = \Carbon\Carbon::parse($this->hora_inicio);
             $fin = \Carbon\Carbon::parse($this->hora_fin);
             $horas = $inicio->diffInMinutes($fin) / 60;
-            return number_format($horas, 1) . ' horas/día';
+
+            return number_format($horas, 1).' horas/día';
         } catch (\Exception $e) {
             return 'Horas no calculables';
         }

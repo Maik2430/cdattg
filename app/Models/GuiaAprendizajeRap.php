@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\GuiasAprendizaje;
-use App\Models\ResultadosAprendizaje;
-
 
 class GuiaAprendizajeRap extends Model
 {
     protected $table = 'guia_aprendizaje_rap';
+
     protected $fillable = [
         'guia_aprendizaje_id',
         'rap_id',

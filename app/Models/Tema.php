@@ -26,12 +26,12 @@ class Tema extends Model
 
     public function userCreate()
     {
-        return  $this->belongsTo(User::class, 'user_create_id');
+        return $this->belongsTo(User::class, 'user_create_id');
     }
 
     public function userUpdate()
     {
-        return  $this->belongsTo(User::class, 'user_edit_id');
+        return $this->belongsTo(User::class, 'user_edit_id');
     }
 
     public function parametros()

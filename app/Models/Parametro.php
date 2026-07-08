@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ParametroTema;
 
 /**
  * @property string $name
@@ -33,12 +32,12 @@ class Parametro extends Model
 
     public function userCreate()
     {
-        return  $this->belongsTo(User::class, 'user_create_id');
+        return $this->belongsTo(User::class, 'user_create_id');
     }
 
     public function userUpdate()
     {
-        return  $this->belongsTo(User::class, 'user_edit_id');
+        return $this->belongsTo(User::class, 'user_edit_id');
     }
 
     public function temas()

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Departamento extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'departamento',
         'pais_id',
@@ -22,7 +23,9 @@ class Departamento extends Model
             $departamento->departamento = strtoupper($departamento->departamento);
         });
     }
-    public function municipios(){
+
+    public function municipios()
+    {
         return $this->hasMany(Municipio::class);
     }
 }

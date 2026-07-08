@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\GuiaAprendizajeService;
-use App\Repositories\GuiasAprendizajeRepository;
 use App\Http\Requests\StoreGuiasAprendizajeRequest;
 use App\Http\Requests\UpdateGuiasAprendizajeRequest;
 use App\Models\GuiasAprendizaje;
 use App\Models\ResultadosAprendizaje;
+use App\Repositories\GuiasAprendizajeRepository;
+use App\Services\GuiaAprendizajeService;
+use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Exception;
+use Illuminate\Support\Facades\Log;
 
 class GuiaAprendizajeController extends Controller
 {
     protected GuiaAprendizajeService $guiaService;
+
     protected GuiasAprendizajeRepository $guiaRepo;
 
     /**
@@ -50,10 +52,10 @@ class GuiaAprendizajeController extends Controller
             // Aplicar filtros si existen
             if ($request->filled('search')) {
                 $searchTerm = $request->search;
-                $query->where(function($q) use ($searchTerm) {
+                $query->where(function ($q) use ($searchTerm) {
                     $q->where('codigo', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('descripcion', 'LIKE', "%{$searchTerm}%");
+                        ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
+                        ->orWhere('descripcion', 'LIKE', "%{$searchTerm}%");
                 });
             }
 
@@ -74,19 +76,19 @@ class GuiaAprendizajeController extends Controller
             }
 
             if ($request->filled('programa_id')) {
-                $query->whereHas('resultadosAprendizaje.competencias.programas', function($q) use ($request) {
+                $query->whereHas('resultadosAprendizaje.competencias.programas', function ($q) use ($request) {
                     $q->where('programa_formacion.id', $request->programa_id);
                 });
             }
 
             if ($request->filled('competencia_id')) {
-                $query->whereHas('resultadosAprendizaje.competencias', function($q) use ($request) {
+                $query->whereHas('resultadosAprendizaje.competencias', function ($q) use ($request) {
                     $q->where('competencias.id', $request->competencia_id);
                 });
             }
 
             if ($request->filled('resultado_id')) {
-                $query->whereHas('resultadosAprendizaje', function($q) use ($request) {
+                $query->whereHas('resultadosAprendizaje', function ($q) use ($request) {
                     $q->where('resultados_aprendizajes.id', $request->resultado_id);
                 });
             }
@@ -122,7 +124,8 @@ class GuiaAprendizajeController extends Controller
                 'usuarios'
             ));
         } catch (Exception $e) {
-            Log::error('Error al obtener lista de guías de aprendizaje: ' . $e->getMessage());
+            Log::error('Error al obtener lista de guías de aprendizaje: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al cargar las guías de aprendizaje.');
         }
     }
@@ -130,7 +133,6 @@ class GuiaAprendizajeController extends Controller
     /**
      * Búsqueda avanzada con AJAX.
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function search(Request $request)
@@ -141,10 +143,10 @@ class GuiaAprendizajeController extends Controller
             // Búsqueda general
             if ($request->filled('q')) {
                 $searchTerm = $request->q;
-                $query->where(function($q) use ($searchTerm) {
+                $query->where(function ($q) use ($searchTerm) {
                     $q->where('codigo', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('descripcion', 'LIKE', "%{$searchTerm}%");
+                        ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
+                        ->orWhere('descripcion', 'LIKE', "%{$searchTerm}%");
                 });
             }
 
@@ -162,13 +164,13 @@ class GuiaAprendizajeController extends Controller
             }
 
             if ($request->filled('competencia_id')) {
-                $query->whereHas('resultadosAprendizaje.competencias', function($q) use ($request) {
+                $query->whereHas('resultadosAprendizaje.competencias', function ($q) use ($request) {
                     $q->where('competencias.id', $request->competencia_id);
                 });
             }
 
             if ($request->filled('resultado_id')) {
-                $query->whereHas('resultadosAprendizaje', function($q) use ($request) {
+                $query->whereHas('resultadosAprendizaje', function ($q) use ($request) {
                     $q->where('resultados_aprendizajes.id', $request->resultado_id);
                 });
             }
@@ -198,12 +200,12 @@ class GuiaAprendizajeController extends Controller
             return response()->json($data);
 
         } catch (Exception $e) {
-            Log::error('Error en búsqueda de guías de aprendizaje: ' . $e->getMessage());
+            Log::error('Error en búsqueda de guías de aprendizaje: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
                 'message' => 'Error al realizar la búsqueda',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -220,29 +222,30 @@ class GuiaAprendizajeController extends Controller
             $resultadosAprendizaje = ResultadosAprendizaje::whereRaw('status = 1')
                 ->orderBy('codigo')
                 ->get();
-            
+
             // Si no hay activos, obtener todos para debug
             if ($resultadosAprendizaje->isEmpty()) {
                 $todosResultados = ResultadosAprendizaje::orderBy('codigo')->get();
                 Log::warning('No hay resultados activos, mostrando todos para debug', [
                     'total' => $todosResultados->count(),
-                    'user_id' => Auth::id()
+                    'user_id' => Auth::id(),
                 ]);
                 $resultadosAprendizaje = $todosResultados;
             }
-            
+
             Log::info('Resultados de aprendizaje cargados para crear guía', [
                 'total' => $resultadosAprendizaje->count(),
                 'user_id' => Auth::id(),
-                'ids' => $resultadosAprendizaje->pluck('id')->take(10)->toArray()
+                'ids' => $resultadosAprendizaje->pluck('id')->take(10)->toArray(),
             ]);
-            
+
             return view('guias_aprendizaje.create', compact('resultadosAprendizaje'));
         } catch (Exception $e) {
-            Log::error('Error al cargar formulario de creación de guía de aprendizaje: ' . $e->getMessage(), [
+            Log::error('Error al cargar formulario de creación de guía de aprendizaje: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
+
             return redirect()->back()->with('error', 'Error al cargar el formulario de creación.');
         }
     }
@@ -250,7 +253,6 @@ class GuiaAprendizajeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreGuiasAprendizajeRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreGuiasAprendizajeRequest $request)
@@ -273,7 +275,7 @@ class GuiaAprendizajeController extends Controller
 
             Log::info('Guía de aprendizaje creada exitosamente', [
                 'guia_id' => $guiaAprendizaje->id,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()->route('guias-aprendizaje.index')
@@ -281,9 +283,9 @@ class GuiaAprendizajeController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error al crear guía de aprendizaje: ' . $e->getMessage(), [
+            Log::error('Error al crear guía de aprendizaje: '.$e->getMessage(), [
                 'user_id' => Auth::id(),
-                'request_data' => $request->all()
+                'request_data' => $request->all(),
             ]);
 
             return redirect()->back()
@@ -295,7 +297,6 @@ class GuiaAprendizajeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param GuiasAprendizaje $guiaAprendizaje
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function show(GuiasAprendizaje $guiaAprendizaje)
@@ -305,9 +306,9 @@ class GuiaAprendizajeController extends Controller
 
             return view('guias_aprendizaje.show', compact('guiaAprendizaje'));
         } catch (Exception $e) {
-            Log::error('Error al mostrar guía de aprendizaje: ' . $e->getMessage(), [
+            Log::error('Error al mostrar guía de aprendizaje: '.$e->getMessage(), [
                 'guia_id' => $guiaAprendizaje->id,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()->back()->with('error', 'Error al cargar la guía de aprendizaje.');
@@ -317,7 +318,6 @@ class GuiaAprendizajeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param GuiasAprendizaje $guiaAprendizaje
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(GuiasAprendizaje $guiaAprendizaje)
@@ -328,9 +328,9 @@ class GuiaAprendizajeController extends Controller
 
             return view('guias_aprendizaje.edit', compact('guiaAprendizaje', 'resultadosAprendizaje'));
         } catch (Exception $e) {
-            Log::error('Error al cargar formulario de edición de guía de aprendizaje: ' . $e->getMessage(), [
+            Log::error('Error al cargar formulario de edición de guía de aprendizaje: '.$e->getMessage(), [
                 'guia_id' => $guiaAprendizaje->id,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()->back()->with('error', 'Error al cargar el formulario de edición.');
@@ -340,8 +340,6 @@ class GuiaAprendizajeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateGuiasAprendizajeRequest $request
-     * @param GuiasAprendizaje $guiaAprendizaje
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateGuiasAprendizajeRequest $request, GuiasAprendizaje $guiaAprendizaje)
@@ -363,7 +361,7 @@ class GuiaAprendizajeController extends Controller
 
             Log::info('Guía de aprendizaje actualizada exitosamente', [
                 'guia_id' => $guiaAprendizaje->id,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()->route('guias-aprendizaje.index')
@@ -371,10 +369,10 @@ class GuiaAprendizajeController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error al actualizar guía de aprendizaje: ' . $e->getMessage(), [
+            Log::error('Error al actualizar guía de aprendizaje: '.$e->getMessage(), [
                 'guia_id' => $guiaAprendizaje->id,
                 'user_id' => Auth::id(),
-                'request_data' => $request->all()
+                'request_data' => $request->all(),
             ]);
 
             return redirect()->back()
@@ -386,7 +384,6 @@ class GuiaAprendizajeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param GuiasAprendizaje $guiaAprendizaje
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(GuiasAprendizaje $guiaAprendizaje)
@@ -410,7 +407,7 @@ class GuiaAprendizajeController extends Controller
 
             Log::info('Guía de aprendizaje eliminada exitosamente', [
                 'guia_id' => $guiaAprendizaje->id,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()->route('guias-aprendizaje.index')
@@ -418,9 +415,9 @@ class GuiaAprendizajeController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error al eliminar guía de aprendizaje: ' . $e->getMessage(), [
+            Log::error('Error al eliminar guía de aprendizaje: '.$e->getMessage(), [
                 'guia_id' => $guiaAprendizaje->id,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()->back()
@@ -442,14 +439,14 @@ class GuiaAprendizajeController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $guiasAprendizaje
+                'data' => $guiasAprendizaje,
             ]);
         } catch (Exception $e) {
-            Log::error('Error en API de guías de aprendizaje: ' . $e->getMessage());
+            Log::error('Error en API de guías de aprendizaje: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener las guías de aprendizaje'
+                'message' => 'Error al obtener las guías de aprendizaje',
             ], 500);
         }
     }
@@ -457,7 +454,6 @@ class GuiaAprendizajeController extends Controller
     /**
      * Cambiar el estado de una guía de aprendizaje.
      *
-     * @param GuiasAprendizaje $guiaAprendizaje
      * @return \Illuminate\Http\RedirectResponse
      */
     public function cambiarEstado(GuiasAprendizaje $guiaAprendizaje)
@@ -466,22 +462,22 @@ class GuiaAprendizajeController extends Controller
             $nuevoEstado = $guiaAprendizaje->status === 1 ? 0 : 1;
             $guiaAprendizaje->update([
                 'status' => $nuevoEstado,
-                'user_edit_id' => Auth::id()
+                'user_edit_id' => Auth::id(),
             ]);
 
             Log::info('Estado de guía de aprendizaje cambiado', [
                 'guia_id' => $guiaAprendizaje->id,
                 'nuevo_estado' => $nuevoEstado,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()->back()
                 ->with('success', 'Estado cambiado exitosamente');
 
         } catch (Exception $e) {
-            Log::error('Error al cambiar estado de guía de aprendizaje: ' . $e->getMessage(), [
+            Log::error('Error al cambiar estado de guía de aprendizaje: '.$e->getMessage(), [
                 'guia_id' => $guiaAprendizaje->id,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()->back()
@@ -492,7 +488,6 @@ class GuiaAprendizajeController extends Controller
     /**
      * Gestionar resultados de aprendizaje de una guía.
      *
-     * @param GuiasAprendizaje $guiaAprendizaje
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function gestionarResultados(GuiasAprendizaje $guiaAprendizaje)
@@ -522,19 +517,16 @@ class GuiaAprendizajeController extends Controller
             ));
 
         } catch (Exception $e) {
-            Log::error('Error al gestionar resultados de guía: ' . $e->getMessage());
+            Log::error('Error al gestionar resultados de guía: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al cargar la gestión de resultados.');
         }
     }
 
     /**
      * Asociar un resultado de aprendizaje a una guía.
-     *
-     * @param Request $request
-     * @param GuiasAprendizaje $guiaAprendizaje
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function asociarResultado(Request $request, GuiasAprendizaje $guiaAprendizaje)
+    public function asociarResultado(Request $request, GuiasAprendizaje $guiaAprendizaje): RedirectResponse
     {
         try {
             $request->validate([
@@ -551,15 +543,8 @@ class GuiaAprendizajeController extends Controller
             }
 
             // Validar competencia si hay resultados ya asignados
-            $resultadosExistentes = $guiaAprendizaje->resultadosAprendizaje()->with('competencias')->get();
-            if ($resultadosExistentes->isNotEmpty()) {
-                $competenciaExistente = $resultadosExistentes->first()->competencias->first();
-                $nuevoResultado = ResultadosAprendizaje::with('competencias')->find($resultadoId);
-                $competenciaNueva = $nuevoResultado->competencias->first();
-
-                if ($competenciaExistente && $competenciaNueva && $competenciaExistente->id !== $competenciaNueva->id) {
-                    return redirect()->back()->with('error', 'Los resultados deben pertenecer a la misma competencia.');
-                }
+            if ($this->guiaService->resultadosTienenCompetenciasDistintas($guiaAprendizaje, (int) $resultadoId)) {
+                return redirect()->back()->with('error', 'Los resultados deben pertenecer a la misma competencia.');
             }
 
             // Asociar el resultado
@@ -574,7 +559,8 @@ class GuiaAprendizajeController extends Controller
             return redirect()->back()->with('success', 'Resultado asociado exitosamente.');
 
         } catch (Exception $e) {
-            Log::error('Error al asociar resultado: ' . $e->getMessage());
+            Log::error('Error al asociar resultado: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al asociar el resultado.');
         }
     }
@@ -582,15 +568,13 @@ class GuiaAprendizajeController extends Controller
     /**
      * Desasociar un resultado de aprendizaje de una guía.
      *
-     * @param GuiasAprendizaje $guiaAprendizaje
-     * @param ResultadosAprendizaje $resultado
      * @return \Illuminate\Http\RedirectResponse
      */
     public function desasociarResultado(GuiasAprendizaje $guiaAprendizaje, ResultadosAprendizaje $resultado)
     {
         try {
             // Verificar que el resultado esté asignado
-            if (!$guiaAprendizaje->resultadosAprendizaje()->where('resultados_aprendizajes.id', $resultado->id)->exists()) {
+            if (! $guiaAprendizaje->resultadosAprendizaje()->where('resultados_aprendizajes.id', $resultado->id)->exists()) {
                 return redirect()->back()->with('error', 'Este resultado no está asignado a la guía.');
             }
 
@@ -600,20 +584,16 @@ class GuiaAprendizajeController extends Controller
             return redirect()->back()->with('success', 'Resultado desasociado exitosamente.');
 
         } catch (Exception $e) {
-            Log::error('Error al desasociar resultado: ' . $e->getMessage());
+            Log::error('Error al desasociar resultado: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al desasociar el resultado.');
         }
     }
 
     /**
      * Cambiar el estado de obligatoriedad de un resultado.
-     *
-     * @param Request $request
-     * @param GuiasAprendizaje $guiaAprendizaje
-     * @param ResultadosAprendizaje $resultado
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function cambiarObligatoriedad(Request $request, GuiasAprendizaje $guiaAprendizaje, ResultadosAprendizaje $resultado)
+    public function cambiarObligatoriedad(Request $request, GuiasAprendizaje $guiaAprendizaje, ResultadosAprendizaje $resultado): RedirectResponse
     {
         try {
             $request->validate([
@@ -630,10 +610,12 @@ class GuiaAprendizajeController extends Controller
             ]);
 
             $mensaje = $esObligatorio ? 'Resultado marcado como obligatorio' : 'Resultado marcado como opcional';
+
             return redirect()->back()->with('success', $mensaje);
 
         } catch (Exception $e) {
-            Log::error('Error al cambiar obligatoriedad: ' . $e->getMessage());
+            Log::error('Error al cambiar obligatoriedad: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al cambiar la obligatoriedad del resultado.');
         }
     }

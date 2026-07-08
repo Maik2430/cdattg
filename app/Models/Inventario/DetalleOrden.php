@@ -2,8 +2,8 @@
 
 namespace App\Models\Inventario;
 
-use App\Traits\Seguimiento;
 use App\Models\ParametroTema;
+use App\Traits\Seguimiento;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,44 +22,43 @@ class DetalleOrden extends Model
         'cantidad',
         'estado_orden_id',
         'user_create_id',
-        'user_update_id'
+        'user_update_id',
     ];
 
     // Relación con la orden
-    public function orden() : BelongsTo
+    public function orden(): BelongsTo
     {
         return $this->belongsTo(Orden::class, 'orden_id');
     }
 
-
     // Relación con el producto
-    public function producto() : BelongsTo
+    public function producto(): BelongsTo
     {
         return $this->belongsTo(Producto::class, 'producto_id');
     }
 
     // Relación con el estado de la orden
-    public function estadoOrden() : BelongsTo
+    public function estadoOrden(): BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'estado_orden_id');
     }
 
-
     // Relación con devoluciones
-    public function devoluciones() : HasMany
+    public function devoluciones(): HasMany
     {
         return $this->hasMany(Devolucion::class, 'detalle_orden_id');
     }
 
-    public function aprobacion() : HasOne
+    public function aprobacion(): HasOne
     {
         return $this->hasOne(\App\Models\Inventario\Aprobacion::class, 'detalle_orden_id', 'id');
     }
 
     // Obtener la cantidad total devuelta
-    public function getCantidadDevuelta() : int
+    public function getCantidadDevuelta(): int
     {
         $suma = $this->devoluciones()->sum('cantidad_devuelta');
+
         return (int) ($suma ?? 0);
     }
 
@@ -77,7 +76,7 @@ class DetalleOrden extends Model
     }
 
     // Verificar si está completamente devuelto
-    public function estaCompletamenteDevuelto() : bool
+    public function estaCompletamenteDevuelto(): bool
     {
         if ($this->tieneCierreSinStock()) {
             return true;
@@ -87,13 +86,13 @@ class DetalleOrden extends Model
     }
 
     // Alias para compatibilidad
-    public function Devuelto() : bool
+    public function Devuelto(): bool
     {
         return $this->estaCompletamenteDevuelto();
     }
 
     // Obtener cantidad pendiente de devolución
-    public function getCantidadPendiente() : int
+    public function getCantidadPendiente(): int
     {
         if ($this->tieneCierreSinStock()) {
             return 0;
@@ -105,7 +104,7 @@ class DetalleOrden extends Model
     }
 
     // Verificar si el préstamo está vencido
-    public function Vencido() : bool
+    public function Vencido(): bool
     {
         // Si ya está completamente devuelto, no está vencido
         if ($this->estaCompletamenteDevuelto()) {
@@ -113,7 +112,7 @@ class DetalleOrden extends Model
         }
 
         // Verificar si tiene fecha de devolución esperada
-        if (!$this->orden || !$this->orden->fecha_devolucion) {
+        if (! $this->orden || ! $this->orden->fecha_devolucion) {
             return false;
         }
 

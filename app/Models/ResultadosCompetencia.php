@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ResultadosCompetencia extends Model
 {
     protected $table = 'resultados_aprendizaje_competencia';
+
     protected $fillable = [
         'rap_id',
         'competencia_id',

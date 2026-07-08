@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class GuiasResultados extends Model
 {
     protected $table = 'guia_aprendizaje_rap';
+
     protected $fillable = [
         'id',
         'guia_aprendizaje_id',

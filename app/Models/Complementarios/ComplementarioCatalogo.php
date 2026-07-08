@@ -62,14 +62,13 @@ class ComplementarioCatalogo extends Model
         if ($this->modalidad_id && $this->relationLoaded('modalidad')) {
             return $this->modalidad?->parametro?->name;
         }
-        
+
         if ($this->modalidad_id) {
             $this->loadMissing(['modalidad.parametro']);
+
             return $this->modalidad?->parametro?->name;
         }
-        
+
         return null;
     }
 }
-
-

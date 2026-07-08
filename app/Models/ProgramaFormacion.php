@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProgramaFormacion extends Model
@@ -26,7 +26,7 @@ class ProgramaFormacion extends Model
         'horas_totales',
         'horas_etapa_lectiva',
         'horas_etapa_productiva',
-        'tipo_programa_id'
+        'tipo_programa_id',
     ];
 
     protected $casts = [
@@ -101,7 +101,7 @@ class ProgramaFormacion extends Model
             'programa_id',
             'competencia_id'
         )->withTimestamps()
-         ->withPivot('user_create_id', 'user_edit_id');
+            ->withPivot('user_create_id', 'user_edit_id');
     }
 
     public function competenciaActual()
@@ -114,6 +114,7 @@ class ProgramaFormacion extends Model
                 return $competenciaPrograma->competencia;
             }
         }
+
         return null;
     }
 
@@ -149,13 +150,13 @@ class ProgramaFormacion extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('nombre', 'LIKE', "%{$search}%")
-              ->orWhere('codigo', 'LIKE', "%{$search}%")
-              ->orWhereHas('redConocimiento', function ($subQuery) use ($search) {
-                  $subQuery->where('nombre', 'LIKE', "%{$search}%");
-              })
-              ->orWhereHas('nivelFormacion', function ($subQuery) use ($search) {
-                  $subQuery->where('name', 'LIKE', "%{$search}%");
-              });
+                ->orWhere('codigo', 'LIKE', "%{$search}%")
+                ->orWhereHas('redConocimiento', function ($subQuery) use ($search) {
+                    $subQuery->where('nombre', 'LIKE', "%{$search}%");
+                })
+                ->orWhereHas('nivelFormacion', function ($subQuery) use ($search) {
+                    $subQuery->where('name', 'LIKE', "%{$search}%");
+                });
         });
     }
 }

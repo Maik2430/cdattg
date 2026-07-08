@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
-use App\Repositories\GuiasAprendizajeRepository;
-use App\Repositories\EvidenciasRepository;
+use App\Models\GuiasAprendizaje;
+use App\Models\ResultadosAprendizaje;
 use App\Repositories\EvidenciaGuiaAprendizajeRepository;
+use App\Repositories\EvidenciasRepository;
+use App\Repositories\GuiasAprendizajeRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +14,9 @@ use Illuminate\Support\Facades\Log;
 class GuiaAprendizajeService
 {
     protected GuiasAprendizajeRepository $guiasRepo;
+
     protected EvidenciasRepository $evidenciasRepo;
+
     protected EvidenciaGuiaAprendizajeRepository $evidenciaGuiaRepo;
 
     public function __construct(
@@ -27,9 +31,6 @@ class GuiaAprendizajeService
 
     /**
      * Obtiene guías por programa
-     *
-     * @param int $programaId
-     * @return Collection
      */
     public function obtenerPorPrograma(int $programaId): Collection
     {
@@ -38,11 +39,6 @@ class GuiaAprendizajeService
 
     /**
      * Registra evidencia de aprendiz en guía
-     *
-     * @param int $guiaId
-     * @param int $aprendizId
-     * @param array $datosEvidencia
-     * @return bool
      */
     public function registrarEvidencia(int $guiaId, int $aprendizId, array $datosEvidencia): bool
     {
@@ -67,11 +63,6 @@ class GuiaAprendizajeService
 
     /**
      * Califica evidencia de aprendiz
-     *
-     * @param int $evidenciaGuiaId
-     * @param float $calificacion
-     * @param string|null $observaciones
-     * @return bool
      */
     public function calificarEvidencia(int $evidenciaGuiaId, float $calificacion, ?string $observaciones = null): bool
     {
@@ -91,9 +82,6 @@ class GuiaAprendizajeService
 
     /**
      * Obtiene progreso de aprendiz en guías
-     *
-     * @param int $aprendizId
-     * @return array
      */
     public function obtenerProgresoAprendiz(int $aprendizId): array
     {
@@ -111,5 +99,30 @@ class GuiaAprendizajeService
             'porcentaje_aprobacion' => $calificadas > 0 ? round(($aprobadas / $calificadas) * 100, 2) : 0,
         ];
     }
-}
 
+    public function resultadosTienenCompetenciasDistintas(GuiasAprendizaje $guiaAprendizaje, int $resultadoId): bool
+    {
+        $resultadosExistentes = $guiaAprendizaje->resultadosAprendizaje()->with('competencias')->get();
+
+        if ($resultadosExistentes->isEmpty()) {
+            return false;
+        }
+
+        $resultadoExistente = $resultadosExistentes->first();
+        if (! $resultadoExistente instanceof ResultadosAprendizaje) {
+            return false;
+        }
+
+        $competenciaExistente = $resultadoExistente->competencias()->first();
+        $nuevoResultado = ResultadosAprendizaje::with('competencias')->find($resultadoId);
+
+        if (! $nuevoResultado instanceof ResultadosAprendizaje) {
+            return false;
+        }
+
+        $competenciaNueva = $nuevoResultado->competencias()->first();
+
+        return $competenciaExistente && $competenciaNueva
+            && $competenciaExistente->id !== $competenciaNueva->id;
+    }
+}

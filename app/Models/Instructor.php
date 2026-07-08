@@ -2,64 +2,48 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Instructor\BuildsInstructorFormattedAttributes;
+use App\Models\Concerns\Instructor\BuildsInstructorPersonaAttributes;
+use App\Models\Concerns\Instructor\HasInstructorFichasQueries;
+use App\Models\Concerns\Instructor\ManagesInstructorEspecialidadesCompetencias;
+use App\Models\Concerns\Instructor\ScopesInstructorEspecialidadCompetencia;
+use App\Models\Concerns\Instructor\ScopesInstructorEstado;
+use App\Models\Concerns\Instructor\ScopesInstructorFiltros;
+use App\Models\Concerns\Instructor\SyncsInstructorCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
-use App\Models\AsignacionInstructor;
-use App\Models\ProgramaFormacion;
-use App\Models\ParametroTema;
 
+/**
+ * @property-read Regional|null $regional
+ */
 class Instructor extends Model
 {
+    use BuildsInstructorFormattedAttributes;
+    use BuildsInstructorPersonaAttributes;
     use HasFactory;
+    use HasInstructorFichasQueries;
+    use ManagesInstructorEspecialidadesCompetencias;
+    use ScopesInstructorEspecialidadCompetencia;
+    use ScopesInstructorEstado;
+    use ScopesInstructorFiltros;
+    use SyncsInstructorCache;
 
     protected $table = 'instructors';
 
     protected $fillable = [
-        'persona_id',
-        'regional_id',
-        'status',
-        'user_create_id',
-        'user_edit_id',
-        'especialidades',
-        'competencias',
-        'anos_experiencia',
-        'experiencia_laboral',
-        'numero_documento_cache',
-        'nombre_completo_cache',
-        // Información laboral
-        'tipo_vinculacion_id',
-        'jornadas',
-        'centro_formacion_id',
-        'experiencia_instructor_meses',
-        'fecha_ingreso_sena',
-        // Formación académica
-        'nivel_academico_id',
-        'titulos_obtenidos',
-        'instituciones_educativas',
-        'certificaciones_tecnicas',
-        'cursos_complementarios',
-        'formacion_pedagogia',
-        // Competencias y habilidades
-        'areas_experticia',
-        'competencias_tic',
-        'idiomas',
-        'habilidades_pedagogicas',
-        // Documentos adjuntos
-        'documentos_adjuntos',
-        // Información administrativa
-        'numero_contrato',
-        'fecha_inicio_contrato',
-        'fecha_fin_contrato',
-        'supervisor_contrato',
-        'eps',
-        'arl'
+        'persona_id', 'regional_id', 'status', 'user_create_id', 'user_edit_id',
+        'especialidades', 'competencias', 'anos_experiencia', 'experiencia_laboral',
+        'numero_documento_cache', 'nombre_completo_cache', 'tipo_vinculacion_id', 'jornadas',
+        'centro_formacion_id', 'experiencia_instructor_meses', 'fecha_ingreso_sena',
+        'nivel_academico_id', 'titulos_obtenidos', 'instituciones_educativas',
+        'certificaciones_tecnicas', 'cursos_complementarios', 'formacion_pedagogia',
+        'areas_experticia', 'competencias_tic', 'idiomas', 'habilidades_pedagogicas',
+        'documentos_adjuntos', 'numero_contrato', 'fecha_inicio_contrato', 'fecha_fin_contrato',
+        'supervisor_contrato', 'eps', 'arl',
     ];
 
     protected $casts = [
@@ -82,100 +66,55 @@ class Instructor extends Model
         'habilidades_pedagogicas' => 'array',
         'documentos_adjuntos' => 'array',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($instructor) {
-            $instructor->status = $instructor->status ?? true;
-            $instructor->actualizarCache();
-        });
-
-        static::updating(function ($instructor) {
-            $instructor->actualizarCache();
-        });
-    }
-
-    /**
-     * Relación con Persona (belongsTo)
-     */
     public function persona(): BelongsTo
     {
         return $this->belongsTo(Persona::class, 'persona_id');
     }
 
-    /**
-     * Relación con Regional (belongsTo)
-     */
     public function regional(): BelongsTo
     {
         return $this->belongsTo(Regional::class, 'regional_id');
     }
 
-    /**
-     * Relación con CentroFormacion (belongsTo)
-     */
     public function centroFormacion(): BelongsTo
     {
         return $this->belongsTo(CentroFormacion::class, 'centro_formacion_id');
     }
 
-    /**
-     * Relación con ParametroTema para tipo de vinculación (belongsTo)
-     */
     public function tipoVinculacion(): BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'tipo_vinculacion_id');
     }
 
-    /**
-     * Relación muchos a muchos con ParametroTema (jornadas) (belongsToMany)
-     */
     public function jornadas(): BelongsToMany
     {
         return $this->belongsToMany(ParametroTema::class, 'instructor_parametro_tema', 'instructor_id', 'parametro_tema_id')
-                    ->whereHas('tema', function($q) {
-                        $q->where('name', 'LIKE', '%JORNADAS%');
-                    })
-                    ->withPivot('user_create_id', 'user_edit_id')
-                    ->withTimestamps();
+            ->whereHas('tema', fn ($q) => $q->where('name', 'LIKE', '%JORNADAS%'))
+            ->withPivot('user_create_id', 'user_edit_id')
+            ->withTimestamps();
     }
 
-    /**
-     * Relación muchos a muchos con ParametroTema (modalidades) (belongsToMany)
-     */
     public function modalidades(): BelongsToMany
     {
         return $this->belongsToMany(ParametroTema::class, 'instructor_parametro_tema', 'instructor_id', 'parametro_tema_id')
-                    ->whereHas('tema', function($q) {
-                        $q->where('id', 5); // ID del tema para MODALIDADES DE FORMACION
-                    })
-                    ->withPivot('user_create_id', 'user_edit_id')
-                    ->withTimestamps();
+            ->whereHas('tema', fn ($q) => $q->where('id', 5))
+            ->withPivot('user_create_id', 'user_edit_id')
+            ->withTimestamps();
     }
 
-    /**
-     * Relación con ParametroTema para nivel académico (belongsTo)
-     */
     public function nivelAcademico(): BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'nivel_academico_id');
     }
 
-    /**
-     * Relación con FichaCaracterizacion (hasMany)
-     */
     public function fichas(): HasMany
     {
         return $this->hasMany(FichaCaracterizacion::class, 'instructor_id');
     }
 
-    /**
-     * Relación con InstructorFichaCaracterizacion (hasMany)
-     */
     public function instructorFichas(): HasMany
     {
         return $this->hasMany(InstructorFichaCaracterizacion::class, 'instructor_id');
@@ -186,362 +125,23 @@ class Instructor extends Model
         return $this->hasMany(AsignacionInstructor::class, 'instructor_id');
     }
 
-
-    /**
-     * Relación con User (hasOne)
-     */
     public function user(): HasOne
     {
         return $this->hasOne(User::class, 'persona_id', 'persona_id');
     }
 
-    /**
-     * Relación con el usuario que creó el instructor
-     */
     public function userCreated(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_create_id');
     }
 
-    /**
-     * Relación con el usuario que editó el instructor
-     */
     public function userEdited(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_edit_id');
     }
 
-    /**
-     * Relación con EntradaSalida (hasMany)
-     */
     public function entradaSalidas(): HasMany
     {
         return $this->hasMany(EntradaSalida::class, 'instructor_user_id', 'persona_id');
-    }
-
-    // SCOPES
-
-    /**
-     * Scope para instructores activos
-     */
-    public function scopeActivos(Builder $query): Builder
-    {
-        return $query->where('status', true);
-    }
-
-    /**
-     * Scope para instructores inactivos
-     */
-    public function scopeInactivos(Builder $query): Builder
-    {
-        return $query->where('status', false);
-    }
-
-    /**
-     * Scope para filtrar por regional
-     */
-    public function scopePorRegional(Builder $query, int $regionalId): Builder
-    {
-        return $query->where('regional_id', $regionalId);
-    }
-
-    /**
-     * Scope para buscar por nombre o documento
-     */
-    public function scopeBuscar(Builder $query, string $termino): Builder
-    {
-        return $query->whereHas('persona', function ($q) use ($termino) {
-            $q->where('primer_nombre', 'like', "%{$termino}%")
-              ->orWhere('segundo_nombre', 'like', "%{$termino}%")
-              ->orWhere('primer_apellido', 'like', "%{$termino}%")
-              ->orWhere('segundo_apellido', 'like', "%{$termino}%")
-              ->orWhere('numero_documento', 'like', "%{$termino}%")
-              ->orWhere('email', 'like', "%{$termino}%");
-        });
-    }
-
-    /**
-     * Scope para instructores con fichas asignadas
-     */
-    public function scopeConFichas(Builder $query): Builder
-    {
-        return $query->whereHas('fichas');
-    }
-
-    /**
-     * Scope para instructores sin fichas asignadas
-     */
-    public function scopeSinFichas(Builder $query): Builder
-    {
-        return $query->whereDoesntHave('fichas');
-    }
-
-    /**
-     * Scope para ordenar por nombre completo
-     */
-    public function scopeOrdenarPorNombre(Builder $query, string $direccion = 'asc'): Builder
-    {
-        return $query->join('personas', 'instructors.persona_id', '=', 'personas.id')
-                     ->orderBy('personas.primer_nombre', $direccion)
-                     ->orderBy('personas.primer_apellido', $direccion)
-                     ->select('instructors.*');
-    }
-
-    // MÉTODOS HELPER
-
-    /**
-     * Obtener el nombre completo del instructor
-     */
-    public function getNombreCompletoAttribute(): string
-    {
-        $persona = $this->persona;
-        if (!$persona) {
-            return 'Sin nombre';
-        }
-
-        $nombre = $persona->primer_nombre;
-        if ($persona->segundo_nombre) {
-            $nombre .= ' ' . $persona->segundo_nombre;
-        }
-        $nombre .= ' ' . $persona->primer_apellido;
-        if ($persona->segundo_apellido) {
-            $nombre .= ' ' . $persona->segundo_apellido;
-        }
-
-        return $nombre;
-    }
-
-    /**
-     * Obtener el número de documento del instructor
-     */
-    public function getNumeroDocumentoAttribute(): string
-    {
-        return $this->persona ? $this->persona->numero_documento : 'Sin documento';
-    }
-
-    /**
-     * Obtener el email del instructor
-     */
-    public function getEmailAttribute(): string
-    {
-        return $this->persona ? $this->persona->email : 'Sin email';
-    }
-
-    /**
-     * Calcular el total de horas asignadas al instructor
-     */
-    public function getTotalHorasAsignadasAttribute(): int
-    {
-        return $this->instructorFichas()->sum('total_horas_instructor') ?? 0;
-    }
-
-    /**
-     * Obtener el número de fichas asignadas
-     */
-    public function getNumeroFichasAsignadasAttribute(): int
-    {
-        return $this->fichas()->count();
-    }
-
-    /**
-     * Verificar si el instructor tiene fichas activas
-     */
-    public function tieneFichasActivas(): bool
-    {
-        return $this->fichas()->where('status', true)->exists();
-    }
-
-    /**
-     * Obtener las fichas activas del instructor
-     */
-    public function fichasActivas()
-    {
-        return $this->fichas()->where('status', true);
-    }
-
-    /**
-     * Calcular la edad del instructor
-     */
-    public function getEdadAttribute(): int
-    {
-        if (!$this->persona || !$this->persona->fecha_nacimiento) {
-            return 0;
-        }
-
-        try {
-            $fechaNacimiento = $this->persona->fecha_nacimiento;
-            
-            // Si ya es una instancia de Carbon, usarla directamente
-            if ($fechaNacimiento instanceof Carbon) {
-                return $fechaNacimiento->age;
-            }
-            
-            // Si es string, intentar parsear en diferentes formatos
-            if (is_string($fechaNacimiento)) {
-                // Intentar formato d/m/Y primero (formato común en español)
-                if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fechaNacimiento)) {
-                    return Carbon::createFromFormat('d/m/Y', $fechaNacimiento)->age;
-                }
-                // Si no, intentar formato estándar Y-m-d
-                return Carbon::parse($fechaNacimiento)->age;
-            }
-            
-            // Si es otro tipo, intentar parsear directamente
-            return Carbon::parse($fechaNacimiento)->age;
-        } catch (\Exception $e) {
-            Log::warning('Error al calcular edad del instructor', [
-                'instructor_id' => $this->id,
-                'fecha_nacimiento' => $this->persona->fecha_nacimiento ?? null,
-                'error' => $e->getMessage()
-            ]);
-            return 0;
-        }
-    }
-
-    /**
-     * Verificar si el instructor está disponible para nuevas asignaciones
-     */
-    public function estaDisponible(): bool
-    {
-        return $this->status && !$this->tieneFichasActivas();
-    }
-
-    /**
-     * Obtener el estado formateado
-     */
-    public function getEstadoFormateadoAttribute(): string
-    {
-        return $this->status ? 'ACTIVO' : 'INACTIVO';
-    }
-
-    /**
-     * Obtener la fecha de creación formateada
-     */
-    public function getFechaCreacionFormateadaAttribute(): string
-    {
-        return $this->created_at ? $this->created_at->format('d/m/Y H:i:s') : 'Sin fecha';
-    }
-
-    /**
-     * Obtener la fecha de actualización formateada
-     */
-    public function getFechaActualizacionFormateadaAttribute(): string
-    {
-        return $this->updated_at ? $this->updated_at->format('d/m/Y H:i:s') : 'Sin fecha';
-    }
-
-    /**
-     * Actualizar campos de caché para optimizar búsquedas
-     */
-    public function actualizarCache(): void
-    {
-        if ($this->persona) {
-            $this->numero_documento_cache = $this->persona->numero_documento;
-            $this->nombre_completo_cache = $this->getNombreCompletoAttribute();
-        }
-    }
-
-    /**
-     * Agregar especialidad al instructor
-     */
-    public function agregarEspecialidad(string $especialidad): void
-    {
-        $especialidades = $this->especialidades ?? [];
-        if (!in_array($especialidad, $especialidades)) {
-            $especialidades[] = $especialidad;
-            $this->especialidades = $especialidades;
-            $this->save();
-        }
-    }
-
-    /**
-     * Remover especialidad del instructor
-     */
-    public function removerEspecialidad(string $especialidad): void
-    {
-        $especialidades = $this->especialidades ?? [];
-        $especialidades = array_filter($especialidades, function($esp) use ($especialidad) {
-            return $esp !== $especialidad;
-        });
-        $this->especialidades = array_values($especialidades);
-        $this->save();
-    }
-
-    /**
-     * Agregar competencia al instructor
-     */
-    public function agregarCompetencia(string $competencia): void
-    {
-        $competencias = $this->competencias ?? [];
-        if (!in_array($competencia, $competencias)) {
-            $competencias[] = $competencia;
-            $this->competencias = $competencias;
-            $this->save();
-        }
-    }
-
-    /**
-     * Remover competencia del instructor
-     */
-    public function removerCompetencia(string $competencia): void
-    {
-        $competencias = $this->competencias ?? [];
-        $competencias = array_filter($competencias, function($comp) use ($competencia) {
-            return $comp !== $competencia;
-        });
-        $this->competencias = array_values($competencias);
-        $this->save();
-    }
-
-    /**
-     * Verificar si el instructor tiene una especialidad específica
-     */
-    public function tieneEspecialidad(string $especialidad): bool
-    {
-        return in_array($especialidad, $this->especialidades ?? []);
-    }
-
-    /**
-     * Verificar si el instructor tiene una competencia específica
-     */
-    public function tieneCompetencia(string $competencia): bool
-    {
-        return in_array($competencia, $this->competencias ?? []);
-    }
-
-    /**
-     * Obtener años de experiencia formateados
-     */
-    public function getAnosExperienciaFormateadosAttribute(): string
-    {
-        if (!$this->anos_experiencia) {
-            return 'Sin especificar';
-        }
-
-        return $this->anos_experiencia . ' año' . ($this->anos_experiencia > 1 ? 's' : '');
-    }
-
-    /**
-     * Scope para buscar por especialidad
-     */
-    public function scopePorEspecialidad(Builder $query, string $especialidad): Builder
-    {
-        return $query->whereJsonContains('especialidades', $especialidad);
-    }
-
-    /**
-     * Scope para buscar por competencia
-     */
-    public function scopePorCompetencia(Builder $query, string $competencia): Builder
-    {
-        return $query->whereJsonContains('competencias', $competencia);
-    }
-
-    /**
-     * Scope para filtrar por años de experiencia mínimos
-     */
-    public function scopeConExperienciaMinima(Builder $query, int $anosMinimos): Builder
-    {
-        return $query->where('anos_experiencia', '>=', $anosMinimos);
     }
 }

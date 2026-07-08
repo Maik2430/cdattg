@@ -23,7 +23,7 @@ class AprendizPolicy
     public function view(User $user, Aprendiz $aprendiz): bool
     {
         // Verificar permiso básico
-        if (!$user->can('VER APRENDIZ')) {
+        if (! $user->can('VER APRENDIZ')) {
             return false;
         }
 
@@ -51,7 +51,7 @@ class AprendizPolicy
     public function update(User $user, Aprendiz $aprendiz): bool
     {
         // Verificar permiso básico
-        if (!$user->can('EDITAR APRENDIZ')) {
+        if (! $user->can('EDITAR APRENDIZ')) {
             return false;
         }
 
@@ -71,7 +71,7 @@ class AprendizPolicy
     public function delete(User $user, Aprendiz $aprendiz): bool
     {
         // Verificar permiso básico
-        if (!$user->can('ELIMINAR APRENDIZ')) {
+        if (! $user->can('ELIMINAR APRENDIZ')) {
             return false;
         }
 
@@ -89,7 +89,7 @@ class AprendizPolicy
      */
     public function restore(User $user, Aprendiz $aprendiz): bool
     {
-        return $user->can('CREAR APRENDIZ') && !$user->hasRole('INSTRUCTOR');
+        return $user->can('CREAR APRENDIZ') && ! $user->hasRole('INSTRUCTOR');
     }
 
     /**
@@ -97,7 +97,7 @@ class AprendizPolicy
      */
     public function forceDelete(User $user, Aprendiz $aprendiz): bool
     {
-        return $user->can('ELIMINAR APRENDIZ') && !$user->hasRole('INSTRUCTOR');
+        return $user->can('ELIMINAR APRENDIZ') && ! $user->hasRole('INSTRUCTOR');
     }
 
     /**
@@ -108,7 +108,7 @@ class AprendizPolicy
         // Obtener el instructor asociado al usuario
         $instructor = $user->persona?->instructor;
 
-        if (!$instructor) {
+        if (! $instructor) {
             return false;
         }
 
@@ -145,4 +145,3 @@ class AprendizPolicy
         return null; // Continuar con las verificaciones normales
     }
 }
-

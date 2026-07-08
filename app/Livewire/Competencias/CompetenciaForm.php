@@ -2,20 +2,27 @@
 
 namespace App\Livewire\Competencias;
 
-use Livewire\Component;
 use App\Models\Competencia;
+use Livewire\Component;
 
 class CompetenciaForm extends Component
 {
     public $codigo;
+
     public $nombre;
+
     public $descripcion;
+
     public $duracion;
+
     public $fecha_inicio;
+
     public $fecha_fin;
+
     public $status = true;
-    
+
     public $isEdit = false;
+
     public $competenciaId;
 
     protected $rules = [
@@ -50,7 +57,7 @@ class CompetenciaForm extends Component
     {
         $this->isEdit = true;
         $this->competenciaId = $competenciaId;
-        
+
         $competencia = Competencia::find($competenciaId);
         $this->codigo = $competencia->codigo;
         $this->nombre = $competencia->nombre;
@@ -64,7 +71,7 @@ class CompetenciaForm extends Component
     public function save()
     {
         if ($this->isEdit) {
-            $this->rules['codigo'] = 'required|string|max:20|unique:competencias,codigo,' . $this->competenciaId;
+            $this->rules['codigo'] = 'required|string|max:20|unique:competencias,codigo,'.$this->competenciaId;
         }
 
         $this->validate();
@@ -86,7 +93,7 @@ class CompetenciaForm extends Component
 
                 $this->dispatch('notify', [
                     'type' => 'success',
-                    'message' => 'Competencia actualizada correctamente'
+                    'message' => 'Competencia actualizada correctamente',
                 ]);
                 $this->dispatch('competenciaActualizada');
             } else {
@@ -104,7 +111,7 @@ class CompetenciaForm extends Component
 
                 $this->dispatch('notify', [
                     'type' => 'success',
-                    'message' => 'Competencia creada correctamente'
+                    'message' => 'Competencia creada correctamente',
                 ]);
                 $this->dispatch('competenciaCreada');
             }
@@ -113,7 +120,7 @@ class CompetenciaForm extends Component
         } catch (\Exception $e) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al guardar la competencia: ' . $e->getMessage()
+                'message' => 'Error al guardar la competencia: '.$e->getMessage(),
             ]);
         }
     }

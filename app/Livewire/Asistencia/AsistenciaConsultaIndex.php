@@ -13,6 +13,7 @@ class AsistenciaConsultaIndex extends Component
     use WithPagination;
 
     public $search = '';
+
     public $perPage = 15;
 
     protected $queryString = [
@@ -50,8 +51,9 @@ class AsistenciaConsultaIndex extends Component
             ])
             ->withCount('asistenciaAprendices')
             ->when($isOnlyInstructor, function ($query) use ($instructorId) {
-                if (!$instructorId) {
+                if (! $instructorId) {
                     $query->whereRaw('1 = 0');
+
                     return;
                 }
 
@@ -69,14 +71,14 @@ class AsistenciaConsultaIndex extends Component
 
                 $query->where(function ($q) use ($search) {
                     $q->whereHas('instructorFicha', function ($sub) use ($search) {
-                        $sub->where('ficha', 'like', '%' . $search . '%')
+                        $sub->where('ficha', 'like', '%'.$search.'%')
                             ->orWhereHas('programaFormacion', function ($p) use ($search) {
-                                $p->where('nombre', 'like', '%' . $search . '%');
+                                $p->where('nombre', 'like', '%'.$search.'%');
                             })
                             ->orWhereHas('instructor.persona', function ($i) use ($search) {
-                                $i->where('numero_documento', 'like', '%' . $search . '%')
-                                    ->orWhere('primer_nombre', 'like', '%' . $search . '%')
-                                    ->orWhere('primer_apellido', 'like', '%' . $search . '%');
+                                $i->where('numero_documento', 'like', '%'.$search.'%')
+                                    ->orWhere('primer_nombre', 'like', '%'.$search.'%')
+                                    ->orWhere('primer_apellido', 'like', '%'.$search.'%');
                             });
                     });
                 });

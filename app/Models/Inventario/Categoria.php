@@ -11,7 +11,7 @@ class Categoria extends Parametro
 {
     protected $table = 'parametros';
 
-    protected static function booted() : void
+    protected static function booted(): void
     {
         static::creating(function ($categoria) {
             $categoria->name = strtoupper($categoria->name);
@@ -19,28 +19,28 @@ class Categoria extends Parametro
     }
 
     // Relación con el tema "CATEGORIAS".
-    public static function tema() : ?Tema
+    public static function tema(): ?Tema
     {
         return Tema::where('name', 'CATEGORIAS')->first();
     }
 
     // Guardar la categoria como parámetro asociado al tema "CATEGORIAS".
-    public function asociarATemaCategorias() : void
+    public function asociarATemaCategorias(): void
     {
         $tema = self::tema();
 
         if ($tema) {
             ParametroTema::create([
-                'parametro_id'  => $this->id,
-                'tema_id'       => $tema->id,
-                'status'        => 1,
-                'user_create_id'=> $this->user_create_id,
-                'user_edit_id'  => $this->user_edit_id,
+                'parametro_id' => $this->id,
+                'tema_id' => $tema->id,
+                'status' => 1,
+                'user_create_id' => $this->user_create_id,
+                'user_edit_id' => $this->user_edit_id,
             ]);
         }
     }
 
-    public function productos() : HasMany
+    public function productos(): HasMany
     {
         return $this->hasMany(Producto::class, 'categoria_id');
     }

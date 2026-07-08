@@ -8,9 +8,9 @@ use App\Exceptions\DevolucionException;
 use App\Traits\Seguimiento;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Devolucion extends Model
 {
@@ -26,7 +26,7 @@ class Devolucion extends Model
         'observaciones',
         'cierra_sin_stock',
         'user_create_id',
-        'user_update_id'
+        'user_update_id',
     ];
 
     protected $casts = [
@@ -34,9 +34,8 @@ class Devolucion extends Model
         'cierra_sin_stock' => 'boolean',
     ];
 
-
     // Relación con el detalle de orden
-    public function detalleOrden() : BelongsTo
+    public function detalleOrden(): BelongsTo
     {
         return $this->belongsTo(DetalleOrden::class, 'detalle_orden_id');
     }
@@ -99,7 +98,7 @@ class Devolucion extends Model
             throw new DevolucionException('Debes registrar el motivo del consumo total para cerrar sin devolución.');
         }
 
-        if (!$detalleOrden->producto->esConsumible()) {
+        if (! $detalleOrden->producto->esConsumible()) {
             throw new DevolucionException('Solo los productos consumibles pueden cerrarse sin devolución de stock.');
         }
     }
@@ -114,37 +113,35 @@ class Devolucion extends Model
             'observaciones' => $observacionesDepuradas,
             'cierra_sin_stock' => $esCierreSinStock,
             'user_create_id' => Auth::id(),
-            'user_update_id' => Auth::id()
+            'user_update_id' => Auth::id(),
         ]);
     }
 
     private static function procesarDevolucionStock(DetalleOrden $detalleOrden, bool $esCierreSinStock, int $cantidadDevuelta): void
     {
-        if (!$esCierreSinStock && $cantidadDevuelta > 0) {
+        if (! $esCierreSinStock && $cantidadDevuelta > 0) {
             $detalleOrden->producto->devolverStock($cantidadDevuelta);
         }
     }
 
-
     // Verificar si la devolución fue a tiempo
-    public function fueATiempo() : ?bool
+    public function fueATiempo(): ?bool
     {
         $fechaEsperada = $this->detalleOrden->orden->fecha_devolucion;
 
-        if (!$fechaEsperada) {
+        if (! $fechaEsperada) {
             return null;
         }
 
         return $this->fecha_devolucion->lte($fechaEsperada);
     }
 
-
-    //Obtener días de retraso en la devolución
-    public function getDiasRetraso() : int
+    // Obtener días de retraso en la devolución
+    public function getDiasRetraso(): int
     {
         $fechaEsperada = $this->detalleOrden->orden->fecha_devolucion;
 
-        if (!$fechaEsperada || $this->fueATiempo()) {
+        if (! $fechaEsperada || $this->fueATiempo()) {
             return 0;
         }
 
@@ -155,11 +152,12 @@ class Devolucion extends Model
 
         // Calcular días de retraso (siempre positivo)
         $dias = $this->fecha_devolucion->diffInDays($fechaEsperada, false);
+
         return (int) max(0, $dias);
     }
 
     // Alias para compatibilidad con el controlador
-    public function getDiasRetrasoDevolucion() : int
+    public function getDiasRetrasoDevolucion(): int
     {
         return $this->getDiasRetraso();
     }

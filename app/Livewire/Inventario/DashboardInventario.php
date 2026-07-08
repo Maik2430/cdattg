@@ -10,13 +10,21 @@ use Livewire\Component;
 class DashboardInventario extends Component
 {
     public int $totalProductos = 0;
+
     public int $productosConsumibles = 0;
+
     public int $productosNoConsumibles = 0;
+
     public int $productosPorVencer = 0;
+
     public int $productosStockBajo = 0;
+
     public int $totalCategorias = 0;
+
     public array $productosMasSolicitados = [];
+
     public array $productosPorCategoria = [];
+
     public array $productosRecientes = [];
 
     protected DashboardRepository $dashboardRepository;
@@ -61,4 +69,3 @@ class DashboardInventario extends Component
         return view('livewire.inventario.dashboard-inventario');
     }
 }
-

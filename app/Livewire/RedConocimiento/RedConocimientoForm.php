@@ -2,14 +2,15 @@
 
 namespace App\Livewire\RedConocimiento;
 
-use Livewire\Component;
 use App\Models\RedConocimiento;
 use App\Models\Regional;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 class RedConocimientoForm extends Component
 {
     public $redId = null;
+
     public $isEdit = false;
 
     #[Validate('required|string|max:255')]
@@ -54,33 +55,34 @@ class RedConocimientoForm extends Component
     {
         try {
             $validated = $this->validate();
-            
+
             // Validación manual de unicidad del nombre
             $existingRed = RedConocimiento::where('nombre', $validated['nombre'])->first();
-                
+
             if ($existingRed) {
                 $this->addError('nombre', 'El nombre ya está siendo utilizado por otra red.');
+
                 return;
             }
-            
+
             // FORZAR ESTADO ACTIVO POR DEFECTO
             $validated['status'] = true;
             $validated['user_create_id'] = auth()->id();
-            
+
             $red = RedConocimiento::create($validated);
-            
+
             $this->dispatch('notify', [
                 'type' => 'success',
                 'message' => 'Red de conocimiento creada correctamente',
             ]);
-            
+
             $this->dispatch('redCreada');
             $this->reset();
             $this->dispatch('closeModal');
         } catch (\Exception $e) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al crear la red: ' . $e->getMessage(),
+                'message' => 'Error al crear la red: '.$e->getMessage(),
             ]);
         }
     }
@@ -89,43 +91,45 @@ class RedConocimientoForm extends Component
     {
         try {
             $validated = $this->validate();
-            
+
             // Validación manual de unicidad del nombre
             $existingRed = RedConocimiento::where('nombre', $validated['nombre'])
                 ->where('id', '!=', $this->redId)
                 ->first();
-                
+
             if ($existingRed) {
                 $this->addError('nombre', 'El nombre ya está siendo utilizado por otra red.');
+
                 return;
             }
-            
+
             $red = RedConocimiento::find($this->redId);
-            if (!$red) {
+            if (! $red) {
                 $this->dispatch('notify', [
                     'type' => 'error',
                     'message' => 'Red de conocimiento no encontrada',
                 ]);
+
                 return;
             }
-            
+
             // Mantener el estado actual de la red (no forzar a true)
             $validated['user_edit_id'] = auth()->id();
-            
+
             $red->update($validated);
-            
+
             $this->dispatch('notify', [
                 'type' => 'success',
                 'message' => 'Red de conocimiento actualizada correctamente',
             ]);
-            
+
             $this->dispatch('redActualizada');
             $this->reset();
             $this->dispatch('closeModal');
         } catch (\Exception $e) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al actualizar la red: ' . $e->getMessage(),
+                'message' => 'Error al actualizar la red: '.$e->getMessage(),
             ]);
         }
     }
@@ -154,7 +158,7 @@ class RedConocimientoForm extends Component
         ];
 
         if ($this->isEdit && $this->redId) {
-            $rules['nombre'] = 'required|string|max:255|unique:red_conocimientos,nombre,' . $this->redId . ',id';
+            $rules['nombre'] = 'required|string|max:255|unique:red_conocimientos,nombre,'.$this->redId.',id';
         }
 
         return $rules;

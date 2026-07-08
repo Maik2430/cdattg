@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
 
 class AsistenciaAprendiz extends Model
 {
@@ -59,6 +59,7 @@ class AsistenciaAprendiz extends Model
 
     /**
      * Relación con AprendizFicha (deprecated - usar aprendiz() en su lugar)
+     *
      * @deprecated Usar aprendiz() en su lugar
      */
     public function aprendizFicha(): BelongsTo
@@ -88,7 +89,7 @@ class AsistenciaAprendiz extends Model
     public function scopeAdentro(Builder $query): Builder
     {
         return $query->whereNotNull('hora_ingreso')
-                    ->whereNull('hora_salida');
+            ->whereNull('hora_salida');
     }
 
     /**
@@ -96,7 +97,7 @@ class AsistenciaAprendiz extends Model
      */
     public function haIngresado(): bool
     {
-        return !is_null($this->hora_ingreso);
+        return ! is_null($this->hora_ingreso);
     }
 
     /**
@@ -104,7 +105,7 @@ class AsistenciaAprendiz extends Model
      */
     public function haSalido(): bool
     {
-        return !is_null($this->hora_salida);
+        return ! is_null($this->hora_salida);
     }
 
     /**
@@ -112,7 +113,7 @@ class AsistenciaAprendiz extends Model
      */
     public function estaAdentro(): bool
     {
-        return $this->haIngresado() && !$this->haSalido();
+        return $this->haIngresado() && ! $this->haSalido();
     }
 
     /**
@@ -125,6 +126,7 @@ class AsistenciaAprendiz extends Model
         }
 
         $this->update(['hora_ingreso' => now()]);
+
         return true;
     }
 
@@ -133,7 +135,7 @@ class AsistenciaAprendiz extends Model
      */
     public function marcarSalida(): bool
     {
-        if (!$this->haIngresado()) {
+        if (! $this->haIngresado()) {
             return false; // No ha ingresado
         }
 
@@ -142,6 +144,7 @@ class AsistenciaAprendiz extends Model
         }
 
         $this->update(['hora_salida' => now()]);
+
         return true;
     }
 
@@ -150,7 +153,7 @@ class AsistenciaAprendiz extends Model
      */
     public function getTiempoDentroAttribute(): string
     {
-        if (!$this->haIngresado()) {
+        if (! $this->haIngresado()) {
             return 'N/A';
         }
 

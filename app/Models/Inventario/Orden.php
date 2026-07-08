@@ -21,33 +21,32 @@ class Orden extends Model
         'fecha_devolucion',
         'estado_id',
         'user_create_id',
-        'user_update_id'
+        'user_update_id',
     ];
 
     protected $casts = [
-        'fecha_devolucion' => 'datetime'
+        'fecha_devolucion' => 'datetime',
     ];
 
-    public function tipoOrden() : BelongsTo
+    public function tipoOrden(): BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'tipo_orden_id');
     }
 
     // Relación con detalles de la orden
-    public function detalles() : HasMany
+    public function detalles(): HasMany
     {
         return $this->hasMany(DetalleOrden::class, 'orden_id');
     }
 
     // Verificar si es un préstamo
-    public function Prestamo() : bool
+    public function Prestamo(): bool
     {
         return $this->tipoOrden && strtoupper($this->tipoOrden->parametro->name ?? '') === 'PRÉSTAMO';
     }
 
-
     // Verificar si es una salida
-    public function Salida() : bool
+    public function Salida(): bool
     {
         return $this->tipoOrden && strtoupper($this->tipoOrden->parametro->name ?? '') === 'SALIDA';
     }

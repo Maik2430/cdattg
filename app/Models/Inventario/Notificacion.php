@@ -2,7 +2,6 @@
 
 namespace App\Models\Inventario;
 
-use Database\Factories\Inventario\NotificacionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Carbon;
@@ -10,6 +9,7 @@ use Illuminate\Support\Carbon;
 class Notificacion extends DatabaseNotification
 {
     use HasFactory;
+
     protected $table = 'notificaciones';
 
     public $timestamps = true;
@@ -55,7 +55,7 @@ class Notificacion extends DatabaseNotification
     /**
      * Laravel espera 'data' pero nuestra columna es 'datos'
      */
-    public function getDataAttribute() : array
+    public function getDataAttribute(): array
     {
         $datos = $this->attributes['datos'] ?? null;
 
@@ -69,16 +69,16 @@ class Notificacion extends DatabaseNotification
 
         // Si es JSON string, decodificarlo
         $decoded = is_string($datos) ? json_decode($datos, true) : null;
+
         return is_array($decoded) ? $decoded : [];
     }
 
-  
-    public function getTypeAttribute() : ?string
+    public function getTypeAttribute(): ?string
     {
         return $this->attributes['tipo'] ?? null;
     }
 
-    public function getReadAtAttribute() : ?Carbon
+    public function getReadAtAttribute(): ?Carbon
     {
         return $this->leida_en;
     }
@@ -86,7 +86,7 @@ class Notificacion extends DatabaseNotification
     /**
      * Marcar la notificación como leída
      */
-    public function markAsRead() : void
+    public function markAsRead(): void
     {
         if (is_null($this->leida_en)) {
             $this->forceFill(['leida_en' => $this->freshTimestamp()])->save();
@@ -96,9 +96,9 @@ class Notificacion extends DatabaseNotification
     /**
      * Marcar la notificación como no leída
      */
-    public function markAsUnread() : void
+    public function markAsUnread(): void
     {
-        if (!is_null($this->leida_en)) {
+        if (! is_null($this->leida_en)) {
             $this->forceFill(['leida_en' => null])->save();
         }
     }
@@ -106,7 +106,7 @@ class Notificacion extends DatabaseNotification
     /**
      * Determinar si la notificación ha sido leída
      */
-    public function read() : bool
+    public function read(): bool
     {
         return $this->leida_en !== null;
     }
@@ -114,7 +114,7 @@ class Notificacion extends DatabaseNotification
     /**
      * Determinar si la notificación no ha sido leída
      */
-    public function unread() : bool
+    public function unread(): bool
     {
         return $this->leida_en === null;
     }

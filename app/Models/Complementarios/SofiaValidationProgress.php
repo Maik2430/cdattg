@@ -73,7 +73,7 @@ class SofiaValidationProgress extends Model
      */
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             284 => 'Pendiente', // PENDING
             285 => 'Procesando', // PROCESSING
             286 => 'Completado', // COMPLETED

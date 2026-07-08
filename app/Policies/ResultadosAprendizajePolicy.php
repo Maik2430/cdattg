@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\ResultadosAprendizaje;
+use App\Models\User;
 
 class ResultadosAprendizajePolicy
 {
@@ -12,7 +12,7 @@ class ResultadosAprendizajePolicy
      */
     public function viewAny(User $user): bool
     {
-        if (!$user->can('VER RESULTADO APRENDIZAJE')) {
+        if (! $user->can('VER RESULTADO APRENDIZAJE')) {
             return false;
         }
 
@@ -32,7 +32,7 @@ class ResultadosAprendizajePolicy
      */
     public function view(User $user, ResultadosAprendizaje $resultadosAprendizaje): bool
     {
-        if (!$user->can('VER RESULTADO APRENDIZAJE')) {
+        if (! $user->can('VER RESULTADO APRENDIZAJE')) {
             return false;
         }
 
@@ -61,7 +61,7 @@ class ResultadosAprendizajePolicy
      */
     public function update(User $user, ResultadosAprendizaje $resultadosAprendizaje): bool
     {
-        if (!$user->can('EDITAR RESULTADO APRENDIZAJE')) {
+        if (! $user->can('EDITAR RESULTADO APRENDIZAJE')) {
             return false;
         }
 
@@ -81,7 +81,7 @@ class ResultadosAprendizajePolicy
      */
     public function delete(User $user, ResultadosAprendizaje $resultadosAprendizaje): bool
     {
-        if (!$user->can('ELIMINAR RESULTADO APRENDIZAJE')) {
+        if (! $user->can('ELIMINAR RESULTADO APRENDIZAJE')) {
             return false;
         }
 
@@ -119,7 +119,7 @@ class ResultadosAprendizajePolicy
      */
     public function cambiarEstado(User $user, ResultadosAprendizaje $resultadosAprendizaje): bool
     {
-        if (!$user->can('EDITAR RESULTADO APRENDIZAJE')) {
+        if (! $user->can('EDITAR RESULTADO APRENDIZAJE')) {
             return false;
         }
 
@@ -139,7 +139,7 @@ class ResultadosAprendizajePolicy
      */
     public function gestionarCompetencias(User $user, ResultadosAprendizaje $resultadosAprendizaje): bool
     {
-        if (!$user->can('EDITAR RESULTADO APRENDIZAJE')) {
+        if (! $user->can('EDITAR RESULTADO APRENDIZAJE')) {
             return false;
         }
 

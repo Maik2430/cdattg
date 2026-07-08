@@ -90,9 +90,9 @@ class RedConocimiento extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('nombre', 'LIKE', "%{$search}%")
-              ->orWhereHas('regional', function ($subQuery) use ($search) {
-                  $subQuery->where('nombre', 'LIKE', "%{$search}%");
-              });
+                ->orWhereHas('regional', function ($subQuery) use ($search) {
+                    $subQuery->where('nombre', 'LIKE', "%{$search}%");
+                });
         });
     }
 }

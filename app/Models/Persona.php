@@ -2,31 +2,35 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Models\Concerns\Persona\BuildsPersonaAttributes;
+use App\Models\Concerns\Persona\BuildsPersonaCaracterizacionAttributes;
+use App\Models\Concerns\Persona\BuildsPersonaEstadoSofiaAttributes;
+use App\Models\Concerns\Persona\ChecksPersonaRoles;
+use App\Models\Concerns\Persona\SyncsPersonaLifecycle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\PersonaContactAlert;
-use App\Models\FichaCaracterizacion;
-use App\Models\Parametro;
-use App\Models\Tema;
-use App\Models\ParametroTema;
 
+/**
+ * @property-read User|null $user
+ * @property-read Parametro|null $tipoDocumento
+ * @property-read Parametro|null $tipoGenero
+ * @property-read Pais|null $pais
+ * @property-read Departamento|null $departamento
+ * @property-read Municipio|null $municipio
+ * @property-read Instructor|null $instructor
+ */
 class Persona extends Model
 {
+    use BuildsPersonaAttributes, ChecksPersonaRoles, SyncsPersonaLifecycle;
+    use BuildsPersonaCaracterizacionAttributes, BuildsPersonaEstadoSofiaAttributes;
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * Los atributos asignables.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'tipo_documento',
         'numero_documento',
@@ -52,77 +56,22 @@ class Persona extends Model
         'nivel_escolaridad_id',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($persona) {
-            // Establecer estado_sofia por defecto si no se especifica (NO REGISTRADO = 277)
-            if (!isset($persona->estado_sofia) || $persona->estado_sofia === null) {
-                $noRegistrado = Parametro::find(277);
-                if ($noRegistrado) {
-                    $persona->estado_sofia = $noRegistrado->id;
-                }
-            }
-        });
-
-        static::saving(function ($persona) {
-            $persona->primer_nombre = strtoupper($persona->primer_nombre);
-            $persona->segundo_nombre = strtoupper($persona->segundo_nombre);
-            $persona->primer_apellido = strtoupper($persona->primer_apellido);
-            $persona->segundo_apellido = strtoupper($persona->segundo_apellido);
-            $persona->direccion = strtoupper($persona->direccion);
-
-            // Sincronizar email con el usuario relacionado si existe
-            if ($persona->isDirty('email') && Schema::hasTable('users')) {
-                // Obtener el nuevo valor del email desde los atributos (no del accessor)
-                $newEmail = $persona->getAttributes()['email'] ?? $persona->getOriginal('email');
-
-                // Buscar si existe un usuario relacionado
-                try {
-                    $user = DB::table('users')->where('persona_id', $persona->id)->first();
-                    if ($user) {
-                        // Usar DB directo para evitar loops infinitos
-                        DB::table('users')
-                            ->where('persona_id', $persona->id)
-                            ->update(['email' => $newEmail]);
-                    }
-                } catch (\Exception $e) {
-                    // Si hay error (tabla no existe, etc.), simplemente continuar
-                }
-            }
-        });
-
-        // Eliminar usuario asociado antes de eliminar la persona
-        static::deleting(function ($persona) {
-            if (Schema::hasTable('users')) {
-                try {
-                    if ($persona->user) {
-                        $persona->user->delete();
-                    }
-                } catch (\Exception $e) {
-                    // Si hay error, simplemente continuar
-                }
-            }
-        });
-    }
-
-    public function user()
+    public function user(): HasOne
     {
         return $this->hasOne(User::class, 'persona_id');
     }
 
-    public function tipoDocumento()
+    public function tipoDocumento(): BelongsTo
     {
         return $this->belongsTo(Parametro::class, 'tipo_documento');
     }
 
-    public function tipoGenero()
+    public function tipoGenero(): BelongsTo
     {
         return $this->belongsTo(Parametro::class, 'genero');
     }
 
-    public function instructor()
+    public function instructor(): HasOne
     {
         return $this->hasOne(Instructor::class);
     }
@@ -132,250 +81,52 @@ class Persona extends Model
         return $this->hasOne(\App\Models\Inventario\Proveedor::class);
     }
 
-    public function esProveedor(): bool
-    {
-        return $this->proveedor()->exists();
-    }
-
-    public function caracterizacionProgramas()
+    public function caracterizacionProgramas(): HasMany
     {
         return $this->hasMany(FichaCaracterizacion::class, 'instructor_id');
     }
 
-    public function pais()
+    public function pais(): BelongsTo
     {
         return $this->belongsTo(Pais::class);
     }
 
-    public function departamento()
+    public function departamento(): BelongsTo
     {
         return $this->belongsTo(Departamento::class);
     }
 
-    public function municipio()
+    public function municipio(): BelongsTo
     {
         return $this->belongsTo(Municipio::class);
     }
 
-    /**
-     * Relación con la caracterización principal asociada a la persona.
-     *
-     * Nota: Aunque las caracterizaciones adicionales se gestionan mediante la
-     * tabla pivote `persona_caracterizacion`, algunas vistas todavía consultan
-     * la relación singular `caracterizacion`. Para mantener compatibilidad,
-     * se usa la columna `parametro_id` como referencia.
-     */
+    /** Caracterización principal vía `parametro_id` (compatibilidad con vistas legacy). */
     public function caracterizacion(): BelongsTo
     {
         return $this->belongsTo(Parametro::class, 'parametro_id');
     }
 
-    /**
-     * Relación One-to-One con Aprendiz.
-     * Una persona puede ser un aprendiz.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function aprendiz()
+    public function aprendiz(): HasOne
     {
         return $this->hasOne(Aprendiz::class, 'persona_id');
     }
 
-    /**
-     * Verifica si la persona es un aprendiz.
-     *
-     * @return bool
-     */
-    public function esAprendiz(): bool
-    {
-        return $this->aprendiz()->exists();
-    }
-
-    /**
-     * Verifica si la persona es un aprendiz activo.
-     *
-     * @return bool
-     */
-    public function esAprendizActivo(): bool
-    {
-        return $this->aprendiz()->where('estado', 1)->exists();
-    }
-
-    /**
-     * Verifica si la persona tiene un rol específico.
-     *
-     * @param string $role
-     * @return bool
-     */
-    public function hasRole(string $role): bool
-    {
-        if (!$this->user) {
-            return false;
-        }
-
-        return $this->user->hasRole(strtoupper($role));
-    }
-
-    /**
-     * Verifica si la persona es instructor.
-     *
-     * @return bool
-     */
-    public function esInstructor(): bool
-    {
-        return $this->instructor()->exists();
-    }
-
-
-    /**
-     * Verifica si la persona tiene el rol de APRENDIZ.
-     *
-     * @return bool
-     */
-    public function tieneRolAprendiz(): bool
-    {
-        if (!$this->user) {
-            return false;
-        }
-
-        return $this->user->hasRole('APRENDIZ');
-    }
-
-    /**
-     * Accesor para obtener el nombre completo de la persona.
-     *
-     * @return string
-     */
-    public function getNombreCompletoAttribute()
-    {
-        // Usa array_filter para omitir valores vacíos y join para unirlos con espacios
-        $nombres = [
-            $this->primer_nombre,
-            $this->segundo_nombre,
-            $this->primer_apellido,
-            $this->segundo_apellido
-        ];
-        return trim(implode(' ', array_filter($nombres)));
-    }
-
-    /**
-     * Accesor para calcular la edad a partir de la fecha de nacimiento.
-     *
-     * @return int
-     */
-    public function getEdadAttribute()
-    {
-        return Carbon::parse($this->fecha_nacimiento)->age;
-    }
-
-    /**
-     * Accesor para obtener el email.
-     * Prioriza el email del usuario relacionado si existe, sino usa el de la persona.
-     *
-     * @param string|null $value
-     * @return string|null
-     */
-    public function getEmailAttribute($value)
-    {
-        // Solo consultar users si la tabla existe
-        if (!Schema::hasTable('users')) {
-            return $value;
-        }
-
-        // Si hay un usuario relacionado y está cargado, usar su email (fuente de verdad)
-        if ($this->relationLoaded('user') && $this->user) {
-            return $this->user->email;
-        }
-
-        // Si la relación no está cargada, verificar si existe un usuario
-        if (!$this->relationLoaded('user')) {
-            try {
-                $user = $this->user;
-                if ($user) {
-                    return $user->email;
-                }
-            } catch (\Exception $e) {
-                // Si hay error al consultar, usar el valor de la tabla personas
-                return $value;
-            }
-        }
-
-        // Fallback al email de la tabla personas (para compatibilidad con personas sin usuario)
-        return $value;
-    }
-
-    /**
-     * Relación con el parámetro de estado Sofia.
-     */
     public function estadoSofiaParametro(): BelongsTo
     {
         return $this->belongsTo(Parametro::class, 'estado_sofia');
     }
 
-    /**
-     * Accesor para obtener la etiqueta del estado de SenaSofiaPlus.
-     * Obtiene el parámetro desde parametros_temas relacionado con el tema "ESTADOS SOFIA".
-     *
-     * @return string
-     */
-    public function getEstadoSofiaLabelAttribute()
-    {
-        $label = 'Desconocido';
-
-        if ($this->estado_sofia &&
-            ($parametro = $this->estadoSofiaParametro) &&
-            ($temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first()) &&
-            ParametroTema::where('tema_id', $temaEstados->id)
-                ->where('parametro_id', $parametro->id)
-                ->where('status', 1)
-                ->exists()) {
-            $label = $parametro->name;
-        }
-
-        return $label;
-    }
-
-    /**
-     * Accesor para obtener la clase CSS del badge del estado de SenaSofiaPlus.
-     * Obtiene el parámetro desde parametros_temas relacionado con el tema "ESTADOS SOFIA".
-     *
-     * @return string
-     */
-    public function getEstadoSofiaBadgeClassAttribute()
-    {
-        $badgeClass = 'bg-dark';
-
-        if ($this->estado_sofia &&
-            ($parametro = $this->estadoSofiaParametro) &&
-            ($temaEstados = Tema::where('name', 'ESTADOS SOFIA')->first()) &&
-            ParametroTema::where('tema_id', $temaEstados->id)
-                ->where('parametro_id', $parametro->id)
-                ->where('status', 1)
-                ->exists()) {
-            $badgeClass = match (strtoupper($parametro->name)) {
-                'NO REGISTRADO' => 'bg-danger',
-                'REGISTRADO' => 'bg-success',
-                'REQUIERE CAMBIO' => 'bg-warning',
-                default => 'bg-dark'
-            };
-        }
-
-        return $badgeClass;
-    }
-
-    public function userCreatedBy()
+    public function userCreatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_create_id');
     }
 
-    public function userUpdatedBy()
+    public function userUpdatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_edit_id');
     }
 
-    /**
-     * Relación con el parámetro de caracterización.
-     */
     public function parametroCaracterizacion(): BelongsTo
     {
         return $this->belongsTo(Parametro::class, 'parametro_id');
@@ -383,38 +134,15 @@ class Persona extends Model
 
     public function caracterizacionesComplementarias(): BelongsToMany
     {
-        return $this->belongsToMany(
-            Parametro::class,
-            'persona_caracterizacion',
-            'persona_id',
-            'parametro_id'
-        )->withTimestamps();
+        return $this->belongsToMany(Parametro::class, 'persona_caracterizacion', 'persona_id', 'parametro_id')
+            ->withTimestamps();
     }
 
-    public function getCaracterizacionesComplementariasNombresAttribute(): array
-    {
-        return $this->caracterizacionesComplementarias
-            ->pluck('nombre')
-            ->filter()
-            ->values()
-            ->all();
-    }
-
-    public function getCaracterizacionesComplementariasTextoAttribute(): string
-    {
-        $nombres = $this->caracterizaciones_complementarias_nombres;
-
-        return $nombres ? implode(', ', $nombres) : '';
-    }
-
-    public function contactAlerts()
+    public function contactAlerts(): HasMany
     {
         return $this->hasMany(PersonaContactAlert::class);
     }
 
-    /**
-     * Relación con el nivel de escolaridad.
-     */
     public function nivelEscolaridad(): BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'nivel_escolaridad_id');

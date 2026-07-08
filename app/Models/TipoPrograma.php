@@ -11,7 +11,6 @@ class TipoPrograma extends Model
 
     protected $table = 'tipos_programas';
 
-
     public function programasFormacion()
     {
         return $this->hasMany(ProgramaFormacion::class);
@@ -21,5 +20,4 @@ class TipoPrograma extends Model
     {
         return $this->belongsTo(ProgramaFormacion::class);
     }
-
 }

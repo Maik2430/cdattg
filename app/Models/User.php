@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Concerns\User\BuildsUserAttributes;
+use App\Models\Concerns\User\HasUserAuthNotifications;
+use App\Models\Concerns\User\HasUserNotifications;
+use App\Models\Concerns\User\HasUserRelations;
+use App\Models\Concerns\User\SyncsUserEmailWithPersona;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use App\Models\Inventario\Notificacion;
-use App\Notifications\VerifyEmailNotification;
-use App\Notifications\ResetPasswordNotification;
 
 /**
  * Modelo User
@@ -23,38 +24,24 @@ use App\Notifications\ResetPasswordNotification;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, MustVerifyEmailTrait;
-
-    /**
-     * Especificar la tabla de notificaciones personalizada
-     */
-    public function notifications()
-    {
-        return $this->morphMany(Notificacion::class, 'notificable', 'notificable_type', 'notificable_id')
-            ->orderBy('created_at', 'desc');
+    use BuildsUserAttributes;
+    use HasApiTokens, HasFactory, HasRoles;
+    use HasUserAuthNotifications, MustVerifyEmailTrait {
+        HasUserAuthNotifications::sendEmailVerificationNotification insteadof MustVerifyEmailTrait;
     }
-
-    /**
-     * Obtener las notificaciones leídas de la entidad.
-     */
-    public function readNotifications()
-    {
-        return $this->notifications()->whereNotNull('leida_en');
+    use HasUserNotifications, Notifiable {
+        HasUserNotifications::notifications insteadof Notifiable;
+        HasUserNotifications::readNotifications insteadof Notifiable;
+        HasUserNotifications::unreadNotifications insteadof Notifiable;
     }
-
-    /**
-     * Obtener las notificaciones no leídas de la entidad.
-     */
-    public function unreadNotifications()
-    {
-        return $this->notifications()->whereNull('leida_en');
-    }
+    use HasUserRelations;
+    use SyncsUserEmailWithPersona;
 
     protected $fillable = [
         'email',
         'password',
         'status',
-        'persona_id'
+        'persona_id',
     ];
 
     /**
@@ -76,126 +63,4 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    /**
-     * Boot del modelo para sincronizar email con persona
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        // Sincronizar email con persona al crear o actualizar
-        static::saving(function ($user) {
-            // Si el email cambió y hay una persona relacionada, sincronizar
-            if ($user->isDirty('email') && $user->persona_id) {
-                // Usar DB directo para evitar loops infinitos
-                DB::table('personas')
-                    ->where('id', $user->persona_id)
-                    ->update(['email' => $user->email]);
-            }
-        });
-    }
-
-    public function persona()
-    {
-        return $this->belongsTo(Persona::class, 'persona_id');
-    }
-
-    // accesor para obtener el nombre completo del usuario
-    public function getNameAttribute()
-    {
-        if ($this->persona) {
-            $nombre = trim($this->persona->primer_nombre . ' ' . $this->persona->segundo_nombre);
-            $apellido = trim($this->persona->primer_apellido . ' ' . $this->persona->segundo_apellido);
-            return trim($nombre . ' ' . $apellido);
-        }
-        return 'Usuario sin nombre';
-    }
-
-    public function entradaSalida()
-    {
-        return $this->hasMany(EntradaSalida::class);
-    }
-
-    // relación de bloques y usuario
-    public function bloqueCreated()
-    {
-        return $this->hasMany(Bloque::class, 'user_create_id');
-    }
-
-    public function bloqueEdited()
-    {
-        return $this->hasMany(Bloque::class, 'user_edit_id');
-    }
-
-    // relación de sedes y usuario
-    public function sedeCreated()
-    {
-        return $this->hasMany(Sede::class);
-    }
-
-    public function sedeEdited()
-    {
-        return $this->hasMany(Sede::class);
-    }
-
-    // relacion  entre piso y usuario
-    public function pisoCreated()
-    {
-        return $this->hasMany(Piso::class, 'user_create_id');
-    }
-
-    public function pisoEdited()
-    {
-        return $this->hasMany(Piso::class, 'user_edit_id');
-    }
-
-    // relacion  entre ambiente y usuario
-    public function ambienteCreated()
-    {
-        return $this->hasMany(Ambiente::class, 'user_create_id');
-    }
-
-    public function ambienteEdited()
-    {
-        return $this->hasMany(Ambiente::class, 'user_edit_id');
-    }
-
-    public function parametrosCreated()
-    {
-        return $this->hasMany(Parametro::class, 'user_create_id');
-    }
-
-    // relacion e sedes y usuario
-    public function fichaCaracterizacionCreate()
-    {
-        return $this->hasMany(FichaCaracterizacion::class);
-    }
-
-    public function fichaCaracerizacionEdit()
-    {
-        return $this->hasMany(FichaCaracterizacion::class);
-    }
-
-    /**
-     * Send the email verification notification.
-     *
-     * @return void
-     */
-    public function sendEmailVerificationNotification()
-    {
-        $this->notify(new VerifyEmailNotification);
-    }
-
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     * @return void
-     */
-    public function sendPasswordResetNotification($token)
-    {
-        $this->notify(new ResetPasswordNotification($token));
-    }
-
 }

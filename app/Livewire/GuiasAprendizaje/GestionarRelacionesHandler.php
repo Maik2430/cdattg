@@ -2,16 +2,20 @@
 
 namespace App\Livewire\GuiasAprendizaje;
 
-use Livewire\Component;
 use App\Models\GuiasAprendizaje;
 use App\Models\ResultadosAprendizaje;
+use Livewire\Component;
 
 class GestionarRelacionesHandler extends Component
 {
     public $guia;
+
     public $resultadosDisponibles;
+
     public $resultadosAsignados;
+
     public $searchDisponible = '';
+
     public $searchAsignado = '';
 
     protected $listeners = [
@@ -34,8 +38,8 @@ class GestionarRelacionesHandler extends Component
 
         if ($this->searchDisponible) {
             $queryDisponibles->where(function ($q) {
-                $q->where('codigo', 'like', '%' . $this->searchDisponible . '%')
-                  ->orWhere('nombre', 'like', '%' . $this->searchDisponible . '%');
+                $q->where('codigo', 'like', '%'.$this->searchDisponible.'%')
+                    ->orWhere('nombre', 'like', '%'.$this->searchDisponible.'%');
             });
         }
 
@@ -46,8 +50,8 @@ class GestionarRelacionesHandler extends Component
 
         if ($this->searchAsignado) {
             $queryAsignados->where(function ($q) {
-                $q->where('codigo', 'like', '%' . $this->searchAsignado . '%')
-                  ->orWhere('nombre', 'like', '%' . $this->searchAsignado . '%');
+                $q->where('codigo', 'like', '%'.$this->searchAsignado.'%')
+                    ->orWhere('nombre', 'like', '%'.$this->searchAsignado.'%');
             });
         }
 
@@ -68,12 +72,13 @@ class GestionarRelacionesHandler extends Component
     {
         try {
             $resultado = ResultadosAprendizaje::find($resultadoId);
-            
-            if (!$resultado) {
+
+            if (! $resultado) {
                 $this->dispatch('notify', [
                     'type' => 'error',
                     'message' => 'Resultado de aprendizaje no encontrado',
                 ]);
+
                 return;
             }
 
@@ -83,6 +88,7 @@ class GestionarRelacionesHandler extends Component
                     'type' => 'warning',
                     'message' => 'El resultado ya está asignado a esta guía',
                 ]);
+
                 return;
             }
 
@@ -104,7 +110,7 @@ class GestionarRelacionesHandler extends Component
         } catch (\Exception $e) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al asignar resultado: ' . $e->getMessage(),
+                'message' => 'Error al asignar resultado: '.$e->getMessage(),
             ]);
         }
     }
@@ -113,21 +119,23 @@ class GestionarRelacionesHandler extends Component
     {
         try {
             $resultado = ResultadosAprendizaje::find($resultadoId);
-            
-            if (!$resultado) {
+
+            if (! $resultado) {
                 $this->dispatch('notify', [
                     'type' => 'error',
                     'message' => 'Resultado de aprendizaje no encontrado',
                 ]);
+
                 return;
             }
 
             // Verificar si está asignado
-            if (!$this->guia->resultadosAprendizaje()->where('resultados_aprendizaje.id', $resultadoId)->exists()) {
+            if (! $this->guia->resultadosAprendizaje()->where('resultados_aprendizaje.id', $resultadoId)->exists()) {
                 $this->dispatch('notify', [
                     'type' => 'warning',
                     'message' => 'El resultado no está asignado a esta guía',
                 ]);
+
                 return;
             }
 
@@ -145,7 +153,7 @@ class GestionarRelacionesHandler extends Component
         } catch (\Exception $e) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al desasociar resultado: ' . $e->getMessage(),
+                'message' => 'Error al desasociar resultado: '.$e->getMessage(),
             ]);
         }
     }

@@ -17,22 +17,21 @@ class Aprobacion extends Model
         'detalle_orden_id',
         'estado_aprobacion_id',
         'user_create_id',
-        'user_update_id'
+        'user_update_id',
     ];
 
-    public function detalleOrden() : BelongsTo
+    public function detalleOrden(): BelongsTo
     {
         return $this->belongsTo(DetalleOrden::class, 'detalle_orden_id');
     }
 
-    public function estado() : BelongsTo
+    public function estado(): BelongsTo
     {
         return $this->belongsTo(\App\Models\ParametroTema::class, 'estado_aprobacion_id');
     }
 
-    public function aprobador() : BelongsTo
+    public function aprobador(): BelongsTo
     {
         return $this->belongsTo(\App\Models\User::class, 'user_update_id');
     }
-
 }

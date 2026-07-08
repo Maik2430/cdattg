@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -10,6 +11,7 @@ use Illuminate\Support\Str;
 class Municipio extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'municipio',
         'departamento_id',
@@ -31,7 +33,6 @@ class Municipio extends Model
     {
         return $this->belongsTo(Departamento::class);
     }
-
 
     /**
      * Relación: Un municipio pertenece a una regional.

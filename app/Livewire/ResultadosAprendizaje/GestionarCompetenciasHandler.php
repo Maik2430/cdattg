@@ -2,15 +2,18 @@
 
 namespace App\Livewire\ResultadosAprendizaje;
 
-use Livewire\Component;
-use App\Models\ResultadosAprendizaje;
 use App\Models\Competencia;
+use App\Models\ResultadosAprendizaje;
+use Livewire\Component;
 
 class GestionarCompetenciasHandler extends Component
 {
     public $resultadoId;
+
     public $resultado;
+
     public $competenciasAsignadas;
+
     public $competenciasDisponibles;
 
     protected $listeners = [
@@ -35,18 +38,18 @@ class GestionarCompetenciasHandler extends Component
                     $this->desasociarCompetencia($params);
                     break;
             }
-            
+
             // 🔥 CLAVE: Refrescar datos después de modificar BD
             $this->refreshData();
-            
+
             $this->dispatch('notify', [
                 'type' => 'success',
-                'message' => 'Operación completada correctamente'
+                'message' => 'Operación completada correctamente',
             ]);
         } catch (\Exception $e) {
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Error al ejecutar la acción: ' . $e->getMessage()
+                'message' => 'Error al ejecutar la acción: '.$e->getMessage(),
             ]);
         }
     }
@@ -54,7 +57,7 @@ class GestionarCompetenciasHandler extends Component
     public function asignarCompetencia($competenciaId)
     {
         $resultado = ResultadosAprendizaje::findOrFail($this->resultadoId);
-        
+
         $resultado->competencias()->attach($competenciaId, [
             'user_create_id' => auth()->id(),
             'user_edit_id' => auth()->id(),
@@ -64,7 +67,7 @@ class GestionarCompetenciasHandler extends Component
     public function desasociarCompetencia($competenciaId)
     {
         $resultado = ResultadosAprendizaje::findOrFail($this->resultadoId);
-        
+
         $resultado->competencias()->detach($competenciaId);
     }
 
@@ -75,7 +78,7 @@ class GestionarCompetenciasHandler extends Component
     {
         $this->resultado = ResultadosAprendizaje::findOrFail($this->resultadoId);
         $this->competenciasAsignadas = $this->resultado->competencias()->get();
-        
+
         $this->competenciasDisponibles = Competencia::whereNotIn('id', $this->competenciasAsignadas->pluck('id'))
             ->orderBy('nombre')
             ->get();

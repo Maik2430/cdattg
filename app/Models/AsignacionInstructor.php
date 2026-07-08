@@ -44,4 +44,3 @@ class AsignacionInstructor extends Model
         )->withTimestamps();
     }
 }
-

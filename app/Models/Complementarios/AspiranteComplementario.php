@@ -70,7 +70,7 @@ class AspiranteComplementario extends Model
      */
     public function getEstadoLabelAttribute(): string
     {
-        return match($this->estado) {
+        return match ($this->estado) {
             1 => 'En proceso',
             3 => 'Admitido',
             4 => 'Rechazado',

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Piso extends Model
 {
     use HasFactory;
+
     protected $fillable = ['piso', 'bloque_id', 'user_create_id', 'user_edit_id', 'status'];
 
     protected static function boot()
@@ -23,6 +24,7 @@ class Piso extends Model
     {
         return $this->belongsTo(Bloque::class);
     }
+
     public function ambientes()
     {
         return $this->hasMany(Ambiente::class, 'piso_id');

@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Evidencias extends Model
 {
     protected $table = 'evidencias';
-    
+
     protected $fillable = [
         'codigo',
         'nombre',
@@ -66,8 +65,8 @@ class Evidencias extends Model
     public function guiasAprendizaje()
     {
         return $this->belongsToMany(GuiasAprendizaje::class, 'evidencia_guia_aprendizaje', 'evidencia_id', 'guia_aprendizaje_id')
-                    ->withPivot('user_create_id', 'user_edit_id')
-                    ->withTimestamps();
+            ->withPivot('user_create_id', 'user_edit_id')
+            ->withTimestamps();
     }
 
     /**

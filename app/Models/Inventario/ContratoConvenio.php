@@ -16,7 +16,7 @@ class ContratoConvenio extends Model
 
     protected $table = 'contratos_convenios';
 
-    protected static function booted() : void
+    protected static function booted(): void
     {
         static::creating(function ($contrato) {
             $contrato->name = strtoupper($contrato->name);
@@ -35,28 +35,28 @@ class ContratoConvenio extends Model
         'fecha_inicio',
         'fecha_fin',
         'user_create_id',
-        'user_update_id'
+        'user_update_id',
     ];
 
     protected $dates = [
         'fecha_inicio',
-        'fecha_fin'
+        'fecha_fin',
     ];
 
     // Relación con el proveedor
-    public function proveedor() : BelongsTo
+    public function proveedor(): BelongsTo
     {
         return $this->belongsTo(Proveedor::class);
     }
 
     // Relación con el estado
-    public function estado() : BelongsTo
+    public function estado(): BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'estado_id');
     }
 
     // Relación con productos
-    public function productos() : HasMany
+    public function productos(): HasMany
     {
         return $this->hasMany(Producto::class);
     }

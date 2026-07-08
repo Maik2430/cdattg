@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Ambiente extends Model
 {
     use HasFactory;
-    protected $fillable = ['title','piso_id', 'user_create_id', 'user_edit_id', 'status'];
+
+    protected $fillable = ['title', 'piso_id', 'user_create_id', 'user_edit_id', 'status'];
 
     protected static function boot()
     {
@@ -33,6 +34,7 @@ class Ambiente extends Model
     {
         return $this->belongsTo(User::class, 'user_edit_id');
     }
+
     public function fichaCaracterizacion()
     {
         return $this->hasMany(FichaCaracterizacion::class, 'ambiente_id');

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use PhpParser\Node\Expr\FuncCall;
 
 class EntradaSalida extends Model
 {
@@ -18,14 +17,16 @@ class EntradaSalida extends Model
         'salida',
         'ficha_caracterizacion_id',
         'listado',
-        'ambiente_id'
+        'ambiente_id',
     ];
 
     public function instructor()
     {
         return $this->belongsTo(User::class, 'instructor_user_id');
     }
-    public function fichaCaracterizacion(){
+
+    public function fichaCaracterizacion()
+    {
         return $this->belongsTo(FichaCaracterizacion::class);
     }
 }

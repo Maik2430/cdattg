@@ -20,7 +20,7 @@ class ProveedorContacto extends Model
         'telefono',
         'email',
         'user_create_id',
-        'user_update_id'
+        'user_update_id',
     ];
 
     /**

@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Competencia;
+use App\Models\User;
 
 class CompetenciaPolicy
 {
@@ -12,7 +12,7 @@ class CompetenciaPolicy
      */
     public function viewAny(User $user): bool
     {
-        if (!$user->can('VER COMPETENCIA')) {
+        if (! $user->can('VER COMPETENCIA')) {
             return false;
         }
 
@@ -32,7 +32,7 @@ class CompetenciaPolicy
      */
     public function view(User $user, Competencia $competencia): bool
     {
-        if (!$user->can('VER COMPETENCIA')) {
+        if (! $user->can('VER COMPETENCIA')) {
             return false;
         }
 
@@ -61,7 +61,7 @@ class CompetenciaPolicy
      */
     public function update(User $user, Competencia $competencia): bool
     {
-        if (!$user->can('EDITAR COMPETENCIA')) {
+        if (! $user->can('EDITAR COMPETENCIA')) {
             return false;
         }
 
@@ -81,7 +81,7 @@ class CompetenciaPolicy
      */
     public function delete(User $user, Competencia $competencia): bool
     {
-        if (!$user->can('ELIMINAR COMPETENCIA')) {
+        if (! $user->can('ELIMINAR COMPETENCIA')) {
             return false;
         }
 
@@ -119,7 +119,7 @@ class CompetenciaPolicy
      */
     public function cambiarEstado(User $user, Competencia $competencia): bool
     {
-        if (!$user->can('EDITAR COMPETENCIA')) {
+        if (! $user->can('EDITAR COMPETENCIA')) {
             return false;
         }
 
@@ -139,7 +139,7 @@ class CompetenciaPolicy
      */
     public function gestionarResultados(User $user, Competencia $competencia): bool
     {
-        if (!$user->can('EDITAR COMPETENCIA')) {
+        if (! $user->can('EDITAR COMPETENCIA')) {
             return false;
         }
 
