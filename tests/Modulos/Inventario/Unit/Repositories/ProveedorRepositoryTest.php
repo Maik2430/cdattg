@@ -20,7 +20,7 @@ class ProveedorRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->repository = new ProveedorRepository();
-        
+
         // Ejecutar seeders necesarios
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
@@ -92,7 +92,7 @@ class ProveedorRepositoryTest extends TestCase
     public function puede_crear_proveedor()
     {
         $estado = \App\Models\ParametroTema::query()->inRandomOrder()->first();
-        
+
         // Si no hay estado disponible, crear uno básico
         if (!$estado) {
             $tema = \App\Models\Tema::firstOrCreate(
@@ -111,7 +111,7 @@ class ProveedorRepositoryTest extends TestCase
                 ->where('parametro_id', $parametro->id)
                 ->first();
         }
-        
+
         $datos = [
             'name' => self::PROVEEDOR_TEST,
             'nit' => '123456789-0',

@@ -22,23 +22,23 @@ return new class extends Migration
         if (Schema::hasColumn('personas', 'estado_sofia')) {
             // Si ya existe como TINYINT, convertirla a BIGINT y migrar datos si los parámetros existen
             $driver = DB::getDriverName();
-            
+
             if ($driver === 'sqlite') {
                 // SQLite: crear nueva columna, migrar datos, eliminar antigua
                 Schema::table('personas', function (Blueprint $table) {
                     $table->unsignedBigInteger('estado_sofia_new')->nullable()->after('status');
                 });
-                
+
                 // Migrar datos si los parámetros existen
                 if ($noRegistrado && $registrado && $requiereCambio) {
                     DB::table('personas')
                         ->where('estado_sofia', 0)
                         ->update(['estado_sofia_new' => $noRegistrado->id]);
-                    
+
                     DB::table('personas')
                         ->where('estado_sofia', 1)
                         ->update(['estado_sofia_new' => $registrado->id]);
-                    
+
                     DB::table('personas')
                         ->where('estado_sofia', 2)
                         ->update(['estado_sofia_new' => $requiereCambio->id]);
@@ -46,11 +46,11 @@ return new class extends Migration
                     // Si no existen parámetros, copiar valores como están (se migrarán después)
                     DB::statement('UPDATE personas SET estado_sofia_new = estado_sofia WHERE estado_sofia IN (0, 1, 2)');
                 }
-                
+
                 Schema::table('personas', function (Blueprint $table) {
                     $table->dropColumn('estado_sofia');
                 });
-                
+
                 try {
                     DB::statement('ALTER TABLE personas RENAME COLUMN estado_sofia_new TO estado_sofia');
                 } catch (\Exception $e) {
@@ -69,20 +69,20 @@ return new class extends Migration
                     Schema::table('personas', function (Blueprint $table) {
                         $table->unsignedBigInteger('estado_sofia_parametro_id')->nullable()->after('estado_sofia');
                     });
-                    
+
                     // Migrar datos
                     DB::table('personas')
                         ->where('estado_sofia', 0)
                         ->update(['estado_sofia_parametro_id' => $noRegistrado->id]);
-                    
+
                     DB::table('personas')
                         ->where('estado_sofia', 1)
                         ->update(['estado_sofia_parametro_id' => $registrado->id]);
-                    
+
                     DB::table('personas')
                         ->where('estado_sofia', 2)
                         ->update(['estado_sofia_parametro_id' => $requiereCambio->id]);
-                    
+
                     // Cambiar tipo y copiar datos
                     DB::statement('ALTER TABLE personas DROP COLUMN estado_sofia');
                     DB::statement('ALTER TABLE personas CHANGE estado_sofia_parametro_id estado_sofia BIGINT UNSIGNED NULL');

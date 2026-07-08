@@ -141,7 +141,7 @@ class PerfilComplementarioControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewHas('aspirantes');
-        
+
         $aspirantes = $response->viewData('aspirantes');
         $this->assertCount(1, $aspirantes);
         $this->assertEquals($aspirante->id, $aspirantes->first()->id);
@@ -168,7 +168,7 @@ class PerfilComplementarioControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewHas('aspirantes');
-        
+
         $aspirantes = $response->viewData('aspirantes');
         $this->assertIsArray($aspirantes);
         $this->assertEmpty($aspirantes);
@@ -285,7 +285,7 @@ class PerfilComplementarioControllerTest extends TestCase
         $response->assertViewHas('user', $this->user);
         $response->assertViewHas('soloPerfil', true);
         $response->assertViewHas('rolesDisponibles');
-        
+
         $rolesDisponibles = $response->viewData('rolesDisponibles');
         $this->assertInstanceOf(\Illuminate\Support\Collection::class, $rolesDisponibles);
         $this->assertTrue($rolesDisponibles->isEmpty());
@@ -327,7 +327,7 @@ class PerfilComplementarioControllerTest extends TestCase
         $response->assertStatus(200);
         $aspirantesView = $response->viewData('aspirantes');
         $this->assertCount(5, $aspirantesView);
-        
+
         // Verify all aspirantes have relationships loaded
         foreach ($aspirantesView as $aspirante) {
             $this->assertTrue($aspirante->relationLoaded('persona'));

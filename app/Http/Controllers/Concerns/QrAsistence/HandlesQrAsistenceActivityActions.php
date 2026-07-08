@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Concerns\QrAsistence;
 
+use App\Models\Evidencias;
 use App\Models\InstructorFichaCaracterizacion;
 use App\Models\RegistroActividades;
-use App\Models\Evidencias;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +21,7 @@ trait HandlesQrAsistenceActivityActions
         ]);
 
         try {
-            $actividad = new RegistroActividades();
+            $actividad = new RegistroActividades;
             $actividad->ficha_id = $request->input('ficha_id');
             $actividad->titulo = $request->input('titulo');
             $actividad->descripcion = $request->input('descripcion');

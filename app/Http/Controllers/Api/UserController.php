@@ -18,10 +18,10 @@ class UserController extends Controller
         }
 
         $user = Auth::user();
-        
+
         // Obtener todos los permisos del usuario a través de sus roles
         $permissions = $user->getAllPermissions()->pluck('name')->toArray();
-        
+
         return response()->json([
             'user' => [
                 'id' => $user->id,

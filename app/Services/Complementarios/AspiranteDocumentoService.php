@@ -189,9 +189,9 @@ class AspiranteDocumentoService
      */
     private function generarNombreArchivo(Persona $persona, UploadedFile $archivo): string
     {
-        $tipoDocumento = $persona->tipoDocumento ?
-            $persona->tipoDocumento->parametro->name :
-            'DOC';
+        $tipoDocumento = $persona->tipoDocumento !== null
+            ? str_replace(' ', '_', $persona->tipoDocumento->name)
+            : 'DOC';
 
         $tipoDocumento = str_replace(' ', '_', $tipoDocumento);
         $numeroDocumento = $persona->numero_documento;

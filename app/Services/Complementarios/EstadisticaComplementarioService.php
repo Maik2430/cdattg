@@ -103,7 +103,7 @@ class EstadisticaComplementarioService
     public function generarReporteTendencias(int $meses = 12)
     {
         $driver = DB::connection()->getDriverName();
-        
+
         // Usar sintaxis específica según el driver de base de datos
         if ($driver === 'sqlite') {
             $yearExpr = "CAST(strftime('%Y', created_at) AS INTEGER)";
@@ -113,7 +113,7 @@ class EstadisticaComplementarioService
             $yearExpr = 'YEAR(created_at)';
             $monthExpr = 'MONTH(created_at)';
         }
-        
+
         return AspiranteComplementario::selectRaw("
                 {$yearExpr} as year,
                 {$monthExpr} as month,

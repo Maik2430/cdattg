@@ -27,7 +27,7 @@ return new class extends Migration
             }
 
             $driver = DB::getDriverName();
-            
+
             if ($driver === 'sqlite') {
                 // SQLite: crear nuevas columnas BIGINT, luego eliminar antiguas
                 if (Schema::hasColumn('senasofiaplus_validation_logs', 'accion')) {
@@ -49,7 +49,7 @@ return new class extends Migration
                         });
                     }
                 }
-                
+
                 if (Schema::hasColumn('senasofiaplus_validation_logs', 'resultado')) {
                     Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
                         $table->unsignedBigInteger('resultado_new')->nullable()->after('accion');
@@ -78,7 +78,7 @@ return new class extends Migration
                     DB::statement('ALTER TABLE senasofiaplus_validation_logs MODIFY COLUMN resultado BIGINT UNSIGNED NULL');
                 }
             }
-            
+
             // Intentar agregar foreign keys (puede fallar si los parámetros no existen)
             try {
                 if (Schema::hasColumn('senasofiaplus_validation_logs', 'accion')) {
@@ -100,7 +100,7 @@ return new class extends Migration
             } catch (\Exception $e) {
                 // Si falla, se agregará después cuando existan los parámetros
             }
-            
+
             return;
         }
 
@@ -134,22 +134,22 @@ return new class extends Migration
         });
 
         $driver = DB::getDriverName();
-        
+
         if ($driver === 'sqlite') {
             // SQLite: crear nuevas columnas, copiar datos, eliminar antiguas
             Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
                 $table->unsignedBigInteger('accion_new')->after('aspirante_id');
                 $table->unsignedBigInteger('resultado_new')->after('accion_new');
             });
-            
+
             // Copiar datos
             DB::statement('UPDATE senasofiaplus_validation_logs SET accion_new = accion_parametro_id, resultado_new = resultado_parametro_id');
-            
+
             // Eliminar columnas antiguas
             Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
                 $table->dropColumn(['accion', 'resultado', 'accion_parametro_id', 'resultado_parametro_id']);
             });
-            
+
             // Renombrar usando RENAME COLUMN si está disponible
             try {
                 DB::statement('ALTER TABLE senasofiaplus_validation_logs RENAME COLUMN accion_new TO accion');
@@ -241,17 +241,17 @@ return new class extends Migration
             ->update(['resultado_tmp' => 'advertencia']);
 
         $driver = DB::getDriverName();
-        
+
         if ($driver === 'sqlite') {
             // SQLite: usar Schema para modificar
             Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
                 $table->dropColumn(['accion', 'resultado']);
             });
-            
+
             Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
                 $table->dropColumn(['accion_tmp', 'resultado_tmp']);
             });
-            
+
             Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
                 $table->string('accion')->default('validar')->after('aspirante_id');
                 $table->string('resultado')->after('accion');

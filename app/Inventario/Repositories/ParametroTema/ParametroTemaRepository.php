@@ -56,7 +56,7 @@ class ParametroTemaRepository implements ParametroTemaRepositoryInterface
         }
 
         $parametro = Parametro::where('name', $nombreEstado)->first();
-        
+
         if (!$parametro) {
             return null;
         }

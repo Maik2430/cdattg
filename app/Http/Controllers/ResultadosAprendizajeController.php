@@ -62,7 +62,7 @@ class ResultadosAprendizajeController extends Controller
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
             }
-            
+
             // Filtro por duración
             if ($request->filled('duracion_min')) {
                 $query->where('duracion', '>=', $request->duracion_min);
@@ -112,24 +112,24 @@ class ResultadosAprendizajeController extends Controller
 
             if ($request->filled('competencia_id')) {
                 $competencia = Competencia::findOrFail($request->competencia_id);
-                
+
                 // Redistribuir duración entre todos los resultados existentes
                 $this->redistribuirDuracionResultados($competencia);
-                
+
                 $totalResultados = $competencia->resultadosAprendizaje()->count() + 1;
                 $duracionPorResultado = $totalResultados > 0 ? $competencia->duracion / $totalResultados : 0;
-                
+
                 $resultadoAprendizaje->competencias()->attach($request->competencia_id, [
                     'duracion' => $duracionPorResultado,
                     'user_create_id' => Auth::id(),
                     'user_edit_id' => Auth::id(),
                 ]);
-                
+
                 // Actualizar duración en resultados_aprendizajes
                 $resultadoAprendizaje->update([
                     'duracion' => $duracionPorResultado,
                 ]);
-                
+
                 // Redistribuir duración entre todos los resultados (incluyendo el nuevo)
                 $this->redistribuirDuracionResultados($competencia);
             }
@@ -252,19 +252,19 @@ class ResultadosAprendizajeController extends Controller
                 return redirect()->back()
                     ->with('error', "No se puede eliminar el resultado de aprendizaje '{$resultadoAprendizaje->codigo}' porque tiene {$cantidadGuias} guía(s) de aprendizaje asociada(s). Primero debe desasociar o eliminar las guías relacionadas.");
             }
-            
+
             // Guardar el código antes de eliminar
             $codigoResultado = $resultadoAprendizaje->codigo;
-            
+
             // Desasociar competencias antes de eliminar
             $competenciasAsociadas = $resultadoAprendizaje->competencias()->get();
             $resultadoAprendizaje->competencias()->detach();
-            
+
             // Redistribuir duración en las competencias asociadas
             foreach ($competenciasAsociadas as $competencia) {
                 $this->redistribuirDuracionResultados($competencia);
             }
-            
+
             $resultadoAprendizaje->delete();
 
             DB::commit();
@@ -277,7 +277,7 @@ class ResultadosAprendizajeController extends Controller
 
             return redirect()->route('resultados-aprendizaje.index')
                 ->with('success', "Resultado de aprendizaje '{$codigoResultado}' eliminado exitosamente.");
-                
+
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error al eliminar resultado de aprendizaje: ' . $e->getMessage(), [
@@ -327,7 +327,7 @@ class ResultadosAprendizajeController extends Controller
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
             }
-            
+
             // Filtro por duración
             if ($request->filled('duracion_min')) {
                 $query->where('duracion', '>=', $request->duracion_min);
@@ -456,10 +456,10 @@ class ResultadosAprendizajeController extends Controller
             }
 
             $resultadoAprendizaje->competencias()->detach($competencia->id);
-            
+
             // Redistribuir duración entre los resultados restantes
             $this->redistribuirDuracionResultados($competencia);
-            
+
             return redirect()->back()->with('success', 'Competencia desasociada exitosamente.');
 
         } catch (Exception $e) {
@@ -475,13 +475,13 @@ class ResultadosAprendizajeController extends Controller
     {
         $resultados = $competencia->resultadosAprendizaje()->get();
         $totalResultados = $resultados->count();
-        
+
         if ($totalResultados === 0) {
             return;
         }
-        
+
         $duracionPorResultado = $competencia->duracion / $totalResultados;
-        
+
         foreach ($resultados as $resultado) {
             // Actualizar duración en la tabla pivot
             DB::table('resultados_aprendizaje_competencia')
@@ -491,7 +491,7 @@ class ResultadosAprendizajeController extends Controller
                     'duracion' => $duracionPorResultado,
                     'updated_at' => now(),
                 ]);
-            
+
             // Actualizar duración en la tabla resultados_aprendizajes
             $resultado->update([
                 'duracion' => $duracionPorResultado,

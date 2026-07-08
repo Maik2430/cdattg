@@ -18,13 +18,13 @@ class ProveedorFactory extends Factory
     public function definition(): array
     {
         static $usedNits = [];
-        
+
         // Obtener ubicación válida de los seeders o usar null
         // Asegurar que el municipio pertenezca al departamento
         // Ambos campos son nullable según las migraciones
         $departamentoId = null;
         $municipioId = null;
-        
+
         try {
             // Primero obtener un municipio y luego su departamento para garantizar la relación
             $municipio = \App\Models\Municipio::query()->inRandomOrder()->first();
@@ -46,7 +46,7 @@ class ProveedorFactory extends Factory
         $empresas = ['TECNOLOGÍA', 'SISTEMAS', 'SUMINISTROS', 'EQUIPOS', 'COMERCIAL', 'DISTRIBUCIONES', 'IMPORTADORA', 'SOLUCIONES'];
         $sufijos = ['LTDA', 'S.A.S', 'S.A', 'E.U'];
         $proveedor = strtoupper($empresas[array_rand($empresas)] . ' ' . $empresas[array_rand($empresas)] . ' ' . $sufijos[array_rand($sufijos)]);
-        
+
         // Generar NIT único
         do {
             $nit = rand(100000000, 999999999) . '-' . rand(0, 9);
@@ -80,7 +80,7 @@ class ProveedorFactory extends Factory
                 })
                 ->inRandomOrder()
                 ->first();
-            
+
             if ($persona) {
                 $personaId = $persona->id;
             }

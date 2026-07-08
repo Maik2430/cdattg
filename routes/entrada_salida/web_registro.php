@@ -11,11 +11,11 @@ Route::get('cargarDatos', [EntradaSalidaController::class, 'cargarDatos'])
     ->middleware('cros');
 
 // Crear entrada/salida directa
-Route::get('crearEntradaSalida/{ficha_id}/{aprendiz}/{ambiente_id}/{descripcion}', 
+Route::get('crearEntradaSalida/{ficha_id}/{aprendiz}/{ambiente_id}/{descripcion}',
     [EntradaSalidaController::class, 'storeEntradaSalida']
 )->name('entradaSalida.crearEntradaSalida');
 
-Route::get('editarEntradaSalida/{aprendiz}/{ambiente_id}/{descripcion}', 
+Route::get('editarEntradaSalida/{aprendiz}/{ambiente_id}/{descripcion}',
     [EntradaSalidaController::class, 'updateEntradaSalida']
 )->name('entradaSalida.editarEntradaSalida');
 

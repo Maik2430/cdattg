@@ -21,7 +21,7 @@ class JornadaValidationServiceTest extends TestCase
     public function puede_validar_horario_jornada_manana()
     {
         $hora = Carbon::createFromTime(8, 0, 0);
-        
+
         $resultado = $this->service->validarHorarioJornada($hora, 'Mañana');
 
         $this->assertTrue($resultado);
@@ -31,7 +31,7 @@ class JornadaValidationServiceTest extends TestCase
     public function puede_validar_horario_jornada_tarde()
     {
         $hora = Carbon::createFromTime(15, 0, 0);
-        
+
         $resultado = $this->service->validarHorarioJornada($hora, 'Tarde');
 
         $this->assertTrue($resultado);
@@ -41,7 +41,7 @@ class JornadaValidationServiceTest extends TestCase
     public function puede_validar_horario_jornada_noche()
     {
         $hora = Carbon::createFromTime(20, 0, 0);
-        
+
         $resultado = $this->service->validarHorarioJornada($hora, 'Noche');
 
         $this->assertTrue($resultado);
@@ -51,7 +51,7 @@ class JornadaValidationServiceTest extends TestCase
     public function rechaza_hora_fuera_de_jornada()
     {
         $hora = Carbon::createFromTime(2, 0, 0); // 2 AM
-        
+
         $resultado = $this->service->validarHorarioJornada($hora, 'Mañana');
 
         $this->assertFalse($resultado);

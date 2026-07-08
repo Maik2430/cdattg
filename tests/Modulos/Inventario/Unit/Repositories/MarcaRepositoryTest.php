@@ -21,7 +21,7 @@ class MarcaRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->repository = new MarcaRepository();
-        
+
         // Ejecutar seeders necesarios
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
@@ -52,7 +52,7 @@ class MarcaRepositoryTest extends TestCase
     private function crearMarcaConParametroTema(Tema $tema, string $nombreParametro): Parametro
     {
         $parametro = $this->crearParametro($nombreParametro);
-        
+
         ParametroTema::create([
             'parametro_id' => $parametro->id,
             'tema_id' => $tema->id,

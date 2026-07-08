@@ -30,25 +30,25 @@ class ComplementarioOfertadoRepository
     public function getEstadoIdByLegacyValue(int $estadoLegacy): ?int
     {
         $nombreEstado = $this->getEstadoNombreByLegacyValue($estadoLegacy);
-        
+
         // Buscar el ParametroTema correspondiente al estado en el tema ESTADOS (ID 1)
         try {
             $temaEstado = Tema::find(1); // Tema "ESTADOS"
-            
+
             if ($temaEstado) {
                 // Buscar parámetro por nombre (los estados están en mayúsculas en la BD)
                 $parametro = Parametro::where('name', strtoupper($nombreEstado))->first();
-                
+
                 if (!$parametro) {
                     // Intentar con el nombre exacto
                     $parametro = Parametro::where('name', $nombreEstado)->first();
                 }
-                
+
                 if ($parametro) {
                     $parametroTema = ParametroTema::where('tema_id', $temaEstado->id)
                         ->where('parametro_id', $parametro->id)
                         ->first();
-                    
+
                     if ($parametroTema) {
                         return $parametroTema->id;
                     }
@@ -57,7 +57,7 @@ class ComplementarioOfertadoRepository
         } catch (Exception $e) {
             // Si hay error, retornar null
         }
-        
+
         return null;
     }
 
@@ -75,12 +75,12 @@ class ComplementarioOfertadoRepository
     public function getByEstado(int $estado, array $relations = []): Collection
     {
         $estadoId = $this->getEstadoIdByLegacyValue($estado);
-        
+
         if (!$estadoId) {
             // Si no se encuentra el estado_id, retornar colección vacía
             return new Collection();
         }
-        
+
         return ComplementarioOfertado::with($relations)
             ->where('estado_id', $estadoId)
             ->get();
@@ -108,7 +108,7 @@ class ComplementarioOfertadoRepository
     public function findByNombre(string $nombre): ?ComplementarioOfertado
     {
         $nombreNormalizado = str_replace('-', ' ', $nombre);
-        
+
         return ComplementarioOfertado::whereHas('catalogo', function ($query) use ($nombreNormalizado): void {
             $query->where('denominacion', $nombreNormalizado);
         })->first();
@@ -154,11 +154,11 @@ class ComplementarioOfertadoRepository
     public function countActivos(): int
     {
         $estadoId = $this->getEstadoIdByLegacyValue(1);
-        
+
         if (!$estadoId) {
             return 0;
         }
-        
+
         return ComplementarioOfertado::where('estado_id', $estadoId)->count();
     }
 
@@ -170,7 +170,7 @@ class ComplementarioOfertadoRepository
         $sinOfertaId = $this->getEstadoIdByLegacyValue(0);
         $activosId = $this->getEstadoIdByLegacyValue(1);
         $cuposLlenosId = $this->getEstadoIdByLegacyValue(2);
-        
+
         return [
             'total' => ComplementarioOfertado::count(),
             'activos' => $activosId ? ComplementarioOfertado::where('estado_id', $activosId)->count() : 0,
@@ -181,7 +181,7 @@ class ComplementarioOfertadoRepository
 
     /**
      * Obtener programas con mayor demanda
-     * 
+     *
      * Nota: El cálculo de tasa_aceptacion ahora se realiza mediante un Accessor
      * en el modelo ComplementarioOfertado (getTasaAceptacionAttribute).
      */

@@ -78,16 +78,16 @@ class StoreProgramaComplementarioRequest extends FormRequest
     public function validated($key = null, $default = null)
     {
         $validated = parent::validated($key, $default);
-        
+
         // Eliminar campos que ya no existen en la tabla (se obtienen del catálogo)
         unset($validated['nombre'], $validated['duracion'], $validated['requisitos_ingreso'], $validated['modalidad_id']);
-        
+
         if (isset($validated['dias']) && is_array($validated['dias'])) {
             $validated['dias'] = collect($validated['dias'])
                 ->filter(static function ($dia) {
                     // Filtrar solo días que tengan dia_id y horarios válidos
-                    return isset($dia['dia_id']) 
-                        && isset($dia['hora_inicio']) 
+                    return isset($dia['dia_id'])
+                        && isset($dia['hora_inicio'])
                         && isset($dia['hora_fin'])
                         && !empty($dia['hora_inicio'])
                         && !empty($dia['hora_fin']);

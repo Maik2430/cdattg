@@ -22,7 +22,7 @@ class AprendizServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->mockRepository = Mockery::mock(AprendizRepository::class);
         $this->service = new AprendizService($this->mockRepository);
     }
@@ -37,9 +37,9 @@ class AprendizServiceTest extends TestCase
     public function puede_listar_aprendices_con_filtros()
     {
         $filtros = ['search' => 'Juan', 'per_page' => 15];
-        
+
         $paginator = new Paginator([], 0, 15, 1);
-        
+
         $this->mockRepository
             ->shouldReceive('obtenerAprendicesConFiltros')
             ->once()
@@ -116,7 +116,7 @@ class AprendizServiceTest extends TestCase
             'numero_documento' => '123456789',
             'email' => 'juan@example.com'
         ];
-        
+
         $ficha = (object)['ficha' => '2089876'];
         $programa = (object)['nombre' => 'ADSI'];
         $ficha->programaFormacion = $programa;

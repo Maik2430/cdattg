@@ -33,7 +33,7 @@ class FichaCaracterizacionFactory extends Factory
         $modalidades = [18, 19, 20];
         $sedeId = Sede::query()->inRandomOrder()->value('id') ?? 1;
         $ambienteId = Ambiente::query()->inRandomOrder()->value('id') ?? 1;
-        
+
         // Obtener jornada desde parametros_temas del tema JORNADAS
         $jornadaId = ParametroTema::whereHas('tema', function($q) {
             $q->where('name', 'LIKE', '%JORNADAS%');
@@ -42,7 +42,7 @@ class FichaCaracterizacionFactory extends Factory
         $mesesAtras = rand(0, 6);
         $mesesAdelante = rand(0, 2);
         $fechaInicio = date('Y-m-d', strtotime("-{$mesesAtras} months +{$mesesAdelante} months"));
-        
+
         $duracionMeses = rand(12, 24);
         $fechaFin = date('Y-m-d', strtotime($fechaInicio . " +{$duracionMeses} months"));
 
@@ -104,7 +104,7 @@ class FichaCaracterizacionFactory extends Factory
             'user_create_id' => $user->id,
             'user_edit_id' => $user->id,
         ]);
-        
+
         return $programa->id;
     }
 
@@ -215,7 +215,7 @@ class FichaCaracterizacionFactory extends Factory
         }
 
         $result = null;
-        
+
         try {
             $id = $obtenerFn();
             if ($id) {
@@ -230,7 +230,7 @@ class FichaCaracterizacionFactory extends Factory
                 $result = null;
             }
         }
-        
+
         return $result;
     }
 

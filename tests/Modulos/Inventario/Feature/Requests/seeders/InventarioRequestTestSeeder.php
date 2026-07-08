@@ -16,27 +16,27 @@ class InventarioRequestTestSeeder extends Seeder
     // Status values
     private const STATUS_ACTIVE = 1;
     private const STATUS_INACTIVE = 0;
-    
+
     // Test user data
     private const TEST_USER_EMAIL = 'test@test.com';
     private const TEST_USER_PASSWORD = 'password';
     private const TEST_PERSONA_NUMERO_DOCUMENTO = '1234567890';
     private const TEST_PERSONA_PRIMER_NOMBRE = 'TEST';
     private const TEST_PERSONA_PRIMER_APELLIDO = 'USER';
-    
+
     // Location names
     private const PAIS_NAME = 'COLOMBIA';
     private const DEPARTAMENTO_NAME = 'GUAVIARE';
     private const MUNICIPIO_NAME = 'SAN JOSE DEL GUAVIARE';
     private const REGIONAL_NAME = 'GUAVIARE';
-    
+
     // Infrastructure names
     private const SEDE_NAME = 'CENTRO';
     private const SEDE_DIRECCION = 'Dirección test';
     private const BLOQUE_NAME = 'BLOQUE A';
     private const PISO_NAME = 'PISO 1';
     private const AMBIENTE_TITLE = 'AULA 101';
-    
+
     /**
      * Get common timestamps array.
      */
@@ -47,7 +47,7 @@ class InventarioRequestTestSeeder extends Seeder
             'updated_at' => now(),
         ];
     }
-    
+
     /**
      * Get common status field.
      */
@@ -55,7 +55,7 @@ class InventarioRequestTestSeeder extends Seeder
     {
         return ['status' => self::STATUS_ACTIVE];
     }
-    
+
     /**
      * Get common user fields for creation/editing.
      */
@@ -66,7 +66,7 @@ class InventarioRequestTestSeeder extends Seeder
             'user_edit_id' => $userId,
         ];
     }
-    
+
     /**
      * Run the database seeds.
      */
@@ -74,36 +74,36 @@ class InventarioRequestTestSeeder extends Seeder
     {
         $connection = DB::connection();
         $isSqlite = $connection->getDriverName() === 'sqlite';
-        
+
         if ($isSqlite) {
             $connection->statement('PRAGMA foreign_keys = OFF');
         }
-        
+
         // Create User and Persona (required for user_create_id fields)
         $userId = $this->crearUsuarioMinimo();
-        
+
         // Create location hierarchy: Pais -> Departamento -> Municipio
         $paisId = $this->crearObtenerPais();
         $departamentoId = $this->crearObtenerDepartamento($paisId);
         $municipioId = $this->crearObtenerMunicipio($departamentoId);
-        
+
         // Create Regional
         $regionalId = $this->crearObtenerRegional($userId);
-        
+
         // Create infrastructure: Sede -> Bloque -> Piso -> Ambiente
         $sedeId = $this->crearObtenerSede($municipioId, $regionalId, $userId);
         $bloqueId = $this->crearObtenerBloque($sedeId, $userId);
         $pisoId = $this->crearObtenerPiso($bloqueId, $userId);
         $this->crearObtenerAmbiente($pisoId, $userId);
-        
+
         // Note: Temas and Parametros are created by TemaSeeder and ParametroSeeder
         // Tests should use existing temas/parametros or create them on-demand
-        
+
         if ($isSqlite) {
             $connection->statement('PRAGMA foreign_keys = ON');
         }
     }
-    
+
     /**
      * Create minimal user with persona.
      */
@@ -113,7 +113,7 @@ class InventarioRequestTestSeeder extends Seeder
         if ($existingUserId) {
             return $existingUserId;
         }
-        
+
         // Create Persona first
         $personaId = DB::table('personas')->insertGetId(array_merge([
             'numero_documento' => self::TEST_PERSONA_NUMERO_DOCUMENTO,
@@ -123,7 +123,7 @@ class InventarioRequestTestSeeder extends Seeder
             'user_create_id' => null,
             'user_edit_id' => null,
         ], $this->getStatusField(), $this->getTimestamps()));
-        
+
         // Create User
         $userId = DB::table('users')->insertGetId(array_merge([
             'email' => self::TEST_USER_EMAIL,
@@ -131,10 +131,10 @@ class InventarioRequestTestSeeder extends Seeder
             'email_verified_at' => now(),
             'persona_id' => $personaId,
         ], $this->getStatusField(), $this->getTimestamps()));
-        
+
         return $userId;
     }
-    
+
     /**
      * Create or get Pais.
      */
@@ -148,7 +148,7 @@ class InventarioRequestTestSeeder extends Seeder
         }
         return $paisId;
     }
-    
+
     /**
      * Create or get Departamento.
      */
@@ -163,7 +163,7 @@ class InventarioRequestTestSeeder extends Seeder
         }
         return $departamentoId;
     }
-    
+
     /**
      * Create or get Municipio.
      */
@@ -178,7 +178,7 @@ class InventarioRequestTestSeeder extends Seeder
         }
         return $municipioId;
     }
-    
+
     /**
      * Create or get Regional.
      */
@@ -192,7 +192,7 @@ class InventarioRequestTestSeeder extends Seeder
         }
         return $regionalId;
     }
-    
+
     /**
      * Create or get Sede.
      */
@@ -209,7 +209,7 @@ class InventarioRequestTestSeeder extends Seeder
         }
         return $sedeId;
     }
-    
+
     /**
      * Create or get Bloque.
      */
@@ -224,7 +224,7 @@ class InventarioRequestTestSeeder extends Seeder
         }
         return $bloqueId;
     }
-    
+
     /**
      * Create or get Piso.
      */
@@ -239,7 +239,7 @@ class InventarioRequestTestSeeder extends Seeder
         }
         return $pisoId;
     }
-    
+
     /**
      * Create or get Ambiente.
      */
@@ -254,6 +254,6 @@ class InventarioRequestTestSeeder extends Seeder
         }
         return $ambienteId;
     }
-    
+
 }
 

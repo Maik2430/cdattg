@@ -21,7 +21,7 @@ return new class extends Migration
 
             // Índice único para evitar duplicados
             $table->unique(['instructor_id', 'jornada_formacion_id'], 'idx_instructor_jornada_unique');
-            
+
             // Índices para optimizar consultas
             $table->index('instructor_id', 'idx_instructor_jornada_instructor');
             $table->index('jornada_formacion_id', 'idx_instructor_jornada_jornada');

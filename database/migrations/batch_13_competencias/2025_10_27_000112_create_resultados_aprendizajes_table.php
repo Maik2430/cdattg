@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('fecha_inicio')->nullable(false);
             $table->date('fecha_fin')->nullable(false);
             $table->foreignId('user_create_id')->nullable()->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');    
+            $table->foreignId('user_edit_id')->nullable()->constrained('users');
             $table->timestamps();
         });
 
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->foreignId('rap_id')->nullable(false)->constrained('resultados_aprendizajes');
             $table->foreignId('competencia_id')->nullable(false)->constrained('competencias');
             $table->foreignId('user_create_id')->nullable()->constrained('users');
-            $table->foreignId('user_edit_id')->nullable()->constrained('users');    
+            $table->foreignId('user_edit_id')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

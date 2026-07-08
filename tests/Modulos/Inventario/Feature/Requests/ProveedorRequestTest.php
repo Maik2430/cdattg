@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 class ProveedorRequestTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     private const PROVEEDOR_TEST = 'PROVEEDOR TEST';
     private const NIT_TEST = '123456789';
     protected function setUp(): void
@@ -48,11 +48,11 @@ class ProveedorRequestTest extends TestCase
     {
         return new class($proveedor) {
             private Proveedor $proveedor;
-            
+
             public function __construct($proveedor) {
                 $this->proveedor = $proveedor;
             }
-            
+
             public function parameter(string $name): ?int
             {
                 if ($name === 'proveedor') {

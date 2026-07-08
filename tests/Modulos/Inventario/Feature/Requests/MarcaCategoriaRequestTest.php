@@ -44,11 +44,11 @@ class MarcaCategoriaRequestTest extends TestCase
     {
         return new class($parametro) {
             private $parametro;
-            
+
             public function __construct($parametro) {
                 $this->parametro = $parametro;
             }
-            
+
             public function parameter(string $name): ?Parametro
             {
                 if ($name === 'categoria') {

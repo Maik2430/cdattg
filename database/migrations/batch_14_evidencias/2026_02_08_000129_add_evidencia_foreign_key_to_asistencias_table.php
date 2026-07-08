@@ -30,7 +30,7 @@ return new class extends Migration
             [DB::getDatabaseName(), 'asistencias', 'evidencia_id']
         );
 
-        if (count($foreignKeys) > 0) {
+        if (!empty($foreignKeys)) {
             return;
         }
 

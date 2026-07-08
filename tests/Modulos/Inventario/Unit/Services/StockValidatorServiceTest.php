@@ -201,7 +201,7 @@ class StockValidatorServiceTest extends TestCase
     public function notifica_cuando_stock_cae_bajo_umbral(): void
     {
         $umbralMinimo = config('inventario.stock.umbral_minimo', 10);
-        
+
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->cantidad = $umbralMinimo - 1;
 

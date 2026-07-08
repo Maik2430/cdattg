@@ -23,7 +23,7 @@ class StoreAspiranteRequest extends FormRequest
     public function rules(): array
     {
         $programaId = $this->route('programa') ?? $this->route('complementarioId');
-        
+
         $rules = [
             'numero_documento' => [
                 'required',
@@ -56,7 +56,7 @@ class StoreAspiranteRequest extends FormRequest
                 }
             };
         }
-        
+
         return $rules;
     }
 

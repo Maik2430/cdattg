@@ -29,7 +29,7 @@ return new class extends Migration
 
     /**
      * Run the migrations.
-     * 
+     *
      * Agrega modalidad_id a complementarios_catalogo y migra datos del campo string modalidad.
      * Luego elimina el campo string y su índice.
      */
@@ -81,17 +81,17 @@ return new class extends Migration
 
         foreach ($catalogos as $catalogo) {
             $modalidadString = trim($catalogo->modalidad);
-            
+
             // Buscar el parametro_id correspondiente
             $parametroId = self::MAPEO_MODALIDAD[$modalidadString] ?? null;
-            
+
             if ($parametroId) {
                 // Buscar el ParametroTema correspondiente
                 $parametroTema = DB::table('parametros_temas')
                     ->where('tema_id', self::TEMA_MODALIDADES)
                     ->where('parametro_id', $parametroId)
                     ->first();
-                
+
                 if ($parametroTema) {
                     // Actualizar el catálogo con el modalidad_id
                     DB::table('complementarios_catalogo')
@@ -155,7 +155,7 @@ return new class extends Migration
             $parametroTema = DB::table('parametros_temas')
                 ->where('id', $catalogo->modalidad_id)
                 ->first();
-            
+
             if ($parametroTema && isset($mapeoInverso[$parametroTema->parametro_id])) {
                 DB::table('complementarios_catalogo')
                     ->where('id', $catalogo->id)

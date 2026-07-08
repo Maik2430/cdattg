@@ -28,7 +28,7 @@ class ProveedorRequest extends FormRequest
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $proveedor = $this->route('proveedor');
             $proveedorId = is_object($proveedor) ? $proveedor->id : $proveedor;
-            
+
             return [
                 'name' => [
                     'required',

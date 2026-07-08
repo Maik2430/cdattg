@@ -48,13 +48,13 @@ class MarcaControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         // Ejecutar solo los seeders necesarios para marcas
         // RefreshDatabase ya ejecuta las migraciones automáticamente
         $this->seed([
@@ -65,7 +65,7 @@ class MarcaControllerTest extends TestCase
 
         // Obtener tema MARCAS (TemaSeeder ya lo crea)
         $this->temaMarcas = Tema::where('name', self::TEMA_MARCAS)->first();
-        
+
         if (!$this->temaMarcas) {
             $this->temaMarcas = Tema::create([
                 'name' => self::TEMA_MARCAS,
@@ -94,7 +94,7 @@ class MarcaControllerTest extends TestCase
         // Crear algunas marcas
         $marca1 = Parametro::factory()->create(['name' => 'MARCA 1']);
         $marca2 = Parametro::factory()->create(['name' => 'MARCA 2']);
-        
+
         ParametroTema::create([
             'parametro_id' => $marca1->id,
             'tema_id' => $this->temaMarcas->id,
@@ -124,7 +124,7 @@ class MarcaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => 'SAMSUNG']);
-        
+
         ParametroTema::create([
             'parametro_id' => $marca->id,
             'tema_id' => $this->temaMarcas->id,
@@ -187,7 +187,7 @@ class MarcaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => self::MARCA_TEST]);
-        
+
         ParametroTema::create([
             'parametro_id' => $marca->id,
             'tema_id' => $this->temaMarcas->id,
@@ -210,7 +210,7 @@ class MarcaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => 'MARCA EDITAR']);
-        
+
         ParametroTema::create([
             'parametro_id' => $marca->id,
             'tema_id' => $this->temaMarcas->id,
@@ -233,7 +233,7 @@ class MarcaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => 'MARCA ORIGINAL']);
-        
+
         ParametroTema::create([
             'parametro_id' => $marca->id,
             'tema_id' => $this->temaMarcas->id,
@@ -261,7 +261,7 @@ class MarcaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => self::MARCA_TEST]);
-        
+
         ParametroTema::create([
             'parametro_id' => $marca->id,
             'tema_id' => $this->temaMarcas->id,
@@ -284,7 +284,7 @@ class MarcaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => 'MARCA ELIMINAR']);
-        
+
         ParametroTema::create([
             'parametro_id' => $marca->id,
             'tema_id' => $this->temaMarcas->id,
@@ -305,7 +305,7 @@ class MarcaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $marca = Parametro::factory()->create(['name' => self::MARCA_TEST]);
-        
+
         ParametroTema::create([
             'parametro_id' => $marca->id,
             'tema_id' => $this->temaMarcas->id,

@@ -19,7 +19,7 @@ class AsistenciaControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->user = User::factory()->create();
     }
 
@@ -88,7 +88,7 @@ class AsistenciaControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Asistencia guardada con éxito']);
-        
+
         $this->assertDatabaseHas('asistencia_aprendices', [
             'caracterizacion_id' => $ficha->id,
             'numero_identificacion' => '12345678',

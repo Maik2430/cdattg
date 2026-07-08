@@ -190,7 +190,7 @@ class AspiranteManagementService
 
             $aspirantes = $this->aspiranteRepository->findByPrograma($complementarioId);
             $aspirante = $aspirantes->where('id', $aspiranteId)->first();
-            
+
             if (!$aspirante) {
                 return [
                     'success' => false,
@@ -198,7 +198,7 @@ class AspiranteManagementService
                     'status_code' => 200
                 ];
             }
-            
+
             // Cargar relación persona si no está cargada
             if (!$aspirante->relationLoaded('persona')) {
                 $aspirante->load('persona');

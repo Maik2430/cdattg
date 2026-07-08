@@ -42,9 +42,9 @@ class AsistenceQrService
 
         $roleNames = $user?->getRoleNames() ?? collect();
         $isOnlyInstructor = $user && $user->hasRole('INSTRUCTOR') && $roleNames->count() === 1;
-        
+
         $instructor = $this->instructorRepository->getInstructor($user->persona_id);
-        
+
         Log::info('Instructor encontrado: ' . ($instructor ? 'SI' : 'NO'));
         if ($instructor) {
             Log::info('Instructor ID: ' . $instructor->id);
@@ -60,14 +60,14 @@ class AsistenceQrService
             $instructor->id,
             $isOnlyInstructor
         );
-        
+
         Log::info('Fichas obtenidas del repositorio: ' . ($fichas ? 'TIENE DATOS' : 'NULL'));
         if ($fichas) {
             Log::info('Cantidad de fichas desde repositorio: ' . $fichas->count());
         }
-        
+
         Log::info('=== FIN DEBUG SERVICE ===');
-        
+
         return $fichas;
     }
 
@@ -87,7 +87,7 @@ class AsistenceQrService
         Log::info('Caracterizacion ID: ' . $caracterizacionId);
         Log::info('User ID: ' . ($user ? $user->id : 'NULL'));
         Log::info('Asistencia ID (filtro tabla): ' . ($asistenciaId ?? 'NULL'));
-        
+
         $fichaCaracterizacion = FichaCaracterizacion::with([
             'diasFormacion.dia',
             'programaFormacion',
@@ -144,11 +144,11 @@ class AsistenceQrService
         Log::info('Obteniendo aprendices de la ficha: ' . $fichaCaracterizacion->id);
         $aprendicesFicha = Aprendiz::where('ficha_caracterizacion_id', $fichaCaracterizacion->id)->get();
         Log::info('Cantidad de aprendices encontrados: ' . $aprendicesFicha->count());
-        
+
         foreach ($aprendicesFicha as $index => $aprendiz) {
             Log::info("Aprendiz {$index}: ID={$aprendiz->id}, documento=" . ($aprendiz->persona->numero_documento ?? 'SIN PERSONA'));
         }
-        
+
         $aprendizPersonaConAsistencia = collect();
         $fechaActual = Carbon::now()->format('Y-m-d');
 

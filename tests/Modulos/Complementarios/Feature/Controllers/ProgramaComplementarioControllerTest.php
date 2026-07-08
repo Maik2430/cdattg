@@ -30,17 +30,17 @@ class ProgramaComplementarioControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->user = User::factory()->create();
-        
+
         // Deshabilitar CSRF para tests
         $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
     }
@@ -137,7 +137,7 @@ class ProgramaComplementarioControllerTest extends TestCase
             ->whereIn('parametro_id', [12, 13, 14, 15, 16, 17, 18])
             ->take(2)
             ->get();
-        
+
         if ($dias->count() < 2) {
             // Si no hay suficientes días, usar los primeros parámetros de días disponibles
             $parametrosDias = \App\Models\Parametro::whereIn('id', [12, 13, 14, 15, 16, 17, 18])->take(2)->get();
@@ -177,7 +177,7 @@ class ProgramaComplementarioControllerTest extends TestCase
 
         $response->assertRedirect(route('complementarios-ofertados.index'));
         $response->assertSessionHas('success');
-        
+
         // Validar que se creó el programa
         $this->assertDatabaseHas('complementarios_ofertados', [
             'codigo' => 'COMP0001',
@@ -185,12 +185,12 @@ class ProgramaComplementarioControllerTest extends TestCase
         ]);
 
         $programa = ComplementarioOfertado::where('codigo', 'COMP0001')->first();
-        
+
         // Validar que se sincronizaron los días de formación
         $this->assertCount(2, $programa->diasFormacion);
         $this->assertTrue($programa->diasFormacion->contains($dia1->id));
         $this->assertTrue($programa->diasFormacion->contains($dia2->id));
-        
+
         // Validar horas en el pivot
         $dia1Pivot = $programa->diasFormacion->firstWhere('id', $dia1->id)->pivot;
         $this->assertEquals('08:00', $dia1Pivot->hora_inicio);
@@ -260,9 +260,9 @@ class ProgramaComplementarioControllerTest extends TestCase
 
         $response->assertRedirect(route('complementarios-ofertados.index'));
         $response->assertSessionHas('success');
-        
+
         $programa = ComplementarioOfertado::where('codigo', 'COMP0002')->first();
-        
+
         // Validar sincronización de estructura académica
         $this->assertTrue($programa->competencias->contains($competencia->id));
         $this->assertTrue($programa->raps->contains($rap->id));
@@ -350,13 +350,13 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         // Obtener días de la semana del seeder (tema_id 4 es DIAS)
         $dias = \App\Models\ParametroTema::where('tema_id', 4)
             ->whereIn('parametro_id', [12, 13, 14, 15, 16, 17, 18])
             ->take(2)
             ->get();
-        
+
         if ($dias->count() < 2) {
             // Si no hay suficientes días, crear parámetros y ParametroTema
             $parametro1 = Parametro::create(['name' => uniqid('Dia1_'), 'status' => 1]);
@@ -407,7 +407,7 @@ class ProgramaComplementarioControllerTest extends TestCase
 
         $response->assertRedirect(route('complementarios-ofertados.show', $programa->id));
         $response->assertSessionHas('success');
-        
+
         $programa->refresh();
         $this->assertCount(2, $programa->diasFormacion);
     }
@@ -417,7 +417,7 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         // Crear competencia con todos los campos requeridos
         $competencia = Competencia::create([
             'codigo' => 'COMP-' . uniqid(),
@@ -468,7 +468,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response = $this->put(route('complementarios-ofertados.update', $programa->id), $data);
 
         $response->assertRedirect(route('complementarios-ofertados.show', $programa->id));
-        
+
         $programa->refresh();
         $this->assertTrue($programa->competencias->contains($competencia->id));
         $this->assertTrue($programa->raps->contains($rap->id));
@@ -496,7 +496,7 @@ class ProgramaComplementarioControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('complementarios.programas.public.index');
-        
+
         $programas = $response->viewData('programas');
         // Solo debe mostrar programas con estado 1 (con oferta)
         foreach ($programas as $programa) {
@@ -509,7 +509,7 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         // Crear competencia con todos los campos requeridos
         $competencia = Competencia::create([
             'codigo' => 'COMP-' . uniqid(),
@@ -532,7 +532,7 @@ class ProgramaComplementarioControllerTest extends TestCase
             'status' => true,
             'user_create_id' => $this->user->id,
         ]);
-        
+
         $programa->competencias()->attach($competencia->id);
         $programa->raps()->attach($rap->id);
 

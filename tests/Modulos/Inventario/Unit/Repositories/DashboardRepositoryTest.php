@@ -157,7 +157,7 @@ class DashboardRepositoryTest extends TestCase
             ['name' => $nombreParametro],
             ['status' => 1, 'user_create_id' => null, 'user_edit_id' => null]
         );
-        
+
         return ParametroTema::firstOrCreate(
             [
                 'parametro_id' => $parametro->id,
@@ -178,7 +178,7 @@ class DashboardRepositoryTest extends TestCase
             ['name' => $nombreCategoria],
             ['status' => 1]
         );
-        
+
         ParametroTema::firstOrCreate(
             [
                 'parametro_id' => $parametro->id,
@@ -186,7 +186,7 @@ class DashboardRepositoryTest extends TestCase
             ],
             ['status' => 1]
         );
-        
+
         return $parametro;
     }
 }

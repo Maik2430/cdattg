@@ -44,11 +44,11 @@ class RecordatorioDevolucionNotification extends Notification implements ShouldQ
     {
         $fechaDevolucion = $this->orden->fecha_devolucion->format('d/m/Y');
         $cantidadProductos = $this->orden->detalles->count();
-        
-        $diasTexto = $this->diasRestantes === 1 
-            ? '1 día' 
+
+        $diasTexto = $this->diasRestantes === 1
+            ? '1 día'
             : $this->diasRestantes . ' días';
-        
+
         return (new MailMessage)
             ->subject('Recordatorio: Devolución de Préstamo en ' . $diasTexto)
             ->view('inventario.email.recordatorio-devolucion', [
@@ -69,7 +69,7 @@ class RecordatorioDevolucionNotification extends Notification implements ShouldQ
     {
         $fechaDevolucion = $this->orden->fecha_devolucion->format('d/m/Y');
         $cantidadProductos = $this->orden->detalles->count();
-        
+
         // Obtener productos pendientes
         $productosPendientes = [];
         foreach ($this->orden->detalles as $detalle) {

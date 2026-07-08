@@ -28,15 +28,15 @@ class AspiranteDocumentoControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->user = User::factory()->create();
     }
 
@@ -48,7 +48,7 @@ class AspiranteDocumentoControllerTest extends TestCase
     public function puede_validar_documentos_de_aspirantes()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         AspiranteComplementario::factory()->count(2)->paraPrograma($programa)->create();
 
@@ -65,7 +65,7 @@ class AspiranteDocumentoControllerTest extends TestCase
     public function retorna_error_si_no_hay_aspirantes_para_validar_documentos()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->post(route('programas-complementarios.validar-documentos', $programa->id));
@@ -80,7 +80,7 @@ class AspiranteDocumentoControllerTest extends TestCase
     public function validar_documentos_retorna_resultado_correcto()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa)->create();
 

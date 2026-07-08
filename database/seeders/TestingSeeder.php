@@ -42,7 +42,7 @@ class TestingSeeder extends Seeder
         $this->command->info('🌐 Creando redes de conocimiento...');
         $redesConocimiento = [];
         $regionalId = Regional::query()->inRandomOrder()->value('id') ?? 1;
-        
+
         $nombresRedes = [
             'Tecnologías de la Información y las Comunicaciones',
             'Electrónica',
@@ -55,34 +55,34 @@ class TestingSeeder extends Seeder
             'Agropecuaria',
             'Turismo',
         ];
-        
+
         // Mezclar y tomar nombres únicos
         $nombresDisponibles = collect($nombresRedes)->shuffle();
         $nombresUsados = [];
-        
+
         for ($i = 0; $i < 5; $i++) {
             // Buscar un nombre que no exista en la BD y no haya sido usado
             $nombre = null;
             $intentos = 0;
             while ($intentos < 20) {
                 $candidato = $nombresDisponibles->random();
-                if (!in_array($candidato, $nombresUsados) && 
+                if (!in_array($candidato, $nombresUsados) &&
                     !RedConocimiento::where('nombre', $candidato)->exists()) {
                     $nombre = $candidato;
                     break;
                 }
                 $intentos++;
             }
-            
+
             // Si no se encontró uno único, agregar un sufijo único
             if (!$nombre) {
                 $baseNombre = $nombresDisponibles->random();
                 $sufijo = rand(1000, 9999);
                 $nombre = $baseNombre . ' ' . $sufijo;
             }
-            
+
             $nombresUsados[] = $nombre;
-            
+
             $redesConocimiento[] = RedConocimiento::create([
                 'nombre' => $nombre,
                 'regionals_id' => $regionalId,
@@ -99,7 +99,7 @@ class TestingSeeder extends Seeder
         $nivelFormacionId = Parametro::whereIn('name', ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO'])
             ->inRandomOrder()
             ->value('id') ?? Parametro::inRandomOrder()->value('id');
-        
+
         $nombresProgramas = [
             'Tecnología en Desarrollo de Software',
             'Tecnología en Redes de Computadores',
@@ -109,14 +109,14 @@ class TestingSeeder extends Seeder
             'Tecnología en Gastronomía',
             'Técnico en Diseño Gráfico',
         ];
-        
+
         foreach ($redesConocimiento as $red) {
             $numProgramas = rand(1, 2);
             for ($j = 0; $j < $numProgramas; $j++) {
                 $horasTotales = rand(800, 2200);
                 $horasEtapaLectiva = rand(400, $horasTotales - 200);
                 $horasEtapaProductiva = $horasTotales - $horasEtapaLectiva;
-                
+
                 $programasFormacion[] = ProgramaFormacion::create([
                     'codigo' => (string) rand(100000, 999999),
                     'nombre' => $this->faker->randomElement($nombresProgramas),
@@ -163,7 +163,7 @@ class TestingSeeder extends Seeder
         foreach ($competencias as $competencia) {
             $numResultados = rand(3, 5);
             $duracionPorResultado = $competencia->duracion / $numResultados;
-            
+
             for ($j = 0; $j < $numResultados; $j++) {
                 $resultado = ResultadosAprendizaje::create([
                     'codigo' => 'RAP-' . str_pad(rand(10000, 99999), 5, '0', STR_PAD_LEFT),
@@ -179,12 +179,12 @@ class TestingSeeder extends Seeder
                     'user_create_id' => 1,
                     'user_edit_id' => 1,
                 ]);
-                
+
                 // Asociar resultado con competencia
                 $competencia->resultadosAprendizaje()->attach($resultado->id, [
                     'duracion' => $duracionPorResultado
                 ]);
-                
+
                 $totalResultados++;
             }
         }
@@ -198,7 +198,7 @@ class TestingSeeder extends Seeder
             $competenciasParaPrograma = collect($competencias)->random(
                 min($numCompetencias, count($competencias))
             );
-            
+
             foreach ($competenciasParaPrograma as $competencia) {
                 $programa->competencias()->attach($competencia->id, [
                     'user_create_id' => 1,
@@ -213,7 +213,7 @@ class TestingSeeder extends Seeder
         $this->command->info('📋 Creando fichas de caracterización...');
         $fichas = [];
         $numerosFichasUsados = [];
-        
+
         foreach ($programasFormacion as $programa) {
             $numFichas = rand(1, 3);
             for ($k = 0; $k < $numFichas; $k++) {
@@ -223,7 +223,7 @@ class TestingSeeder extends Seeder
                 while ($intentos < 100) {
                     $candidato = 'FICHA-' . str_pad(rand(1000, 9999), 4, '0', STR_PAD_LEFT);
                     $key = $programa->id . '_' . $candidato;
-                    if (!isset($numerosFichasUsados[$key]) && 
+                    if (!isset($numerosFichasUsados[$key]) &&
                         !FichaCaracterizacion::where('ficha', $candidato)
                             ->where('programa_formacion_id', $programa->id)->exists() &&
                         !FichaCaracterizacion::where('ficha', $candidato)->exists()) {
@@ -233,11 +233,11 @@ class TestingSeeder extends Seeder
                     }
                     $intentos++;
                 }
-                
+
                 if (!$numeroFicha) {
                     $numeroFicha = 'FICHA-' . str_pad(rand(1000, 9999), 4, '0', STR_PAD_LEFT) . '_' . time() . '_' . rand(1000, 9999);
                 }
-                
+
                 // Validar fechas: fecha_inicio >= hace 2 años, fecha_fin > fecha_inicio
                 // No fines de semana, duración mínima de 30 días
                 $fechaInicio = Carbon::now()->subMonths(rand(0, 6));
@@ -245,7 +245,7 @@ class TestingSeeder extends Seeder
                 while ($fechaInicio->isWeekend()) {
                     $fechaInicio->addDay();
                 }
-                
+
                 // Duración mínima de 30 días
                 $diasDuracion = rand(30, 180);
                 $fechaFin = (clone $fechaInicio)->addDays($diasDuracion);
@@ -253,7 +253,7 @@ class TestingSeeder extends Seeder
                 while ($fechaFin->isWeekend()) {
                     $fechaFin->addDay();
                 }
-                
+
                 // Asegurar que fecha_inicio >= hace 2 años
                 $fechaMinima = Carbon::now()->subYears(2);
                 if ($fechaInicio->lt($fechaMinima)) {
@@ -266,24 +266,24 @@ class TestingSeeder extends Seeder
                         $fechaFin->addDay();
                     }
                 }
-                
+
                 // Obtener IDs válidos para relaciones
                 $sedeId = Sede::inRandomOrder()->value('id');
                 $ambienteId = Ambiente::inRandomOrder()->value('id');
                 $instructorId = Instructor::inRandomOrder()->value('id');
-                
+
                 // Obtener jornada desde parametros_temas del tema JORNADAS
                 $jornadaId = ParametroTema::whereHas('tema', function($q): void {
                     $q->where('name', 'LIKE', '%JORNADAS%');
                 })->inRandomOrder()->value('id');
-                
+
                 $fichaData = [
                     'programa_formacion_id' => $programa->id,
                     'ficha' => $numeroFicha,
                     'fecha_inicio' => $fechaInicio->format('Y-m-d'),
                     'fecha_fin' => $fechaFin->format('Y-m-d'),
                 ];
-                
+
                 // Solo agregar relaciones si existen
                 if ($sedeId) {
                     $fichaData['sede_id'] = $sedeId;
@@ -297,7 +297,7 @@ class TestingSeeder extends Seeder
                 if ($jornadaId) {
                     $fichaData['jornada_id'] = $jornadaId;
                 }
-                
+
                 $fichas[] = FichaCaracterizacion::factory()
                     ->state($fichaData)
                     ->create();
@@ -312,12 +312,12 @@ class TestingSeeder extends Seeder
             // Seleccionar 3-5 días de la semana (Lunes a Viernes = 12-16)
             $diasSemana = [12, 13, 14, 15, 16];
             $diasSeleccionados = collect($diasSemana)->random(rand(3, 5));
-            
+
             foreach ($diasSeleccionados as $diaId) {
                 // Usar horarios por defecto (las jornadas ahora están en tema-parametro)
                 $horaInicio = '08:00:00';
                 $horaFin = '12:00:00';
-                
+
                 FichaDiasFormacion::create([
                     'ficha_id' => $ficha->id,
                     'dia_id' => $diaId,
@@ -340,17 +340,17 @@ class TestingSeeder extends Seeder
         $this->command->info('🔗 Asignando instructores a fichas (con validaciones)...');
         $asignacionesCreadas = 0;
         $asignacionService = app(AsignacionInstructorService::class);
-        
+
         foreach ($fichas as $ficha) {
             // Recargar ficha con relaciones necesarias
             $ficha->load(['programaFormacion.redConocimiento', 'diasFormacion']);
-            
+
             // Obtener competencias del programa de formación de la ficha
             $competenciasDelPrograma = $ficha->programaFormacion->competencias;
             if ($competenciasDelPrograma->isEmpty()) {
                 continue; // Saltar si no hay competencias en el programa
             }
-            
+
             $numInstructores = rand(1, 2); // Reducir para evitar conflictos
             $instructoresParaFicha = $instructores->random(min($numInstructores, $instructores->count()));
 
@@ -367,22 +367,22 @@ class TestingSeeder extends Seeder
                 if (empty($diasFicha)) {
                     continue; // Saltar si la ficha no tiene días configurados
                 }
-                
+
                 // Seleccionar algunos días de los configurados en la ficha
                 $diasSeleccionados = collect($diasFicha)->random(min(rand(3, count($diasFicha)), count($diasFicha)));
 
                 // Crear fechas dentro del rango de la ficha
                 $fechaInicioFicha = Carbon::parse($ficha->fecha_inicio);
                 $fechaFinFicha = Carbon::parse($ficha->fecha_fin);
-                
+
                 // Fecha inicio del instructor (dentro del rango de la ficha)
                 $diasDesdeInicio = rand(0, min(30, $fechaInicioFicha->diffInDays($fechaFinFicha)));
                 $fechaInicio = (clone $fechaInicioFicha)->addDays($diasDesdeInicio);
-                
+
                 // Fecha fin del instructor (no más allá de la ficha)
                 $diasDuracion = rand(60, min(180, $fechaInicio->diffInDays($fechaFinFicha)));
                 $fechaFin = (clone $fechaInicio)->addDays($diasDuracion);
-                
+
                 // Asegurar que no exceda la fecha fin de la ficha
                 if ($fechaFin->gt($fechaFinFicha)) {
                     $fechaFin = clone $fechaFinFicha;
@@ -435,7 +435,7 @@ class TestingSeeder extends Seeder
                 $persona = Persona::factory()->create([
                     'email' => 'aprendiz' . $contadorEmail . '_' . time() . '_' . rand(1000, 9999) . '@example.com',
                 ]);
-                
+
                 // Crear aprendiz
                 Aprendiz::create([
                     'persona_id' => $persona->id,
@@ -444,12 +444,12 @@ class TestingSeeder extends Seeder
                     'user_create_id' => 1,
                     'user_edit_id' => 1,
                 ]);
-                
+
                 // Asignar rol APRENDIZ si tiene usuario
                 if ($persona->user && !$persona->user->hasRole('APRENDIZ')) {
                     $persona->user->assignRole('APRENDIZ');
                 }
-                
+
                 $aprendicesCreados++;
             }
         }

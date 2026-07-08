@@ -334,7 +334,7 @@ Route::get('/fichas/{id}/aprendices', function ($id) {
 
 Route::get('/fichas/{id}/estadisticas', function ($id) {
     $ficha = \App\Models\FichaCaracterizacion::findOrFail($id);
-    
+
     return [
         'total_aprendices' => $ficha->contarAprendices(),
         'duracion_dias' => $ficha->duracionEnDias(),
@@ -367,7 +367,7 @@ Route::get('/fichas/validar-numero/{numero}/{id}', function ($numero, $id) {
 
 Route::get('/fichas/buscar', function (\Illuminate\Http\Request $request) {
     $query = $request->get('q', '');
-    
+
     return \App\Models\FichaCaracterizacion::where('ficha', 'like', "%{$query}%")
         ->orWhereHas('programaFormacion', function($q) use ($query) {
             $q->where('nombre', 'like', "%{$query}%");
@@ -379,27 +379,27 @@ Route::get('/fichas/buscar', function (\Illuminate\Http\Request $request) {
 
 Route::get('/fichas/filtrar', function (\Illuminate\Http\Request $request) {
     $query = \App\Models\FichaCaracterizacion::query();
-    
+
     if ($request->has('estado') && $request->estado !== '') {
         $query->where('status', $request->estado);
     }
-    
+
     if ($request->has('programa_id') && $request->programa_id) {
         $query->where('programa_formacion_id', $request->programa_id);
     }
-    
+
     if ($request->has('sede_id') && $request->sede_id) {
         $query->where('sede_id', $request->sede_id);
     }
-    
+
     if ($request->has('modalidad_id') && $request->modalidad_id) {
         $query->where('modalidad_formacion_id', $request->modalidad_id);
     }
-    
+
     if ($request->has('jornada_id') && $request->jornada_id) {
         $query->where('jornada_id', $request->jornada_id);
     }
-    
+
     return $query->with([
         'programaFormacion:id,nombre',
         'sede:id,nombre',

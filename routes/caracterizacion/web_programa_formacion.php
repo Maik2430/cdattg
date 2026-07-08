@@ -58,11 +58,11 @@ Route::middleware(['can:VER PROGRAMAS DE FORMACION'])->group(function () {
     // Ruta para obtener programas por red de conocimiento
     Route::get('/programas-por-red/{redConocimientoId}', [ProgramaFormacionController::class, 'getByRedConocimiento'])
         ->name('programa.byRedConocimiento');
-    
+
     // Ruta para obtener programas por nivel de formación
     Route::get('/programas-por-nivel/{nivelFormacionId}', [ProgramaFormacionController::class, 'getByNivelFormacion'])
         ->name('programa.byNivelFormacion');
-    
+
     // Ruta para obtener programas activos
     Route::get('/programas-activos', [ProgramaFormacionController::class, 'getActivos'])
         ->name('programa.activos');

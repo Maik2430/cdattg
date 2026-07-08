@@ -35,7 +35,7 @@ class UpdateProgramaComplementarioRequestTest extends TestCase
         $modalidad = ParametroTema::where('tema_id', 5)
             ->whereIn('parametro_id', [18, 19, 20])
             ->first();
-        
+
         $jornada = JornadaFormacion::first();
         $ambiente = Ambiente::first();
 
@@ -57,7 +57,7 @@ class UpdateProgramaComplementarioRequestTest extends TestCase
         $route = new \Illuminate\Routing\Route(['PUT'], '/programas/{programa}', []);
         $route->bind($httpRequest);
         $route->setParameter('programa', $programa);
-        
+
         $httpRequest->setRouteResolver(function () use ($route) {
             return $route;
         });

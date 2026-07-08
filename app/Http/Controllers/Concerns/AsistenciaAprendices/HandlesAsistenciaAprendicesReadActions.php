@@ -6,13 +6,12 @@ use App\Models\AsistenciaAprendiz;
 use App\Models\FichaCaracterizacion;
 use App\Models\ParametroTema;
 use Carbon\Carbon;
-use DateTimeInterface;
 use Carbon\Month;
 use Carbon\WeekDay;
+use DateTimeInterface;
 use Exception;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 

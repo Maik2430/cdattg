@@ -182,11 +182,11 @@ class CarritoServiceTest extends TestCase
         $productoMock->imagen = 'img/producto.jpg';
         $productoMock->cantidad = 10;
         $productoMock->descripcion = 'Descripción';
-        
+
         $categoriaMock = Mockery::mock()->makePartial();
         $categoriaMock->name = 'Categoria Test';
         $productoMock->categoria = $categoriaMock;
-        
+
         $marcaMock = Mockery::mock()->makePartial();
         $marcaMock->name = 'Marca Test';
         $productoMock->marca = $marcaMock;

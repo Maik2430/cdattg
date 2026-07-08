@@ -30,7 +30,7 @@ return new class extends Migration
                 $table->foreign('tipo_producto_id')->references('id')->on('parametros_temas')->onDelete('restrict');
                 $table->foreign('unidad_medida_id')->references('id')->on('parametros_temas')->onDelete('restrict');
                 $table->foreign('estado_id')->references('id')->on('parametros_temas')->onDelete('restrict');
-                
+
                 $table->foreign('user_create_id')->references('id')->on('users')->onDelete('restrict');
                 $table->foreign('user_update_id')->references('id')->on('users')->onDelete('restrict');
             });

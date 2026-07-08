@@ -29,15 +29,15 @@ class InscripcionComplementarioControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         Storage::fake('google');
     }
 
@@ -69,7 +69,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $pais = Pais::first();
         $departamento = Departamento::where('pais_id', $pais->id)->first();
         $municipio = Municipio::where('departamento_id', $departamento->id)->first();
-        
+
         // Asegurar que existen los parametros_temas necesarios en la base de datos
         $parametroDoc = \App\Models\Parametro::firstOrCreate(
             ['id' => 3],
@@ -138,10 +138,10 @@ class InscripcionComplementarioControllerTest extends TestCase
         $pais = Pais::first();
         $departamento = Departamento::where('pais_id', $pais->id)->first();
         $municipio = Municipio::where('departamento_id', $departamento->id)->first();
-        
+
         $numeroDocumento = uniqid('doc_');
         $email = uniqid('test_') . self::TEST_EMAIL_DOMAIN;
-        
+
         Persona::factory()->create([
             'numero_documento' => $numeroDocumento,
             'email' => $email,
@@ -174,7 +174,7 @@ class InscripcionComplementarioControllerTest extends TestCase
         $pais = Pais::first();
         $departamento = Departamento::where('pais_id', $pais->id)->first();
         $municipio = Municipio::where('departamento_id', $departamento->id)->first();
-        
+
         $programa = ComplementarioOfertado::factory()->conOferta()->create();
 
         // Asegurar que existen los parametros_temas necesarios en la base de datos

@@ -86,11 +86,11 @@ class ProductoRequestTest extends TestCase
         $request->setRouteResolver(function () use ($ruta) {
             return new class($ruta) {
                 private string $ruta;
-                
+
                 public function __construct(string $ruta) {
                     $this->ruta = $ruta;
                 }
-                
+
                 public function named(...$patterns): bool {
                     return in_array($this->ruta, $patterns);
                 }
@@ -150,7 +150,7 @@ class ProductoRequestTest extends TestCase
         $tipoProducto = $this->crearParametroTema('TIPO PRODUCTO TEST', 'TIPOS DE PRODUCTO');
         $unidadMedida = $this->crearParametroTema('UNIDAD MEDIDA TEST', 'UNIDADES DE MEDIDA');
         $estadoProducto = $this->crearParametroTema('ESTADO PRODUCTO TEST', 'ESTADOS DE PRODUCTO');
-        
+
         $categoriaParametro = $this->crearParametroConTema('CATEGORIA TEST', 'CATEGORIAS');
         $marcaParametro = $this->crearParametroConTema('MARCA TEST', 'MARCAS');
 
@@ -186,14 +186,14 @@ class ProductoRequestTest extends TestCase
             'user_create_id' => null,
             'user_edit_id' => null,
         ]);
-        
+
         $parametro = \App\Models\Parametro::create([
             'name' => $nombreParametro,
             'status' => 1,
             'user_create_id' => null,
             'user_edit_id' => null,
         ]);
-        
+
         return ParametroTema::create([
             'parametro_id' => $parametro->id,
             'tema_id' => $tema->id,
@@ -213,14 +213,14 @@ class ProductoRequestTest extends TestCase
             'user_create_id' => null,
             'user_edit_id' => null,
         ]);
-        
+
         $parametro = \App\Models\Parametro::create([
             'name' => $nombreParametro,
             'status' => 1,
             'user_create_id' => null,
             'user_edit_id' => null,
         ]);
-        
+
         \App\Models\ParametroTema::create([
             'parametro_id' => $parametro->id,
             'tema_id' => $tema->id,
@@ -228,7 +228,7 @@ class ProductoRequestTest extends TestCase
             'user_create_id' => null,
             'user_edit_id' => null,
         ]);
-        
+
         return $parametro;
     }
 
@@ -301,7 +301,7 @@ class ProductoRequestTest extends TestCase
     private function crearProveedor(): Proveedor
     {
         $userId = $this->obtenerUserId();
-        
+
         // Generar nombre único para evitar constraint UNIQUE
         $proveedorName = 'PROVEEDOR TEST ' . uniqid();
         $proveedorId = DB::table('proveedores')->insertGetId([
@@ -319,7 +319,7 @@ class ProductoRequestTest extends TestCase
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        
+
         return Proveedor::find($proveedorId);
     }
 
@@ -330,12 +330,12 @@ class ProductoRequestTest extends TestCase
     {
         // Crear proveedor mínimo primero
         $proveedor = $this->crearProveedor();
-        
+
         // Crear estado (ParametroTema) mínimo
         $estado = $this->crearParametroTema('ESTADO TEST', 'ESTADOS');
-        
+
         $userId = $this->obtenerUserId();
-        
+
         // Generar nombre y código únicos para evitar constraint UNIQUE
         $uniqueId = uniqid();
         $contratoId = DB::table('contratos_convenios')->insertGetId([
@@ -350,7 +350,7 @@ class ProductoRequestTest extends TestCase
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        
+
         return ContratoConvenio::find($contratoId);
     }
 }

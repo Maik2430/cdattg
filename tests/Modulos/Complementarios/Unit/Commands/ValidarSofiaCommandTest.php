@@ -24,7 +24,7 @@ class ValidarSofiaCommandTest extends TestCase
         // Verificar que el comando tiene el nombre correcto usando getName()
         // getName() devuelve el nombre base del comando sin argumentos
         $command = new ValidarSofiaCommand;
-        
+
         $this->assertEquals('sofia:validar', $command->getName());
     }
 }

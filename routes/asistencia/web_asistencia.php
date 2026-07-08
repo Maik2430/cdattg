@@ -46,7 +46,7 @@ Route::middleware(['permission:TOMAR ASISTENCIA'])->group(function () {
     Route::post('/asistencia/set-session-alert', [AsistenceQrController::class, 'setSessionAlert'])->name('asistencia.setSessionAlert');
     Route::post('/asistence/agregar-actividad', [AsistenceQrController::class, 'agregar_actividad'])->name('asistence.agregarActividad');
     Route::put('/asistence/terminar-actividad', [AsistenceQrController::class, 'terminar_actividad'])->name('asistence.terminarActividad');
-    
+
     // Rutas para gestión de evidencias (asistencia QR)
     Route::post('/evidencias/store-simple', [AsistenceQrController::class, 'storeEvidencia'])->name('evidencias.store.simple');
 });

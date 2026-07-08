@@ -43,13 +43,13 @@ class ParametroTemaRepositoryTest extends TestCase
         $tema = Tema::factory()->create(['name' => self::TEMA_TIPOS_PRODUCTO]);
         $parametro1 = Parametro::factory()->create(['name' => self::PARAMETRO_CONSUMIBLE]);
         $parametro2 = Parametro::factory()->create(['name' => self::PARAMETRO_NO_CONSUMIBLE]);
-        
+
         $parametroTema1 = ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametro1->id,
             'status' => 1
         ]);
-        
+
         $parametroTema2 = ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametro2->id,
@@ -85,13 +85,13 @@ class ParametroTemaRepositoryTest extends TestCase
         $tema = Tema::factory()->create(['name' => self::TEMA_TIPOS_PRODUCTO]);
         $parametroActivo = Parametro::factory()->create(['name' => self::PARAMETRO_CONSUMIBLE]);
         $parametroInactivo = Parametro::factory()->create(['name' => self::PARAMETRO_NO_CONSUMIBLE]);
-        
+
         ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametroActivo->id,
             'status' => 1
         ]);
-        
+
         ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametroInactivo->id,
@@ -112,7 +112,7 @@ class ParametroTemaRepositoryTest extends TestCase
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_ESTADOS_PRODUCTO]);
         $parametro = Parametro::factory()->create(['name' => self::PARAMETRO_DISPONIBLE]);
-        
+
         $parametroTema = ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametro->id,
@@ -149,7 +149,7 @@ class ParametroTemaRepositoryTest extends TestCase
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_ESTADOS_PRODUCTO]);
         $parametro = Parametro::factory()->create(['name' => self::PARAMETRO_DISPONIBLE]);
-        
+
         ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametro->id,
@@ -169,7 +169,7 @@ class ParametroTemaRepositoryTest extends TestCase
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_ESTADOS_ORDEN]);
         $parametro = Parametro::factory()->create(['name' => self::PARAMETRO_APROBADA]);
-        
+
         $parametroTema = ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametro->id,
@@ -217,7 +217,7 @@ class ParametroTemaRepositoryTest extends TestCase
         // Arrange
         $tema = Tema::factory()->create(['name' => self::TEMA_ESTADOS_ORDEN]);
         $parametro = Parametro::factory()->create(['name' => self::PARAMETRO_RECHAZADA]);
-        
+
         ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametro->id,
@@ -237,7 +237,7 @@ class ParametroTemaRepositoryTest extends TestCase
         // Arrange
         $tema = Tema::factory()->create(['name' => self::PARAMETRO_MARCAS]);
         $parametros = [];
-        
+
         for ($i = 1; $i <= 5; $i++) {
             $parametro = Parametro::factory()->create(['name' => "MARCA $i"]);
             ParametroTema::create([
@@ -265,7 +265,7 @@ class ParametroTemaRepositoryTest extends TestCase
         // Arrange
         $tema = Tema::factory()->create(['name' => self::PARAMETRO_CATEGORIAS]);
         $parametro = Parametro::factory()->create(['name' => 'ELECTRÓNICA']);
-        
+
         ParametroTema::create([
             'tema_id' => $tema->id,
             'parametro_id' => $parametro->id,

@@ -16,7 +16,7 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Configurar APP_KEY para tests si no está configurado
         if (empty(config('app.key'))) {
             config(['app.key' => 'base64:' . base64_encode('12345678901234567890123456789012')]);
@@ -35,7 +35,7 @@ abstract class TestCase extends BaseTestCase
         // Forzar el uso de SQLite para tests (sobrescribe cualquier configuración del .env)
         config(['database.default' => 'sqlite']);
         config(['database.connections.sqlite.database' => database_path('testing.sqlite')]);
-        
+
         $connection = config('database.default');
         $driver = config("database.connections.{$connection}.driver");
 
@@ -65,16 +65,16 @@ abstract class TestCase extends BaseTestCase
                 if ($driver === 'mysql') {
                     DB::connection($connection)->statement('SET FOREIGN_KEY_CHECKS=0');
                 }
-                
+
                 // Obtener todas las tablas
                 $tables = DB::connection($connection)->select("SHOW TABLES");
                 $tableKey = 'Tables_in_' . config("database.connections.{$connection}.database");
-                
+
                 foreach ($tables as $table) {
                     $tableName = $table->$tableKey;
                     DB::connection($connection)->statement("DROP TABLE IF EXISTS `{$tableName}`");
                 }
-                
+
                 // Reactivar las foreign keys
                 if ($driver === 'mysql') {
                     DB::connection($connection)->statement('SET FOREIGN_KEY_CHECKS=1');

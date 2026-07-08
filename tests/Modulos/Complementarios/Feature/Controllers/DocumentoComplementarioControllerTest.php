@@ -79,7 +79,7 @@ class DocumentoComplementarioControllerTest extends TestCase
             'primer_apellido' => self::NOMBRE_PRIMER_APELLIDO,
             'email' => self::EMAIL_TEST,
         ]);
-        
+
         // Load tipoDocumento relationship
         $this->persona->load('tipoDocumento');
 
@@ -124,7 +124,7 @@ class DocumentoComplementarioControllerTest extends TestCase
     {
         // Ensure relationships are loaded
         $this->aspirante->load('persona.tipoDocumento');
-        
+
         $file = UploadedFile::fake()->create('documento.pdf', self::FILE_SIZE_KB, self::MIME_TYPE_PDF);
 
         $response = $this->post(route('programas-complementarios.subir-documentos', [
@@ -267,7 +267,7 @@ class DocumentoComplementarioControllerTest extends TestCase
     {
         // Ensure persona has tipoDocumento relationship loaded
         $this->aspirante->load('persona.tipoDocumento');
-        
+
         $file = UploadedFile::fake()->create('documento.pdf', self::FILE_SIZE_KB, self::MIME_TYPE_PDF);
 
         $response = $this->post(route('programas-complementarios.subir-documentos', [

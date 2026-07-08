@@ -131,16 +131,16 @@ class StoreAspiranteRequestTest extends TestCase
     public function prepareForValidation_trim_numero_documento(): void
     {
         $request = new StoreAspiranteRequest();
-        
+
         // Simular request con espacios
         $request->merge(['numero_documento' => '  ' . self::NUMERO_DOCUMENTO_TEST . '  ']);
-        
+
         // Usar reflection para llamar al método protegido
         // En PHP 8.1+ setAccessible() ya no es necesario
         $reflection = new \ReflectionClass($request);
         $method = $reflection->getMethod('prepareForValidation');
         $method->invoke($request);
-        
+
         $this->assertEquals(self::NUMERO_DOCUMENTO_TEST, $request->numero_documento);
     }
 

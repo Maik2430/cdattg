@@ -158,7 +158,7 @@ class ProductoControllerTest extends TestCase
         $categoria = \App\Models\Parametro::whereHas('temas', function ($q) {
             $q->where('name', 'CATEGORIAS');
         })->first();
-        
+
         if (!$categoria) {
             // TemaSeeder ya crea CATEGORÍAS, solo buscar el tema existente
             $temaCategorias = \App\Models\Tema::where('name', 'CATEGORÍAS')->first();
@@ -189,7 +189,7 @@ class ProductoControllerTest extends TestCase
         $marca = \App\Models\Parametro::whereHas('temas', function ($q) {
             $q->where('name', 'MARCAS');
         })->first();
-        
+
         if (!$marca) {
             // TemaSeeder ya crea MARCAS, solo buscar el tema existente
             $temaMarcas = \App\Models\Tema::where('name', 'MARCAS')->first();

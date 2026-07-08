@@ -21,9 +21,9 @@ class AspiranteComplementarioRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->repository = new AspiranteComplementarioRepository();
     }
 
@@ -234,7 +234,7 @@ class AspiranteComplementarioRepositoryTest extends TestCase
     public function puede_obtener_estadisticas_exclusion()
     {
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         // Crear personas con diferentes estados
         $personaValida = Persona::factory()->create([
             'condocumento' => 1,

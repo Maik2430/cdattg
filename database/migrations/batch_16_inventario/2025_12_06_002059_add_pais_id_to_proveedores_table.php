@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('proveedores', function (Blueprint $table) {
             $table->unsignedBigInteger('pais_id')->nullable()->after('direccion')->comment('ID del país del proveedor');
-            
+
             $table->foreign('pais_id')->references('id')->on('pais')->onDelete('set null');
         });
     }

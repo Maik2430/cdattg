@@ -11,7 +11,7 @@ class InstructorFichaCaracterizacionRepository
     {
         Log::info('=== DEBUG INSTRUCTORFICHACARACTERIZACIONREPOSITORY ===');
         Log::info('Buscando fichas para instructor_id: ' . $instructorId);
-        
+
         $fichas = InstructorFichaCaracterizacion::query()
             ->with([
                 'ficha.programaFormacion',
@@ -29,9 +29,9 @@ class InstructorFichaCaracterizacionRepository
                 });
             })
             ->get();
-        
+
         Log::info('Cantidad de fichas encontradas: ' . $fichas->count());
-        
+
         if ($fichas->isNotEmpty()) {
             Log::info('Fichas encontradas:');
             foreach ($fichas as $index => $ficha) {
@@ -40,9 +40,9 @@ class InstructorFichaCaracterizacionRepository
         } else {
             Log::warning('No se encontraron fichas para el instructor_id: ' . $instructorId);
         }
-        
+
         Log::info('=== FIN DEBUG REPOSITORIO FICHAS ===');
-        
+
         return $fichas;
     }
 }

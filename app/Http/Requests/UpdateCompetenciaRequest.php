@@ -15,10 +15,10 @@ class UpdateCompetenciaRequest extends FormRequest
     public function rules(): array
     {
         $competencia = $this->route('competencia');
-        
+
         // Obtener el ID si es un objeto
-        $competenciaId = $competencia instanceof \App\Models\Competencia 
-            ? $competencia->id 
+        $competenciaId = $competencia instanceof \App\Models\Competencia
+            ? $competencia->id
             : $competencia;
 
         return [

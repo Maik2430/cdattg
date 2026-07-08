@@ -13,24 +13,24 @@ return new class extends Migration
     {
         Schema::create('detalle_ordenes', function (Blueprint $table) {
             $table->id();
-            
+
             // Relación con orden
             $table->unsignedBigInteger('orden_id');
-            
+
             // Relación con producto
             $table->unsignedBigInteger('producto_id');
-            
+
             // Estado del detalle de la orden
             $table->unsignedBigInteger('estado_orden_id');
-            
+
             // Cantidad solicitada/prestada
             $table->integer('cantidad');
-            
+
             // Auditoría
             $table->unsignedBigInteger('user_create_id');
             $table->unsignedBigInteger('user_update_id');
             $table->timestamps();
-            
+
             // Llaves foráneas
             $table->foreign('orden_id')->references('id')->on('ordenes')->onDelete('cascade');
             $table->foreign('producto_id')->references('id')->on('productos')->onDelete('restrict');

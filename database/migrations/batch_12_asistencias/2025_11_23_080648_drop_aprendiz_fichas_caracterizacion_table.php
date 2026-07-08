@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * IMPORTANT: Esta migración debe ejecutarse DESPUÉS de cambiar la foreign key
      * en asistencia_aprendices. Asegúrate de que la migración anterior se haya ejecutado.
      */
@@ -16,7 +16,7 @@ return new class extends Migration
     {
         // Verificar que no haya foreign keys apuntando a esta tabla
         // La foreign key de asistencia_aprendices ya debería haber sido cambiada
-        
+
         Schema::dropIfExists('aprendiz_fichas_caracterizacion');
     }
 

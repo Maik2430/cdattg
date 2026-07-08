@@ -58,7 +58,7 @@ class ValidacionSofiaController extends Controller
     private function performValidations($complementarioId): array
     {
         $aspirantesCount = $this->countAspirantesNeedingValidation($complementarioId);
-        
+
         $errorResponse = $this->checkAspirantesCount($aspirantesCount, $complementarioId);
         if ($errorResponse !== null) {
             return ['error' => $errorResponse, 'aspirantes_count' => 0];

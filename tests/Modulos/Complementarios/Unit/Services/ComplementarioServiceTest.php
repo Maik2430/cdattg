@@ -33,11 +33,11 @@ class ComplementarioServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->temaRepositoryMock = Mockery::mock(TemaRepository::class);
         $this->programaRepositoryMock = Mockery::mock(ComplementarioOfertadoRepository::class);
         $this->aspiranteRepositoryMock = Mockery::mock(AspiranteComplementarioRepository::class);
-        
+
         $this->service = new ComplementarioService(
             $this->temaRepositoryMock,
             $this->programaRepositoryMock,
@@ -55,7 +55,7 @@ class ComplementarioServiceTest extends TestCase
     public function puede_obtener_icono_para_programa()
     {
         $icono = $this->service->getIconoForPrograma('Auxiliar de Cocina');
-        
+
         $this->assertEquals('fas fa-utensils', $icono);
     }
 
@@ -63,7 +63,7 @@ class ComplementarioServiceTest extends TestCase
     public function retorna_icono_por_defecto_si_no_existe()
     {
         $icono = $this->service->getIconoForPrograma('Programa Desconocido');
-        
+
         $this->assertEquals('fas fa-graduation-cap', $icono);
     }
 
@@ -73,7 +73,7 @@ class ComplementarioServiceTest extends TestCase
         $clase0 = $this->service->getBadgeClassForEstado(0);
         $clase1 = $this->service->getBadgeClassForEstado(1);
         $clase2 = $this->service->getBadgeClassForEstado(2);
-        
+
         $this->assertEquals('bg-secondary', $clase0);
         $this->assertEquals('bg-success', $clase1);
         $this->assertEquals('bg-warning', $clase2);
@@ -85,7 +85,7 @@ class ComplementarioServiceTest extends TestCase
         $label0 = $this->service->getEstadoLabel(0);
         $label1 = $this->service->getEstadoLabel(1);
         $label2 = $this->service->getEstadoLabel(2);
-        
+
         $this->assertEquals('Sin Oferta', $label0);
         $this->assertEquals('Con Oferta', $label1);
         $this->assertEquals('Cupos Llenos', $label2);
@@ -96,9 +96,9 @@ class ComplementarioServiceTest extends TestCase
     {
         $modalidad = new ParametroTema(['id' => 1, 'tema_id' => 5]);
         $modalidad->setRelation('parametro', new Parametro(['id' => 1, 'name' => 'Presencial']));
-        
+
         $jornada = new JornadaFormacion(['id' => 1, 'jornada' => 'Diurna']);
-        
+
         $programa = new ComplementarioOfertado();
         $programa->id = 1;
         $programa->nombre = 'Auxiliar de Cocina';
@@ -308,7 +308,7 @@ class ComplementarioServiceTest extends TestCase
         ]);
 
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         // Crear parámetros con nombres únicos para evitar violaciones de UNIQUE constraint
         $dia1 = Parametro::create(['name' => 'LUNES_TEST_' . uniqid(), 'status' => 1]);
         $dia2 = Parametro::create(['name' => 'MARTES_TEST_' . uniqid(), 'status' => 1]);
@@ -360,7 +360,7 @@ class ComplementarioServiceTest extends TestCase
         ]);
 
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         // Crear parámetro con nombre único para evitar violaciones de UNIQUE constraint
         $dia = Parametro::create(['name' => 'MIERCOLES_TEST_' . uniqid(), 'status' => 1]);
 
@@ -386,7 +386,7 @@ class ComplementarioServiceTest extends TestCase
         // Crear un mock del tema que extienda de Tema o sea una instancia de Tema
         $temaMock = Mockery::mock(\App\Models\Tema::class)->makePartial();
         $temaMock->id = 1;
-        
+
         $builderMock = Mockery::mock();
         $builderMock->shouldReceive('where')
             ->once()
@@ -426,7 +426,7 @@ class ComplementarioServiceTest extends TestCase
         // Crear un mock del tema que extienda de Tema o sea una instancia de Tema
         $temaMock = Mockery::mock(\App\Models\Tema::class)->makePartial();
         $temaMock->id = 1;
-        
+
         $builderMock = Mockery::mock();
         $builderMock->shouldReceive('where')
             ->once()

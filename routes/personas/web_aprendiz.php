@@ -31,11 +31,11 @@ Route::middleware('can:VER APRENDIZ')->group(function () {
     // API: Listar todos los aprendices
     Route::get('/api/aprendices', [AprendizController::class, 'apiIndex'])
         ->name('api.aprendices.index');
-    
+
     // API: Buscar aprendices por nombre o documento
     Route::get('/api/aprendices/search', [AprendizController::class, 'search'])
         ->name('api.aprendices.search');
-    
+
     // API: Obtener aprendices por ficha
     Route::get('/api/aprendices/ficha/{fichaId}', [AprendizController::class, 'getAprendicesByFicha'])
         ->name('api.aprendices.by.ficha');

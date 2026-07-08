@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Schema::table('productos', function (Blueprint $table) {
             $table->dropForeign(['proveedor_id']);
-            
+
             $table->dropColumn(['proveedor_id']);
         });
     }

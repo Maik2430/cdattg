@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('datos'); // Datos de la notificación
             $table->timestamp('leida_en')->nullable(); // Fecha de lectura
             $table->timestamps();
-            
+
             $table->index(['notificable_type', 'notificable_id', 'leida_en']);
         });
     }

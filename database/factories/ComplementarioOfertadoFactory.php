@@ -76,11 +76,11 @@ class ComplementarioOfertadoFactory extends Factory
         $catalogoExistente = ComplementarioCatalogo::where('activo', true)
             ->inRandomOrder()
             ->first();
-        
+
         if ($catalogoExistente) {
             return $catalogoExistente->id;
         }
-        
+
         // Si no hay catálogos, crear uno nuevo
         $nombres = [
             'Auxiliar de Cocina',
@@ -96,10 +96,10 @@ class ComplementarioOfertadoFactory extends Factory
             'Corte y Confección',
             'Jardinería y Paisajismo',
         ];
-        
+
         $denominacion = $this->faker->randomElement($nombres);
         $prfCodigo = 'PRF' . str_pad($this->faker->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT);
-        
+
         $catalogo = ComplementarioCatalogo::create([
             'prf_codigo' => $prfCodigo,
             'version' => 1,
@@ -111,7 +111,7 @@ class ComplementarioOfertadoFactory extends Factory
             'modalidad_id' => $this->obtenerModalidadId(),
             'activo' => true,
         ]);
-        
+
         return $catalogo->id;
     }
 
@@ -125,14 +125,14 @@ class ComplementarioOfertadoFactory extends Factory
                 ->whereIn('parametro_id', [18, 19, 20])
                 ->inRandomOrder()
                 ->value('id');
-            
+
             if ($modalidadId) {
                 return $modalidadId;
             }
         } catch (\Exception $e) {
             // Continuar si hay error
         }
-        
+
         // Si no se encontró, intentar crear los registros necesarios
         return $this->crearModalidadSiNoExiste();
     }
@@ -148,14 +148,14 @@ class ComplementarioOfertadoFactory extends Factory
                 ['id' => 5],
                 ['name' => 'MODALIDADES DE FORMACION', 'status' => 1]
             );
-            
+
             // Crear los parámetros de modalidad si no existen (18, 19, 20)
             $parametrosModalidad = [
                 18 => 'PRESENCIAL',
                 19 => 'VIRTUAL',
                 20 => 'MIXTA',
             ];
-            
+
             foreach ($parametrosModalidad as $paramId => $paramName) {
                 try {
                     \App\Models\Parametro::firstOrCreate(
@@ -166,7 +166,7 @@ class ComplementarioOfertadoFactory extends Factory
                     // Continuar si el parámetro ya existe
                 }
             }
-            
+
             // Crear un ParametroTema con uno de los parámetros de modalidad
             $parametroId = 18; // Usar PRESENCIAL por defecto
             try {
@@ -190,12 +190,12 @@ class ComplementarioOfertadoFactory extends Factory
     private function obtenerJornadaId(): int
     {
         $jornadaId = JornadaFormacion::inRandomOrder()->value('id');
-        
+
         if (!$jornadaId) {
             $jornada = JornadaFormacion::factory()->create();
             $jornadaId = $jornada->id;
         }
-        
+
         return $jornadaId;
     }
 
@@ -215,22 +215,22 @@ class ComplementarioOfertadoFactory extends Factory
         try {
             // Buscar el tema ESTADOS (ID 1) que contiene los estados de programas complementarios
             $temaEstado = \App\Models\Tema::find(1); // Tema "ESTADOS"
-            
+
             if ($temaEstado) {
                 // Obtener el ParametroTema para "Sin Oferta" (parametro_id = 277) por defecto
                 $estadoId = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
                     ->where('parametro_id', 277) // SIN OFERTA por defecto
                     ->value('id');
-                
+
                 if ($estadoId) {
                     return $estadoId;
                 }
-                
+
                 // Si no encuentra el específico, buscar cualquier estado del tema ESTADOS
                 $estadoId = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
                     ->inRandomOrder()
                     ->value('id');
-                
+
                 if ($estadoId) {
                     return $estadoId;
                 }
@@ -238,7 +238,7 @@ class ComplementarioOfertadoFactory extends Factory
         } catch (\Exception $e) {
             // Si hay error, continuar con null
         }
-        
+
         // Si no se encontró estado parametrizado, intentar obtener cualquier ParametroTema como fallback
         return \App\Models\ParametroTema::inRandomOrder()->value('id');
     }
@@ -251,21 +251,21 @@ class ComplementarioOfertadoFactory extends Factory
         try {
             // Buscar en el tema ESTADOS (ID 1)
             $temaEstado = \App\Models\Tema::find(1); // Tema "ESTADOS"
-            
+
             if ($temaEstado) {
                 // Buscar el parámetro por nombre (asegurarse de que coincida el caso)
                 $parametro = \App\Models\Parametro::where('name', strtoupper($nombreEstado))->first();
-                
+
                 if (!$parametro) {
                     // Intentar con el nombre exacto
                     $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
                 }
-                
+
                 if ($parametro) {
                     $parametroTema = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
                         ->where('parametro_id', $parametro->id)
                         ->first();
-                    
+
                     if ($parametroTema) {
                         return $parametroTema->id;
                     }
@@ -274,7 +274,7 @@ class ComplementarioOfertadoFactory extends Factory
         } catch (\Exception $e) {
             // Si hay error, retornar null
         }
-        
+
         return null;
     }
 
@@ -284,7 +284,7 @@ class ComplementarioOfertadoFactory extends Factory
     public function conCupos(int $cupos = null): static
     {
         $cuposFinal = $cupos ?? $this->faker->numberBetween(20, 50);
-        
+
         return $this->state(fn () => [
             'cupos' => $cuposFinal,
             'estado_id' => $this->getEstadoIdByName('Con Oferta'),
@@ -302,7 +302,7 @@ class ComplementarioOfertadoFactory extends Factory
                 ComplementarioCatalogo::where('id', $attributes['catalogo_id'])
                     ->update(['duracion_horas' => $horas]);
             }
-            
+
             return [];
         });
     }

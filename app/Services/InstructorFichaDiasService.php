@@ -31,7 +31,7 @@ class InstructorFichaDiasService
 
             // Obtener la relación instructor-ficha
             $instructorFicha = InstructorFichaCaracterizacion::with(['instructor', 'ficha', 'competencia', 'resultadosAprendizaje'])->findOrFail($instructorFichaId);
-            
+
             \Log::info('Instructor-ficha encontrado', ['instructor_ficha' => $instructorFicha]);
 
             // Validar disponibilidad del instructor
@@ -40,7 +40,7 @@ class InstructorFichaDiasService
             if (!$validacion['disponible']) {
                 $conflictos = $validacion['conflictos'];
                 $mensaje = 'El instructor tiene conflictos de horario, jornada o fechas con otras fichas asignadas:';
-                
+
                 $detallesConflictos = [];
                 foreach ($conflictos as $conflicto) {
                     $detalle = "• {$conflicto['dia_nombre']}: Ficha {$conflicto['ficha_conflicto']} ({$conflicto['programa_conflicto']}) - ";
@@ -49,9 +49,9 @@ class InstructorFichaDiasService
                     $detalle .= "Horario: {$conflicto['horario_conflicto']} (solicitado: {$conflicto['horario_solicitado']})";
                     $detallesConflictos[] = $detalle;
                 }
-                
+
                 $mensajeCompleto = $mensaje . "\n\n" . implode("\n", $detallesConflictos);
-                
+
                 return [
                     'success' => false,
                     'message' => $mensajeCompleto,
@@ -138,12 +138,12 @@ class InstructorFichaDiasService
     public function validarDisponibilidadInstructor(InstructorFichaCaracterizacion $instructorFicha, array $diasData): array
     {
         $conflictos = [];
-        
+
         $fechaInicio = Carbon::parse($instructorFicha->fecha_inicio);
         $fechaFin = Carbon::parse($instructorFicha->fecha_fin);
         $jornadaIdFicha = $instructorFicha->ficha->jornada_id ?? null;
         $diasIdsNuevos = collect($diasData)->pluck('dia_id')->toArray();
-        
+
         // Buscar otras asignaciones del mismo instructor que puedan tener conflictos
         $otrasAsignacionesFicha = InstructorFichaCaracterizacion::where('instructor_id', $instructorFicha->instructor_id)
             ->where('id', '!=', $instructorFicha->id)
@@ -164,7 +164,7 @@ class InstructorFichaDiasService
             })
             ->with(['ficha.jornadaFormacion.parametro', 'instructorFichaDias.dia'])
             ->get();
-        
+
         // Validar conflictos por día y horario
         foreach ($diasData as $diaData) {
             $diaId = $diaData['dia_id'];
@@ -174,16 +174,16 @@ class InstructorFichaDiasService
             foreach ($otrasAsignacionesFicha as $otraAsignacionFicha) {
                 // Buscar si la otra asignación tiene el mismo día
                 $diaExistente = $otraAsignacionFicha->instructorFichaDias->firstWhere('dia_id', $diaId);
-                
+
                 if ($diaExistente) {
                     // Hay conflicto de día, ahora validar horario si ambos tienen horarios
                     $hayConflictoHorario = false;
-                    
+
                     if ($horaInicio && $horaFin && $diaExistente->hora_inicio && $diaExistente->hora_fin) {
                         $hayConflictoHorario = $this->hayConflictoHorario(
-                            $horaInicio, 
-                            $horaFin, 
-                            $diaExistente->hora_inicio, 
+                            $horaInicio,
+                            $horaFin,
+                            $diaExistente->hora_inicio,
                             $diaExistente->hora_fin
                         );
                     } elseif ($horaInicio && $horaFin && (!$diaExistente->hora_inicio || !$diaExistente->hora_fin)) {
@@ -193,7 +193,7 @@ class InstructorFichaDiasService
                         // Si la nueva asignación no tiene horario, considerar conflicto si hay día en común
                         $hayConflictoHorario = true;
                     }
-                    
+
                     if ($hayConflictoHorario) {
                         $conflictos[] = [
                             'dia_id' => $diaId,
@@ -203,11 +203,11 @@ class InstructorFichaDiasService
                             'jornada_conflicto' => $otraAsignacionFicha->ficha->jornadaFormacion->parametro->name ?? 'N/A',
                             'fecha_inicio_conflicto' => Carbon::parse($otraAsignacionFicha->fecha_inicio)->format('d/m/Y'),
                             'fecha_fin_conflicto' => Carbon::parse($otraAsignacionFicha->fecha_fin)->format('d/m/Y'),
-                            'horario_conflicto' => $diaExistente->hora_inicio && $diaExistente->hora_fin 
-                                ? $diaExistente->hora_inicio . ' - ' . $diaExistente->hora_fin 
+                            'horario_conflicto' => $diaExistente->hora_inicio && $diaExistente->hora_fin
+                                ? $diaExistente->hora_inicio . ' - ' . $diaExistente->hora_fin
                                 : 'Sin horario',
-                            'horario_solicitado' => $horaInicio && $horaFin 
-                                ? $horaInicio . ' - ' . $horaFin 
+                            'horario_solicitado' => $horaInicio && $horaFin
+                                ? $horaInicio . ' - ' . $horaFin
                                 : 'Sin horario'
                         ];
                     }
@@ -399,7 +399,7 @@ class InstructorFichaDiasService
     {
         $competenciaId = $instructorFicha->competencia_id;
         $resultadosIds = $instructorFicha->resultadosAprendizaje->pluck('id')->toArray();
-        
+
         // Solo validar si tiene competencia o resultados asignados
         if (!$competenciaId && empty($resultadosIds)) {
             return ['valido' => true];
@@ -408,7 +408,7 @@ class InstructorFichaDiasService
         // Calcular horas trabajadas
         $fechasEfectivas = $this->generarFechasEfectivas($instructorFicha, $diasData);
         $horasTrabajadas = 0;
-        
+
         foreach ($fechasEfectivas as $fecha) {
             if ($fecha['hora_inicio'] && $fecha['hora_fin']) {
                 $horas = $this->convertirTiempoAHoras($fecha['hora_inicio'], $fecha['hora_fin']);
@@ -418,7 +418,7 @@ class InstructorFichaDiasService
 
         // Obtener duración esperada
         $duracionEsperada = 0;
-        
+
         if (!empty($resultadosIds)) {
             $resultados = \App\Models\ResultadosAprendizaje::whereIn('id', $resultadosIds)->get();
             $duracionEsperada = $resultados->sum('duracion');
@@ -436,15 +436,15 @@ class InstructorFichaDiasService
         // Calcular diferencia porcentual (margen de tolerancia del 10%)
         $diferencia = abs($horasTrabajadas - $duracionEsperada);
         $porcentajeDiferencia = ($diferencia / $duracionEsperada) * 100;
-        
+
         // Si la diferencia es mayor al 10%, mostrar advertencia
         if ($porcentajeDiferencia > 10) {
-            $competenciaNombre = $competenciaId 
+            $competenciaNombre = $competenciaId
                 ? (\App\Models\Competencia::find($competenciaId)->nombre ?? 'Competencia')
                 : 'Resultados de aprendizaje';
-            
+
             $mensaje = "⚠️ INCOHERENCIA DE HORAS: Las horas trabajadas ({$horasTrabajadas}h) no son coherentes con la duración esperada ({$duracionEsperada}h) de {$competenciaNombre}. Diferencia: {$diferencia}h ({$porcentajeDiferencia}%). Ajuste las fechas, días u horarios para que coincidan.";
-            
+
             return [
                 'valido' => false,
                 'mensaje' => $mensaje
@@ -466,12 +466,12 @@ class InstructorFichaDiasService
         try {
             $inicio = \Carbon\Carbon::parse($horaInicio);
             $fin = \Carbon\Carbon::parse($horaFin);
-            
+
             // Si la hora fin es menor que inicio, asumir que es del día siguiente
             if ($fin->lt($inicio)) {
                 $fin->addDay();
             }
-            
+
             $diferencia = $inicio->diffInMinutes($fin);
             return $diferencia / 60; // Convertir minutos a horas
         } catch (\Exception $e) {

@@ -39,14 +39,14 @@ class AspiranteManagementServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->aspiranteRepositoryMock = Mockery::mock(AspiranteComplementarioRepository::class);
         $this->programaRepositoryMock = Mockery::mock(ComplementarioOfertadoRepository::class);
         $this->personaRepositoryMock = Mockery::mock(PersonaRepository::class);
         $this->documentoServiceMock = Mockery::mock(AspiranteDocumentoService::class);
-        
+
         $this->service = new AspiranteManagementService(
             $this->aspiranteRepositoryMock,
             $this->programaRepositoryMock,
@@ -70,12 +70,12 @@ class AspiranteManagementServiceTest extends TestCase
         $programa1->setAttribute('id', 1);
         $programa1->setAttribute('nombre', 'Programa 1');
         $programa1->setAttribute('aspirantes_count', 5);
-        
+
         $programa2 = new ComplementarioOfertado();
         $programa2->setAttribute('id', 2);
         $programa2->setAttribute('nombre', 'Programa 2');
         $programa2->setAttribute('aspirantes_count', 3);
-        
+
         $programas = new EloquentCollection([$programa1, $programa2]);
 
         $this->programaRepositoryMock->shouldReceive('getAllWithAspirantesCount')
@@ -97,7 +97,7 @@ class AspiranteManagementServiceTest extends TestCase
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
         $programa->setAttribute('nombre', 'Auxiliar de Cocina');
-        
+
         $aspirantes = new EloquentCollection([
             new AspiranteComplementario(['id' => 1, 'complementario_id' => 1]),
             new AspiranteComplementario(['id' => 2, 'complementario_id' => 1]),
@@ -135,7 +135,7 @@ class AspiranteManagementServiceTest extends TestCase
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
         $programa->setAttribute('nombre', self::TEST_PROGRAMA_NOMBRE);
-        
+
         $aspirantes = new EloquentCollection([
             new AspiranteComplementario(['id' => 1]),
             new AspiranteComplementario(['id' => 2]),
@@ -169,13 +169,13 @@ class AspiranteManagementServiceTest extends TestCase
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
         $programa->setAttribute('nombre', self::TEST_PROGRAMA_NOMBRE);
-        
+
         $persona = new Persona();
         $persona->setAttribute('id', 1);
         $persona->setAttribute('numero_documento', self::TEST_NUMERO_DOCUMENTO);
         $persona->setAttribute('primer_nombre', 'Juan');
         $persona->setAttribute('primer_apellido', 'Pérez');
-        
+
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1, 'complementario_id' => 1]);
 
         $this->programaRepositoryMock->shouldReceive('findWithRelations')
@@ -237,7 +237,7 @@ class AspiranteManagementServiceTest extends TestCase
         $programa = new ComplementarioOfertado();
         $programa->setAttribute('id', 1);
         $programa->setAttribute('nombre', self::TEST_PROGRAMA_NOMBRE);
-        
+
         $persona = new Persona();
         $persona->setAttribute('id', 1);
         $persona->setAttribute('numero_documento', self::TEST_NUMERO_DOCUMENTO);
@@ -401,11 +401,11 @@ class AspiranteManagementServiceTest extends TestCase
             'estado' => 1,
             'observaciones' => null,
         ]);
-        
+
         // Establecer la relación persona usando setRelation
         // Esto marca la relación como cargada automáticamente
         $aspirante->setRelation('persona', $persona);
-        
+
         // Sincronizar atributos originales
         $aspirante->syncOriginal();
 
@@ -457,7 +457,7 @@ class AspiranteManagementServiceTest extends TestCase
         \Illuminate\Support\Facades\Log::shouldReceive('info')
             ->zeroOrMoreTimes()
             ->andReturn(true);
-        
+
         \Illuminate\Support\Facades\Log::shouldReceive('error')
             ->zeroOrMoreTimes()
             ->andReturn(true);

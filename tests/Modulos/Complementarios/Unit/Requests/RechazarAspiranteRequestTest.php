@@ -97,15 +97,15 @@ class RechazarAspiranteRequestTest extends TestCase
     public function prepareForValidation_trim_motivo_rechazo(): void
     {
         $request = new RechazarAspiranteRequest();
-        
+
         $request->merge(['motivo_rechazo' => '  Motivo con espacios  ']);
-        
+
         // Usar reflection para llamar al método protegido
         // En PHP 8.1+ setAccessible() ya no es necesario
         $reflection = new \ReflectionClass($request);
         $method = $reflection->getMethod('prepareForValidation');
         $method->invoke($request);
-        
+
         $this->assertEquals('Motivo con espacios', $request->motivo_rechazo);
     }
 
@@ -113,14 +113,14 @@ class RechazarAspiranteRequestTest extends TestCase
     public function prepareForValidation_trim_observaciones(): void
     {
         $request = new RechazarAspiranteRequest();
-        
+
         $request->merge(['observaciones' => '  Observaciones con espacios  ']);
-        
+
         // En PHP 8.1+ setAccessible() ya no es necesario
         $reflection = new \ReflectionClass($request);
         $method = $reflection->getMethod('prepareForValidation');
         $method->invoke($request);
-        
+
         $this->assertEquals('Observaciones con espacios', $request->observaciones);
     }
 
@@ -128,14 +128,14 @@ class RechazarAspiranteRequestTest extends TestCase
     public function prepareForValidation_acepta_motivo_rechazo_null(): void
     {
         $request = new RechazarAspiranteRequest();
-        
+
         $request->merge(['motivo_rechazo' => null]);
-        
+
         // En PHP 8.1+ setAccessible() ya no es necesario
         $reflection = new \ReflectionClass($request);
         $method = $reflection->getMethod('prepareForValidation');
         $method->invoke($request);
-        
+
         $this->assertNull($request->motivo_rechazo);
     }
 

@@ -23,9 +23,9 @@ class EstadisticaComplementarioControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->user = User::factory()->create();
     }
 
@@ -33,7 +33,7 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function puede_ver_estadisticas_dashboard()
     {
         $this->actingAs($this->user);
-        
+
         $response = $this->get(route('complementarios.estadisticas'));
 
         $response->assertStatus(200);
@@ -49,7 +49,7 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function puede_obtener_estadisticas_api_sin_filtros()
     {
         $this->actingAs($this->user);
-        
+
         // Crear datos de prueba
         $programa = ComplementarioOfertado::factory()->create(['estado' => 1]);
         AspiranteComplementario::factory()->count(5)->paraPrograma($programa)->create();
@@ -74,7 +74,7 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function puede_obtener_estadisticas_api_con_filtro_fecha()
     {
         $this->actingAs($this->user);
-        
+
         $fechaInicio = now()->subDays(30)->format('Y-m-d');
         $fechaFin = now()->format('Y-m-d');
 
@@ -96,9 +96,9 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function puede_obtener_estadisticas_api_con_filtro_departamento()
     {
         $this->actingAs($this->user);
-        
+
         $departamento = Departamento::first();
-        
+
         if ($departamento) {
             $response = $this->get(route('complementarios.estadisticas.api', [
                 'departamento_id' => $departamento->id,
@@ -120,9 +120,9 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function puede_obtener_estadisticas_api_con_filtro_municipio()
     {
         $this->actingAs($this->user);
-        
+
         $municipio = Municipio::first();
-        
+
         if ($municipio) {
             $response = $this->get(route('complementarios.estadisticas.api', [
                 'municipio_id' => $municipio->id,
@@ -144,7 +144,7 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function puede_obtener_estadisticas_api_con_filtro_programa()
     {
         $this->actingAs($this->user);
-        
+
         $programa = ComplementarioOfertado::factory()->create();
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa)->create();
 
@@ -165,10 +165,10 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function puede_obtener_estadisticas_api_con_filtros_combinados()
     {
         $this->actingAs($this->user);
-        
+
         $programa = ComplementarioOfertado::factory()->create();
         $departamento = Departamento::first();
-        
+
         if ($departamento) {
             $fechaInicio = now()->subDays(30)->format('Y-m-d');
             $fechaFin = now()->format('Y-m-d');
@@ -196,11 +196,11 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function puede_exportar_programas_demanda_excel()
     {
         $this->actingAs($this->user);
-        
+
         // Crear programas con aspirantes para tener datos de demanda
         $programa1 = ComplementarioOfertado::factory()->create(['estado' => 1]);
         $programa2 = ComplementarioOfertado::factory()->create(['estado' => 1]);
-        
+
         AspiranteComplementario::factory()->count(5)->paraPrograma($programa1)->create();
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa2)->create();
 
@@ -208,7 +208,7 @@ class EstadisticaComplementarioControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        
+
         // Verificar que el header Content-Disposition contiene 'attachment' y '.xlsx'
         $contentDisposition = $response->headers->get('Content-Disposition');
         $this->assertNotNull($contentDisposition);
@@ -220,7 +220,7 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function exportar_excel_maneja_errores_correctamente()
     {
         $this->actingAs($this->user);
-        
+
         // Mock del servicio para forzar un error
         $mockService = $this->mock(\App\Services\Complementarios\EstadisticaComplementarioService::class);
         $mockService->shouldReceive('exportarProgramasDemandaExcel')
@@ -241,13 +241,13 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function estadisticas_dashboard_muestra_departamentos_y_municipios()
     {
         $this->actingAs($this->user);
-        
+
         $response = $this->get(route('complementarios.estadisticas'));
 
         $response->assertStatus(200);
         $departamentos = $response->viewData('departamentos');
         $municipios = $response->viewData('municipios');
-        
+
         $this->assertNotNull($departamentos);
         $this->assertNotNull($municipios);
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $departamentos);
@@ -258,14 +258,14 @@ class EstadisticaComplementarioControllerTest extends TestCase
     public function estadisticas_api_retorna_datos_vacios_cuando_no_hay_datos()
     {
         $this->actingAs($this->user);
-        
+
         // No crear ningún dato
 
         $response = $this->get(route('complementarios.estadisticas.api'));
 
         $response->assertStatus(200);
         $data = $response->json();
-        
+
         $this->assertArrayHasKey('total_aspirantes', $data);
         $this->assertArrayHasKey('aspirantes_aceptados', $data);
         $this->assertArrayHasKey('aspirantes_pendientes', $data);

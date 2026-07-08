@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Elimina campos duplicados de complementarios_ofertados que ya existen
      * en complementarios_catalogo. Estos datos deben obtenerse a través
      * de la relación con el catálogo:
@@ -27,11 +27,11 @@ return new class extends Migration
             if (Schema::hasColumn('complementarios_ofertados', 'nombre')) {
                 $table->dropColumn('nombre');
             }
-            
+
             if (Schema::hasColumn('complementarios_ofertados', 'duracion')) {
                 $table->dropColumn('duracion');
             }
-            
+
             if (Schema::hasColumn('complementarios_ofertados', 'requisitos_ingreso')) {
                 $table->dropColumn('requisitos_ingreso');
             }
@@ -40,7 +40,7 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     * 
+     *
      * Restaura los campos eliminados para permitir rollback.
      */
     public function down(): void
@@ -54,11 +54,11 @@ return new class extends Migration
             if (!Schema::hasColumn('complementarios_ofertados', 'nombre')) {
                 $table->string('nombre')->after('codigo');
             }
-            
+
             if (!Schema::hasColumn('complementarios_ofertados', 'duracion')) {
                 $table->integer('duracion')->after('justificacion');
             }
-            
+
             if (!Schema::hasColumn('complementarios_ofertados', 'requisitos_ingreso')) {
                 $table->text('requisitos_ingreso')->nullable()->after('justificacion');
             }

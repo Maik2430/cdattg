@@ -17,7 +17,7 @@ return new class extends Migration
         if ($driver === 'sqlite') {
             // SQLite no soporta MODIFY, necesitamos recrear la tabla
             DB::statement('PRAGMA foreign_keys=off;');
-            
+
             DB::statement('
                 CREATE TABLE resultados_aprendizajes_new (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,13 +37,13 @@ return new class extends Migration
             ');
 
             DB::statement('
-                INSERT INTO resultados_aprendizajes_new 
+                INSERT INTO resultados_aprendizajes_new
                 SELECT * FROM resultados_aprendizajes
             ');
 
             DB::statement('DROP TABLE resultados_aprendizajes');
             DB::statement('ALTER TABLE resultados_aprendizajes_new RENAME TO resultados_aprendizajes');
-            
+
             DB::statement('PRAGMA foreign_keys=on;');
         } else {
             Schema::table('resultados_aprendizajes', function (Blueprint $table) {

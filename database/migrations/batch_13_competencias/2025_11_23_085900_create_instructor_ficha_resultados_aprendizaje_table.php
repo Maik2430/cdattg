@@ -23,7 +23,7 @@ return new class extends Migration
                       ->onDelete('cascade')
                       ->name('if_rap_resultado_id_fk');
                 $table->timestamps();
-                
+
                 // Evitar duplicados: un mismo resultado de aprendizaje no puede estar asignado dos veces a la misma asignación
                 $table->unique(['instructor_ficha_id', 'resultado_aprendizaje_id'], 'unique_instructor_ficha_resultado');
             });
@@ -39,7 +39,7 @@ return new class extends Migration
             } catch (\Exception $e) {
                 // La foreign key ya existe, ignorar
             }
-            
+
             try {
                 Schema::table('instructor_ficha_resultados_aprendizaje', function (Blueprint $table) {
                     $table->foreign('resultado_aprendizaje_id', 'if_rap_resultado_id_fk')

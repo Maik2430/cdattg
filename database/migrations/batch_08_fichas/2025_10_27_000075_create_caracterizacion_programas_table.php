@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('ficha_id')->constrained('fichas_caracterizacion');
             $table->foreignId('programa_formacion_id')->constrained('programas_formacion');
             $table->foreignId('instructor_id')->constrained('instructors');
-            $table->foreignId('jornada_id')->constrained('jornadas_formacion'); 
+            $table->foreignId('jornada_id')->constrained('jornadas_formacion');
             $table->timestamps();
         });
     }

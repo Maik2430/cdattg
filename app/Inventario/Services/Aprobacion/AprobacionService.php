@@ -384,7 +384,7 @@ class AprobacionService
         }
 
         $detalles = $this->ordenRepository->obtenerDetallesPendientes($estadoEnEspera->id);
-        
+
         // Asegurar que siempre sea una colección (convertir Eloquent Collection a Support Collection si es necesario)
         return $detalles instanceof \Illuminate\Database\Eloquent\Collection
             ? $detalles

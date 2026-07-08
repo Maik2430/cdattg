@@ -27,7 +27,7 @@ class CategoriaFactory extends Factory
     public function definition(): array
     {
         $nombreCategoria = $this->faker->unique()->words(random_int(1, 3), true);
-        
+
         $userId = null;
         try {
             $userId = $this->getUserId();
@@ -52,7 +52,7 @@ class CategoriaFactory extends Factory
         return $this->afterCreating(function (Categoria $categoria): void {
             // Asociar automáticamente al tema CATEGORIAS
             $tema = Categoria::tema();
-            
+
             if ($tema) {
                 // Verificar si ya existe la asociación
                 $existeAsociacion = ParametroTema::query()

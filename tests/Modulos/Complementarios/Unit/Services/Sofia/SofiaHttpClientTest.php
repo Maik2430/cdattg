@@ -19,10 +19,10 @@ class SofiaHttpClientTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Configurar URL base para tests
         config(['services.playwright.url' => 'https://test-playwright:3000']);
-        
+
         $this->client = new SofiaHttpClient();
     }
 

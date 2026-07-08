@@ -25,13 +25,13 @@ return new class extends Migration
             if (!Schema::hasColumn('guia_aprendizajes', 'status')) {
                 $table->boolean('status')->default(true)->after('nivel_dificultad');
             }
-            
+
             // Agregar soft deletes si no existe
             if (!Schema::hasColumn('guia_aprendizajes', 'deleted_at')) {
                 $table->softDeletes()->after('updated_at');
             }
         });
-        
+
         // Agregar índices para optimización
         Schema::table('guia_aprendizajes', function (Blueprint $table) {
             try {
@@ -39,43 +39,43 @@ return new class extends Migration
             } catch (\Exception $e) {
                 // Índice ya existe
             }
-            
+
             try {
                 $table->index(['nombre'], 'idx_guia_aprendizajes_nombre');
             } catch (\Exception $e) {
                 // Índice ya existe
             }
-            
+
             try {
                 $table->index(['status'], 'idx_guia_aprendizajes_status');
             } catch (\Exception $e) {
                 // Índice ya existe
             }
-            
+
             try {
                 $table->index(['nivel_dificultad'], 'idx_guia_aprendizajes_nivel_dificultad');
             } catch (\Exception $e) {
                 // Índice ya existe
             }
-            
+
             try {
                 $table->index(['user_create_id'], 'idx_guia_aprendizajes_user_create');
             } catch (\Exception $e) {
                 // Índice ya existe
             }
-            
+
             try {
                 $table->index(['created_at'], 'idx_guia_aprendizajes_created_at');
             } catch (\Exception $e) {
                 // Índice ya existe
             }
-            
+
             try {
                 $table->index(['status', 'nivel_dificultad'], 'idx_guia_aprendizajes_status_nivel');
             } catch (\Exception $e) {
                 // Índice ya existe
             }
-            
+
             try {
                 $table->index(['user_create_id', 'status'], 'idx_guia_aprendizajes_user_status');
             } catch (\Exception $e) {
@@ -99,7 +99,7 @@ return new class extends Migration
             try { $table->dropIndex('idx_guia_aprendizajes_created_at'); } catch (\Exception $e) {}
             try { $table->dropIndex('idx_guia_aprendizajes_status_nivel'); } catch (\Exception $e) {}
             try { $table->dropIndex('idx_guia_aprendizajes_user_status'); } catch (\Exception $e) {}
-            
+
             // Eliminar columnas agregadas
             if (Schema::hasColumn('guia_aprendizajes', 'descripcion')) {
                 $table->dropColumn('descripcion');

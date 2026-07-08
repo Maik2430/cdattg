@@ -41,17 +41,17 @@ class AspiranteComplementarioControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->user = User::factory()->create();
-        
+
         // Asignar permisos necesarios para los tests
         Permission::firstOrCreate(['name' => 'ELIMINAR ASPIRANTE COMPLEMENTARIO']);
         $this->user->givePermissionTo('ELIMINAR ASPIRANTE COMPLEMENTARIO');
@@ -74,18 +74,18 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_ver_aspirantes_de_programa_por_nombre()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $programa->nombre = 'Auxiliar de Cocina';
         $programa->save();
-        
+
         $repo = new \App\Repositories\Complementarios\ComplementarioOfertadoRepository();
         $programaEncontrado = $repo->findByNombre('Auxiliar-de-Cocina');
-        
+
         if (!$programaEncontrado) {
             $this->markTestSkipped('No se pudo encontrar el programa por nombre. Verificar repositorio.');
         }
-        
+
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa)->create();
 
         $response = $this->get(route('programas-complementarios.ver-aspirantes', 'Auxiliar-de-Cocina'));
@@ -100,7 +100,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_ver_aspirantes_de_programa_por_id()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         AspiranteComplementario::factory()->count(4)->paraPrograma($programa)->create();
 
@@ -116,7 +116,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_agregar_aspirante_existente()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
 
@@ -136,7 +136,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function no_agrega_aspirante_si_no_existe_persona()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->postJson(route('programas-complementarios.aspirantes.store', $programa->id), [
@@ -152,7 +152,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function no_agrega_aspirante_si_ya_esta_inscrito()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         AspiranteComplementario::factory()->paraPersona($persona)->paraPrograma($programa)->create();
@@ -169,7 +169,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_rechazar_aspirante()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $aspirante = AspiranteComplementario::factory()->enProceso()->paraPrograma($programa)->create();
 
@@ -191,7 +191,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function no_agrega_aspirante_si_programa_no_existe()
     {
         $this->actingAs($this->user);
-        
+
         Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
 
         $response = $this->post(route('programas-complementarios.aspirantes.store', 99999), [
@@ -206,7 +206,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function no_rechaza_aspirante_si_no_existe()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->delete(route('programas-complementarios.aspirantes.destroy', [
@@ -222,7 +222,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function no_rechaza_aspirante_si_programa_no_existe()
     {
         $this->actingAs($this->user);
-        
+
         $aspirante = AspiranteComplementario::factory()->create();
 
         $response = $this->delete(route('programas-complementarios.aspirantes.destroy', [
@@ -239,9 +239,9 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_ver_aspirantes_con_filtros()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
-        
+
         AspiranteComplementario::factory()->enProceso()->paraPrograma($programa)->count(2)->create();
         AspiranteComplementario::factory()->admitido()->paraPrograma($programa)->count(1)->create();
         AspiranteComplementario::factory()->rechazado()->paraPrograma($programa)->count(1)->create();
@@ -284,7 +284,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_buscar_persona_por_documento()
     {
         $this->actingAs($this->user);
-        
+
         Persona::factory()->create([
             'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
@@ -341,9 +341,9 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_mostrar_formulario_crear_aspirante()
     {
         $this->actingAs($this->user);
-        
+
         $this->prepararTemasYParametros();
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->get(route('programas-complementarios.aspirantes.create', $programa->id));
@@ -362,7 +362,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_almacenar_nuevo_aspirante()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
 
@@ -382,7 +382,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function almacenar_aspirante_valida_datos_requeridos()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->post(route('programas-complementarios.aspirantes.store', $programa->id), []);
@@ -395,7 +395,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function almacenar_aspirante_retorna_error_si_persona_no_existe()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->postJson(route('programas-complementarios.aspirantes.store', $programa->id), [
@@ -410,7 +410,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_obtener_estadisticas_exclusion()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa)->create();
         AspiranteComplementario::factory()->rechazado()->count(2)->paraPrograma($programa)->create();
@@ -431,14 +431,14 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function estadisticas_exclusion_retorna_ceros_si_no_hay_aspirantes()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->get(route('aspirantes.estadisticas-exclusion', $programa->id));
 
         $response->assertStatus(200);
         $data = $response->json();
-        
+
         $this->assertArrayHasKey('total', $data);
         $this->assertArrayHasKey('rechazados', $data);
         $this->assertArrayHasKey('sin_documento', $data);
@@ -448,7 +448,7 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function buscar_persona_carga_relaciones_correctamente()
     {
         $this->actingAs($this->user);
-        
+
         Persona::factory()->create([
             'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
@@ -459,7 +459,7 @@ class AspiranteComplementarioControllerTest extends TestCase
 
         $response->assertStatus(200);
         $personaData = $response->json('persona');
-        
+
         $this->assertNotNull($personaData);
         $this->assertArrayHasKey('tipo_documento', $personaData);
         $this->assertArrayHasKey('genero', $personaData);
@@ -472,9 +472,9 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function crear_aspirante_muestra_todos_los_datos_necesarios()
     {
         $this->actingAs($this->user);
-        
+
         $this->prepararTemasYParametros();
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->get(route('programas-complementarios.aspirantes.create', $programa->id));
@@ -494,39 +494,39 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_crear_nuevo_aspirante_completo()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $datos = $this->crearDatosPersonaCompleta(self::NUMERO_DOCUMENTO_NUEVO);
-        
+
         $response = $this->post(route('aspirantes.store-new', $programa->id), $datos);
-        
+
         $response->assertStatus(302);
         $response->assertRedirect(route('aspirantes.programa', $programa->id));
         $response->assertSessionHas('success');
-        
+
         // Verificar que se creó la persona (los nombres se guardan en mayúsculas por el boot method del modelo)
         // Nota: La codificación puede variar, así que verificamos solo los campos críticos
         $this->assertDatabaseHas('personas', [
             'numero_documento' => self::NUMERO_DOCUMENTO_NUEVO,
             'email' => 'maria@example.com',
         ]);
-        
+
         // Verificar nombres por separado para evitar problemas de codificación
         $persona = \App\Models\Persona::where('numero_documento', self::NUMERO_DOCUMENTO_NUEVO)->first();
         $this->assertNotNull($persona);
         $this->assertStringContainsStringIgnoringCase('maría', $persona->primer_nombre);
         $this->assertStringContainsStringIgnoringCase('gonzález', $persona->primer_apellido);
-        
+
         $persona = Persona::where('numero_documento', self::NUMERO_DOCUMENTO_NUEVO)->first();
         $this->assertNotNull($persona);
-        
+
         // Verificar que se creó el aspirante
         $this->assertDatabaseHas('aspirantes_complementarios', [
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
             'estado' => 1, // En proceso
         ]);
-        
+
         // Verificar caracterizaciones si se proporcionaron
         $caracterizacion = $this->obtenerCaracterizacion();
         if ($caracterizacion && !empty($datos['caracterizaciones'])) {
@@ -535,7 +535,7 @@ class AspiranteComplementarioControllerTest extends TestCase
             $tieneCaracterizacion = $persona->caracterizacionesComplementarias()
                 ->where('parametros.id', $caracterizacion->id)
                 ->exists();
-            
+
             if (!$tieneCaracterizacion && $persona->parametro_id != $caracterizacion->id) {
                 $this->markTestSkipped('No se pudo verificar la caracterización. Puede ser un problema de datos de prueba.');
             }
@@ -546,13 +546,13 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function crear_aspirante_valida_campos_obligatorios()
     {
         $this->actingAs($this->user);
-        
+
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         $response = $this->post(route('aspirantes.store-new', $programa->id), [
             'numero_documento' => self::NUMERO_DOCUMENTO_VALIDACION,
         ]);
-        
+
         $response->assertStatus(302);
         // Verificar que hay errores de validación (los campos requeridos)
         $response->assertSessionHasErrors([
@@ -562,7 +562,7 @@ class AspiranteComplementarioControllerTest extends TestCase
         ]);
         // Nota: pais_id, departamento_id y municipio_id son nullable, así que no aparecen en los errores
         // Nota: email es nullable, así que no debería aparecer en los errores
-        
+
         // Verificar que NO se creó la persona
         $this->assertDatabaseMissing('personas', [
             'numero_documento' => self::NUMERO_DOCUMENTO_VALIDACION,
@@ -573,22 +573,22 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function crear_aspirante_valida_unicidad_documento()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
-        
+
         // Crear persona existente
         Persona::factory()->create([
             'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
         ]);
-        
+
         $datos = $this->crearDatosPersonaCompleta(self::TEST_NUMERO_DOCUMENTO);
         $datos['email'] = 'nuevo@example.com'; // Cambiar email para evitar conflicto
-        
+
         $response = $this->post(route('aspirantes.store-new', $programa->id), $datos);
-        
+
         $response->assertStatus(302);
         $response->assertSessionHasErrors(['numero_documento']);
-        
+
         // Verificar que NO se creó nueva persona
         $this->assertEquals(1, Persona::where('numero_documento', self::TEST_NUMERO_DOCUMENTO)->count());
     }
@@ -597,13 +597,13 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function crear_aspirante_valida_formato_email()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $datos = $this->crearDatosPersonaCompleta(self::NUMERO_DOCUMENTO_VALIDACION);
         $datos['email'] = 'email-invalido';
-        
+
         $response = $this->post(route('aspirantes.store-new', $programa->id), $datos);
-        
+
         $response->assertStatus(302);
         $response->assertSessionHasErrors(['email']);
     }
@@ -616,26 +616,26 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_actualizar_estado_aspirante()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $aspirante = AspiranteComplementario::factory()
             ->enProceso()
             ->paraPrograma($programa)
             ->create();
-        
+
         $response = $this->put(route('programas-complementarios.aspirantes.update', [
             'programa' => $programa->id,
             'aspirante' => $aspirante->id,
         ]), [
             'estado' => 3, // Admitido
         ]);
-        
+
         $response->assertStatus(200);
         $response->assertJson([
             'success' => true,
             'message' => 'Aspirante actualizado exitosamente.',
         ]);
-        
+
         $this->assertDatabaseHas('aspirantes_complementarios', [
             'id' => $aspirante->id,
             'estado' => 3,
@@ -646,24 +646,24 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function puede_actualizar_observaciones_aspirante()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $aspirante = AspiranteComplementario::factory()
             ->paraPrograma($programa)
             ->create();
-        
+
         $nuevasObservaciones = 'Observaciones actualizadas desde pruebas';
-        
+
         $response = $this->put(route('programas-complementarios.aspirantes.update', [
             'programa' => $programa->id,
             'aspirante' => $aspirante->id,
         ]), [
             'observaciones' => $nuevasObservaciones,
         ]);
-        
+
         $response->assertStatus(200);
         $response->assertJson(['success' => true]);
-        
+
         $this->assertDatabaseHas('aspirantes_complementarios', [
             'id' => $aspirante->id,
             'observaciones' => $nuevasObservaciones,
@@ -674,22 +674,22 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function actualizar_aspirante_valida_estado_permitido()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         $aspirante = AspiranteComplementario::factory()
             ->paraPrograma($programa)
             ->create();
-        
+
         $response = $this->putJson(route('programas-complementarios.aspirantes.update', [
             'programa' => $programa->id,
             'aspirante' => $aspirante->id,
         ]), [
             'estado' => 99, // Estado inválido
         ]);
-        
+
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['estado']);
-        
+
         // Verificar que el estado NO cambió
         $aspirante->refresh();
         $this->assertNotEquals(99, $aspirante->estado);
@@ -699,16 +699,16 @@ class AspiranteComplementarioControllerTest extends TestCase
     public function actualizar_aspirante_retorna_error_si_no_existe()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
-        
+
         $response = $this->put(route('programas-complementarios.aspirantes.update', [
             'programa' => $programa->id,
             'aspirante' => 99999,
         ]), [
             'estado' => 3,
         ]);
-        
+
         $response->assertStatus(200);
         $response->assertJson([
             'success' => false,
@@ -725,26 +725,26 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         /** @var User $userSinPermisos */
         $userSinPermisos = User::factory()->create();
-        
+
         $this->actingAs($userSinPermisos);
-        
+
         $programa = $this->crearProgramaComplementario();
         $aspirante = AspiranteComplementario::factory()
             ->enProceso()
             ->paraPrograma($programa)
             ->create();
-        
+
         $estadoOriginal = $aspirante->estado;
-        
+
         $response = $this->deleteJson(route('programas-complementarios.aspirantes.destroy', [
             'programa' => $programa->id,
             'aspirante' => $aspirante->id,
         ]));
-        
+
         // El servicio verifica permisos y retorna error con status_code 403
         $response->assertStatus(403);
         $response->assertJson(['success' => false]);
-        
+
         // Verificar que el estado NO cambió
         $aspirante->refresh();
         $this->assertEquals($estadoOriginal, $aspirante->estado);

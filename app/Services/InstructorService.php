@@ -236,19 +236,19 @@ class InstructorService
                     ];
                 }
                 $instructor->jornadas()->sync($pivotData);
-                
+
                 // Actualizar también el campo JSON jornadas
                 $instructor->jornadas = $jornadasIds;
                 $instructor->save();
             }
-            
+
             // Sincronizar modalidades (many-to-many) - habilidades pedagógicas
             Log::info('Sincronizando modalidades en InstructorService', [
                 'instructor_id' => $instructor->id,
                 'modalidades_ids' => $modalidadesIds,
                 'count' => count($modalidadesIds ?? [])
             ]);
-            
+
             if (!empty($modalidadesIds) && is_array($modalidadesIds)) {
                 $pivotData = [];
                 foreach ($modalidadesIds as $modalidadId) {
@@ -258,27 +258,27 @@ class InstructorService
                         'updated_at' => now()
                     ];
                 }
-                
+
                 Log::info('Sincronizando modalidades con pivot data', [
                     'instructor_id' => $instructor->id,
                     'pivot_data' => $pivotData
                 ]);
-                
+
                 $resultadoSync = $instructor->modalidades()->sync($pivotData);
-                
+
                 Log::info('Resultado de sync de modalidades', [
                     'instructor_id' => $instructor->id,
                     'resultado' => $resultadoSync
                 ]);
-                
+
                 // Actualizar también el campo JSON habilidades_pedagogicas con los IDs
                 // Forzar la asignación para que Eloquent detecte el cambio
                 $instructor->setAttribute('habilidades_pedagogicas', $modalidadesIds);
                 $instructor->save();
-                
+
                 // Refrescar el modelo para asegurar que los cambios se reflejen
                 $instructor->refresh();
-                
+
                 Log::info('Modalidades guardadas en JSON', [
                     'instructor_id' => $instructor->id,
                     'habilidades_pedagogicas' => $instructor->habilidades_pedagogicas,
@@ -424,7 +424,7 @@ class InstructorService
         ];
 
         // La primera especialidad es la principal (guardar ID, no nombre)
-        if (count($especialidadesValidas) > 0) {
+        if (!empty($especialidadesValidas)) {
             $especialidadesFormateadas['principal'] = $especialidadesValidas[0];
 
             // Las demás son secundarias (guardar IDs, no nombres)

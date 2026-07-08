@@ -41,7 +41,7 @@ class NotificacionServiceTest extends TestCase
     public function puede_notificar_instructor_sin_email()
     {
         $instructor = Instructor::factory()->create();
-        
+
         // Eliminar el usuario directamente desde la BD para evitar problemas de cache
         // El servicio verifica $user->email, no $persona->email
         if ($instructor->persona->user) {

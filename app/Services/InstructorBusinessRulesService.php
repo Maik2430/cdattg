@@ -706,7 +706,7 @@ class InstructorBusinessRulesService
     {
         $especialidadRequeridaId = $datosFicha['especialidad_requerida_id'] ?? null;
         $instructorLiderId = $datosFicha['instructor_lider_id'] ?? null;
-        
+
         // Si no hay especialidad requerida, cualquier instructor puede tomar la ficha
         if (!$especialidadRequeridaId) {
             return;
@@ -719,7 +719,7 @@ class InstructorBusinessRulesService
 
         // Obtener especialidades del instructor
         $especialidades = $instructor->especialidades ?? [];
-        
+
         if (empty($especialidades)) {
             $resultado['disponible'] = false;
             $especialidadNombre = $datosFicha['especialidad_requerida'] ?? 'especialidad requerida';
@@ -730,14 +730,14 @@ class InstructorBusinessRulesService
         // Verificar si tiene la especialidad requerida (principal o secundaria)
         $especialidadPrincipal = $especialidades['principal'] ?? null;
         $especialidadesSecundarias = $especialidades['secundarias'] ?? [];
-        
+
         $tieneEspecialidad = false;
-        
+
         // Verificar si la especialidad requerida coincide con la principal
         if ($especialidadPrincipal == $especialidadRequeridaId) {
             $tieneEspecialidad = true;
         }
-        
+
         // Verificar si está en las secundarias
         if (!$tieneEspecialidad && is_array($especialidadesSecundarias)) {
             $tieneEspecialidad = in_array($especialidadRequeridaId, $especialidadesSecundarias);

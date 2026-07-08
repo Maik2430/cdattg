@@ -21,7 +21,7 @@ class CategoriaRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->repository = new CategoriaRepository();
-        
+
         // Ejecutar seeders necesarios
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
@@ -52,7 +52,7 @@ class CategoriaRepositoryTest extends TestCase
     private function crearCategoriaConParametroTema(Tema $tema, string $nombreParametro): Parametro
     {
         $parametro = $this->crearParametro($nombreParametro);
-        
+
         ParametroTema::create([
             'parametro_id' => $parametro->id,
             'tema_id' => $tema->id,

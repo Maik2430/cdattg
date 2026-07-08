@@ -20,7 +20,7 @@ class UserRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->repository = new UserRepository();
-        
+
         // Ejecutar seeders necesarios
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
@@ -38,7 +38,7 @@ class UserRepositoryTest extends TestCase
     {
         // Crear rol si no existe
         Role::firstOrCreate(['name' => self::ROL_SUPER_ADMINISTRADOR]);
-        
+
         // Crear usuario con rol
         $user = User::first();
         if (!$user->hasRole(self::ROL_SUPER_ADMINISTRADOR)) {

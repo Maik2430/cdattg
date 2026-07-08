@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Elimina modalidad_id de complementarios_ofertados ya que ahora
      * se obtiene desde complementarios_catalogo a través de catalogo_id.
      */

@@ -9,7 +9,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Elimina el constraint unique de persona_id para permitir
      * que una persona sea contacto de múltiples proveedores.
      */

@@ -21,7 +21,7 @@ class ContratoConvenioRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->repository = new ContratoConvenioRepository();
-        
+
         // Ejecutar seeders necesarios
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
@@ -95,7 +95,7 @@ class ContratoConvenioRepositoryTest extends TestCase
     {
         $proveedor = Proveedor::factory()->create();
         $estado = \App\Models\ParametroTema::query()->inRandomOrder()->first();
-        
+
         $datos = [
             'name' => self::CONTRATO_TEST,
             'codigo' => 'TEST-001',

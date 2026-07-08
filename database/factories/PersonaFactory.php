@@ -151,7 +151,7 @@ class PersonaFactory extends Factory
             } else {
                 throw new ParametroTemaCreationException($temaId, $parametroId, "ERROR CRÍTICO: El resultado no tiene un campo 'id'. Resultado: " . json_encode($parametroTema));
             }
-            
+
             // Verificación final: el ID debe existir y tener los valores correctos
             // Esta verificación es suficiente - si el ID existe con los valores correctos, es válido
             // (incluso si coincide con el parametro_id por casualidad)
@@ -184,7 +184,7 @@ class PersonaFactory extends Factory
             ->where('parametro_id', $parametroId)
             ->orderBy('id', 'desc') // Obtener el más reciente
             ->first();
-        
+
         $parametroTemaId = $parametroTema && isset($parametroTema->id) ? (int) $parametroTema->id : null;
 
         if (!$parametroTemaId) {
@@ -192,7 +192,7 @@ class PersonaFactory extends Factory
         }
 
         $parametroTemaId = (int) $parametroTemaId;
-        
+
         // Verificación final: el ID debe existir y tener los valores correctos
         // Esta verificación es suficiente - si el ID existe con los valores correctos, es válido
         // (incluso si coincide con el parametro_id por casualidad)

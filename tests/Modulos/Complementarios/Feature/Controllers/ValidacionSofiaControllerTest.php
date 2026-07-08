@@ -36,19 +36,19 @@ class ValidacionSofiaControllerTest extends TestCase
 
         // Asegurar que los parámetros de Sofía existan
         SofiaParametrosHelper::clearCache();
-        
+
         // Forzar la creación de parámetros si no existen
         if (!\App\Models\Parametro::where('name', 'NO REGISTRADO')->exists()) {
             SofiaParametrosHelper::crearParametrosSiNoExisten();
         }
-        
+
         SofiaParametrosHelper::clearCache();
-        
+
         // Verificar que los parámetros existan
         $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
         $requiereCambioId = SofiaParametrosHelper::getRequiereCambioId();
         $pendingId = SofiaParametrosHelper::getPendingId();
-        
+
         // Si aún no existen, hay un problema
         if (!$noRegistradoId || !$requiereCambioId || !$pendingId) {
             throw new \RuntimeException(
@@ -58,7 +58,7 @@ class ValidacionSofiaControllerTest extends TestCase
                 "PENDING: " . ($pendingId ?? 'null')
             );
         }
-        
+
         $this->user = User::factory()->create();
         Queue::fake();
     }
@@ -74,11 +74,11 @@ class ValidacionSofiaControllerTest extends TestCase
         SofiaParametrosHelper::clearCache();
         $noRegistradoId = SofiaParametrosHelper::getNoRegistradoId();
         $requiereCambioId = SofiaParametrosHelper::getRequiereCambioId();
-        
+
         // Verificar que los IDs no sean null
         $this->assertNotNull($noRegistradoId, 'El parámetro NO REGISTRADO debe existir');
         $this->assertNotNull($requiereCambioId, 'El parámetro REQUIERE CAMBIO debe existir');
-        
+
         $persona1 = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
         $persona2 = Persona::factory()->create(['estado_sofia' => $requiereCambioId]);
 
@@ -362,7 +362,7 @@ class ValidacionSofiaControllerTest extends TestCase
         $response->assertJson([
             'success' => true,
         ]);
-        
+
         $responseData = $response->json();
         $completedId = SofiaParametrosHelper::getCompletedId();
         $this->assertEquals($completedId, $responseData['progress']['status']);
@@ -390,7 +390,7 @@ class ValidacionSofiaControllerTest extends TestCase
         $response->assertJson([
             'success' => true,
         ]);
-        
+
         $responseData = $response->json();
         $failedId = SofiaParametrosHelper::getFailedId();
         $this->assertEquals($failedId, $responseData['progress']['status']);
@@ -409,7 +409,7 @@ class ValidacionSofiaControllerTest extends TestCase
         $requiereCambioId = SofiaParametrosHelper::getRequiereCambioId();
         $persona1 = Persona::factory()->create(['estado_sofia' => $noRegistradoId]);
         $persona2 = Persona::factory()->create(['estado_sofia' => $requiereCambioId]);
-        
+
         // Aspirante ya validado
         $registradoId = SofiaParametrosHelper::getRegistradoId();
         $persona3 = Persona::factory()->create(['estado_sofia' => $registradoId]);
@@ -444,7 +444,7 @@ class ValidacionSofiaControllerTest extends TestCase
         // Simular error forzando un ID inválido que cause excepción
         // En este caso, el ModelNotFoundException ya está cubierto, pero podemos
         // verificar que otros errores se manejan correctamente
-        
+
         $response = $this->post(route('programas-complementarios.validar-sofia', 'invalid-id'));
 
         // Debe manejar el error y retornar respuesta JSON

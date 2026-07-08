@@ -11,19 +11,19 @@ if (!defined('ROUTE_PATTERN_NUMERIC')) {
 Route::prefix('inscripciones')
     ->name('inscripciones.')
     ->group(function () {
-        
+
         // Inscripción general (sin programa específico)
         Route::get('general', [InscripcionComplementarioController::class, 'inscripcionGeneral'])
             ->name('general');
-        
+
         Route::post('general', [InscripcionComplementarioController::class, 'procesarInscripcionGeneral'])
             ->name('general.store');
-        
+
         // Inscripción a programa específico
         Route::get('{programa}', [InscripcionComplementarioController::class, 'formularioInscripcion'])
             ->name('formulario')
             ->where('programa', ROUTE_PATTERN_NUMERIC);
-        
+
         Route::post('{programa}', [InscripcionComplementarioController::class, 'procesarInscripcion'])
             ->name('procesar')
             ->where('programa', ROUTE_PATTERN_NUMERIC);

@@ -41,13 +41,13 @@ class AprobacionControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         // Ejecutar solo los seeders necesarios para aprobaciones
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
@@ -76,7 +76,7 @@ class AprobacionControllerTest extends TestCase
                     'user_update_id' => null,
                 ]
             );
-            
+
             \App\Models\ParametroTema::firstOrCreate(
                 [
                     'parametro_id' => $parametro->id,

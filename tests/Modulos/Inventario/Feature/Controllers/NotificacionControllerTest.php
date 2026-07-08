@@ -34,13 +34,13 @@ class NotificacionControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         // Ejecutar seeders necesarios para notificaciones
         // UserFactory necesita ParametroSeeder y TemaSeeder para crear Personas
         // RefreshDatabase ya ejecuta las migraciones automáticamente
@@ -250,7 +250,7 @@ class NotificacionControllerTest extends TestCase
         $response = $this->get(route(self::ROUTE_INDEX));
 
         $response->assertStatus(200);
-        
+
         // Verificar que solo ve sus propias notificaciones
         $notificaciones = $response->viewData('notificaciones');
         foreach ($notificaciones as $notificacion) {
@@ -265,7 +265,7 @@ class NotificacionControllerTest extends TestCase
     private function crearNotificacion(int $userId, string $tipo, array $datos): string
     {
         $id = \Illuminate\Support\Str::uuid()->toString();
-        
+
         DB::table('notificaciones')->insert([
             'id' => $id,
             'notificable_type' => \App\Models\User::class,

@@ -11,11 +11,11 @@ Route::prefix('inventario')
         // Vista de préstamos y salidas
         Route::get('ordenes/prestamos-salidas', [OrdenController::class, 'prestamosSalidas'])
             ->name('prestamos-salidas');
-            
+
         // Procesar préstamo/salida
         Route::post('ordenes/prestamos-salidas', [OrdenController::class, 'storePrestamos'])
             ->name('prestamos-salidas.store');
-        
+
         // Rutas adicionales para órdenes
         $ordenRoute = 'ordenes/{orden}';
 

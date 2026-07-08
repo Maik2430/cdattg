@@ -17,7 +17,7 @@ class ComplementariosSeeder extends Seeder
 
         // Crear programas complementarios
         $this->crearProgramas();
-        
+
         // Crear aspirantes
         $this->crearAspirantes();
 
@@ -101,7 +101,7 @@ class ComplementariosSeeder extends Seeder
                 ->create();
 
             $total = $enProceso->count() + $completos->count() + $admitidos->count() + $rechazados->count();
-            
+
             $this->command->info("   ✓ Programa '{$programa->nombre}': {$total} aspirantes");
             $this->command->line("      - En proceso: {$enProceso->count()}");
             $this->command->line("      - Completos: {$completos->count()}");

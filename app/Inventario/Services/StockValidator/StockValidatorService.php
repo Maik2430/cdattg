@@ -77,7 +77,7 @@ class StockValidatorService implements StockValidatorServiceInterface
         }
 
         $umbralMinimo = $this->getUmbralMinimo();
-        
+
         // Notificar en dos casos:
         // 1. El stock cruzó el umbral (era mayor, ahora es menor o igual)
         // 2. El stock ya estaba bajo y disminuyó aún más

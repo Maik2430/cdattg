@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_update_id');
 
             $table->timestamps();
-            
+
             $table->foreign('user_create_id')->references('id')->on('users')->onDelete('restrict');
             $table->foreign('user_update_id')->references('id')->on('users')->onDelete('restrict');
         });

@@ -40,11 +40,11 @@ class CarritoRequestTest extends TestCase
         $request->setRouteResolver(function () use ($rutaActualizar) {
             return new class($rutaActualizar) {
                 private string $ruta;
-                
+
                 public function __construct(string $ruta) {
                     $this->ruta = $ruta;
                 }
-                
+
                 public function named(...$patterns): bool {
                     return in_array($this->ruta, $patterns);
                 }
@@ -177,9 +177,9 @@ class CarritoRequestTest extends TestCase
         $rules = $this->obtenerRulesParaActualizar();
         $data = [$campo => $valorInvalido];
         $validator = Validator::make($data, $rules);
-        
+
         $this->assertTrue($validator->fails(), "Validation should fail for field {$campo}");
-        
+
         $errorArray = $validator->errors()->toArray();
         $this->assertArrayHasKey($campo, $errorArray, "Field {$campo} must have validation errors");
     }

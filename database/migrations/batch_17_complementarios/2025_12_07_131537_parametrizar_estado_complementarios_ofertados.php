@@ -11,7 +11,7 @@ return new class extends Migration
     private const ESTADO_CON_OFERTA = 'Con Oferta';
     private const ESTADO_CUPOS_LLENOS = 'Cupos Llenos';
     private const TEMA_ESTADO = 'ESTADO_PROGRAMA_COMPLEMENTARIO';
-    
+
     private const ESTADOS = [
         ['name' => self::ESTADO_SIN_OFERTA, 'valor_legacy' => 0],
         ['name' => self::ESTADO_CON_OFERTA, 'valor_legacy' => 1],
@@ -23,17 +23,17 @@ return new class extends Migration
     public function up(): void
     {
         $temaId = $this->crearTemaEstados();
-        
+
         if (!$temaId) {
             return; // No se pudo crear el tema, salir temprano
         }
-        
+
         $parametros = $this->crearParametrosYRelaciones($temaId);
-        
+
         if (empty($parametros)) {
             return; // No se pudieron crear parámetros, salir temprano
         }
-        
+
         $this->modificarTablaComplementarios($parametros);
     }
 
@@ -62,7 +62,7 @@ return new class extends Migration
     private function crearParametrosYRelaciones(int $temaId): array
     {
         $parametros = [];
-        
+
         if (!Schema::hasTable('parametros') || !Schema::hasTable('parametros_temas')) {
             return $parametros;
         }

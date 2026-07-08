@@ -31,7 +31,7 @@ class StoreProgramaComplementarioRequestTest extends TestCase
         $modalidad = ParametroTema::where('tema_id', 5)
             ->whereIn('parametro_id', [18, 19, 20])
             ->first();
-        
+
         $jornada = JornadaFormacion::first();
         $ambiente = Ambiente::first();
 

@@ -13,27 +13,27 @@ return new class extends Migration
     {
         Schema::create('asistencias', function (Blueprint $table) {
             $table->id();
-            
+
             // Relación con la evidencia (FK se agrega en batch_14 cuando exista la tabla evidencias)
             $table->unsignedBigInteger('evidencia_id')->nullable();
-            
+
             // Relación con la ficha del instructor
             $table->foreignId('instructor_ficha_id')->nullable()->constrained('instructor_fichas_caracterizacion')->onDelete('cascade');
-            
+
             // Datos de la sesión
             $table->date('fecha')->comment('Fecha de la sesión de asistencia');
             $table->datetime('hora_inicio')->comment('Hora de inicio de la sesión');
             $table->datetime('hora_fin')->nullable()->comment('Hora de finalización de la sesión');
-            
+
             // Estado de la asistencia
             $table->boolean('is_finished')->default(false)->comment('Indica si la sesión está finalizada');
-            
+
             // Auditoría
             $table->foreignId('user_create_id')->nullable()->constrained('users');
             $table->foreignId('user_edit_id')->nullable()->constrained('users');
-            
+
             $table->timestamps();
-            
+
             // Índices para optimización
             $table->index(['instructor_ficha_id', 'is_finished']);
             $table->index(['evidencia_id', 'is_finished']);

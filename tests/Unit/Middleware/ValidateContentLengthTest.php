@@ -164,7 +164,7 @@ class ValidateContentLengthTest extends TestCase
         );
 
         $data = json_decode($response->getContent(), true);
-        
+
         $this->assertArrayHasKey('max_size_bytes', $data);
         $this->assertArrayHasKey('request_size_bytes', $data);
         $this->assertEquals(UploadLimits::GENERAL_CONTENT_LENGTH_BYTES, $data['max_size_bytes']);

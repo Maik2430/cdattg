@@ -43,7 +43,7 @@ class TransactionServiceTest extends TestCase
     public function puede_hacer_commit(): void
     {
         DB::beginTransaction();
-        
+
         $this->service->commit();
 
         $this->assertEquals(0, DB::transactionLevel());
@@ -53,7 +53,7 @@ class TransactionServiceTest extends TestCase
     public function puede_hacer_rollback(): void
     {
         DB::beginTransaction();
-        
+
         $this->service->rollBack();
 
         $this->assertEquals(0, DB::transactionLevel());

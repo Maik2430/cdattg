@@ -100,7 +100,7 @@ class ProductoFactory extends Factory
 
         $productos = ['COMPUTADOR', 'MONITOR', 'TECLADO', 'MOUSE', 'CABLE', 'SWITCH', 'ROUTER', 'ESCRITORIO', 'SILLA'];
         $producto = strtoupper($productos[array_rand($productos)] . ' ' . $productos[array_rand($productos)]);
-        
+
         $descripciones = [
             'Producto de alta calidad para uso en ambientes formativos',
             'Equipo tecnológico para la formación profesional',

@@ -22,7 +22,7 @@ return new class extends Migration
                 }
                 $table->dropColumn('tipo_vinculacion');
             }
-            
+
             // Add new tipo_vinculacion_id as foreign key to parametros_temas (solo si no existe)
             if (!Schema::hasColumn('instructors', 'tipo_vinculacion_id')) {
                 $table->foreignId('tipo_vinculacion_id')->nullable()->after('regional_id')->constrained('parametros_temas')->onDelete('set null')->comment('Tipo de vinculación (parámetro_tema)');
@@ -41,7 +41,7 @@ return new class extends Migration
             $table->dropIndex('idx_instructors_tipo_vinculacion_id');
             $table->dropForeign(['tipo_vinculacion_id']);
             $table->dropColumn('tipo_vinculacion_id');
-            
+
             // Restore old column
             $table->string('tipo_vinculacion', 50)->nullable()->after('regional_id')->comment('Tipo de vinculación: planta, contratista, apoyo a la formación');
             $table->index('tipo_vinculacion', 'idx_instructors_tipo_vinculacion');

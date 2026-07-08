@@ -56,7 +56,7 @@ class CompetenciaController extends Controller
         try {
             $competencia = Competencia::with(['userCreate', 'userEdit', 'programasFormacion', 'resultadosCompetencia'])
                 ->findOrFail($id);
-            
+
             return view('competencias.show', compact('competencia'));
         } catch (\Exception $e) {
             Log::error('Error al mostrar competencia: ' . $e->getMessage());
@@ -155,29 +155,29 @@ class CompetenciaController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             // Guardar la duración anterior para comparar
             $duracionAnterior = $competencia->duracion;
-            
+
             $data = $request->validated();
             $data['user_edit_id'] = Auth::id();
 
             $competencia->update($data);
-            
+
             // Procesar resultados de aprendizaje del formulario
             $resultadosData = $request->input('resultados', []);
             $resultadosIds = [];
-            
+
             foreach ($resultadosData as $resultadoData) {
                 $resultadoId = $resultadoData['id'] ?? null;
                 $codigo = $resultadoData['codigo'] ?? '';
                 $nombre = $resultadoData['nombre'] ?? '';
                 $horas = (float) ($resultadoData['horas'] ?? 0);
-                
+
                 if (empty($codigo) || empty($nombre)) {
                     continue; // Saltar resultados sin código o nombre
                 }
-                
+
                 if ($resultadoId) {
                     // Actualizar resultado existente
                     $resultado = ResultadosAprendizaje::find($resultadoId);
@@ -188,7 +188,7 @@ class CompetenciaController extends Controller
                             'duracion' => $horas,
                             'user_edit_id' => Auth::id(),
                         ]);
-                        
+
                         // Actualizar horas en la tabla pivot
                         DB::table('resultados_aprendizaje_competencia')
                             ->where('competencia_id', $competencia->id)
@@ -197,7 +197,7 @@ class CompetenciaController extends Controller
                                 'duracion' => $horas,
                                 'updated_at' => now(),
                             ]);
-                        
+
                         $resultadosIds[] = $resultadoId;
                     }
                 } else {
@@ -210,7 +210,7 @@ class CompetenciaController extends Controller
                         'user_create_id' => Auth::id(),
                         'user_edit_id' => Auth::id(),
                     ]);
-                    
+
                     // Asociar con la competencia
                     $competencia->resultadosAprendizaje()->attach($resultado->id, [
                         'duracion' => $horas,
@@ -219,24 +219,24 @@ class CompetenciaController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-                    
+
                     $resultadosIds[] = $resultado->id;
                 }
             }
-            
+
             // Eliminar resultados que ya no están en la lista
             $resultadosActuales = $competencia->resultadosAprendizaje()->pluck('resultados_aprendizajes.id')->toArray();
             $resultadosAEliminar = array_diff($resultadosActuales, $resultadosIds);
-            
+
             foreach ($resultadosAEliminar as $resultadoIdEliminar) {
                 $competencia->resultadosAprendizaje()->detach($resultadoIdEliminar);
             }
-            
+
             // Si la duración cambió o se modificaron resultados, redistribuir
             if (isset($data['duracion']) && $data['duracion'] != $duracionAnterior) {
                 $this->redistribuirDuracionResultados($competencia);
             }
-            
+
             DB::commit();
 
             Log::info('Competencia actualizada exitosamente', [
@@ -505,14 +505,14 @@ class CompetenciaController extends Controller
             if ($competencia->resultadosAprendizaje()->where('resultados_aprendizajes.id', $resultadoId)->exists()) {
                 return redirect()->back()->with('error', 'Este resultado de aprendizaje ya está asignado a la competencia.');
             }
-            
+
             // Calcular duración dividida entre todos los resultados (incluyendo el nuevo)
             $totalResultados = $competencia->resultadosAprendizaje()->count() + 1;
             $duracionPorResultado = $totalResultados > 0 ? $competencia->duracion / $totalResultados : 0;
-            
+
             // Redistribuir duración entre todos los resultados existentes
             $this->redistribuirDuracionResultados($competencia);
-            
+
             // Asociar el resultado con su duración calculada
             $competencia->resultadosAprendizaje()->attach($resultadoId, [
                 'duracion' => $duracionPorResultado,
@@ -521,10 +521,10 @@ class CompetenciaController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            
+
             // Redistribuir nuevamente para asegurar que todos tengan la misma duración
             $this->redistribuirDuracionResultados($competencia);
-            
+
             DB::commit();
 
             Log::info('Resultado de aprendizaje asociado a competencia', [
@@ -579,14 +579,14 @@ class CompetenciaController extends Controller
                         $errores[] = "El resultado '{$resultado->codigo}' ya está asignado a la competencia.";
                         continue;
                     }
-                    
+
                     // Calcular duración dividida
                     $totalResultados = $competencia->resultadosAprendizaje()->count() + 1;
                     $duracionPorResultado = $totalResultados > 0 ? $competencia->duracion / $totalResultados : 0;
-                    
+
                     // Redistribuir duración entre todos los resultados existentes
                     $this->redistribuirDuracionResultados($competencia);
-                    
+
                     // Asociar el resultado con su duración calculada
                     $competencia->resultadosAprendizaje()->attach($resultadoId, [
                         'duracion' => $duracionPorResultado,
@@ -595,12 +595,12 @@ class CompetenciaController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-                    
+
                     // Actualizar duración en resultados_aprendizajes
                     $resultado->update([
                         'duracion' => $duracionPorResultado,
                     ]);
-                    
+
                     $asociadosExitosamente[] = $resultado->codigo;
 
                     Log::info('Resultado de aprendizaje asociado a competencia (múltiple)', [
@@ -614,12 +614,12 @@ class CompetenciaController extends Controller
                     $errores[] = "Error al asociar resultado ID {$resultadoId}: " . $e->getMessage();
                 }
             }
-            
+
             // Redistribuir duración entre todos los resultados (incluyendo los nuevos)
             if (!empty($asociadosExitosamente)) {
                 $this->redistribuirDuracionResultados($competencia);
             }
-            
+
             DB::commit();
 
             // Construir mensaje de respuesta
@@ -657,18 +657,18 @@ class CompetenciaController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             if (!$competencia->resultadosAprendizaje()->where('resultados_aprendizajes.id', $resultado->id)->exists()) {
                 return redirect()->back()->with('error', 'Este resultado de aprendizaje no está asignado a la competencia.');
             }
 
             $competencia->resultadosAprendizaje()->detach($resultado->id);
-            
+
             // Redistribuir duración entre los resultados restantes
             $this->redistribuirDuracionResultados($competencia);
-            
+
             DB::commit();
-            
+
             return redirect()->back()->with('success', 'Resultado de aprendizaje desasociado exitosamente.');
 
         } catch (Exception $e) {
@@ -686,13 +686,13 @@ class CompetenciaController extends Controller
     {
         $resultados = $competencia->resultadosAprendizaje()->get();
         $totalResultados = $resultados->count();
-        
+
         if ($totalResultados === 0) {
             return;
         }
-        
+
         $duracionPorResultado = $competencia->duracion / $totalResultados;
-        
+
         foreach ($resultados as $resultado) {
             // Actualizar duración en la tabla pivot
             DB::table('resultados_aprendizaje_competencia')
@@ -702,7 +702,7 @@ class CompetenciaController extends Controller
                     'duracion' => $duracionPorResultado,
                     'updated_at' => now(),
                 ]);
-            
+
             // Actualizar duración en la tabla resultados_aprendizajes
             $resultado->update([
                 'duracion' => $duracionPorResultado,

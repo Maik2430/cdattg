@@ -48,7 +48,7 @@ class ProductoEnrichmentServiceTest extends TestCase
     {
         $marcaMock = Mockery::mock(\App\Models\Inventario\Marca::class)->makePartial();
         $marcaMock->id = 1;
-        
+
         $categoriaMock = Mockery::mock(\App\Models\Inventario\Categoria::class)->makePartial();
         $categoriaMock->id = 1;
 
@@ -82,7 +82,7 @@ class ProductoEnrichmentServiceTest extends TestCase
     {
         $marcaMock = Mockery::mock(\App\Models\Inventario\Marca::class)->makePartial();
         $marcaMock->id = 1;
-        
+
         $categoriaMock = Mockery::mock(\App\Models\Inventario\Categoria::class)->makePartial();
         $categoriaMock->id = 1;
 

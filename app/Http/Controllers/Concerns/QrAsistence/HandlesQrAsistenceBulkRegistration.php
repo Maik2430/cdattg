@@ -7,7 +7,6 @@ use App\Models\Asistencia;
 use App\Models\AsistenciaAprendiz;
 use App\Models\Persona;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 

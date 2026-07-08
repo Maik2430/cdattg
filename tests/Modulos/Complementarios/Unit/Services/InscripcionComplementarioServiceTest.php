@@ -47,9 +47,9 @@ class InscripcionComplementarioServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->personaRepositoryMock = Mockery::mock(PersonaRepository::class);
         $this->aspiranteRepositoryMock = Mockery::mock(AspiranteComplementarioRepository::class);
         $this->programaRepositoryMock = Mockery::mock(ComplementarioOfertadoRepository::class);
@@ -57,7 +57,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $this->complementarioServiceMock = Mockery::mock(ComplementarioService::class);
         $this->userServiceMock = Mockery::mock(UserService::class);
         $this->documentoServiceMock = Mockery::mock(AspiranteDocumentoService::class);
-        
+
         $this->service = new InscripcionComplementarioService(
             $this->personaRepositoryMock,
             $this->aspiranteRepositoryMock,
@@ -81,13 +81,13 @@ class InscripcionComplementarioServiceTest extends TestCase
         // NOTA: Este test requiere BD porque el servicio usa directamente Pais::all() y Departamento::all()
         // que son difíciles de mockear sin cambiar el código del servicio.
         // Mockeamos lo que es posible (repositorios y servicios inyectados)
-        
+
         // Ejecutar seeders necesarios para evitar conflictos de restricción única
         $this->seed([
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
         ]);
-        
+
         $this->temaRepositoryMock->shouldReceive('obtenerCaracterizacionesComplementarias')
             ->once()
             ->andReturn(null);
@@ -256,7 +256,7 @@ class InscripcionComplementarioServiceTest extends TestCase
         $pais = Pais::first();
         $departamento = Departamento::where('pais_id', $pais->id)->first();
         $municipio = \App\Models\Municipio::where('departamento_id', $departamento->id)->first();
-        
+
         $programa = ComplementarioOfertado::factory()->conOferta()->create();
 
         // Asegurar que existen los parametros_temas necesarios en la base de datos

@@ -18,26 +18,26 @@ return new class extends Migration
                 ->after('persona_id')
                 ->constrained('fichas_caracterizacion')
                 ->onDelete('set null');
-            
+
             // Agregar estado (activo/inactivo)
             $table->boolean('estado')->default(1)->after('ficha_caracterizacion_id');
-            
+
             // Agregar campos de auditoría
             $table->foreignId('user_create_id')
                 ->nullable()
                 ->after('estado')
                 ->constrained('users')
                 ->onDelete('set null');
-            
+
             $table->foreignId('user_edit_id')
                 ->nullable()
                 ->after('user_create_id')
                 ->constrained('users')
                 ->onDelete('set null');
-            
+
             // Agregar soft deletes
             $table->softDeletes();
-            
+
             // Agregar índices para optimizar consultas
             $table->index('persona_id', 'aprendices_persona_id_index');
             $table->index('ficha_caracterizacion_id', 'aprendices_ficha_index');
@@ -57,12 +57,12 @@ return new class extends Migration
             $table->dropIndex('aprendices_ficha_index');
             $table->dropIndex('aprendices_estado_index');
             $table->dropIndex('aprendices_persona_estado_index');
-            
+
             // Eliminar foreign keys
             $table->dropForeign(['ficha_caracterizacion_id']);
             $table->dropForeign(['user_create_id']);
             $table->dropForeign(['user_edit_id']);
-            
+
             // Eliminar columnas
             $table->dropColumn([
                 'ficha_caracterizacion_id',

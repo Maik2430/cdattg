@@ -26,7 +26,7 @@ class InstructorFactory extends Factory
     public function definition(): array
     {
         $regionalId = Regional::query()->inRandomOrder()->value('id') ?? 1;
-        
+
         // Obtener IDs de RedConocimiento para especialidades
         $redesConocimiento = \App\Models\RedConocimiento::query()->inRandomOrder()->get();
         $principalId = $redesConocimiento->first()?->id ?? null;
@@ -54,12 +54,12 @@ class InstructorFactory extends Factory
         $tipoVinculacionId = \App\Models\ParametroTema::whereHas('tema', function($q) {
             $q->where('name', 'like', '%VINCULACION%');
         })->inRandomOrder()->value('id');
-        
+
         // nivel_academico_id apunta a parametros (según la foreign key real en la BD)
         $nivelAcademicoId = \App\Models\Parametro::whereHas('temas', function($q) {
             $q->where('name', 'like', '%NIVEL%ACADEMICO%');
         })->inRandomOrder()->value('id');
-        
+
         // Si no encuentra ninguno, usar null (el campo es nullable) o un valor aleatorio
         if (!$tipoVinculacionId) {
             $tipoVinculacionId = \App\Models\ParametroTema::inRandomOrder()->value('id');

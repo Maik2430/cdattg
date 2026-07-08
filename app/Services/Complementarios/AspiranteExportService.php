@@ -129,7 +129,7 @@ class AspiranteExportService
         // Agregar título
         $sheet->setCellValue('A1', 'FORMATO PARA LA INSCRIPCIÓN DE ASPIRANTES EN SOFIA PLUS v1.0');
         $sheet->mergeCells('A1:G1');
-        
+
         // Estilo para el título con bordes oscuros
         $titleStyle = [
             'font' => [
@@ -240,7 +240,7 @@ class AspiranteExportService
         foreach ($aspirantes as $aspirante) {
             $tipoDocumento = $aspirante->persona->tipoDocumento ? $aspirante->persona->tipoDocumento->name : 'N/A';
             $numeroDocumento = $aspirante->persona->numero_documento;
-            
+
             // Obtener caracterización
             $caracterizacion = $aspirante->persona->caracterizacion ?
                 $aspirante->persona->caracterizacion->name : 'Sin caracterización';
@@ -268,7 +268,7 @@ class AspiranteExportService
     {
         // Limpiar el texto y quitar acentos
         $tipoDocumento = $this->limpiarTexto($tipoDocumento);
-        
+
         // Mapeo de tipos de documento a sus iniciales
         $mapeo = [
             'cedula de ciudadania' => 'CC',

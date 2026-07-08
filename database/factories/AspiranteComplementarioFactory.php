@@ -26,7 +26,7 @@ class AspiranteComplementarioFactory extends Factory
             'Requiere seguimiento especial.',
             null, // Algunos sin observaciones
         ];
-        
+
         return [
             'persona_id' => Persona::factory(),
             'complementario_id' => ComplementarioOfertado::factory(),

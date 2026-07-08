@@ -126,7 +126,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
-        
+
         $aspirantes = new Collection([$aspirante]);
         $files = ['documento1.pdf', 'documento2.pdf'];
 
@@ -159,7 +159,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
-        
+
         $aspirantes = new Collection([$aspirante]);
         $files = ['documento1.pdf', 'documento2.pdf'];
 
@@ -192,7 +192,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
-        
+
         $aspirantes = new Collection([$aspirante]);
         $files = ['documento1.pdf'];
 
@@ -214,13 +214,13 @@ class AspiranteComplementarioServiceTest extends TestCase
     {
         $persona1 = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO_ALT]);
         $persona2 = new \App\Models\Persona(['id' => 2, 'numero_documento' => '2222222222']);
-        
+
         $aspirante1 = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante2 = new AspiranteComplementario(['id' => 2, 'persona_id' => 2]);
-        
+
         $aspirante1->setRelation('persona', $persona1);
         $aspirante2->setRelation('persona', $persona2);
-        
+
         $aspirantes = new Collection([$aspirante1, $aspirante2]);
         $files = ['documento1.pdf', 'documento2.pdf'];
 
@@ -250,7 +250,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
-        
+
         $aspirantes = new Collection([$aspirante]);
         $tempDir = sys_get_temp_dir();
         $pdf = Mockery::mock('stdClass');
@@ -293,7 +293,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
-        
+
         $aspirantes = new Collection([$aspirante]);
         $tempDir = sys_get_temp_dir();
         $pdf = Mockery::mock('stdClass');
@@ -321,7 +321,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
-        
+
         $aspirantes = new Collection([$aspirante]);
         $tempDir = sys_get_temp_dir();
         $pdf = Mockery::mock('stdClass');
@@ -356,7 +356,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante->setRelation('persona', $persona);
-        
+
         $aspirantes = new Collection([$aspirante]);
         $tempDir = sys_get_temp_dir();
         $pdf = Mockery::mock('stdClass');
@@ -378,13 +378,13 @@ class AspiranteComplementarioServiceTest extends TestCase
     {
         $persona1 = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO_ALT]);
         $persona2 = new \App\Models\Persona(['id' => 2, 'numero_documento' => '2222222222']);
-        
+
         $aspirante1 = new AspiranteComplementario(['id' => 1, 'persona_id' => 1]);
         $aspirante2 = new AspiranteComplementario(['id' => 2, 'persona_id' => 2]);
-        
+
         $aspirante1->setRelation('persona', $persona1);
         $aspirante2->setRelation('persona', $persona2);
-        
+
         $aspirantes = new Collection([$aspirante1, $aspirante2]);
         $tempDir = sys_get_temp_dir();
         $pdf = Mockery::mock('stdClass');
@@ -425,13 +425,13 @@ class AspiranteComplementarioServiceTest extends TestCase
             'id' => 1,
             'nombre' => 'Programa Test',
         ]);
-        
+
         $tempDir = sys_get_temp_dir() . '/test_pdf_' . uniqid();
         if (!file_exists($tempDir)) {
             mkdir($tempDir, 0755, true);
         }
         $archivosTemporales = [];
-        
+
         $pdf = Mockery::mock('stdClass');
         $pdf->shouldIgnoreMissing();
         $pdf->shouldReceive('Output')
@@ -449,7 +449,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $response = $this->service->generarArchivoPDF($programa, $pdf, $tempDir, $archivosTemporales);
 
         $this->assertInstanceOf(\Symfony\Component\HttpFoundation\BinaryFileResponse::class, $response);
-        
+
         // Limpiar
         if (file_exists($tempDir)) {
             array_map('unlink', glob("$tempDir/*"));
@@ -464,13 +464,13 @@ class AspiranteComplementarioServiceTest extends TestCase
             'id' => 1,
             'nombre' => 'Programa Con Espacios',
         ]);
-        
+
         $tempDir = sys_get_temp_dir() . '/test_pdf_' . uniqid();
         if (!file_exists($tempDir)) {
             mkdir($tempDir, 0755, true);
         }
         $archivosTemporales = [];
-        
+
         $pdf = Mockery::mock('stdClass');
         $pdf->shouldIgnoreMissing();
         $pdf->shouldReceive('Output')
@@ -488,7 +488,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $response = $this->service->generarArchivoPDF($programa, $pdf, $tempDir, $archivosTemporales);
 
         $this->assertInstanceOf(\Symfony\Component\HttpFoundation\BinaryFileResponse::class, $response);
-        
+
         // Limpiar
         if (file_exists($tempDir)) {
             array_map('unlink', glob("$tempDir/*"));
@@ -530,7 +530,7 @@ class AspiranteComplementarioServiceTest extends TestCase
         $persona = new \App\Models\Persona(['id' => 1, 'numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
         $aspirante = new AspiranteComplementario(['id' => 1, 'persona_id' => null]);
         $aspirante->setRelation('persona', $persona);
-        
+
         $aspirantes = new Collection([$aspirante]);
         $files = ['documento1.pdf'];
 

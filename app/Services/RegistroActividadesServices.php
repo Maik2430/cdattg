@@ -33,20 +33,20 @@ class RegistroActividadesServices
     {
         // Obtener los RAPs asignados directamente desde instructor_ficha_resultados_aprendizaje
         $raps = $instructorFichaCaracterizacion->resultadosAprendizaje;
-        
+
         if ($raps->isEmpty()) {
             throw new \Exception('No hay resultados de aprendizaje asignados a esta ficha de instructor. Contacte al administrador para asignar RAPs.');
         }
 
         // Obtener todas las guías de aprendizaje de todos los RAPs asignados
         $todasActividades = collect([]);
-        
+
         foreach ($raps as $rap) {
             $guiasAprendizaje = $rap->guiasAprendizaje;
-            
+
             foreach ($guiasAprendizaje as $guiaAprendizaje) {
                 $actividades = $guiaAprendizaje->actividades;
-                
+
                 foreach ($actividades as $actividad) {
                     $actividad->id_estado = $this->formatearEstadoActividad($actividad);
                     $todasActividades->push($actividad);
@@ -73,21 +73,21 @@ class RegistroActividadesServices
     {
         // Obtener los RAPs asignados directamente desde instructor_ficha_resultados_aprendizaje
         $raps = $caracterizacion->resultadosAprendizaje;
-        
+
         if ($raps->isEmpty()) {
             throw new \Exception('No hay resultados de aprendizaje asignados a esta ficha de instructor. Contacte al administrador para asignar RAPs.');
         }
 
         // Buscar la primera guía de aprendizaje disponible en los RAPs asignados
         $guiaAprendizaje = null;
-        
+
         foreach ($raps as $rap) {
             $guiaAprendizaje = $rap->guiasAprendizaje->first();
             if ($guiaAprendizaje) {
                 break;
             }
         }
-        
+
         if (!$guiaAprendizaje) {
             throw new \Exception('No se encontró ninguna guía de aprendizaje asociada a los RAPs asignados. Contacte al administrador para asignar guías de aprendizaje.');
         }
@@ -121,7 +121,7 @@ class RegistroActividadesServices
     {
         // Obtener los RAPs asignados directamente desde instructor_ficha_resultados_aprendizaje
         $raps = $instructorFichaCaracterizacion->resultadosAprendizaje;
-        
+
         if ($raps->isEmpty()) {
             return null;
         }
@@ -133,7 +133,7 @@ class RegistroActividadesServices
                 return $guiaAprendizaje;
             }
         }
-        
+
         // Retornar null si no hay guía de aprendizaje, permitiendo que la vista maneje este caso
         return null;
     }

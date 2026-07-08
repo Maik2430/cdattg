@@ -25,7 +25,7 @@ return new class extends Migration
             if (!Schema::hasIndex('competencia_programa', ['programa_id'])) {
                 $table->index('programa_id', 'idx_competencia_programa_programa_id');
             }
-            
+
             if (!Schema::hasIndex('competencia_programa', ['competencia_id'])) {
                 $table->index('competencia_id', 'idx_competencia_programa_competencia_id');
             }
@@ -37,7 +37,7 @@ return new class extends Migration
         Schema::table('competencias', function (Blueprint $table) {
             // Eliminar índices
             $table->dropIndex('idx_competencias_codigo');
-            
+
             // Eliminar campo status si existe
             if (Schema::hasColumn('competencias', 'status')) {
                 $table->dropColumn('status');

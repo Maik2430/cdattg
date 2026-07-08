@@ -38,9 +38,9 @@ class ImageService implements ImageServiceInterface
         try {
             $directory = $this->getImageDirectory();
             $nombreArchivo = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
-            
+
             $rutaStorage = Storage::disk('public')->putFileAs($directory, $imagen, $nombreArchivo);
-            
+
             return 'storage/' . $rutaStorage;
         } catch (Exception $e) {
             Log::error('Error al procesar imagen de producto: ' . $e->getMessage());
@@ -69,12 +69,12 @@ class ImageService implements ImageServiceInterface
             // Si la imagen está en formato storage/..., convertir a ruta de storage
             // Ejemplo: storage/imagenes_productos/nombre.jpg -> imagenes_productos/nombre.jpg
             $rutaStorage = str_replace('storage/', '', $producto->imagen);
-            
+
             // Intentar eliminar desde storage usando disco 'public'
             if (Storage::disk('public')->exists($rutaStorage)) {
                 Storage::disk('public')->delete($rutaStorage);
             }
-            
+
             // También intentar eliminar desde public_path por compatibilidad (legacy)
             if (file_exists(public_path($producto->imagen))) {
                 unlink(public_path($producto->imagen));

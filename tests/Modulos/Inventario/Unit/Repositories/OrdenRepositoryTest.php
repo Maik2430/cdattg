@@ -19,7 +19,7 @@ class OrdenRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->repository = new OrdenRepository();
-        
+
         // Ejecutar seeders necesarios
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,

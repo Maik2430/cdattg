@@ -20,7 +20,7 @@ class JornadaFormacionFactory extends Factory
             'NOCHE',
             'FINES DE SEMANA',
         ];
-        
+
         return [
             'jornada' => $this->faker->randomElement($jornadas),
         ];

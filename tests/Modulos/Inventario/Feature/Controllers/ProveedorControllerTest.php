@@ -51,7 +51,7 @@ class ProveedorControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ejecutar solo los seeders necesarios para proveedores
         // RefreshDatabase ya ejecuta las migraciones automáticamente
         $this->seed([
@@ -88,7 +88,7 @@ class ProveedorControllerTest extends TestCase
 
         // Obtener tema ESTADOS (TemaSeeder ya lo crea)
         $temaEstados = \App\Models\Tema::where('name', 'ESTADOS')->first();
-        
+
         if (!$temaEstados) {
             $temaEstados = \App\Models\Tema::create([
                 'name' => 'ESTADOS',
@@ -369,7 +369,7 @@ class ProveedorControllerTest extends TestCase
         $response->assertJsonStructure([
             '*' => ['id', 'municipio']
         ]);
-        
+
         // Verificar que retorna los municipios del departamento
         $municipios = $response->json();
         $this->assertGreaterThanOrEqual(1, count($municipios));

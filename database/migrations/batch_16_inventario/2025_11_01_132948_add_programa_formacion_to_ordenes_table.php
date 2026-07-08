@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Schema::table('ordenes', function (Blueprint $table) {
             $table->dropForeign(['programa_formacion_id']);
-            
+
             $table->dropColumn(['programa_formacion_id']);
         });
     }

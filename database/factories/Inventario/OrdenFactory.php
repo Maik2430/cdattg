@@ -21,7 +21,7 @@ class OrdenFactory extends Factory
     {
         // Obtener tipo_orden_id de parametros_temas - campo NOT NULL
         $tipoOrdenId = $this->obtenerParametroTemaAleatorio();
-        
+
         $diasAdelante = random_int(7, 120);
         // fecha_devolucion es nullable según la migración
         $fechaDevolucion = random_int(0, 1) === 1

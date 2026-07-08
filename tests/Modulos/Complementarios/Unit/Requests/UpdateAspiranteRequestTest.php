@@ -146,16 +146,16 @@ class UpdateAspiranteRequestTest extends TestCase
     public function prepareForValidation_trim_observaciones(): void
     {
         $request = new UpdateAspiranteRequest();
-        
+
         // Simular request con espacios
         $request->merge(['observaciones' => '  Observaciones con espacios  ']);
-        
+
         // Usar reflection para llamar al método protegido
         // En PHP 8.1+ setAccessible() ya no es necesario
         $reflection = new \ReflectionClass($request);
         $method = $reflection->getMethod('prepareForValidation');
         $method->invoke($request);
-        
+
         $this->assertEquals('Observaciones con espacios', $request->observaciones);
     }
 
@@ -163,14 +163,14 @@ class UpdateAspiranteRequestTest extends TestCase
     public function prepareForValidation_acepta_observaciones_null(): void
     {
         $request = new UpdateAspiranteRequest();
-        
+
         $request->merge(['observaciones' => null]);
-        
+
         // En PHP 8.1+ setAccessible() ya no es necesario
         $reflection = new \ReflectionClass($request);
         $method = $reflection->getMethod('prepareForValidation');
         $method->invoke($request);
-        
+
         $this->assertNull($request->observaciones);
     }
 

@@ -17,16 +17,16 @@ class HomeController extends Controller
         // Obtener programas complementarios activos (estado = 1)
         // Nota: estado_id ahora es FK a parametros_temas, necesitamos obtener el ID correspondiente
         $estadoActivoId = $this->getEstadoIdByLegacyValue(1);
-        
+
         $programas = ComplementarioOfertado::with(['modalidad.parametro', 'jornada', 'diasFormacion']);
-        
+
         if ($estadoActivoId) {
             $programas = $programas->where('estado_id', $estadoActivoId);
         } else {
             // Si no se encuentra el estado_id, retornar colección vacía
             $programas = $programas->where('estado_id', 0); // Esto no devolverá resultados
         }
-        
+
         $programas = $programas->get();
 
         // Asignar iconos a cada programa
@@ -82,19 +82,19 @@ class HomeController extends Controller
             2 => 'Cupos Llenos',
             default => 'Sin Oferta',
         };
-        
+
         // Buscar el ParametroTema correspondiente al estado
         try {
             $temaEstado = \App\Models\Tema::where('name', 'ESTADO_PROGRAMA_COMPLEMENTARIO')->first();
-            
+
             if ($temaEstado) {
                 $parametro = \App\Models\Parametro::where('name', $nombreEstado)->first();
-                
+
                 if ($parametro) {
                     $parametroTema = \App\Models\ParametroTema::where('tema_id', $temaEstado->id)
                         ->where('parametro_id', $parametro->id)
                         ->first();
-                    
+
                     if ($parametroTema) {
                         return $parametroTema->id;
                     }
@@ -104,7 +104,7 @@ class HomeController extends Controller
             // Si hay error, retornar null
             Log::error("Error obteniendo estado_id para valor legacy {$estadoLegacy}: " . $e->getMessage());
         }
-        
+
         return null;
     }
 

@@ -55,7 +55,7 @@ class ContratoConvenioControllerTest extends TestCase
 
         // Obtener tema ESTADOS (TemaSeeder ya lo crea)
         $temaEstados = Tema::where('name', self::TEMA_ESTADOS)->first();
-        
+
         if (!$temaEstados) {
             $temaEstados = Tema::create([
                 'name' => self::TEMA_ESTADOS,

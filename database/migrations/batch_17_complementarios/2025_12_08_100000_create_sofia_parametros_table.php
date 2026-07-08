@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Nota: Los temas y parámetros de Sofia se crean en el TemaSeeder,
      * no en las migraciones. Las migraciones solo deben manejar estructura.
      */

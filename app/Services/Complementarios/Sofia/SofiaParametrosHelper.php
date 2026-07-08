@@ -170,7 +170,7 @@ class SofiaParametrosHelper
     {
         // En testing, usar null para user_create_id para evitar problemas con foreign keys
         $userId = null;
-        
+
         try {
             $temaEstados = Tema::updateOrCreate(
                 ['name' => 'ESTADOS SOFIA'],
@@ -244,7 +244,7 @@ class SofiaParametrosHelper
                 $parametro->id => ['status' => 1, 'user_create_id' => $userId]
             ]);
         }
-        
+
             // Limpiar cache después de crear parámetros
             self::clearCache();
         } catch (Exception $e) {
@@ -267,7 +267,7 @@ class SofiaParametrosHelper
             if ($parametro) {
                 return $parametro->id;
             }
-            
+
             // Si no existe, intentar crearlo
             try {
                 self::crearParametrosSiNoExisten();
@@ -283,25 +283,25 @@ class SofiaParametrosHelper
                     'trace' => $e->getTraceAsString()
                 ]);
             }
-            
+
             return null;
         }
-        
+
         // En producción/desarrollo, usar el cache
         $ids = self::getAllIds();
-        
+
         // Si el parámetro existe, retornarlo
         if (isset($ids[$nombre]) && $ids[$nombre] !== null) {
             return $ids[$nombre];
         }
-        
+
         // Si no existe en cache, buscar directamente
         $parametro = Parametro::where('name', $nombre)->first();
         if ($parametro) {
             self::clearCache();
             return $parametro->id;
         }
-        
+
         return null;
     }
 

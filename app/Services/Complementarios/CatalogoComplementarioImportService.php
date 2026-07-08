@@ -290,7 +290,7 @@ class CatalogoComplementarioImportService
         }
 
         $modalidadNormalizada = mb_strtoupper(trim((string) $modalidadString));
-        
+
         // Mapeo de valores de modalidad string a parametro_id
         $mapeoModalidad = [
             'PRESENCIAL' => 18,
@@ -299,7 +299,7 @@ class CatalogoComplementarioImportService
         ];
 
         $parametroId = $mapeoModalidad[$modalidadNormalizada] ?? null;
-        
+
         if (!$parametroId) {
             return null;
         }

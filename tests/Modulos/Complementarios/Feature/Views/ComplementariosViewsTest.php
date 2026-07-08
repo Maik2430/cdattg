@@ -24,9 +24,9 @@ class ComplementariosViewsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->user = User::factory()->create();
     }
 
@@ -124,7 +124,7 @@ class ComplementariosViewsTest extends TestCase
         // Nota: La vista pública NO muestra competencias ni RAPs directamente
         // Estos solo se muestran en la vista admin. Este test verifica que la vista se renderiza correctamente
         $programa = ComplementarioOfertado::factory()->conOferta()->create();
-        
+
         $competencia = Competencia::create([
             'codigo' => 'COMP-' . uniqid(),
             'nombre' => 'Competencia de Prueba',
@@ -182,7 +182,7 @@ class ComplementariosViewsTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Formulario de Inscripción');
         $response->assertSee('Programa de Inscripción');
-        
+
         // Verificar campos del formulario
         $response->assertSee('tipo_documento', false);
         $response->assertSee('numero_documento', false);
@@ -257,7 +257,7 @@ class ComplementariosViewsTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Crear Programa Complementario', false);
         $response->assertSee('Creación de programa complementario', false);
-        
+
         // Verificar campos principales del formulario
         $response->assertSee('codigo', false);
         $response->assertSee('nombre', false);
@@ -325,7 +325,7 @@ class ComplementariosViewsTest extends TestCase
     {
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         $competencia = Competencia::create([
             'codigo' => 'COMP-' . uniqid(),
             'nombre' => 'Competencia Asociada',
@@ -426,16 +426,16 @@ class ComplementariosViewsTest extends TestCase
         $response->assertSee('Lista de Aspirantes', false);
         $response->assertSee('Nombre Completo', false);
         $response->assertSee('N# Documento', false);
-        
+
         // Verificar que el número de documento se muestra (esto sabemos que funciona)
         $response->assertSee('1234567890', false);
-        
+
         // Verificar que los datos del aspirante están en la vista
         // Usamos viewData para verificar que los datos están disponibles
         $viewData = $response->viewData('aspirantes');
         $this->assertNotNull($viewData);
         $this->assertGreaterThan(0, $viewData->count());
-        
+
         // Verificar que el aspirante está en la colección
         $aspiranteEncontrado = $viewData->firstWhere('id', $aspirante->id);
         $this->assertNotNull($aspiranteEncontrado);

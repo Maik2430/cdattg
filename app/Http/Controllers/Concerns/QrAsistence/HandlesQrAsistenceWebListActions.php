@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Concerns\QrAsistence;
 
 use App\Models\AsistenciaAprendiz;
 use Carbon\Carbon;
-use DateTimeInterface;
 use Carbon\Month;
 use Carbon\WeekDay;
+use DateTimeInterface;
 
 trait HandlesQrAsistenceWebListActions
 {

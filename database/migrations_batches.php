@@ -2,10 +2,10 @@
 
 /**
  * Índice de Batches de Migraciones por Módulos
- * 
+ *
  * Este archivo define la organización de las migraciones del proyecto
  * agrupadas por módulos funcionales con sus dependencias.
- * 
+ *
  * Uso:
  *   - Migrar un módulo específico: php artisan migrate:module batch_01_sistema_base
  *   - Migrar todos los módulos: php artisan migrate:module --all

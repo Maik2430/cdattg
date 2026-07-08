@@ -37,12 +37,12 @@ class ComplementarioOfertadoModelTest extends TestCase
                 ['name' => 'PRESENCIAL', 'status' => 1]
             );
         }
-        
+
         $tema = \App\Models\Tema::firstOrCreate(
             ['id' => 5],
             ['name' => 'MODALIDADES DE FORMACION', 'status' => 1]
         );
-        
+
         $modalidad = ParametroTema::firstOrCreate([
             'tema_id' => $tema->id,
             'parametro_id' => $parametro->id,

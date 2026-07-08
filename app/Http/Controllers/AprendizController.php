@@ -40,7 +40,7 @@ class AprendizController extends Controller
 
             $aprendices = $this->aprendizService->listarConFiltros($filtros);
             $fichas = FichaCaracterizacion::where('status', 1)->get();
-            
+
             // Obtener solo personas que NO son aprendices aún (para el formulario de creación)
             $personas = Persona::whereDoesntHave('aprendiz')
                 ->where('status', 1)

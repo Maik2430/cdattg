@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('resultados_aprendizajes', function (Blueprint $table) {
             // Agregar campo status (1 = activo, 0 = inactivo)
             $table->boolean('status')->default(1)->after('user_edit_id');
-            
+
             // Agregar índices para optimizar búsquedas
             $table->index('codigo', 'idx_rap_codigo');
             $table->index('status', 'idx_rap_status');
@@ -41,7 +41,7 @@ return new class extends Migration
             $table->dropIndex('idx_rap_status');
             $table->dropIndex('idx_rap_codigo_status');
             $table->dropIndex('idx_rap_created_at');
-            
+
             // Eliminar columna status
             $table->dropColumn('status');
         });

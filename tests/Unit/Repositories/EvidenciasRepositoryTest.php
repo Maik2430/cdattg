@@ -57,7 +57,7 @@ class EvidenciasRepositoryTest extends TestCase
     public function retorna_la_evidencia_mas_reciente(): void
     {
         $guia = GuiasAprendizaje::factory()->create();
-        
+
         $evidencia1 = Evidencias::factory()->create(['created_at' => now()->subDays(2)]);
         $evidencia2 = Evidencias::factory()->create(['created_at' => now()->subDay()]);
         $evidencia3 = Evidencias::factory()->create(['created_at' => now()]);

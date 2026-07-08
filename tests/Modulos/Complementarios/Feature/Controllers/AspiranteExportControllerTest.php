@@ -29,9 +29,9 @@ class AspiranteExportControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->user = User::factory()->create();
     }
 
@@ -43,7 +43,7 @@ class AspiranteExportControllerTest extends TestCase
     public function puede_exportar_aspirantes_a_excel()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa)->create();
 
@@ -57,7 +57,7 @@ class AspiranteExportControllerTest extends TestCase
     public function exportar_excel_retorna_error_si_no_hay_aspirantes()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->get(route('programas-complementarios.exportar-excel', $programa->id));
@@ -75,7 +75,7 @@ class AspiranteExportControllerTest extends TestCase
     public function puede_descargar_cedulas_de_aspirantes()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
         AspiranteComplementario::factory()->count(2)->paraPrograma($programa)->create();
 
@@ -89,7 +89,7 @@ class AspiranteExportControllerTest extends TestCase
     public function descargar_cedulas_retorna_error_si_no_hay_aspirantes()
     {
         $this->actingAs($this->user);
-        
+
         $programa = $this->crearProgramaComplementario();
 
         $response = $this->get(route('programas-complementarios.descargar-cedulas', $programa->id));

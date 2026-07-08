@@ -123,13 +123,13 @@ class ComplementariosAvanzadoSeeder extends Seeder
         foreach ($programas as $programa) {
             // Obtener cantidad actual de aspirantes
             $aspirantesActuales = $programa->aspirantes()->count();
-            
+
             // Agregar más aspirantes si hay cupos disponibles
             $cuposDisponibles = $programa->cupos - $aspirantesActuales;
-            
+
             if ($cuposDisponibles > 0) {
                 $cantidadAgregar = min(rand(5, 15), $cuposDisponibles);
-                
+
                 AspiranteComplementario::factory()
                     ->count($cantidadAgregar)
                     ->state(function (): array {

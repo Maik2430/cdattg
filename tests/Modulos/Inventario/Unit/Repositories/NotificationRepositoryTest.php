@@ -19,7 +19,7 @@ class NotificationRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->repository = new NotificationRepository();
-        
+
         // Ejecutar seeders necesarios
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
@@ -36,7 +36,7 @@ class NotificationRepositoryTest extends TestCase
     public function puede_obtener_notificaciones_paginadas_por_usuario()
     {
         $user = User::first();
-        
+
         // Crear notificaciones para el usuario
         Notificacion::create([
             'id' => \Illuminate\Support\Str::uuid()->toString(),
@@ -56,7 +56,7 @@ class NotificationRepositoryTest extends TestCase
     public function puede_obtener_notificaciones_no_leidas_limitadas()
     {
         $user = User::first();
-        
+
         Notificacion::create([
             'id' => \Illuminate\Support\Str::uuid()->toString(),
             'tipo' => 'TestNotification',
@@ -75,7 +75,7 @@ class NotificationRepositoryTest extends TestCase
     public function puede_contar_notificaciones_no_leidas()
     {
         $user = User::first();
-        
+
         Notificacion::create([
             'id' => \Illuminate\Support\Str::uuid()->toString(),
             'tipo' => 'TestNotification',
@@ -113,7 +113,7 @@ class NotificationRepositoryTest extends TestCase
     public function puede_marcar_todas_las_notificaciones_como_leidas()
     {
         $user = User::first();
-        
+
         Notificacion::create([
             'id' => \Illuminate\Support\Str::uuid()->toString(),
             'tipo' => 'TestNotification',
@@ -122,7 +122,7 @@ class NotificationRepositoryTest extends TestCase
             'datos' => json_encode(['message' => 'Test 1']),
             'leida_en' => null,
         ]);
-        
+
         Notificacion::create([
             'id' => \Illuminate\Support\Str::uuid()->toString(),
             'tipo' => 'TestNotification',

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('programas_formacion', function (Blueprint $table) {
             // Drop the foreign key constraint first
             $table->dropForeign(['red_conocimiento_id']);
-            
+
             // Make the column nullable
             $table->foreignId('red_conocimiento_id')->nullable()->change();
 
@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->integer('horas_etapa_lectiva')->nullable()->change();
             $table->integer('horas_etapa_productiva')->nullable()->change();
-            
+
             // Re-add the foreign key constraint with onDelete('set null')
             $table->foreign('red_conocimiento_id')
                   ->references('id')
@@ -40,10 +40,10 @@ return new class extends Migration
         Schema::table('programas_formacion', function (Blueprint $table) {
             // Drop the foreign key constraint first
             $table->dropForeign(['red_conocimiento_id']);
-            
+
             // Make the column NOT nullable
             $table->foreignId('red_conocimiento_id')->nullable(false)->change();
-            
+
             // Re-add the foreign key constraint without onDelete('set null')
             $table->foreign('red_conocimiento_id')
                   ->references('id')

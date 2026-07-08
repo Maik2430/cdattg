@@ -20,7 +20,7 @@ class ProgramaFormacionController extends Controller
     {
         $this->middleware('auth');
         $this->programaService = $programaService;
-        
+
         $this->middleware('permission:VER PROGRAMAS DE FORMACION')->only('index');
         $this->middleware('permission:VER PROGRAMA DE FORMACION')->only('show');
         $this->middleware('permission:CREAR PROGRAMA DE FORMACION')->only('create', 'store');

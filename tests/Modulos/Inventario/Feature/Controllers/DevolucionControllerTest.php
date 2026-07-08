@@ -46,7 +46,7 @@ class DevolucionControllerTest extends TestCase
         // Obtener temas existentes (TemaSeeder ya los crea)
         $temaEstados = Tema::where('name', 'ESTADOS DE ORDEN')->first();
         $temaTipoOrden = Tema::where('name', 'TIPOS DE ORDEN')->first();
-        
+
         if (!$temaEstados) {
             $temaEstados = Tema::create([
                 'name' => 'ESTADOS DE ORDEN',
@@ -55,7 +55,7 @@ class DevolucionControllerTest extends TestCase
                 'user_edit_id' => null,
             ]);
         }
-        
+
         if (!$temaTipoOrden) {
             $temaTipoOrden = Tema::create([
                 'name' => 'TIPOS DE ORDEN',
@@ -119,7 +119,7 @@ class DevolucionControllerTest extends TestCase
 
         // Obtener tipo de producto CONSUMIBLE (TemaSeeder ya crea el tema)
         $temaTiposProducto = Tema::where('name', 'TIPOS DE PRODUCTO')->first();
-        
+
         if (!$temaTiposProducto) {
             $temaTiposProducto = Tema::create([
                 'name' => 'TIPOS DE PRODUCTO',

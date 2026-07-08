@@ -18,7 +18,7 @@ return new class extends Migration
                 ->after('jornada_id')
                 ->constrained('users')
                 ->onDelete('set null');
-            
+
             $table->foreignId('user_edit_id')
                 ->nullable()
                 ->after('user_create_id')
@@ -36,7 +36,7 @@ return new class extends Migration
             // Eliminar foreign keys primero
             $table->dropForeign(['user_create_id']);
             $table->dropForeign(['user_edit_id']);
-            
+
             // Eliminar columnas
             $table->dropColumn(['user_create_id', 'user_edit_id']);
         });

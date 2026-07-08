@@ -38,7 +38,7 @@ return new class extends Migration
             // Eliminar la relación con asistencias
             $table->dropForeign(['asistencia_id']);
             $table->dropColumn('asistencia_id');
-            
+
             // Restaurar la relación con evidencias
             $table->foreignId('evidencia_id')->nullable()->after('aprendiz_ficha_id')->constrained('evidencias')->onDelete('cascade');
         });

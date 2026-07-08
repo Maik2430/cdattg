@@ -232,7 +232,7 @@ class ValidarSofiaJobTest extends TestCase
     public function marca_progreso_como_completado_si_no_hay_aspirantes(): void
     {
         $user = $this->createTestUser();
-        
+
         // Obtener datos necesarios del seeder
         $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
             ->whereIn('parametro_id', [18, 19, 20])
@@ -282,7 +282,7 @@ class ValidarSofiaJobTest extends TestCase
     public function inicializa_progreso_al_iniciar_job(): void
     {
         $user = $this->createTestUser();
-        
+
         // Obtener datos necesarios del seeder
         $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
             ->whereIn('parametro_id', [18, 19, 20])
@@ -385,7 +385,7 @@ class ValidarSofiaJobTest extends TestCase
     public function marca_progreso_como_fallido_si_hay_errores(): void
     {
         $user = $this->createTestUser();
-        
+
         // Obtener datos necesarios del seeder
         $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
             ->whereIn('parametro_id', [18, 19, 20])

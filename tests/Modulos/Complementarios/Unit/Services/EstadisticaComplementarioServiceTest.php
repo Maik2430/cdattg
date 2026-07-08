@@ -39,13 +39,13 @@ class EstadisticaComplementarioServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->seedComplementariosDatabaseIfNeeded();
-        
+
         $this->aspiranteRepositoryMock = Mockery::mock(AspiranteComplementarioRepository::class);
         $this->programaRepositoryMock = Mockery::mock(ComplementarioOfertadoRepository::class);
         $this->personaRepositoryMock = Mockery::mock(PersonaRepository::class);
-        
+
         $this->service = new EstadisticaComplementarioService(
             $this->aspiranteRepositoryMock,
             $this->programaRepositoryMock,
@@ -68,7 +68,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // NOTA: Este test requiere BD porque el servicio usa directamente AspiranteComplementario::whereIn()
         // que es difícil de mockear sin cambiar el código del servicio.
         // Los otros métodos del servicio están completamente mockeados.
-        
+
         // Mock para getEstadisticas
         $this->aspiranteRepositoryMock->shouldReceive('getEstadisticas')
             ->once()
@@ -136,7 +136,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $this->assertArrayHasKey('tendencia_inscripciones', $estadisticas);
         $this->assertArrayHasKey('distribucion_programas', $estadisticas);
         $this->assertArrayHasKey('programas_demanda', $estadisticas);
-        
+
         $this->assertEquals(18, $estadisticas['total_aspirantes']);
         $this->assertEquals(5, $estadisticas['aspirantes_aceptados']);
         // aspirantes_pendientes puede variar si el mock del modelo no funciona
@@ -190,7 +190,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -228,7 +228,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -268,7 +268,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -317,7 +317,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -329,7 +329,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $persona1 = Persona::factory()->create();
         $persona2 = Persona::factory()->create();
         $persona3 = Persona::factory()->create();
-        
+
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
             'complementario_id' => $programa->id,
@@ -467,7 +467,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -492,7 +492,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -538,7 +538,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -656,12 +656,12 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Crear datos de prueba con fechas en los últimos 3 meses
         $programa = ComplementarioOfertado::factory()->create();
         $now = now();
-        
+
         // Crear aspirantes en diferentes meses
         $persona1 = Persona::factory()->create();
         $persona2 = Persona::factory()->create();
         $persona3 = Persona::factory()->create();
-        
+
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
             'complementario_id' => $programa->id,
@@ -695,7 +695,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -749,7 +749,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Para tests que usan BD real, no cerramos Mockery completamente
         // porque puede afectar el factory. En su lugar, solo limpiamos los mocks específicos.
         // El tearDown() se encargará de cerrar Mockery al final.
-        
+
         $service = new EstadisticaComplementarioService(
             new AspiranteComplementarioRepository(),
             new ComplementarioOfertadoRepository(),
@@ -759,7 +759,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         $programa = ComplementarioOfertado::factory()->create();
         $persona1 = Persona::factory()->create();
         $persona2 = Persona::factory()->create();
-        
+
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona1->id,
             'complementario_id' => $programa->id,
@@ -909,7 +909,7 @@ class EstadisticaComplementarioServiceTest extends TestCase
         // Crear datos de prueba con fecha en el último mes
         $programa = ComplementarioOfertado::factory()->create();
         $persona = Persona::factory()->create();
-        
+
         AspiranteComplementario::factory()->create([
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,

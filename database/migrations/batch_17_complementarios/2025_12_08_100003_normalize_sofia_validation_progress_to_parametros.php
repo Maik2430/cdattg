@@ -27,7 +27,7 @@ return new class extends Migration
             }
 
             $driver = DB::getDriverName();
-            
+
             if ($driver === 'sqlite') {
                 // SQLite: crear nueva columna BIGINT, luego eliminar antigua
                 if (Schema::hasColumn('sofia_validation_progress', 'status')) {
@@ -55,7 +55,7 @@ return new class extends Migration
                     DB::statement('ALTER TABLE sofia_validation_progress MODIFY COLUMN status BIGINT UNSIGNED NULL');
                 }
             }
-            
+
             // Intentar agregar foreign key (puede fallar si los parámetros no existen)
             try {
                 if (Schema::hasColumn('sofia_validation_progress', 'status')) {
@@ -69,7 +69,7 @@ return new class extends Migration
             } catch (\Exception $e) {
                 // Si falla, se agregará después cuando existan los parámetros
             }
-            
+
             return;
         }
 
@@ -101,22 +101,22 @@ return new class extends Migration
             ->update(['status_parametro_id' => $pending->id]);
 
         $driver = DB::getDriverName();
-        
+
         if ($driver === 'sqlite') {
             // SQLite: crear nueva columna, copiar datos, eliminar antigua
             Schema::table('sofia_validation_progress', function (Blueprint $table) use ($pending) {
                 $table->unsignedBigInteger('status_new')->default($pending->id)->after('user_id');
             });
-            
+
             // Copiar datos
             DB::statement('UPDATE sofia_validation_progress SET status_new = status_parametro_id WHERE status_parametro_id IS NOT NULL');
             DB::statement("UPDATE sofia_validation_progress SET status_new = {$pending->id} WHERE status_new IS NULL");
-            
+
             // Eliminar columnas antiguas
             Schema::table('sofia_validation_progress', function (Blueprint $table) {
                 $table->dropColumn(['status', 'status_parametro_id']);
             });
-            
+
             // Renombrar usando RENAME COLUMN si está disponible
             try {
                 DB::statement('ALTER TABLE sofia_validation_progress RENAME COLUMN status_new TO status');
@@ -198,17 +198,17 @@ return new class extends Migration
             ->update(['status_tmp' => 'failed']);
 
         $driver = DB::getDriverName();
-        
+
         if ($driver === 'sqlite') {
             // SQLite: usar Schema para modificar
             Schema::table('sofia_validation_progress', function (Blueprint $table) {
                 $table->dropColumn('status');
             });
-            
+
             Schema::table('sofia_validation_progress', function (Blueprint $table) {
                 $table->dropColumn('status_tmp');
             });
-            
+
             Schema::table('sofia_validation_progress', function (Blueprint $table) {
                 $table->string('status')->default('pending')->after('user_id');
             });

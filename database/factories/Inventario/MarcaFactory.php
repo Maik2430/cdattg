@@ -27,7 +27,7 @@ class MarcaFactory extends Factory
     public function definition(): array
     {
         $nombreMarca = $this->faker->unique()->company();
-        
+
         $userId = null;
         try {
             $userId = $this->getUserId();
@@ -52,7 +52,7 @@ class MarcaFactory extends Factory
         return $this->afterCreating(function (Marca $marca): void {
             // Asociar automáticamente al tema MARCAS
             $tema = Marca::tema();
-            
+
             if ($tema) {
                 // Verificar si ya existe la asociación
                 $existeAsociacion = ParametroTema::query()

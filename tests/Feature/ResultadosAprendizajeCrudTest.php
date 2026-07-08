@@ -86,7 +86,7 @@ class ResultadosAprendizajeCrudTest extends TestCase
 
         $response->assertRedirect(route('resultados-aprendizaje.index'));
         $response->assertSessionHas('success');
-        
+
         $this->assertDatabaseHas('resultados_aprendizajes', [
             'codigo' => 'RAP001',
             'nombre' => 'Resultado de Aprendizaje de Prueba',
@@ -202,7 +202,7 @@ class ResultadosAprendizajeCrudTest extends TestCase
 
         $response->assertRedirect(route('resultados-aprendizaje.index'));
         $response->assertSessionHas('success');
-        
+
         $this->assertDatabaseHas('resultados_aprendizajes', [
             'id' => $rap->id,
             'codigo' => 'RAP004',
@@ -260,7 +260,7 @@ class ResultadosAprendizajeCrudTest extends TestCase
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
-        
+
         $rap->refresh();
         $this->assertEquals(0, $rap->status);
     }
@@ -287,7 +287,7 @@ class ResultadosAprendizajeCrudTest extends TestCase
 
         $response->assertRedirect(route('resultados-aprendizaje.index'));
         $response->assertSessionHas('success');
-        
+
         $this->assertDatabaseMissing('resultados_aprendizajes', [
             'id' => $rap->id,
         ]);

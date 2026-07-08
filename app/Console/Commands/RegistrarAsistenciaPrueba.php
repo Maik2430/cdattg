@@ -46,7 +46,7 @@ class RegistrarAsistenciaPrueba extends Command
                 'persona',
                 'fichaCaracterizacion.jornadaFormacion.parametro'
             ])->whereNotNull('ficha_caracterizacion_id')->inRandomOrder()->first();
-            
+
             if (!$aprendiz) {
                 $this->error('❌ No se encontró ningún aprendiz en la base de datos.');
                 $this->info('💡 Por favor, crea al menos un aprendiz primero.');

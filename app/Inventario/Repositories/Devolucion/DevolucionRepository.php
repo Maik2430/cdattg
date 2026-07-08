@@ -105,17 +105,17 @@ class DevolucionRepository implements DevolucionRepositoryInterface
     {
         $page = request()->get('page', 1);
         $paginatedItems = $items->forPage((int) $page, $perPage)->values();
-        
+
         try {
             $path = request()->url();
         } catch (Exception $e) {
             $path = route('inventario.devoluciones.index');
         }
-        
+
         if (!$path) {
             $path = route('inventario.devoluciones.index');
         }
-        
+
         $query = request()->query() ?? [];
 
         return new \Illuminate\Pagination\LengthAwarePaginator(

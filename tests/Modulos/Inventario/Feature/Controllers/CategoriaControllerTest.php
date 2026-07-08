@@ -47,13 +47,13 @@ class CategoriaControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         // Ejecutar solo los seeders necesarios para categorías
         // RefreshDatabase ya ejecuta las migraciones automáticamente
         $this->seed([
@@ -66,7 +66,7 @@ class CategoriaControllerTest extends TestCase
         $this->temaCategorias = Tema::where('name', 'CATEGORIAS')
             ->orWhere('name', 'CATEGORÍAS')
             ->first();
-        
+
         if (!$this->temaCategorias) {
             // Si no existe, crear con el nombre que el repositorio espera
             $this->temaCategorias = Tema::create([
@@ -99,7 +99,7 @@ class CategoriaControllerTest extends TestCase
         // Crear algunas categorías
         $categoria1 = Parametro::factory()->create(['name' => 'CATEGORIA 1']);
         $categoria2 = Parametro::factory()->create(['name' => 'CATEGORIA 2']);
-        
+
         ParametroTema::create([
             'parametro_id' => $categoria1->id,
             'tema_id' => $this->temaCategorias->id,
@@ -129,7 +129,7 @@ class CategoriaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => 'ELECTRONICA']);
-        
+
         ParametroTema::create([
             'parametro_id' => $categoria->id,
             'tema_id' => $this->temaCategorias->id,
@@ -192,7 +192,7 @@ class CategoriaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => self::CATEGORIA_TEST]);
-        
+
         ParametroTema::create([
             'parametro_id' => $categoria->id,
             'tema_id' => $this->temaCategorias->id,
@@ -215,7 +215,7 @@ class CategoriaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => 'CATEGORIA EDITAR']);
-        
+
         ParametroTema::create([
             'parametro_id' => $categoria->id,
             'tema_id' => $this->temaCategorias->id,
@@ -238,7 +238,7 @@ class CategoriaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => 'CATEGORIA ORIGINAL']);
-        
+
         ParametroTema::create([
             'parametro_id' => $categoria->id,
             'tema_id' => $this->temaCategorias->id,
@@ -266,7 +266,7 @@ class CategoriaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => self::CATEGORIA_TEST]);
-        
+
         ParametroTema::create([
             'parametro_id' => $categoria->id,
             'tema_id' => $this->temaCategorias->id,
@@ -289,7 +289,7 @@ class CategoriaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => 'CATEGORIA ELIMINAR']);
-        
+
         ParametroTema::create([
             'parametro_id' => $categoria->id,
             'tema_id' => $this->temaCategorias->id,
@@ -310,7 +310,7 @@ class CategoriaControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $categoria = Parametro::factory()->create(['name' => self::CATEGORIA_TEST]);
-        
+
         ParametroTema::create([
             'parametro_id' => $categoria->id,
             'tema_id' => $this->temaCategorias->id,

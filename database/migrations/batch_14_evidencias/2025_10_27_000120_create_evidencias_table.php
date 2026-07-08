@@ -31,11 +31,11 @@ return new class extends Migration
             $table->foreignId('user_create_id')->nullable()->constrained('users');
             $table->foreignId('user_edit_id')->nullable()->constrained('users');
             $table->timestamps();
-        }); 
+        });
     }
 
     /**
-     * Reverse the migrations. 
+     * Reverse the migrations.
      */
     public function down(): void
     {

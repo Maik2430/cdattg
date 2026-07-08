@@ -20,15 +20,15 @@ class InventarioRoutesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Desactivar CSRF para tests
         $this->withoutMiddleware([
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
-        
+
         $this->migrateDatabases();
-        
+
         // Asegurar que los seeders se ejecuten después de RefreshDatabase
         if (!\App\Models\Tema::where('name', 'CATEGORIAS')->exists()) {
             $this->artisan('db:seed', ['--force' => true, '--quiet' => true]);
@@ -94,7 +94,7 @@ class InventarioRoutesTest extends TestCase
         $this->actingAs($this->user);
 
         $this->assertTrue(Route::has('inventario.dashboard'));
-        
+
         $response = $this->get(route('inventario.dashboard'));
         $response->assertStatus(200);
     }
@@ -125,7 +125,7 @@ class InventarioRoutesTest extends TestCase
 
         $response = $this->get(route('inventario.productos.index'));
         $this->assertContains($response->status(), [200, 302, 403]);
-        
+
         // Asegurar que no haya output buffers abiertos al final del test
         // Esto evita el warning de "risky test"
         if (ob_get_level() > 0) {

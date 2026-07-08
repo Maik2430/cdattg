@@ -24,7 +24,7 @@ class FichaRepositoryTest extends TestCase
         parent::setUp();
         $this->repository = new FichaRepository();
         Cache::flush();
-        
+
         // Ejecutar seeders necesarios para las pruebas
         // Estos datos son requeridos por las claves foráneas en PersonaFactory
         $this->seed([

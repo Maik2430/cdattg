@@ -115,7 +115,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
         $modalidad = ParametroTema::where('tema_id', 5)
             ->whereIn('parametro_id', [18, 19, 20])
             ->first();
-        
+
         $jornada = JornadaFormacion::first();
         $ambiente = Ambiente::first();
 
@@ -344,7 +344,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
     public function get_programas_con_mayor_demanda_respeta_limite()
     {
         $programas = ComplementarioOfertado::factory()->count(15)->create();
-        
+
         $programas->each(function ($programa, $index) {
             AspiranteComplementario::factory()->count($index + 1)->paraPrograma($programa)->create();
         });
@@ -380,7 +380,7 @@ class ComplementarioOfertadoRepositoryTest extends TestCase
     public function get_programas_con_mayor_demanda_calcula_tasa_aceptacion_correctamente()
     {
         $programa = ComplementarioOfertado::factory()->create();
-        
+
         // 10 aspirantes, 4 aceptados = 40%
         AspiranteComplementario::factory()->count(4)->paraPrograma($programa)->admitido()->create();
         AspiranteComplementario::factory()->count(6)->paraPrograma($programa)->enProceso()->create();

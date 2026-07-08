@@ -20,7 +20,7 @@ trait CreatesApplication
         if (env('APP_ENV') === 'testing') {
             $app['config']->set('database.default', 'sqlite');
             $app['config']->set('database.connections.sqlite.database', database_path('testing.sqlite'));
-            
+
             // Asegurar que el archivo SQLite existe
             $databasePath = database_path('testing.sqlite');
             if (!file_exists($databasePath)) {
