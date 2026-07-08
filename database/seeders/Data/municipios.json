@@ -1,0 +1,5502 @@
+[
+    {
+        "municipio": "El Retorno",
+        "departamento_id": 95,
+        "status": 1
+    },
+    {
+        "municipio": "Calamar",
+        "departamento_id": 95,
+        "status": 1
+    },
+    {
+        "municipio": "Mapiripan",
+        "departamento_id": 50,
+        "status": 1
+    },
+    {
+        "municipio": "Miraflores",
+        "departamento_id": 95,
+        "status": 1
+    },
+    {
+        "municipio": "Puerto Concordia",
+        "departamento_id": 50,
+        "status": 1
+    },
+    {
+        "municipio": "San José del Guaviare",
+        "departamento_id": 95,
+        "status": 1
+    },
+    {
+        "municipio": "Abriaquí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Acacías",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Acandí",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Acevedo",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Achí",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Agrado",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Agua de Dios",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Aguachica",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Aguada",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Aguadas",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Aguazul",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Agustín Codazzi",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Aipe",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Albania",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Albania",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Albania",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Albán",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Albán",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Alcalá",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Alejandria",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Algarrobo",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Algeciras",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Almaguer",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Almeida",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Alpujarra",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Altamira",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Alto Baudó (Pie de Pato)",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Altos del Rosario",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Alvarado",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Amagá",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Amalfi",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Ambalema",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Anapoima",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Ancuya",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Andalucía",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Andes",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Angelópolis",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Angostura",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Anolaima",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Anorí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Anserma",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Ansermanuevo",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Anzoátegui",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Anzá",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Apartadó",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Apulo",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Apía",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Aquitania",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Aracataca",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Aranzazu",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Aratoca",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Arauca",
+        "departamento_id": 81,
+        "status": 0
+    },
+    {
+        "municipio": "Arauquita",
+        "departamento_id": 81,
+        "status": 0
+    },
+    {
+        "municipio": "Arbeláez",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Arboleda (Berruecos)",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Arboledas",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Arboletes",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Arcabuco",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Arenal",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Argelia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Argelia",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Argelia",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Ariguaní (El Difícil)",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Arjona",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Armenia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Armenia",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Armero (Guayabal)",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Arroyohondo",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Astrea",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Ataco",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Atrato (Yuto)",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Ayapel",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Bagadó",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Bahía Solano (Mútis)",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Bajo Baudó (Pizarro)",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Balboa",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Balboa",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Baranoa",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Baraya",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Barbacoas",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Barbosa",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Barbosa",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Barichara",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Barranca de Upía",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Barrancabermeja",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Barrancas",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Barranco de Loba",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Barranquilla",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Becerríl",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Belalcázar",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Bello",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Belmira",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Beltrán",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Belén",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Belén",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Belén de Bajirá",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Belén de Umbría",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Belén de los Andaquíes",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Berbeo",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Betania",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Beteitiva",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Betulia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Betulia",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Bituima",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Boavita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Bochalema",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Bogotá D.C.",
+        "departamento_id": 11,
+        "status": 0
+    },
+    {
+        "municipio": "Bojacá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Bojayá (Bellavista)",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Bolívar",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Bolívar",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Bolívar",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Bolívar",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Bosconia",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Boyacá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Briceño",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Briceño",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Bucaramanga",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Bucarasica",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Buenaventura",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Buenavista",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Buenavista",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Buenavista",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Buenavista",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Buenos Aires",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Buesaco",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Buga",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Bugalagrande",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Burítica",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Busbanza",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Cabrera",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Cabrera",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Cabuyaro",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Cachipay",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Caicedo",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Caicedonia",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Caimito",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Cajamarca",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Cajibío",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Cajicá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Calamar",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Calarcá",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Caldas",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Caldas",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Caldono",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "California",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Calima (Darién)",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Caloto",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Calí",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Campamento",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Campo de la Cruz",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Campoalegre",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Campohermoso",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Canalete",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Candelaria",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Candelaria",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Cantagallo",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Cantón de San Pablo",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Caparrapí",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Capitanejo",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Caracolí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Caramanta",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Carcasí",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Carepa",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Carmen de Apicalá",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Carmen de Carupa",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Carmen de Viboral",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Carmen del Darién (CURBARADÓ)",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Carolina",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Cartagena",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Cartagena del Chairá",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Cartago",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Carurú",
+        "departamento_id": 97,
+        "status": 0
+    },
+    {
+        "municipio": "Casabianca",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Castilla la Nueva",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Caucasia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Cañasgordas",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Cepita",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Cereté",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Cerinza",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Cerrito",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Cerro San Antonio",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Chachaguí",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Chaguaní",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Chalán",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Chaparral",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Charalá",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Charta",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Chigorodó",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Chima",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Chimichagua",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Chimá",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Chinavita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Chinchiná",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Chinácota",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Chinú",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Chipaque",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Chipatá",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Chiquinquirá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Chiriguaná",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Chiscas",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Chita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Chitagá",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Chitaraque",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Chivatá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Chivolo",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Choachí",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Chocontá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Chámeza",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Chía",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Chíquiza",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Chívor",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Cicuco",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Cimitarra",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Circasia",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Cisneros",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Ciénaga",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Ciénaga",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Ciénaga de Oro",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Clemencia",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Cocorná",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Coello",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Cogua",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Colombia",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Colosó (Ricaurte)",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Colón",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Colón (Génova)",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Concepción",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Concepción",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Concordia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Concordia",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Condoto",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Confines",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Consaca",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Contadero",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Contratación",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Convención",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Copacabana",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Coper",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Cordobá",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Corinto",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Coromoro",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Corozal",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Corrales",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Cota",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Cotorra",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Covarachía",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Coveñas",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Coyaima",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Cravo Norte",
+        "departamento_id": 81,
+        "status": 0
+    },
+    {
+        "municipio": "Cuaspud (Carlosama)",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Cubarral",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Cubará",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Cucaita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Cucunubá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Cucutilla",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Cuitiva",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Cumaral",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Cumaribo",
+        "departamento_id": 99,
+        "status": 0
+    },
+    {
+        "municipio": "Cumbal",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Cumbitara",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Cunday",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Curillo",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Curití",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Curumaní",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Cáceres",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Cáchira",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Cácota",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Cáqueza",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Cértegui",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Cómbita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Córdoba",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Córdoba",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Cúcuta",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Dabeiba",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Dagua",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Dibulla",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Distracción",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Dolores",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Don Matías",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Dos Quebradas",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Duitama",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Durania",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Ebéjico",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "El Bagre",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "El Banco",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "El Cairo",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "El Calvario",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "El Carmen",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "El Carmen",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "El Carmen de Atrato",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "El Carmen de Bolívar",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "El Castillo",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "El Cerrito",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "El Charco",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "El Cocuy",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "El Colegio",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "El Copey",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "El Doncello",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "El Dorado",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "El Dovio",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "El Espino",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "El Guacamayo",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "El Guamo",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "El Molino",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "El Paso",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "El Paujil",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "El Peñol",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "El Peñon",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "El Peñon",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "El Peñón",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "El Piñon",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "El Playón",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "El Retén",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "El Roble",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "El Rosal",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "El Rosario",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "El Tablón de Gómez",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "El Tambo",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "El Tambo",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "El Tarra",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "El Zulia",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "El Águila",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Elías",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Encino",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Enciso",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Entrerríos",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Envigado",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Espinal",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Facatativá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Falan",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Filadelfia",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Filandia",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Firavitoba",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Flandes",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Florencia",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Florencia",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Floresta",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Florida",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Floridablanca",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Florián",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Fonseca",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Fortúl",
+        "departamento_id": 81,
+        "status": 0
+    },
+    {
+        "municipio": "Fosca",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Francisco Pizarro",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Fredonia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Fresno",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Frontino",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Fuente de Oro",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Fundación",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Funes",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Funza",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Fusagasugá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Fómeque",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Fúquene",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Gachalá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Gachancipá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Gachantivá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Gachetá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Galapa",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Galeras (Nueva Granada)",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Galán",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Gama",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Gamarra",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Garagoa",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Garzón",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Gigante",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Ginebra",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Giraldo",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Girardot",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Girardota",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Girón",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Gonzalez",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Gramalote",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Granada",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Granada",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Granada",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Guaca",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Guacamayas",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Guacarí",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Guachavés",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Guachené",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Guachetá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Guachucal",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Guadalupe",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Guadalupe",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Guadalupe",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Guaduas",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Guaitarilla",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Gualmatán",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Guamal",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Guamal",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Guamo",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Guapota",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Guapí",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Guaranda",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Guarne",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Guasca",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Guatapé",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Guataquí",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Guatavita",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Guateque",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Guavatá",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Guayabal de Siquima",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Guayabetal",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Guayatá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Guepsa",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Guicán",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Gutiérrez",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Guática",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Gámbita",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Gámeza",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Génova",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Gómez Plata",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Hacarí",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Hatillo de Loba",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Hato",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Hato Corozal",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Hatonuevo",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Heliconia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Herrán",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Herveo",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Hispania",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Hobo",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Honda",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Ibagué",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Icononzo",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Iles",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Imúes",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Inzá",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Inírida",
+        "departamento_id": 94,
+        "status": 0
+    },
+    {
+        "municipio": "Ipiales",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Isnos",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Istmina",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Itagüí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Ituango",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Izá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Jambaló",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Jamundí",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Jardín",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Jenesano",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Jericó",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Jericó",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Jerusalén",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Jesús María",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Jordán",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Juan de Acosta",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Junín",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Juradó",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "La Apartada y La Frontera",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "La Argentina",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "La Belleza",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "La Calera",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "La Capilla",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "La Ceja",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "La Celia",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "La Cruz",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "La Cumbre",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "La Dorada",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "La Esperanza",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "La Estrella",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "La Florida",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "La Gloria",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "La Jagua de Ibirico",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "La Jagua del Pilar",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "La Llanada",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "La Macarena",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "La Merced",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "La Mesa",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "La Montañita",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "La Palma",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "La Paz",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "La Paz (Robles)",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "La Peña",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "La Pintada",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "La Plata",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "La Playa",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "La Primavera",
+        "departamento_id": 99,
+        "status": 0
+    },
+    {
+        "municipio": "La Salina",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "La Sierra",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "La Tebaida",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "La Tola",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "La Unión",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "La Unión",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "La Unión",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "La Unión",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "La Uvita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "La Vega",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "La Vega",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "La Victoria",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "La Victoria",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "La Victoria",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "La Virginia",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Labateca",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Labranzagrande",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Landázuri",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Lebrija",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Leiva",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Lejanías",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Lenguazaque",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Leticia",
+        "departamento_id": 91,
+        "status": 0
+    },
+    {
+        "municipio": "Liborina",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Linares",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Lloró",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Lorica",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Los Córdobas",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Los Palmitos",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Los Patios",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Los Santos",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Lourdes",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Luruaco",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Lérida",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Líbano",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "López (Micay)",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Macanal",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Macaravita",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Maceo",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Machetá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Madrid",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Magangué",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Magüi (Payán)",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Mahates",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Maicao",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Majagual",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Malambo",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Mallama (Piedrancha)",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Manatí",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Manaure",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Manaure Balcón del Cesar",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Manizales",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Manta",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Manzanares",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Maní",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Margarita",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Marinilla",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Maripí",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Mariquita",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Marmato",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Marquetalia",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Marsella",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Marulanda",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "María la Baja",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Matanza",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Medellín",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Medina",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Medio Atrato",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Medio Baudó",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Medio San Juan (ANDAGOYA)",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Melgar",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Mercaderes",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Mesetas",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Milán",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Miraflores",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Miranda",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Mistrató",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Mitú",
+        "departamento_id": 97,
+        "status": 0
+    },
+    {
+        "municipio": "Mocoa",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Mogotes",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Molagavita",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Momil",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Mompós",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Mongua",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Monguí",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Moniquirá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Montebello",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Montecristo",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Montelíbano",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Montenegro",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Monteria",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Monterrey",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Morales",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Morales",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Morelia",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Morroa",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Mosquera",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Mosquera",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Motavita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Moñitos",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Murillo",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Murindó",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Mutatá",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Mutiscua",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Muzo",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Málaga",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Nariño",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Nariño",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Nariño",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Natagaima",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Nechí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Necoclí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Neira",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Neiva",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Nemocón",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Nilo",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Nimaima",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Nobsa",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Nocaima",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Norcasia",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Norosí",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Novita",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Nueva Granada",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Nuevo Colón",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Nunchía",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Nuquí",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Nátaga",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Obando",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Ocamonte",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Ocaña",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Oiba",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Oicatá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Olaya",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Olaya Herrera",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Onzaga",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Oporapa",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Orito",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Orocué",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Ortega",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Ospina",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Otanche",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Ovejas",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Pachavita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Pacho",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Padilla",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Paicol",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Pailitas",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Paime",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Paipa",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Pajarito",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Palermo",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Palestina",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Palestina",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Palmar",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Palmar de Varela",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Palmas del Socorro",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Palmira",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Palmito",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Palocabildo",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Pamplona",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Pamplonita",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Pandi",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Panqueba",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Paratebueno",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Pasca",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Patía (El Bordo)",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Pauna",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Paya",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Paz de Ariporo",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Paz de Río",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Pedraza",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Pelaya",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Pensilvania",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Peque",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Pereira",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Pesca",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Peñol",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Piamonte",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Pie de Cuesta",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Piedras",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Piendamó",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Pijao",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Pijiño",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Pinchote",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Pinillos",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Piojo",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Pisva",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Pital",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Pitalito",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Pivijay",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Planadas",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Planeta Rica",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Plato",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Policarpa",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Polonuevo",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Ponedera",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Popayán",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Pore",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Potosí",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Pradera",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Prado",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Providencia",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Providencia",
+        "departamento_id": 88,
+        "status": 0
+    },
+    {
+        "municipio": "Pueblo Bello",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Pueblo Nuevo",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Pueblo Rico",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Pueblorrico",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Puebloviejo",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Puente Nacional",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Puerres",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Asís",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Berrío",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Boyacá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Caicedo",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Carreño",
+        "departamento_id": 99,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Colombia",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Escondido",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Gaitán",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Guzmán",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Leguízamo",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Libertador",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Lleras",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto López",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Nare",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Nariño",
+        "departamento_id": 91,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Parra",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Rico",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Rico",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Rondón",
+        "departamento_id": 81,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Salgar",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Santander",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Tejada",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Triunfo",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Puerto Wilches",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Pulí",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Pupiales",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Puracé (Coconuco)",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Purificación",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Purísima",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Pácora",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Páez",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Páez (Belalcazar)",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Páramo",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Quebradanegra",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Quetame",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Quibdó",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Quimbaya",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Quinchía",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Quipama",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Quipile",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Ragonvalia",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Ramiriquí",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Recetor",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Regidor",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Remedios",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Remolino",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Repelón",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Restrepo",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Restrepo",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Retiro",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Ricaurte",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Ricaurte",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Rio Negro",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Rioblanco",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Riofrío",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Riohacha",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Risaralda",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Rivera",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Roberto Payán",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Roldanillo",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Roncesvalles",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Rondón",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Rosas",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Rovira",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Ráquira",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Río Iró",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Río Quito",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Río Sucio",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Río Viejo",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Río de oro",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Ríonegro",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Ríosucio",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Sabana de Torres",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Sabanagrande",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Sabanalarga",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Sabanalarga",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Sabanalarga",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Sabanas de San Angel (SAN ANGEL)",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Sabaneta",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Saboyá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sahagún",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Saladoblanco",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Salamina",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Salamina",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Salazar",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Saldaña",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Salento",
+        "departamento_id": 63,
+        "status": 0
+    },
+    {
+        "municipio": "Salgar",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Samacá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Samaniego",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Samaná",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Sampués",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "San Agustín",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "San Alberto",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "San Andrés",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "San Andrés Sotavento",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "San Andrés de Cuerquía",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Antero",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "San Antonio",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "San Antonio de Tequendama",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "San Benito",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "San Benito Abad",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "San Bernardo",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "San Bernardo",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "San Bernardo del Viento",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "San Calixto",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "San Carlos",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Carlos",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "San Carlos de Guaroa",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "San Cayetano",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "San Cayetano",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "San Cristobal",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "San Diego",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "San Eduardo",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "San Estanislao",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "San Fernando",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "San Francisco",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Francisco",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "San Francisco",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "San Gíl",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "San Jacinto",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "San Jacinto del Cauca",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "San Jerónimo",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Joaquín",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "San José",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "San José de Miranda",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "San José de Montaña",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San José de Pare",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "San José de Uré",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "San José del Fragua",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "San José del Palmar",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "San Juan de Arama",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "San Juan de Betulia",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "San Juan de Nepomuceno",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "San Juan de Pasto",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "San Juan de Río Seco",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "San Juan de Urabá",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Juan del Cesar",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "San Juanito",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "San Lorenzo",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "San Luis",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "San Luís",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Luís de Gaceno",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "San Luís de Palenque",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "San Marcos",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "San Martín",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "San Martín",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "San Martín de Loba",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "San Mateo",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "San Miguel",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "San Miguel",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "San Miguel de Sema",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "San Onofre",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "San Pablo",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "San Pablo",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "San Pablo de Borbur",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "San Pedro",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Pedro",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "San Pedro",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "San Pedro de Cartago",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "San Pedro de Urabá",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Pelayo",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "San Rafael",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Roque",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Sebastián",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "San Sebastián de Buenavista",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "San Vicente",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "San Vicente del Caguán",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "San Vicente del Chucurí",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "San Zenón",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Sandoná",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Ana",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Bárbara",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Bárbara",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Bárbara (Iscuandé)",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Bárbara de Pinto",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Catalina",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Fé de Antioquia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Genoveva de Docorodó",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Helena del Opón",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Isabel",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Lucía",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Marta",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Santa María",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Santa María",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Rosa",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Rosa",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Rosa de Cabal",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Rosa de Osos",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Rosa de Viterbo",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Rosa del Sur",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Rosalía",
+        "departamento_id": 99,
+        "status": 0
+    },
+    {
+        "municipio": "Santa Sofía",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Santana",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Santander de Quilichao",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Santiago",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Santiago",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Santo Domingo",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Santo Tomás",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Santuario",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Santuario",
+        "departamento_id": 66,
+        "status": 0
+    },
+    {
+        "municipio": "Sapuyes",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Saravena",
+        "departamento_id": 81,
+        "status": 0
+    },
+    {
+        "municipio": "Sardinata",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Sasaima",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Sativanorte",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sativasur",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Segovia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Sesquilé",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Sevilla",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Siachoque",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sibaté",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Sibundoy",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Silos",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Silvania",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Silvia",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Simacota",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Simijaca",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Simití",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Sincelejo",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Sincé",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Sipí",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Sitionuevo",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Soacha",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Soatá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Socha",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Socorro",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Socotá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sogamoso",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Solano",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Soledad",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Solita",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Somondoco",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sonsón",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Sopetrán",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Soplaviento",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Sopó",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Sora",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Soracá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sotaquirá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sotara (Paispamba)",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Sotomayor (Los Andes)",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Suaita",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Suan",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Suaza",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Subachoque",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Sucre",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Sucre",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Sucre",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Suesca",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Supatá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Supía",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Suratá",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Susa",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Susacón",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sutamarchán",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Sutatausa",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Sutatenza",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Suárez",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Suárez",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Sácama",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Sáchica",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tabio",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Tadó",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Talaigua Nuevo",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Tamalameque",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Tame",
+        "departamento_id": 81,
+        "status": 0
+    },
+    {
+        "municipio": "Taminango",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Tangua",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Taraira",
+        "departamento_id": 97,
+        "status": 0
+    },
+    {
+        "municipio": "Tarazá",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Tarqui",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Tarso",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Tasco",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tauramena",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Tausa",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Tello",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Tena",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Tenerife",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Tenjo",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Tenza",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Teorama",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Teruel",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Tesalia",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Tibacuy",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Tibaná",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tibasosa",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tibirita",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Tibú",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Tierralta",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Timaná",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Timbiquí",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Timbío",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Tinjacá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tipacoque",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tiquisio (Puerto Rico)",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Titiribí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Toca",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tocaima",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Tocancipá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Toguí",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Toledo",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Toledo",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Tolú",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Tolú Viejo",
+        "departamento_id": 70,
+        "status": 0
+    },
+    {
+        "municipio": "Tona",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Topagá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Topaipí",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Toribío",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Toro",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Tota",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Totoró",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Trinidad",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Trujillo",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Tubará",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Tuchín",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Tulúa",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Tumaco",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Tunja",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tunungua",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Turbaco",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Turbaná",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Turbo",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Turmequé",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tuta",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Tutasá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Támara",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Támesis",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Túquerres",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Ubalá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Ubaque",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Ubaté",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Ulloa",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Une",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Unguía",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Unión Panamericana (ÁNIMAS)",
+        "departamento_id": 27,
+        "status": 0
+    },
+    {
+        "municipio": "Uramita",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Uribe",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Uribia",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Urrao",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Urumita",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Usiacuri",
+        "departamento_id": 8,
+        "status": 0
+    },
+    {
+        "municipio": "Valdivia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Valencia",
+        "departamento_id": 23,
+        "status": 0
+    },
+    {
+        "municipio": "Valle de San José",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Valle de San Juan",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Valle del Guamuez",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Valledupar",
+        "departamento_id": 20,
+        "status": 0
+    },
+    {
+        "municipio": "Valparaiso",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Valparaiso",
+        "departamento_id": 18,
+        "status": 0
+    },
+    {
+        "municipio": "Vegachí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Venadillo",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Venecia",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Venecia (Ospina Pérez)",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Ventaquemada",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Vergara",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Versalles",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Vetas",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Viani",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Vigía del Fuerte",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Vijes",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Villa Caro",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Villa Rica",
+        "departamento_id": 19,
+        "status": 0
+    },
+    {
+        "municipio": "Villa de Leiva",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Villa del Rosario",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Villagarzón",
+        "departamento_id": 86,
+        "status": 0
+    },
+    {
+        "municipio": "Villagómez",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Villahermosa",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Villamaría",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Villanueva",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Villanueva",
+        "departamento_id": 44,
+        "status": 0
+    },
+    {
+        "municipio": "Villanueva",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Villanueva",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Villapinzón",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Villarrica",
+        "departamento_id": 73,
+        "status": 0
+    },
+    {
+        "municipio": "Villavicencio",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Villavieja",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Villeta",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Viotá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Viracachá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Vista Hermosa",
+        "departamento_id": 50,
+        "status": 0
+    },
+    {
+        "municipio": "Viterbo",
+        "departamento_id": 17,
+        "status": 0
+    },
+    {
+        "municipio": "Vélez",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Yacopí",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Yacuanquer",
+        "departamento_id": 52,
+        "status": 0
+    },
+    {
+        "municipio": "Yaguará",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Yalí",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Yarumal",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Yolombó",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Yondó (Casabe)",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Yopal",
+        "departamento_id": 85,
+        "status": 0
+    },
+    {
+        "municipio": "Yotoco",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Yumbo",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Zambrano",
+        "departamento_id": 13,
+        "status": 0
+    },
+    {
+        "municipio": "Zapatoca",
+        "departamento_id": 68,
+        "status": 0
+    },
+    {
+        "municipio": "Zapayán (PUNTA DE PIEDRAS)",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Zaragoza",
+        "departamento_id": 5,
+        "status": 0
+    },
+    {
+        "municipio": "Zarzal",
+        "departamento_id": 76,
+        "status": 0
+    },
+    {
+        "municipio": "Zetaquirá",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Zipacón",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Zipaquirá",
+        "departamento_id": 25,
+        "status": 0
+    },
+    {
+        "municipio": "Zona Bananera (PRADO - SEVILLA)",
+        "departamento_id": 47,
+        "status": 0
+    },
+    {
+        "municipio": "Ábrego",
+        "departamento_id": 54,
+        "status": 0
+    },
+    {
+        "municipio": "Íquira",
+        "departamento_id": 41,
+        "status": 0
+    },
+    {
+        "municipio": "Úmbita",
+        "departamento_id": 15,
+        "status": 0
+    },
+    {
+        "municipio": "Útica",
+        "departamento_id": 25,
+        "status": 0
+    }
+]
