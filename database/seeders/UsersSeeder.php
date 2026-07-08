@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use Database\Seeders\Services\DemoUserSeederService;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class UsersSeeder extends Seeder
 {
@@ -13,81 +12,6 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = [
-            [
-                'email' => 'info@dataguaviare.com.co',
-                'password' => 'Guaviare25.',
-                'persona_id' => 1,
-                'role' => 'BOT',
-            ],
-            [
-                'email' => 'superadmin@dataguaviare.com',
-                'password' => 'Guaviare25.',
-                'persona_id' => 2,
-                'role' => 'SUPER ADMINISTRADOR',
-            ],
-            [
-                'email' => 'admin@dataguaviare.com',
-                'password' => 'Guaviare25.',
-                'persona_id' => 3,
-                'role' => 'ADMINISTRADOR',
-            ],
-            [
-                'email' => 'coordinador@dataguaviare.com',
-                'password' => 'Guaviare25.',
-                'persona_id' => 4,
-                'role' => 'COORDINADOR',
-            ],
-            [
-                'email' => 'instructor@dataguaviare.com',
-                'password' => 'Guaviare25.',
-                'persona_id' => 5,
-                'role' => 'INSTRUCTOR',
-            ],
-            [
-                'email' => 'aprendiz1@dataguaviare.com',
-                'password' => 'Guaviare25!',
-                'persona_id' => 6,
-                'role' => 'APRENDIZ',
-            ],
-            [
-                'email' => 'aprendiz2@dataguaviare.com',
-                'password' => 'Guaviare25!',
-                'persona_id' => 7,
-                'role' => 'APRENDIZ',
-            ],
-            [
-                'email' => 'proveedor@dataguaviare.com',
-                'password' => 'Guaviare25.',
-                'persona_id' => 8,
-                'role' => 'PROVEEDOR',
-            ],
-        ];
-
-        foreach ($users as $userData) {
-            $this->createOrUpdateUser($userData);
-        }
-    }
-
-    /**
-     * Crea o actualiza un usuario y asigna su rol
-     *
-     * @param array<string, mixed> $userData
-     */
-    private function createOrUpdateUser(array $userData): void
-    {
-        $user = User::updateOrCreate(
-            ['email' => $userData['email']],
-            [
-                'password' => Hash::make($userData['password']),
-                'status' => 1,
-                'persona_id' => $userData['persona_id'],
-                'email_verified_at' => now(),
-            ]
-        );
-
-        if (!$user->hasRole($userData['role'])) {
-            $user->assignRole($userData['role']);
-        }
+        (new DemoUserSeederService())->seedAll();
     }
 }

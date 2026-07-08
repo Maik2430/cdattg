@@ -133,7 +133,7 @@ class PersonaFactory extends Factory
             throw new DatabaseTableNotFoundException('parametros_temas');
         }
 
-        // Usar el mismo método que PersonaSeeder::getParametroTemaId
+        // Usar el mismo criterio que Database\Seeders\Concerns\ResolvesParametroTema
         // IMPORTANTE: Necesitamos el ID de la columna 'id' de parametros_temas, NO el parametro_id
         // NO usar select() para evitar problemas con el orden de los campos
         $parametroTema = DB::table('parametros_temas')
@@ -178,7 +178,7 @@ class PersonaFactory extends Factory
         ]);
 
         // Después de syncWithoutDetaching, buscar el registro recién creado
-        // Usar el mismo método que PersonaSeeder::getParametroTemaId
+        // Usar el mismo criterio que Database\Seeders\Concerns\ResolvesParametroTema
         $parametroTema = DB::table('parametros_temas')
             ->where('tema_id', $temaId)
             ->where('parametro_id', $parametroId)
