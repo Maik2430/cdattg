@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 
 class BackfillSenaBarcodes extends Command
 {
+    private const MAX_INTENTOS_ASIGNACION = 3;
+
     protected $signature = 'productos:backfill-sena-barcodes {--dry-run : Muestra qué haría sin guardar cambios} {--chunk=500 : Tamaño de lote para procesar}';
 
     protected $description = 'Genera y asigna códigos SENA de 11 dígitos incrementales para productos que no lo tengan';
@@ -19,28 +21,56 @@ class BackfillSenaBarcodes extends Command
 
         $this->info('Iniciando asignación de códigos SENA de 11 dígitos' . ($dryRun ? ' (dry-run)' : ''));
 
-        // Asegurar formato uniforme: todos los existentes deben ser 11 dígitos zero-padded
+        $normalizados = $this->normalizarCodigosExistentes($chunk, $dryRun);
+        if ($normalizados > 0) {
+            $this->info("Normalizados {$normalizados} códigos existentes a 11 dígitos");
+        }
+
+        ['procesados' => $procesados, 'asignados' => $asignados] = $this->asignarCodigosFaltantes($chunk, $dryRun);
+
+        $this->info("Procesados: {$procesados}, Asignados: {$asignados}");
+
+        return Command::SUCCESS;
+    }
+
+    private function normalizarCodigosExistentes(int $chunk, bool $dryRun): int
+    {
         $normalizados = 0;
+
         Producto::whereNotNull('codigo_barras_sena')
             ->select('id', 'codigo_barras_sena')
             ->chunkById($chunk, function ($productos) use (&$normalizados, $dryRun) {
                 foreach ($productos as $producto) {
-                    $soloDigitos = preg_replace('/\D/', '', (string) $producto->codigo_barras_sena);
-                    if (strlen($soloDigitos) > 0 && strlen($soloDigitos) !== 11) {
-                        $nuevo = str_pad(substr($soloDigitos, -11), 11, '0', STR_PAD_LEFT);
-                        if (!$dryRun) {
-                            $producto->codigo_barras_sena = $nuevo;
-                            $producto->saveQuietly();
-                        }
+                    if ($this->normalizarCodigoProducto($producto, $dryRun)) {
                         $normalizados++;
                     }
                 }
             });
 
-        if ($normalizados > 0) {
-            $this->info("Normalizados {$normalizados} códigos existentes a 11 dígitos");
+        return $normalizados;
+    }
+
+    private function normalizarCodigoProducto(Producto $producto, bool $dryRun): bool
+    {
+        $soloDigitos = preg_replace('/\D/', '', (string) $producto->codigo_barras_sena);
+        if (strlen($soloDigitos) === 0 || strlen($soloDigitos) === 11) {
+            return false;
         }
 
+        $nuevo = str_pad(substr($soloDigitos, -11), 11, '0', STR_PAD_LEFT);
+        if (!$dryRun) {
+            $producto->codigo_barras_sena = $nuevo;
+            $producto->saveQuietly();
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array{procesados: int, asignados: int}
+     */
+    private function asignarCodigosFaltantes(int $chunk, bool $dryRun): array
+    {
         $procesados = 0;
         $asignados = 0;
 
@@ -49,43 +79,60 @@ class BackfillSenaBarcodes extends Command
             ->chunkById($chunk, function ($productos) use (&$procesados, &$asignados, $dryRun) {
                 foreach ($productos as $producto) {
                     $procesados++;
-                    $siguiente = $this->generarSiguienteCodigo();
-                    if ($dryRun) {
-                        $this->line("[dry-run] Producto {$producto->id} -> {$siguiente}");
-                    } else {
-                        // Reintentos simples ante colisión por índice único
-                        $maxIntentos = 3;
-                        for ($i = 0; $i < $maxIntentos; $i++) {
-                            try {
-                                $ok = DB::transaction(function () use ($producto, $siguiente) {
-                                    $modelo = Producto::lockForUpdate()->find($producto->id);
-                                    if (!$modelo) {
-                                        return false;
-                                    }
-                                    if ($modelo->codigo_barras_sena) {
-                                        return true; // ya asignado por otro proceso
-                                    }
-                                    $modelo->codigo_barras_sena = $siguiente;
-                                    $modelo->save();
-                                    return true;
-                                });
-                                if ($ok) {
-                                    $asignados++;
-                                    break;
-                                }
-                            } catch (\Throwable $e) {
-                                // Si hubo colisión por único, recalcular siguiente y reintentar
-                                if ($i === $maxIntentos - 1) {
-                                    throw $e;
-                                }
-                            }
-                        }
+                    if ($this->procesarProductoSinCodigo($producto, $dryRun)) {
+                        $asignados++;
                     }
                 }
             });
 
-        $this->info("Procesados: {$procesados}, Asignados: {$asignados}");
-        return self::SUCCESS;
+        return ['procesados' => $procesados, 'asignados' => $asignados];
+    }
+
+    private function procesarProductoSinCodigo(Producto $producto, bool $dryRun): bool
+    {
+        $siguiente = $this->generarSiguienteCodigo();
+
+        if ($dryRun) {
+            $this->line("[dry-run] Producto {$producto->id} -> {$siguiente}");
+
+            return false;
+        }
+
+        return $this->intentarAsignarCodigo($producto, $siguiente);
+    }
+
+    private function intentarAsignarCodigo(Producto $producto, string $siguiente): bool
+    {
+        for ($i = 0; $i < self::MAX_INTENTOS_ASIGNACION; $i++) {
+            try {
+                if ($this->asignarCodigoEnTransaccion($producto, $siguiente)) {
+                    return true;
+                }
+            } catch (\Throwable $e) {
+                if ($i === self::MAX_INTENTOS_ASIGNACION - 1) {
+                    throw $e;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function asignarCodigoEnTransaccion(Producto $producto, string $siguiente): bool
+    {
+        return DB::transaction(function () use ($producto, $siguiente) {
+            $modelo = Producto::lockForUpdate()->find($producto->id);
+            if (!$modelo) {
+                return false;
+            }
+            if ($modelo->codigo_barras_sena) {
+                return true;
+            }
+            $modelo->codigo_barras_sena = $siguiente;
+            $modelo->save();
+
+            return true;
+        });
     }
 
     private function generarSiguienteCodigo(): string
@@ -99,9 +146,8 @@ class BackfillSenaBarcodes extends Command
             $soloDigitos = preg_replace('/\D/', '', (string) $max);
             $num = $soloDigitos === '' ? 0 : (int) $soloDigitos;
             $next = $num + 1;
+
             return str_pad((string) $next, 11, '0', STR_PAD_LEFT);
         }, 3);
     }
 }
-
-
