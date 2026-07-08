@@ -8,7 +8,6 @@ use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterfac
 use App\Models\Inventario\Proveedor;
 use App\Exceptions\ProveedorException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ProveedorService
 {
@@ -22,47 +21,32 @@ class ProveedorService
 
     /**
      * Crea un nuevo proveedor
-     *
-     * @param array $datos
-     * @param int $userId
-     * @return Proveedor
      */
     public function crear(array $datos, int $userId): Proveedor
     {
-        return DB::transaction(function () use ($datos, $userId) {
+        return DB::transaction(function () use ($datos, $userId): Proveedor {
             $datos['user_create_id'] = $userId;
             $datos['user_update_id'] = $userId;
 
-            $proveedor = $this->repository->crear($datos);
-
-            return $proveedor;
+            return $this->repository->crear($datos);
         });
     }
 
     /**
      * Actualiza un proveedor existente
-     *
-     * @param Proveedor $proveedor
-     * @param array $datos
-     * @param int $userId
-     * @return bool
      */
     public function actualizar(Proveedor $proveedor, array $datos, int $userId): bool
     {
-        return DB::transaction(function () use ($proveedor, $datos, $userId) {
+        return DB::transaction(function () use ($proveedor, $datos, $userId): bool {
             $datos['user_update_id'] = $userId;
 
-            $resultado = $this->repository->actualizar($proveedor->id, $datos);
-
-            return $resultado;
+            return $this->repository->actualizar($proveedor->id, $datos);
         });
     }
 
     /**
      * Elimina un proveedor si no está en uso
      *
-     * @param Proveedor $proveedor
-     * @return bool
      * @throws ProveedorException
      */
     public function eliminar(Proveedor $proveedor): bool

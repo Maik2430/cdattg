@@ -19,10 +19,6 @@ class ContratoConvenioService
 
     /**
      * Crea un nuevo contrato/convenio
-     *
-     * @param array $datos
-     * @param int $userId
-     * @return ContratoConvenio
      */
     public function crear(array $datos, int $userId): ContratoConvenio
     {
@@ -34,11 +30,6 @@ class ContratoConvenioService
 
     /**
      * Actualiza un contrato/convenio existente
-     *
-     * @param ContratoConvenio $contrato
-     * @param array $datos
-     * @param int $userId
-     * @return bool
      */
     public function actualizar(ContratoConvenio $contrato, array $datos, int $userId): bool
     {
@@ -49,8 +40,6 @@ class ContratoConvenioService
     /**
      * Elimina un contrato/convenio si no está en uso
      *
-     * @param ContratoConvenio $contrato
-     * @return bool
      * @throws ContratoConvenioException
      */
     public function eliminar(ContratoConvenio $contrato): bool

@@ -14,9 +14,6 @@ class ParametroTemaRepository implements ParametroTemaRepositoryInterface
 {
     /**
      * Obtiene parámetros tema por nombre de tema
-     *
-     * @param string $nombreTema
-     * @return Collection
      */
     public function obtenerPorTema(string $nombreTema): Collection
     {
@@ -35,8 +32,6 @@ class ParametroTemaRepository implements ParametroTemaRepositoryInterface
     /**
      * Obtiene un parámetro tema específico por tema y parámetro
      *
-     * @param int $temaId
-     * @param int $parametroId
      * @return ParametroTema|null
      */
     public function obtenerPorTemaYParametro(int $temaId, int $parametroId)
@@ -50,8 +45,6 @@ class ParametroTemaRepository implements ParametroTemaRepositoryInterface
     /**
      * Obtiene un estado específico por nombre
      *
-     * @param string $nombreEstado
-     * @param string $nombreTema
      * @return ParametroTema|null
      */
     public function obtenerEstadoPorNombre(string $nombreEstado, string $nombreTema)

@@ -21,9 +21,6 @@ class MarcaService
     /**
      * Crea una nueva marca
      *
-     * @param array $datos
-     * @param int $userId
-     * @return Marca
      * @throws MarcaException
      */
     public function crear(array $datos, int $userId): Marca
@@ -47,11 +44,6 @@ class MarcaService
 
     /**
      * Actualiza una marca existente
-     *
-     * @param Marca $marca
-     * @param array $datos
-     * @param int $userId
-     * @return bool
      */
     public function actualizar(Marca $marca, array $datos, int $userId): bool
     {
@@ -66,8 +58,6 @@ class MarcaService
     /**
      * Elimina una marca si no está en uso
      *
-     * @param Marca $marca
-     * @return bool
      * @throws MarcaException
      */
     public function eliminar(Marca $marca): bool

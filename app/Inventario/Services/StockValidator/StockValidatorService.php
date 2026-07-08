@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\StockValidator;
 
+use App\Exceptions\OrdenException;
 use App\Models\Inventario\Producto;
 use App\Inventario\Interfaces\Services\NotificationServiceInterface;
 use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
@@ -24,9 +25,6 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     /**
      * Verifica si el stock está bajo el umbral mínimo
-     *
-     * @param Producto $producto
-     * @return bool
      */
     public function estaBajoUmbralMinimo(Producto $producto): bool
     {
@@ -36,9 +34,6 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     /**
      * Verifica si el stock está en nivel crítico
-     *
-     * @param Producto $producto
-     * @return bool
      */
     public function estaNivelCritico(Producto $producto): bool
     {
@@ -48,10 +43,6 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     /**
      * Verifica si hay stock suficiente
-     *
-     * @param Producto $producto
-     * @param int $cantidadRequerida
-     * @return bool
      */
     public function hayStockSuficiente(Producto $producto, int $cantidadRequerida): bool
     {
@@ -60,10 +51,6 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     /**
      * Verifica y notifica si el stock cambió a bajo
-     *
-     * @param Producto $producto
-     * @param int $cantidadAnterior
-     * @return void
      */
     public function verificarYNotificarCambioStock(Producto $producto, int $cantidadAnterior): void
     {
@@ -107,8 +94,6 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     /**
      * Obtiene el umbral mínimo configurado
-     *
-     * @return int
      */
     public function getUmbralMinimo(): int
     {
@@ -117,8 +102,6 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     /**
      * Obtiene el umbral crítico configurado
-     *
-     * @return int
      */
     public function getUmbralCritico(): int
     {
@@ -127,10 +110,6 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     /**
      * Calcula el porcentaje de stock disponible
-     *
-     * @param Producto $producto
-     * @param int $stockMaximo
-     * @return float
      */
     public function calcularPorcentajeStock(Producto $producto, int $stockMaximo): float
     {
@@ -143,9 +122,6 @@ class StockValidatorService implements StockValidatorServiceInterface
 
     /**
      * Obtiene nivel de stock (crítico, bajo, normal, alto)
-     *
-     * @param Producto $producto
-     * @return string
      */
     public function obtenerNivelStock(Producto $producto): string
     {
@@ -168,15 +144,12 @@ class StockValidatorService implements StockValidatorServiceInterface
     /**
      * Valida que haya stock suficiente, lanza excepción si no
      *
-     * @param Producto $producto
-     * @param int $cantidadRequerida
-     * @return void
-     * @throws \App\Exceptions\OrdenException
+     * @throws OrdenException
      */
     public function validarStockSuficiente(Producto $producto, int $cantidadRequerida): void
     {
         if (!$this->hayStockSuficiente($producto, $cantidadRequerida)) {
-            throw new \App\Exceptions\OrdenException(
+            throw new OrdenException(
                 "Stock insuficiente para '{$producto->name}'. " .
                 "Disponible: {$producto->cantidad}, Solicitado: {$cantidadRequerida}"
             );

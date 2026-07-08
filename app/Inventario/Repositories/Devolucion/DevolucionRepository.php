@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\Devolucion;
 
+use Illuminate\Support\Collection;
+use Exception;
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Devolucion;
 use App\Inventario\Interfaces\Repositories\Devolucion\DevolucionRepositoryInterface;
@@ -13,15 +15,11 @@ class DevolucionRepository implements DevolucionRepositoryInterface
 {
     /**
      * Obtiene préstamos pendientes de devolución
-     *
-     * @param int      $estadoAprobadaId
-     * @param int|null $userId
-     * @return LengthAwarePaginator
      */
     public function obtenerPrestamosPendientes(int $estadoAprobadaId, ?int $userId = null): LengthAwarePaginator
     {
         $prestamos = DetalleOrden::with(['orden.tipoOrden.parametro', 'producto', 'devoluciones'])
-            ->whereHas('orden', function ($query) use ($userId) {
+            ->whereHas('orden', function ($query) use ($userId): void {
                 $query->whereNotNull('fecha_devolucion');
 
                 if ($userId !== null) {
@@ -30,7 +28,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
             })
             ->where('estado_orden_id', $estadoAprobadaId)
             ->get()
-            ->filter(function ($detalle) {
+            ->filter(function ($detalle): bool {
                 return !$detalle->estaCompletamenteDevuelto();
             });
 
@@ -39,9 +37,6 @@ class DevolucionRepository implements DevolucionRepositoryInterface
 
     /**
      * Obtiene historial de devoluciones
-     *
-     * @param int|null $userId
-     * @return LengthAwarePaginator
      */
     public function obtenerHistorial(?int $userId = null): LengthAwarePaginator
     {
@@ -49,7 +44,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
             ->orderBy('fecha_devolucion', 'desc');
 
         if ($userId !== null) {
-            $query->whereHas('detalleOrden.orden', function ($q) use ($userId) {
+            $query->whereHas('detalleOrden.orden', function ($q) use ($userId): void {
                 $q->where('user_create_id', $userId);
             });
         }
@@ -59,9 +54,6 @@ class DevolucionRepository implements DevolucionRepositoryInterface
 
     /**
      * Obtiene devolución con relaciones
-     *
-     * @param int $id
-     * @return Devolucion|null
      */
     public function encontrarConRelaciones(int $id): ?Devolucion
     {
@@ -75,21 +67,17 @@ class DevolucionRepository implements DevolucionRepositoryInterface
 
     /**
      * Obtiene préstamos activos del usuario
-     *
-     * @param int $userId
-     * @param int $estadoAprobadaId
-     * @return LengthAwarePaginator
      */
     public function obtenerPrestamosActivosUsuario(int $userId, int $estadoAprobadaId): LengthAwarePaginator
     {
         $prestamos = DetalleOrden::with(['orden.tipoOrden.parametro', 'producto', 'devoluciones'])
-            ->whereHas('orden', function ($query) use ($userId) {
+            ->whereHas('orden', function ($query) use ($userId): void {
                 $query->where('user_create_id', $userId)
                     ->whereNotNull('fecha_devolucion');
             })
             ->where('estado_orden_id', $estadoAprobadaId)
             ->get()
-            ->filter(function ($detalle) {
+            ->filter(function ($detalle): bool {
                 return !$detalle->estaCompletamenteDevuelto();
             });
 
@@ -98,14 +86,11 @@ class DevolucionRepository implements DevolucionRepositoryInterface
 
     /**
      * Obtiene historial de préstamos del usuario
-     *
-     * @param int $userId
-     * @return LengthAwarePaginator
      */
     public function obtenerHistorialPrestamosUsuario(int $userId): LengthAwarePaginator
     {
         return DetalleOrden::with(['orden.tipoOrden', 'producto', 'devoluciones'])
-            ->whereHas('orden', function ($query) use ($userId) {
+            ->whereHas('orden', function ($query) use ($userId): void {
                 $query->where('user_create_id', $userId)
                     ->whereNotNull('fecha_devolucion');
             })
@@ -115,19 +100,15 @@ class DevolucionRepository implements DevolucionRepositoryInterface
 
     /**
      * Crea paginación manual para colecciones filtradas
-     *
-     * @param \Illuminate\Support\Collection $items
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
-    private function paginacionManual(\Illuminate\Support\Collection $items, int $perPage): LengthAwarePaginator
+    private function paginacionManual(Collection $items, int $perPage): LengthAwarePaginator
     {
         $page = request()->get('page', 1);
         $paginatedItems = $items->forPage((int) $page, $perPage)->values();
         
         try {
             $path = request()->url();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $path = route('inventario.devoluciones.index');
         }
         

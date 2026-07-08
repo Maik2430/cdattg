@@ -18,8 +18,6 @@ class BarcodeService implements BarcodeServiceInterface
 
     /**
      * Obtiene la longitud del código de barras desde configuración
-     *
-     * @return int
      */
     private function getBarcodeLength(): int
     {

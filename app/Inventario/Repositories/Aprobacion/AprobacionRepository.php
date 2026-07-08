@@ -11,9 +11,6 @@ class AprobacionRepository implements AprobacionRepositoryInterface
 {
     /**
      * Crea una nueva aprobación
-     *
-     * @param array $datos
-     * @return Aprobacion
      */
     public function crear(array $datos): Aprobacion
     {

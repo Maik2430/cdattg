@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Producto;
 
+use Illuminate\Http\UploadedFile;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use App\Inventario\Interfaces\Services\ImageServiceInterface;
 use App\Inventario\Interfaces\Services\BarcodeServiceInterface;
@@ -34,10 +35,6 @@ class ProductoService
 
     /**
      * Crea un nuevo producto
-     *
-     * @param array $datos
-     * @param int $userId
-     * @return Producto
      */
     public function crear(array $datos, int $userId): Producto
     {
@@ -51,17 +48,12 @@ class ProductoService
 
     /**
      * Actualiza un producto existente
-     *
-     * @param Producto $producto
-     * @param array $datos
-     * @param int $userId
-     * @return Producto
      */
     public function actualizar(Producto $producto, array $datos, int $userId): Producto
     {
         $cantidadAnterior = $producto->cantidad;
 
-        if (isset($datos['imagen']) && $datos['imagen'] instanceof \Illuminate\Http\UploadedFile) {
+        if (isset($datos['imagen']) && $datos['imagen'] instanceof UploadedFile) {
             $datos['imagen'] = $this->imageService->procesarImagenParaActualizacion(
                 $datos['imagen'],
                 $producto
@@ -94,9 +86,6 @@ class ProductoService
 
     /**
      * Elimina un producto
-     *
-     * @param Producto $producto
-     * @return bool
      */
     public function eliminar(Producto $producto): bool
     {

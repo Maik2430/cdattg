@@ -14,9 +14,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 {
     /**
      * Obtiene órdenes con filtros
-     *
-     * @param array $filtros
-     * @return LengthAwarePaginator
      */
     public function obtenerConFiltros(array $filtros = []): LengthAwarePaginator
     {
@@ -29,15 +26,15 @@ class OrdenRepository implements OrdenRepositoryInterface
 
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('descripcion_orden', 'LIKE', "%{$search}%")
-                    ->orWhereHas('userCreate', function ($userQuery) use ($search) {
+                    ->orWhereHas('userCreate', function ($userQuery) use ($search): void {
                         $userQuery->where('name', 'LIKE', "%{$search}%");
                     })
-                    ->orWhereHas('tipoOrden.parametro', function ($tipoQuery) use ($search) {
+                    ->orWhereHas('tipoOrden.parametro', function ($tipoQuery) use ($search): void {
                         $tipoQuery->where('name', 'LIKE', "%{$search}%");
                     })
-                    ->orWhereHas('detalles.producto', function ($productoQuery) use ($search) {
+                    ->orWhereHas('detalles.producto', function ($productoQuery) use ($search): void {
                         $productoQuery->where('name', 'LIKE', "%{$search}%")
                             ->orWhere('codigo_barras', 'LIKE', "%{$search}%");
                     });
@@ -53,7 +50,7 @@ class OrdenRepository implements OrdenRepositoryInterface
         }
 
         if (!empty($filtros['estado_id'])) {
-            $query->whereHas('detalles', function ($q) use ($filtros) {
+            $query->whereHas('detalles', function ($q) use ($filtros): void {
                 $q->where('estado_orden_id', $filtros['estado_id']);
             });
         }
@@ -69,10 +66,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Obtiene órdenes pendientes (EN ESPERA)
-     *
-     * @param int      $estadoEnEsperaId
-     * @param int|null $userId
-     * @return LengthAwarePaginator
      */
     public function obtenerPendientes(int $estadoEnEsperaId, ?int $userId = null): LengthAwarePaginator
     {
@@ -82,7 +75,7 @@ class OrdenRepository implements OrdenRepositoryInterface
             'detalles.producto',
             'detalles.estadoOrden.parametro'
         ])
-        ->whereHas('detalles', function ($q) use ($estadoEnEsperaId) {
+        ->whereHas('detalles', function ($q) use ($estadoEnEsperaId): void {
             $q->where('estado_orden_id', $estadoEnEsperaId);
         });
 
@@ -95,10 +88,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Obtiene órdenes completadas (APROBADA)
-     *
-     * @param int      $estadoAprobadaId
-     * @param int|null $userId
-     * @return LengthAwarePaginator
      */
     public function obtenerCompletadas(int $estadoAprobadaId, ?int $userId = null): LengthAwarePaginator
     {
@@ -108,7 +97,7 @@ class OrdenRepository implements OrdenRepositoryInterface
             'detalles.producto',
             'detalles.estadoOrden.parametro'
         ])
-        ->whereHas('detalles', function ($q) use ($estadoAprobadaId) {
+        ->whereHas('detalles', function ($q) use ($estadoAprobadaId): void {
             $q->where('estado_orden_id', $estadoAprobadaId);
         });
 
@@ -121,10 +110,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Obtiene órdenes rechazadas (RECHAZADA)
-     *
-     * @param int      $estadoRechazadaId
-     * @param int|null $userId
-     * @return LengthAwarePaginator
      */
     public function obtenerRechazadas(int $estadoRechazadaId, ?int $userId = null): LengthAwarePaginator
     {
@@ -134,7 +119,7 @@ class OrdenRepository implements OrdenRepositoryInterface
             'detalles.producto',
             'detalles.estadoOrden.parametro'
         ])
-        ->whereHas('detalles', function ($q) use ($estadoRechazadaId) {
+        ->whereHas('detalles', function ($q) use ($estadoRechazadaId): void {
             $q->where('estado_orden_id', $estadoRechazadaId);
         });
 
@@ -147,9 +132,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Obtiene orden con relaciones (usado en show)
-     *
-     * @param int $id
-     * @return Orden|null
      */
     public function encontrarConRelaciones(int $id): ?Orden
     {
@@ -164,9 +146,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Obtiene orden con detalles y devoluciones (usado en update y destroy)
-     *
-     * @param int $id
-     * @return Orden|null
      */
     public function encontrarConDetallesYDevoluciones(int $id): ?Orden
     {
@@ -175,9 +154,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Obtiene detalles de orden pendientes de aprobación
-     *
-     * @param int $estadoEnEsperaId
-     * @return Collection
      */
     public function obtenerDetallesPendientes(int $estadoEnEsperaId): Collection
     {
@@ -196,9 +172,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Crea una nueva orden
-     *
-     * @param array $datos
-     * @return Orden
      */
     public function crear(array $datos): Orden
     {
@@ -207,10 +180,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Actualiza una orden
-     *
-     * @param Orden $orden
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(Orden $orden, array $datos): bool
     {
@@ -219,9 +188,6 @@ class OrdenRepository implements OrdenRepositoryInterface
 
     /**
      * Elimina una orden
-     *
-     * @param Orden $orden
-     * @return bool
      */
     public function eliminar(Orden $orden): bool
     {

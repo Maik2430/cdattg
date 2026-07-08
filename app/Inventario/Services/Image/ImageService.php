@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Image;
 
+use Exception;
 use App\Inventario\Interfaces\Services\ImageServiceInterface;
 use App\Models\Inventario\Producto;
 use Illuminate\Http\UploadedFile;
@@ -14,8 +15,6 @@ class ImageService implements ImageServiceInterface
 {
     /**
      * Obtiene la imagen por defecto desde configuración
-     *
-     * @return string
      */
     private function getDefaultImage(): string
     {
@@ -24,8 +23,6 @@ class ImageService implements ImageServiceInterface
 
     /**
      * Obtiene el directorio de imágenes desde configuración
-     *
-     * @return string
      */
     private function getImageDirectory(): string
     {
@@ -45,7 +42,7 @@ class ImageService implements ImageServiceInterface
             $rutaStorage = Storage::disk('public')->putFileAs($directory, $imagen, $nombreArchivo);
             
             return 'storage/' . $rutaStorage;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al procesar imagen de producto: ' . $e->getMessage());
             return $this->getDefaultImage();
         }

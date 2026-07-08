@@ -19,8 +19,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
     /**
      * Obtiene el tema de categorías
-     *
-     * @return Tema|null
      */
     public function obtenerTemaCategorias(): ?Tema
     {
@@ -29,9 +27,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
     /**
      * Obtiene categorías con filtros
-     *
-     * @param array $filtros
-     * @return LengthAwarePaginator
      */
     public function obtenerConFiltros(array $filtros = []): LengthAwarePaginator
     {
@@ -47,7 +42,7 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('parametros.name', 'LIKE', "%{$search}%");
             });
         }
@@ -65,9 +60,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
     /**
      * Encuentra una categoría por ID
-     *
-     * @param int $id
-     * @return Categoria|null
      */
     public function encontrar(int $id): ?Categoria
     {
@@ -76,9 +68,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
     /**
      * Encuentra múltiples categorías por IDs
-     *
-     * @param array $ids
-     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function encontrarMultiples(array $ids): Collection
     {
@@ -87,9 +76,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
     /**
      * Encuentra una categoría por ID con relaciones
-     *
-     * @param int $id
-     * @return Parametro|null
      */
     public function encontrarConRelaciones(int $id): ?Parametro
     {
@@ -98,10 +84,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
     /**
      * Actualiza una categoría
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -110,10 +92,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
     /**
      * Elimina una categoría
-     *
-     * @param Parametro $categoria
-     * @param int $temaId
-     * @return bool
      */
     public function eliminar(Parametro $categoria, int $temaId): bool
     {
@@ -127,9 +105,6 @@ class CategoriaRepository implements CategoriaRepositoryInterface
 
     /**
      * Verifica si una categoría tiene productos asociados
-     *
-     * @param int $id
-     * @return bool
      */
     public function tieneProductos(int $id): bool
     {

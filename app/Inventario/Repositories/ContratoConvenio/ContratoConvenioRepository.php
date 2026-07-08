@@ -14,8 +14,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 
     /**
      * Obtiene todos los contratos y convenios
-     *
-     * @return Collection
      */
     public function obtenerTodos(): Collection
     {
@@ -24,9 +22,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 
     /**
      * Obtiene contratos con filtros y relaciones
-     *
-     * @param array $filtros
-     * @return LengthAwarePaginator
      */
     public function obtenerConFiltros(array $filtros = []): LengthAwarePaginator
     {
@@ -39,10 +34,10 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('codigo', 'LIKE', "%{$search}%")
-                    ->orWhereHas('proveedor', function ($proveedorQuery) use ($search) {
+                    ->orWhereHas('proveedor', function ($proveedorQuery) use ($search): void {
                         $proveedorQuery->where('name', 'LIKE', "%{$search}%");
                     });
             });
@@ -54,9 +49,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 
     /**
      * Encuentra un contrato por ID con relaciones
-     *
-     * @param int $id
-     * @return ContratoConvenio|null
      */
     public function encontrarConRelaciones(int $id): ?ContratoConvenio
     {
@@ -71,9 +63,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 
     /**
      * Crea un nuevo contrato
-     *
-     * @param array $datos
-     * @return ContratoConvenio
      */
     public function crear(array $datos): ContratoConvenio
     {
@@ -82,10 +71,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 
     /**
      * Actualiza un contrato
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -94,9 +79,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 
     /**
      * Elimina un contrato
-     *
-     * @param int $id
-     * @return bool
      */
     public function eliminar(int $id): bool
     {
@@ -105,9 +87,6 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 
     /**
      * Verifica si un contrato tiene productos asociados
-     *
-     * @param int $id
-     * @return bool
      */
     public function tieneProductos(int $id): bool
     {

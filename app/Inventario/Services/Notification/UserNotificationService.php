@@ -23,10 +23,6 @@ class UserNotificationService
 
     /**
      * Obtiene notificaciones paginadas del usuario
-     *
-     * @param int $userId
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function obtenerNotificacionesPaginadas(int $userId, int $perPage = null): LengthAwarePaginator
     {
@@ -36,10 +32,6 @@ class UserNotificationService
 
     /**
      * Obtiene notificaciones no leídas del usuario
-     *
-     * @param int $userId
-     * @param int $limit
-     * @return Collection
      */
     public function obtenerNoLeidas(int $userId, int $limit = null): Collection
     {
@@ -49,9 +41,6 @@ class UserNotificationService
 
     /**
      * Cuenta notificaciones no leídas
-     *
-     * @param int $userId
-     * @return int
      */
     public function contarNoLeidas(int $userId): int
     {
@@ -60,10 +49,6 @@ class UserNotificationService
 
     /**
      * Marca una notificación como leída
-     *
-     * @param int $userId
-     * @param string $notificationId
-     * @return bool
      */
     public function marcarComoLeida(int $userId, string $notificationId): bool
     {
@@ -73,7 +58,6 @@ class UserNotificationService
     /**
      * Marca todas las notificaciones como leídas
      *
-     * @param int $userId
      * @return int Número de notificaciones marcadas
      */
     public function marcarTodasComoLeidas(int $userId): int
@@ -83,10 +67,6 @@ class UserNotificationService
 
     /**
      * Elimina una notificación
-     *
-     * @param int $userId
-     * @param string $notificationId
-     * @return bool
      */
     public function eliminar(int $userId, string $notificationId): bool
     {
@@ -95,9 +75,6 @@ class UserNotificationService
 
     /**
      * Obtiene datos para el dropdown de notificaciones
-     *
-     * @param int $userId
-     * @return array
      */
     public function obtenerDatosDropdown(int $userId): array
     {

@@ -21,9 +21,6 @@ class CategoriaService
     /**
      * Crea una nueva categoría
      *
-     * @param array $datos
-     * @param int $userId
-     * @return Categoria
      * @throws CategoriaException
      */
     public function crear(array $datos, int $userId): Categoria
@@ -47,11 +44,6 @@ class CategoriaService
 
     /**
      * Actualiza una categoría existente
-     *
-     * @param Categoria $categoria
-     * @param array $datos
-     * @param int $userId
-     * @return bool
      */
     public function actualizar(Categoria $categoria, array $datos, int $userId): bool
     {
@@ -66,8 +58,6 @@ class CategoriaService
     /**
      * Elimina una categoría si no está en uso
      *
-     * @param Categoria $categoria
-     * @return bool
      * @throws CategoriaException
      */
     public function eliminar(Categoria $categoria): bool

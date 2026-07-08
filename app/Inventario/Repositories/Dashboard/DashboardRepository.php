@@ -11,8 +11,6 @@ class DashboardRepository
 {
     /**
      * Obtiene el total de productos
-     *
-     * @return int
      */
     public function obtenerTotalProductos(): int
     {
@@ -21,8 +19,6 @@ class DashboardRepository
 
     /**
      * Obtiene productos consumibles
-     *
-     * @return int
      */
     public function obtenerProductosConsumibles(): int
     {
@@ -35,8 +31,6 @@ class DashboardRepository
 
     /**
      * Obtiene productos no consumibles
-     *
-     * @return int
      */
     public function obtenerProductosNoConsumibles(): int
     {
@@ -49,8 +43,6 @@ class DashboardRepository
 
     /**
      * Obtiene productos por vencer (próximos 30 días)
-     *
-     * @return int
      */
     public function obtenerProductosPorVencer(): int
     {
@@ -66,8 +58,6 @@ class DashboardRepository
 
     /**
      * Obtiene productos con stock bajo (menor a 10)
-     *
-     * @return int
      */
     public function obtenerProductosStockBajo(): int
     {
@@ -78,8 +68,6 @@ class DashboardRepository
 
     /**
      * Obtiene el total de categorías activas
-     *
-     * @return int
      */
     public function obtenerTotalCategorias(): int
     {
@@ -92,9 +80,6 @@ class DashboardRepository
 
     /**
      * Obtiene los productos más solicitados
-     *
-     * @param int $limite
-     * @return array
      */
     public function obtenerProductosMasSolicitados(int $limite = 5): array
     {
@@ -105,7 +90,7 @@ class DashboardRepository
             ->orderBy('solicitudes', 'desc')
             ->limit($limite)
             ->get()
-            ->map(function ($item) {
+            ->map(function ($item): array {
                 return [
                     'name' => $item->nombre,
                     'solicitudes' => (int) $item->solicitudes,
@@ -118,8 +103,6 @@ class DashboardRepository
 
     /**
      * Obtiene productos agrupados por categoría
-     *
-     * @return array
      */
     public function obtenerProductosPorCategoria(): array
     {
@@ -128,7 +111,7 @@ class DashboardRepository
             ->select('parametros.name as categoria', DB::raw('count(*) as total'))
             ->groupBy('parametros.id', 'parametros.name')
             ->get()
-            ->map(function ($item) {
+            ->map(function ($item): array {
                 return [
                     'categoria' => $item->categoria,
                     'total' => (int) $item->total,
@@ -139,9 +122,6 @@ class DashboardRepository
 
     /**
      * Obtiene productos recientes con estado
-     *
-     * @param int $limite
-     * @return array
      */
     public function obtenerProductosRecientes(int $limite = 5): array
     {
@@ -157,7 +137,7 @@ class DashboardRepository
             ->orderBy('productos.created_at', 'desc')
             ->limit($limite)
             ->get()
-            ->map(function ($producto) {
+            ->map(function ($producto): array {
                 return [
                     'name' => $producto->name,
                     'cantidad' => (int) $producto->cantidad,

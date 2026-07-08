@@ -13,10 +13,6 @@ class NotificationRepository implements NotificationRepositoryInterface
 {
     /**
      * Obtiene notificaciones paginadas de un usuario
-     *
-     * @param int $userId
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function obtenerPorUsuarioPaginadas(int $userId, int $perPage): LengthAwarePaginator
     {
@@ -26,10 +22,6 @@ class NotificationRepository implements NotificationRepositoryInterface
 
     /**
      * Obtiene notificaciones no leídas limitadas
-     *
-     * @param int $userId
-     * @param int $limit
-     * @return Collection
      */
     public function obtenerNoLeidasLimitadas(int $userId, int $limit): Collection
     {
@@ -39,9 +31,6 @@ class NotificationRepository implements NotificationRepositoryInterface
 
     /**
      * Cuenta notificaciones no leídas
-     *
-     * @param int $userId
-     * @return int
      */
     public function contarNoLeidas(int $userId): int
     {
@@ -51,10 +40,6 @@ class NotificationRepository implements NotificationRepositoryInterface
 
     /**
      * Marca una notificación como leída
-     *
-     * @param int $userId
-     * @param string $notificationId
-     * @return bool
      */
     public function marcarComoLeida(int $userId, string $notificationId): bool
     {
@@ -71,16 +56,13 @@ class NotificationRepository implements NotificationRepositoryInterface
 
     /**
      * Marca todas las notificaciones como leídas
-     *
-     * @param int $userId
-     * @return int
      */
     public function marcarTodasComoLeidas(int $userId): int
     {
         $user = User::findOrFail($userId);
         $count = 0;
 
-        $user->unreadNotifications->each(function ($notification) use (&$count) {
+        $user->unreadNotifications->each(function ($notification) use (&$count): void {
             $notification->markAsRead();
             $count++;
         });
@@ -90,10 +72,6 @@ class NotificationRepository implements NotificationRepositoryInterface
 
     /**
      * Elimina una notificación
-     *
-     * @param int $userId
-     * @param string $notificationId
-     * @return bool
      */
     public function eliminar(int $userId, string $notificationId): bool
     {

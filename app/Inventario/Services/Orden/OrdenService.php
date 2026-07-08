@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Orden;
 
+use Exception;
 use App\Models\Inventario\Orden;
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Aprobacion;
@@ -55,9 +56,6 @@ class OrdenService
     /**
      * Crea una nueva orden con sus detalles
      *
-     * @param array $datos
-     * @param int $userId
-     * @return Orden
      * @throws OrdenException
      */
     public function crear(array $datos, int $userId): Orden
@@ -81,7 +79,7 @@ class OrdenService
 
             return $orden;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->transactionService->rollBack();
             throw new OrdenException('Error al crear la orden: ' . $e->getMessage());
         }
@@ -90,9 +88,6 @@ class OrdenService
     /**
      * Crea una orden de préstamo/salida desde carrito
      *
-     * @param array $datos
-     * @param int $userId
-     * @return Orden
      * @throws OrdenException
      */
     public function crearDesdeCarrito(array $datos, int $userId): Orden
@@ -164,7 +159,7 @@ class OrdenService
         } catch (OrdenException $e) {
             $this->transactionService->rollBack();
             throw $e;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->transactionService->rollBack();
             throw new OrdenException('Error al crear la orden: ' . $e->getMessage());
         }
@@ -173,10 +168,6 @@ class OrdenService
     /**
      * Procesa un detalle de orden
      *
-     * @param Orden $orden
-     * @param array $productoData
-     * @param int $userId
-     * @return void
      * @throws OrdenException
      */
     private function procesarDetalleOrden(Orden $orden, array $productoData, int $userId): void
@@ -208,8 +199,6 @@ class OrdenService
     /**
      * Obtiene el tipo de orden como ParametroTema válido
      *
-     * @param string $codigo
-     * @return ParametroTema
      * @throws OrdenException
      */
     public function obtenerParametroTipoOrden(string $codigo): ParametroTema
@@ -245,7 +234,7 @@ class OrdenService
      * Obtiene estado EN ESPERA
      * Retorna ParametroTema porque estado_orden_id en DetalleOrden referencia a parametros_temas
      *
-     * @return \App\Models\ParametroTema
+     * @return ParametroTema
      * @throws OrdenException
      */
     public function obtenerEstadoEnEspera()
@@ -288,9 +277,7 @@ class OrdenService
     /**
      * Genera descripción detallada de la orden
      *
-     * @param array $datos
      * @param mixed $usuario
-     * @return string
      */
     private function generarDescripcionOrden(array $datos, $usuario): string
     {
@@ -323,9 +310,6 @@ class OrdenService
 
     /**
      * Notifica a administradores sobre nueva orden
-     *
-     * @param Orden $orden
-     * @return void
      */
     private function notificarNuevaOrden(Orden $orden): void
     {
@@ -335,10 +319,6 @@ class OrdenService
     /**
      * Actualiza una orden existente
      *
-     * @param Orden $orden
-     * @param array $datos
-     * @param int $userId
-     * @return Orden
      * @throws OrdenException
      */
     public function actualizar(Orden $orden, array $datos, int $userId): Orden
@@ -374,7 +354,7 @@ class OrdenService
 
             return $orden;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->transactionService->rollBack();
             throw new OrdenException('Error al actualizar la orden: ' . $e->getMessage());
         }
@@ -383,8 +363,6 @@ class OrdenService
     /**
      * Elimina una orden y devuelve el stock
      *
-     * @param Orden $orden
-     * @return bool
      * @throws OrdenException
      */
     public function eliminar(Orden $orden): bool
@@ -409,7 +387,7 @@ class OrdenService
 
             return $resultado;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->transactionService->rollBack();
             throw new OrdenException('Error al eliminar la orden: ' . $e->getMessage());
         }
@@ -417,9 +395,6 @@ class OrdenService
 
     /**
      * Verifica si una orden tiene devoluciones registradas
-     *
-     * @param Orden $orden
-     * @return bool
      */
     public function tieneDevoluciones(Orden $orden): bool
     {
@@ -491,9 +466,9 @@ class OrdenService
 
             return [
                 'eliminadas' => (int) $eliminadas,
-                'pendientes' => (int) $pendientes,
+                'pendientes' => $pendientes,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->transactionService->rollBack();
             throw new OrdenException('Error al vaciar el historial de órdenes: ' . $e->getMessage());
         }

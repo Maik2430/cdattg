@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Aprobacion;
 
+use App\Models\ParametroTema;
+use Illuminate\Support\Collection;
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Orden;
 use App\Exceptions\AprobacionException;
@@ -54,19 +56,15 @@ class AprobacionService
         $this->formOptionsService = $formOptionsService;
     }
 
-    /**
-     * @return \App\Models\ParametroTema|null
-     */
-    public function obtenerEstadoEnEspera(): ?\App\Models\ParametroTema
+    public function obtenerEstadoEnEspera(): ?ParametroTema
     {
         return $this->obtenerEstadoPorNombre(self::STATUS_PENDING);
     }
 
     /**
-     * @return \App\Models\ParametroTema
      * @throws AprobacionException
      */
-    public function obtenerEstadoAprobada(): \App\Models\ParametroTema
+    public function obtenerEstadoAprobada(): ParametroTema
     {
         $parametroTema = $this->obtenerEstadoPorNombre(self::STATUS_APPROVED);
         if (!$parametroTema) {
@@ -76,10 +74,9 @@ class AprobacionService
     }
 
     /**
-     * @return \App\Models\ParametroTema
      * @throws AprobacionException
      */
-    public function obtenerEstadoRechazada(): \App\Models\ParametroTema
+    public function obtenerEstadoRechazada(): ParametroTema
     {
         $parametroTema = $this->obtenerEstadoPorNombre(self::STATUS_REJECTED);
         if (!$parametroTema) {
@@ -91,11 +88,8 @@ class AprobacionService
     /**
      * Obtiene un estado por nombre en el tema de estados de orden.
      * Usa FormOptionsService para centralizar acceso a Tema (SRP)
-     *
-     * @param string $name
-     * @return \App\Models\ParametroTema|null
      */
-    private function obtenerEstadoPorNombre(string $name): ?\App\Models\ParametroTema
+    private function obtenerEstadoPorNombre(string $name): ?ParametroTema
     {
         return $this->formOptionsService->obtenerEstadoOrdenPorNombre($name, self::ORDER_STATUS_THEME);
     }
@@ -103,8 +97,6 @@ class AprobacionService
     /**
      * Aprueba un detalle de orden
      *
-     * @param DetalleOrden $detalleOrden
-     * @return void
      * @throws AprobacionException
      */
     public function aprobarDetalle(DetalleOrden $detalleOrden): void
@@ -156,12 +148,9 @@ class AprobacionService
     /**
      * Valida que el detalle esté pendiente de aprobación
      *
-     * @param DetalleOrden $detalleOrden
-     * @param \App\Models\ParametroTema|null $estadoEnEspera
-     * @return void
      * @throws AprobacionException
      */
-    private function validarDetallePendiente(DetalleOrden $detalleOrden, ?\App\Models\ParametroTema $estadoEnEspera): void
+    private function validarDetallePendiente(DetalleOrden $detalleOrden, ?ParametroTema $estadoEnEspera): void
     {
         if (!$estadoEnEspera || $detalleOrden->estado_orden_id != $estadoEnEspera->id) {
             throw new AprobacionException('Esta solicitud no está pendiente de aprobación.');
@@ -174,9 +163,6 @@ class AprobacionService
 
     /**
      * Notifica la aprobación al solicitante (en cola si el driver de notificaciones está configurado)
-     *
-     * @param DetalleOrden $detalleOrden
-     * @return void
      */
     private function notificarAprobacion(DetalleOrden $detalleOrden): void
     {
@@ -191,10 +177,6 @@ class AprobacionService
 
     /**
      * Notifica el rechazo al solicitante
-     *
-     * @param DetalleOrden $detalleOrden
-     * @param string $motivoRechazo
-     * @return void
      */
     private function notificarRechazo(DetalleOrden $detalleOrden, string $motivoRechazo): void
     {
@@ -209,9 +191,6 @@ class AprobacionService
     /**
      * Rechaza un detalle de orden
      *
-     * @param DetalleOrden $detalleOrden
-     * @param string $motivoRechazo
-     * @return void
      * @throws AprobacionException
      */
     public function rechazarDetalle(DetalleOrden $detalleOrden, string $motivoRechazo): void
@@ -266,15 +245,12 @@ class AprobacionService
         $texto .= "Producto: {$detalleOrden->producto->name}\n";
         $texto .= "Motivo: {$motivoRechazo}\n";
         $texto .= "Rechazado por: " . Auth::user()->name . "\n";
-        $texto .= "Fecha: " . now()->format('d/m/Y H:i') . "\n";
-        return $texto;
+        return $texto . ("Fecha: " . now()->format('d/m/Y H:i') . "\n");
     }
 
     /**
      * Aprueba toda una orden completa
      *
-     * @param Orden $orden
-     * @return void
      * @throws AprobacionException
      */
     public function aprobarOrdenCompleta(Orden $orden): void
@@ -338,9 +314,6 @@ class AprobacionService
     /**
      * Rechaza toda una orden completa
      *
-     * @param Orden $orden
-     * @param string $motivoRechazo
-     * @return void
      * @throws AprobacionException
      */
     public function rechazarOrdenCompleta(Orden $orden, string $motivoRechazo): void
@@ -400,14 +373,14 @@ class AprobacionService
     /**
      * Obtiene detalles pendientes de aprobación
      *
-     * @return \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Collection
+     * @return Collection|\Illuminate\Database\Eloquent\Collection
      */
     public function obtenerDetallesPendientes()
     {
         $estadoEnEspera = $this->obtenerEstadoEnEspera();
 
         if (!$estadoEnEspera || !isset($estadoEnEspera->id)) {
-            return \Illuminate\Support\Collection::make([]);
+            return Collection::make([]);
         }
 
         $detalles = $this->ordenRepository->obtenerDetallesPendientes($estadoEnEspera->id);
@@ -415,14 +388,11 @@ class AprobacionService
         // Asegurar que siempre sea una colección (convertir Eloquent Collection a Support Collection si es necesario)
         return $detalles instanceof \Illuminate\Database\Eloquent\Collection
             ? $detalles
-            : \Illuminate\Support\Collection::make($detalles);
+            : Collection::make($detalles);
     }
 
     /**
      * Encuentra un detalle de orden con sus relaciones
-     *
-     * @param int $detalleOrdenId
-     * @return DetalleOrden|null
      */
     public function encontrarDetalleConRelaciones(int $detalleOrdenId): ?DetalleOrden
     {
@@ -431,9 +401,6 @@ class AprobacionService
 
     /**
      * Encuentra una orden con detalles y devoluciones
-     *
-     * @param int $ordenId
-     * @return Orden|null
      */
     public function encontrarOrdenConDetallesYDevoluciones(int $ordenId): ?Orden
     {

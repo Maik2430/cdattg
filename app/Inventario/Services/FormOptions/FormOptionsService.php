@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\FormOptions;
 
+use Illuminate\Support\Collection;
+use App\Models\ParametroTema;
 use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
 use App\Inventario\Interfaces\Repositories\ParametroTema\ParametroTemaRepositoryInterface;
 
@@ -15,9 +17,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene todas las opciones para formularios de productos
-     *
-     * @param string|null $temaEstados
-     * @return array
      */
     public function obtenerOpcionesProducto(?string $temaEstados = null): array
     {
@@ -34,8 +33,6 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene opciones para formularios de órdenes
-     *
-     * @return array
      */
     public function obtenerOpcionesOrden(): array
     {
@@ -47,9 +44,8 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene tipos de producto
-     * @return \Illuminate\Support\Collection
      */
-    public function obtenerTiposProducto()
+    public function obtenerTiposProducto(): Collection
     {
         return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.tipos_producto', 'TIPOS DE PRODUCTO')
@@ -58,10 +54,8 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene unidades de medida
-     *
-     * @return \Illuminate\Support\Collection
      */
-    public function obtenerUnidadesMedida()
+    public function obtenerUnidadesMedida(): Collection
     {
         return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.unidades_medida', 'UNIDADES DE MEDIDA')
@@ -70,20 +64,16 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene estados
-     *
-     * @param string $tema
-     * @return \Illuminate\Support\Collection
      */
-    public function obtenerEstados(string $tema)
+    public function obtenerEstados(string $tema): Collection
     {
         return $this->parametroTemaRepository->obtenerPorTema($tema);
     }
 
     /**
      * Obtiene categorías
-     * @return \Illuminate\Support\Collection
      */
-    public function obtenerCategorias()
+    public function obtenerCategorias(): Collection
     {
         return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.categorias', 'CATEGORIAS')
@@ -92,9 +82,8 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene marcas
-     * @return \Illuminate\Support\Collection
      */
-    public function obtenerMarcas()
+    public function obtenerMarcas(): Collection
     {
         return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.marcas', 'MARCAS')
@@ -103,9 +92,8 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene tipos de orden
-     * @return \Illuminate\Support\Collection
      */
-    public function obtenerTiposOrden()
+    public function obtenerTiposOrden(): Collection
     {
         return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.tipos_orden', 'TIPOS DE ORDEN')
@@ -114,9 +102,8 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene estados de orden
-     * @return \Illuminate\Support\Collection
      */
-    public function obtenerEstadosOrden()
+    public function obtenerEstadosOrden(): Collection
     {
         return $this->parametroTemaRepository->obtenerPorTema(
             config('inventario.temas.estados_orden', 'ESTADOS DE ORDEN')
@@ -125,8 +112,7 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene el estado "AGOTADO" de productos
-     * @param string|null $temaEstados
-     * @return \App\Models\ParametroTema|null
+     * @return ParametroTema|null
      */
     public function obtenerEstadoAgotado(?string $temaEstados = null)
     {
@@ -137,9 +123,7 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene un estado de orden por nombre
-     * @param string $nombreEstado
-     * @param string|null $temaEstados
-     * @return \App\Models\ParametroTema|null
+     * @return ParametroTema|null
      */
     public function obtenerEstadoOrdenPorNombre(string $nombreEstado, ?string $temaEstados = null)
     {

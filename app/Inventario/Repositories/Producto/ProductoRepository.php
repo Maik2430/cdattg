@@ -15,9 +15,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Obtiene productos con filtros y relaciones
-     *
-     * @param array $filtros
-     * @return LengthAwarePaginator
      */
     public function obtenerConFiltros(array $filtros = []): LengthAwarePaginator
     {
@@ -32,7 +29,7 @@ class ProductoRepository implements ProductoRepositoryInterface
 
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('codigo_barras', 'LIKE', "%{$search}%")
                     ->orWhere('descripcion', 'LIKE', "%{$search}%");
@@ -79,9 +76,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Obtiene producto con todas sus relaciones
-     *
-     * @param int $id
-     * @return Producto|null
      */
     public function encontrarConRelaciones(int $id): ?Producto
     {
@@ -99,9 +93,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Busca producto por código de barras
-     *
-     * @param string $codigo
-     * @return Producto|null
      */
     public function buscarPorCodigoBarras(string $codigo): ?Producto
     {
@@ -110,9 +101,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Obtiene productos para catálogo (con filtros y ordenamiento)
-     *
-     * @param array $filtros
-     * @return LengthAwarePaginator
      */
     public function obtenerParaCatalogo(array $filtros = []): LengthAwarePaginator
     {
@@ -171,9 +159,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Busca productos para AJAX (usado en método buscar)
-     *
-     * @param array $filtros
-     * @return Collection
      */
     public function buscarParaAjax(array $filtros = []): Collection
     {
@@ -204,13 +189,11 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Obtiene tipos de productos activos ordenados
-     *
-     * @return Collection
      */
     public function obtenerTiposProductos(): Collection
     {
         return ParametroTema::with(['parametro', 'tema'])
-            ->whereHas('tema', function ($query) {
+            ->whereHas('tema', function ($query): void {
                 $query->where('name', 'TIPOS DE PRODUCTO');
             })
             ->where('status', 1)
@@ -223,9 +206,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Encuentra un producto por ID
-     *
-     * @param int $id
-     * @return Producto|null
      */
     public function encontrar(int $id): ?Producto
     {
@@ -234,9 +214,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Crea un nuevo producto
-     *
-     * @param array $datos
-     * @return Producto
      */
     public function crear(array $datos): Producto
     {
@@ -245,10 +222,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Actualiza un producto
-     *
-     * @param Producto $producto
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(Producto $producto, array $datos): bool
     {
@@ -257,9 +230,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Elimina un producto
-     *
-     * @param Producto $producto
-     * @return bool
      */
     public function eliminar(Producto $producto): bool
     {
@@ -268,10 +238,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Actualiza el stock de un producto
-     *
-     * @param Producto $producto
-     * @param int $cantidad
-     * @return bool
      */
     public function actualizarStock(Producto $producto, int $cantidad): bool
     {
@@ -296,8 +262,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Obtiene el código de barras máximo
-     *
-     * @return string|null
      */
     public function obtenerMaxCodigoBarras(): ?string
     {
@@ -307,9 +271,6 @@ class ProductoRepository implements ProductoRepositoryInterface
 
     /**
      * Verifica si existe un código de barras
-     *
-     * @param string $codigo
-     * @return bool
      */
     public function existeCodigoBarras(string $codigo): bool
     {

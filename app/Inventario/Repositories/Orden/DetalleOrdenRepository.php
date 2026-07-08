@@ -11,9 +11,6 @@ class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
 {
     /**
      * Crea un nuevo detalle de orden
-     *
-     * @param array $datos
-     * @return DetalleOrden
      */
     public function crear(array $datos): DetalleOrden
     {
@@ -22,10 +19,6 @@ class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
 
     /**
      * Actualiza un detalle de orden
-     *
-     * @param DetalleOrden $detalleOrden
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(DetalleOrden $detalleOrden, array $datos): bool
     {
@@ -34,9 +27,6 @@ class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
 
     /**
      * Elimina un detalle de orden
-     *
-     * @param DetalleOrden $detalleOrden
-     * @return bool
      */
     public function eliminar(DetalleOrden $detalleOrden): bool
     {
@@ -45,9 +35,6 @@ class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
 
     /**
      * Elimina todos los detalles de una orden
-     *
-     * @param int $ordenId
-     * @return bool
      */
     public function eliminarPorOrden(int $ordenId): bool
     {
@@ -56,9 +43,6 @@ class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
 
     /**
      * Encuentra un detalle de orden por ID
-     *
-     * @param int $id
-     * @return DetalleOrden|null
      */
     public function encontrar(int $id): ?DetalleOrden
     {
@@ -67,9 +51,6 @@ class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
 
     /**
      * Encuentra un detalle de orden con relaciones
-     *
-     * @param int $id
-     * @return DetalleOrden|null
      */
     public function encontrarConRelaciones(int $id): ?DetalleOrden
     {

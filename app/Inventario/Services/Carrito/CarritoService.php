@@ -57,9 +57,6 @@ class CarritoService
     /**
      * Valida un item individual del carrito
      *
-     * @param int $productoId
-     * @param int $cantidad
-     * @return array
      * @throws CarritoException
      */
     public function validarItem(int $productoId, int $cantidad): array
@@ -93,7 +90,6 @@ class CarritoService
      * Obtiene información de productos para el carrito
      *
      * @param array $items Array de items con 'id'
-     * @return Collection
      */
     public function obtenerProductosParaCarrito(array $items): Collection
     {

@@ -14,8 +14,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
     /**
      * Obtiene todos los proveedores
-     *
-     * @return Collection
      */
     public function obtenerTodos(): Collection
     {
@@ -24,9 +22,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
     /**
      * Obtiene proveedores con filtros y relaciones
-     *
-     * @param array $filtros
-     * @return LengthAwarePaginator
      */
     public function obtenerConFiltros(array $filtros = []): LengthAwarePaginator
     {
@@ -44,12 +39,12 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('nit', 'LIKE', "%{$search}%")
                     ->orWhere('email', 'LIKE', "%{$search}%")
                     ->orWhere('telefono', 'LIKE', "%{$search}%")
-                    ->orWhereHas('persona', function ($personaQuery) use ($search) {
+                    ->orWhereHas('persona', function ($personaQuery) use ($search): void {
                         $personaQuery->where('primer_nombre', 'LIKE', "%{$search}%")
                             ->orWhere('segundo_nombre', 'LIKE', "%{$search}%")
                             ->orWhere('primer_apellido', 'LIKE', "%{$search}%")
@@ -58,10 +53,10 @@ class ProveedorRepository implements ProveedorRepositoryInterface
                             ->orWhere('celular', 'LIKE', "%{$search}%")
                             ->orWhere('email', 'LIKE', "%{$search}%");
                     })
-                    ->orWhereHas('departamento', function ($departamentoQuery) use ($search) {
+                    ->orWhereHas('departamento', function ($departamentoQuery) use ($search): void {
                         $departamentoQuery->where('departamento', 'LIKE', "%{$search}%");
                     })
-                    ->orWhereHas('municipio', function ($municipioQuery) use ($search) {
+                    ->orWhereHas('municipio', function ($municipioQuery) use ($search): void {
                         $municipioQuery->where('municipio', 'LIKE', "%{$search}%");
                     });
             });
@@ -73,9 +68,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
     /**
      * Encuentra un proveedor por ID con relaciones
-     *
-     * @param int $id
-     * @return Proveedor|null
      */
     public function encontrarConRelaciones(int $id): ?Proveedor
     {
@@ -93,9 +85,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
     /**
      * Crea un nuevo proveedor
-     *
-     * @param array $datos
-     * @return Proveedor
      */
     public function crear(array $datos): Proveedor
     {
@@ -104,10 +93,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
     /**
      * Actualiza un proveedor
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -116,9 +101,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
     /**
      * Elimina un proveedor
-     *
-     * @param int $id
-     * @return bool
      */
     public function eliminar(int $id): bool
     {
@@ -127,9 +109,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
     /**
      * Verifica si un proveedor tiene contratos asociados
-     *
-     * @param int $id
-     * @return bool
      */
     public function tieneContratos(int $id): bool
     {
@@ -140,9 +119,6 @@ class ProveedorRepository implements ProveedorRepositoryInterface
 
     /**
      * Verifica si un proveedor tiene productos asociados
-     *
-     * @param int $id
-     * @return bool
      */
     public function tieneProductos(int $id): bool
     {

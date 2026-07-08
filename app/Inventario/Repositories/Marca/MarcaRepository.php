@@ -19,8 +19,6 @@ class MarcaRepository implements MarcaRepositoryInterface
 
     /**
      * Obtiene el tema de marcas
-     *
-     * @return Tema|null
      */
     public function obtenerTemaMarcas(): ?Tema
     {
@@ -29,9 +27,6 @@ class MarcaRepository implements MarcaRepositoryInterface
 
     /**
      * Obtiene marcas con filtros
-     *
-     * @param array $filtros
-     * @return LengthAwarePaginator
      */
     public function obtenerConFiltros(array $filtros = []): LengthAwarePaginator
     {
@@ -47,7 +42,7 @@ class MarcaRepository implements MarcaRepositoryInterface
 
         if (!empty($filtros['search'])) {
             $search = $filtros['search'];
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('parametros.name', 'LIKE', "%{$search}%");
             });
         }
@@ -65,9 +60,6 @@ class MarcaRepository implements MarcaRepositoryInterface
 
     /**
      * Encuentra una marca por ID
-     *
-     * @param int $id
-     * @return Marca|null
      */
     public function encontrar(int $id): ?Marca
     {
@@ -76,9 +68,6 @@ class MarcaRepository implements MarcaRepositoryInterface
 
     /**
      * Encuentra múltiples marcas por IDs
-     *
-     * @param array $ids
-     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function encontrarMultiples(array $ids): Collection
     {
@@ -87,9 +76,6 @@ class MarcaRepository implements MarcaRepositoryInterface
 
     /**
      * Encuentra una marca por ID con relaciones
-     *
-     * @param int $id
-     * @return Parametro|null
      */
     public function encontrarConRelaciones(int $id): ?Parametro
     {
@@ -98,10 +84,6 @@ class MarcaRepository implements MarcaRepositoryInterface
 
     /**
      * Actualiza una marca
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -110,10 +92,6 @@ class MarcaRepository implements MarcaRepositoryInterface
 
     /**
      * Elimina una marca
-     *
-     * @param Parametro $marca
-     * @param int $temaId
-     * @return bool
      */
     public function eliminar(Parametro $marca, int $temaId): bool
     {
@@ -127,9 +105,6 @@ class MarcaRepository implements MarcaRepositoryInterface
 
     /**
      * Verifica si una marca tiene productos asociados
-     *
-     * @param int $id
-     * @return bool
      */
     public function tieneProductos(int $id): bool
     {

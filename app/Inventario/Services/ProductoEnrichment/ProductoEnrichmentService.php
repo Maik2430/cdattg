@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Inventario\Services\ProductoEnrichment;
 
 use App\Models\Inventario\Producto;
-use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
 use App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface;
@@ -24,9 +23,6 @@ class ProductoEnrichmentService
 
     /**
      * Enriquece una colección de productos con sus marcas y categorías
-     *
-     * @param iterable|LengthAwarePaginator $productos
-     * @return void
      */
     public function enriquecerConMarcasYCategorias(iterable|LengthAwarePaginator $productos): void
     {
@@ -65,9 +61,6 @@ class ProductoEnrichmentService
 
     /**
      * Enriquece un solo producto con sus relaciones
-     *
-     * @param Producto $producto
-     * @return void
      */
     public function enriquecerProducto(Producto $producto): void
     {
