@@ -62,7 +62,7 @@ class EstadisticaComplementarioController extends Controller
                 'user_id' => auth()->id(),
             ]);
 
-            abort(500, 'Error al generar el archivo Excel. Por favor intente nuevamente.');
+            return abort(500, 'Error al generar el archivo Excel. Por favor intente nuevamente.');
         }
     }
 }

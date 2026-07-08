@@ -13,7 +13,7 @@
  *
  * @constant {Array<{id:number,nombre:string}>}
  */
-let DIAS_SEMANA_FALLBACK = [
+let diasSemanaFallbackLocal = [
     { id: 0, nombre: 'Lunes' },
     { id: 0, nombre: 'Martes' },
     { id: 0, nombre: 'Miércoles' },
@@ -27,7 +27,7 @@ let DIAS_SEMANA_FALLBACK = [
  * Horarios predefinidos disponibles
  * @constant {Object}
  */
-let HORARIOS_PREDEFINIDOS = {
+let horariosPredefinidosLocal = {
     '00': { inicio: null, fin: null, label: 'Sin formación' },
     '1': { inicio: '07:00', fin: '13:00', label: '07:00 - 13:00' },
     '2': { inicio: '08:00', fin: '12:00', label: '08:00 - 12:00' },
@@ -67,7 +67,7 @@ class DiasHorariosManager {
      */
     normalizarDiasSemana(diasSemana) {
         if (!Array.isArray(diasSemana) || diasSemana.length === 0) {
-            return DIAS_SEMANA_FALLBACK;
+            return diasSemanaFallbackLocal;
         }
 
         return diasSemana
@@ -115,7 +115,7 @@ class DiasHorariosManager {
         const fin = horaFin.substring(0, 5);
         
         // Buscar en horarios predefinidos
-        for (const [key, horario] of Object.entries(HORARIOS_PREDEFINIDOS)) {
+        for (const [key, horario] of Object.entries(horariosPredefinidosLocal)) {
             if (key === '00' || key === 'custom') {
                 continue;
             }
@@ -217,7 +217,6 @@ class DiasHorariosManager {
      * @param {HTMLSelectElement} select - Elemento select que cambió
      */
     manejarCambioHorario(select) {
-        const diaId = parseInt(select.dataset.diaId);
         const valor = select.value;
         const row = select.closest('.dia-horario-row');
         const customContainer = row.querySelector('.custom-time-container');
@@ -238,8 +237,8 @@ class DiasHorariosManager {
             
             // Si no es "Sin formación", establecer valores del horario predefinido
             if (valor !== '00') {
-                const horario = HORARIOS_PREDEFINIDOS[valor];
-                if (horario && horario.inicio && horario.fin) {
+                const horario = horariosPredefinidosLocal[valor];
+                if (horario?.inicio && horario?.fin) {
                     inicioInput.value = horario.inicio;
                     finInput.value = horario.fin;
                 }
@@ -333,8 +332,8 @@ class DiasHorariosManager {
                     return;
                 }
             } else {
-                const horario = HORARIOS_PREDEFINIDOS[valor];
-                if (horario && horario.inicio && horario.fin) {
+                const horario = horariosPredefinidosLocal[valor];
+                if (horario?.inicio && horario?.fin) {
                     horaInicio = horario.inicio;
                     horaFin = horario.fin;
                 } else {
@@ -389,9 +388,9 @@ class DiasHorariosManager {
 }
 
 // Exportar para uso global
-if (typeof window !== 'undefined') {
-    window.DiasHorariosManager = DiasHorariosManager;
-    window.DIAS_SEMANA_FALLBACK = DIAS_SEMANA_FALLBACK;
-    window.HORARIOS_PREDEFINIDOS = HORARIOS_PREDEFINIDOS;
+if (globalThis.window !== undefined) {
+    globalThis.DiasHorariosManager = DiasHorariosManager;
+    globalThis.DIAS_SEMANA_FALLBACK = diasSemanaFallbackLocal;
+    globalThis.HORARIOS_PREDEFINIDOS = horariosPredefinidosLocal;
 }
 
