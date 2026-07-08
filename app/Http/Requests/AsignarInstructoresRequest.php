@@ -163,7 +163,7 @@ class AsignarInstructoresRequest extends FormRequest
             $this->validarDisponibilidadHoraria($validator);
             $this->validarReglasSENA($validator);
             $this->validarCoherenciaHorasCompetencia($validator);
-            
+
             // Las sugerencias han sido removidas por solicitud del usuario
         });
     }
@@ -288,7 +288,7 @@ class AsignarInstructoresRequest extends FormRequest
     private function validarConflictosOtrosInstructor($validator, $instructorId, $fechaInicio, $fechaFin, $diasNuevos, $jornadaIdFicha, $index): void
     {
         $instructorData = $this->input("instructores.{$index}", []);
-        
+
         // Extraer horarios si están disponibles (formato: dias[dia_id][hora_inicio/hora_fin])
         $horariosNuevos = [];
         if (isset($instructorData['dias']) && is_array($instructorData['dias'])) {
@@ -301,7 +301,7 @@ class AsignarInstructoresRequest extends FormRequest
                 }
             }
         }
-        
+
         $conflictosQuery = InstructorFichaCaracterizacion::where('instructor_id', $instructorId)
             ->whereHas('ficha', function($q) use ($jornadaIdFicha) {
                     $q->where('status', true);
@@ -328,12 +328,12 @@ class AsignarInstructoresRequest extends FormRequest
             $conflictosExistentes = $conflictosExistentes->filter(function($conflicto) use ($diasNuevos, $horariosNuevos) {
                 $diasExistentes = $conflicto->instructorFichaDias->pluck('dia_id')->toArray();
                 $diasEnComun = array_intersect($diasNuevos, $diasExistentes);
-                
+
                 // Si no hay días en común, no hay conflicto
                 if (empty($diasEnComun)) {
                     return false;
                 }
-                
+
                 // Si hay horarios especificados, validar también conflictos de horario
                 if (!empty($horariosNuevos)) {
                     foreach ($diasEnComun as $diaId) {
@@ -341,10 +341,10 @@ class AsignarInstructoresRequest extends FormRequest
                         if (!isset($horariosNuevos[$diaId])) {
                             continue; // Si no hay horario especificado para este día, no validar horario
                         }
-                        
+
                         $horaInicioNueva = $horariosNuevos[$diaId]['hora_inicio'];
                         $horaFinNueva = $horariosNuevos[$diaId]['hora_fin'];
-                        
+
                         // Buscar horario del día en las asignaciones existentes
                         $diaExistente = $conflicto->instructorFichaDias->firstWhere('dia_id', $diaId);
                         if ($diaExistente && $diaExistente->hora_inicio && $diaExistente->hora_fin) {
@@ -357,7 +357,7 @@ class AsignarInstructoresRequest extends FormRequest
                     // Si hay días en común pero no hay conflictos de horario, no es conflicto
                     return false;
                 }
-                
+
                 // Si hay días en común pero no se especificaron horarios, considerar conflicto
                 return true;
             });
@@ -368,7 +368,7 @@ class AsignarInstructoresRequest extends FormRequest
             $conflictosText = $conflictosExistentes->map(function($conflicto) use ($diasNuevos, $horariosNuevos) {
                     $programaNombre = $conflicto->ficha->programaFormacion->nombre ?? 'Sin programa';
                 $jornada = $conflicto->ficha->jornadaFormacion->parametro->name ?? 'Sin jornada';
-                
+
                 // Mostrar días en conflicto
                 $diasExistentes = $conflicto->instructorFichaDias->pluck('dia_id')->toArray();
                 $diasEnComun = array_intersect($diasNuevos, $diasExistentes);
@@ -398,7 +398,7 @@ class AsignarInstructoresRequest extends FormRequest
             );
         }
     }
-    
+
     /**
      * Verificar si hay conflicto entre dos rangos horarios
      */
@@ -641,14 +641,14 @@ class AsignarInstructoresRequest extends FormRequest
     {
         $fichaId = $this->route('id');
         $ficha = FichaCaracterizacion::with('programaFormacion.competencias')->find($fichaId);
-        
+
         if (!$ficha || !$ficha->programaFormacion) {
             $fail("La ficha no tiene un programa de formación asociado.");
             return;
         }
 
         $competenciaPertenece = $ficha->programaFormacion->competencias->contains('id', $competenciaId);
-        
+
         if (!$competenciaPertenece) {
             $competencia = \App\Models\Competencia::find($competenciaId);
             $competenciaNombre = $competencia ? $competencia->nombre : 'Competencia desconocida';
@@ -665,7 +665,7 @@ class AsignarInstructoresRequest extends FormRequest
         // Formato: instructores.0.resultados_aprendizaje.0
         preg_match('/instructores\.(\d+)\.resultados_aprendizaje\.\d+/', $attribute, $matches);
         $instructorIndex = $matches[1] ?? null;
-        
+
         if ($instructorIndex === null) {
             return; // No se puede validar sin el índice
         }
@@ -679,14 +679,14 @@ class AsignarInstructoresRequest extends FormRequest
         }
 
         $competencia = \App\Models\Competencia::with('resultadosAprendizaje')->find($competenciaId);
-        
+
         if (!$competencia) {
             $fail("La competencia seleccionada no existe.");
             return;
         }
 
         $resultadoPertenece = $competencia->resultadosAprendizaje->contains('id', $resultadoId);
-        
+
         if (!$resultadoPertenece) {
             $resultado = \App\Models\ResultadosAprendizaje::find($resultadoId);
             $resultadoNombre = $resultado ? $resultado->nombre : 'Resultado desconocido';
@@ -702,7 +702,7 @@ class AsignarInstructoresRequest extends FormRequest
         $instructores = $this->input('instructores', []);
         $fichaId = $this->route('id');
         $ficha = FichaCaracterizacion::with(['diasFormacion', 'jornadaFormacion.parametro'])->find($fichaId);
-        
+
         if (!$ficha) {
             return;
         }
@@ -710,7 +710,7 @@ class AsignarInstructoresRequest extends FormRequest
         foreach ($instructores as $index => $instructorData) {
             $competenciaId = $instructorData['competencia_id'] ?? null;
             $resultadosIds = $instructorData['resultados_aprendizaje'] ?? [];
-            
+
             // Solo validar si tiene competencia o resultados asignados
             if (!$competenciaId && empty($resultadosIds)) {
                 continue;
@@ -718,10 +718,10 @@ class AsignarInstructoresRequest extends FormRequest
 
             // Calcular horas totales que se trabajarán
             $horasTrabajadas = $this->calcularHorasTrabajadas($instructorData, $ficha);
-            
+
             // Obtener duración esperada
             $duracionEsperada = 0;
-            
+
             if (!empty($resultadosIds)) {
                 // Si hay resultados asignados, sumar sus duraciones
                 $resultados = \App\Models\ResultadosAprendizaje::whereIn('id', $resultadosIds)->get();
@@ -741,13 +741,13 @@ class AsignarInstructoresRequest extends FormRequest
             // Calcular diferencia porcentual (margen de tolerancia del 10%)
             $diferencia = abs($horasTrabajadas - $duracionEsperada);
             $porcentajeDiferencia = ($diferencia / $duracionEsperada) * 100;
-            
+
             // Si la diferencia es mayor al 10%, mostrar advertencia
             if ($porcentajeDiferencia > 10) {
-                $competenciaNombre = $competenciaId 
+                $competenciaNombre = $competenciaId
                     ? (\App\Models\Competencia::find($competenciaId)->nombre ?? 'Competencia')
                     : 'Resultados de aprendizaje';
-                
+
                 $validator->errors()->add(
                     "instructores.{$index}.fecha_inicio",
                     "⚠️ INCOHERENCIA DE HORAS: Las horas trabajadas ({$horasTrabajadas}h) no son coherentes con la duración esperada ({$duracionEsperada}h) de {$competenciaNombre}. Diferencia: {$diferencia}h ({$porcentajeDiferencia}%). Ajuste las fechas, días u horarios para que coincidan."
@@ -764,11 +764,11 @@ class AsignarInstructoresRequest extends FormRequest
         try {
             $fechaInicio = Carbon::parse($instructorData['fecha_inicio']);
             $fechaFin = Carbon::parse($instructorData['fecha_fin']);
-            
+
             // Obtener días seleccionados
             $diasSeleccionados = [];
             $diasConHorarios = [];
-            
+
             if (isset($instructorData['dias']) && is_array($instructorData['dias'])) {
                 // Formato con horarios específicos
                 foreach ($instructorData['dias'] as $diaId => $diaInfo) {
@@ -785,7 +785,7 @@ class AsignarInstructoresRequest extends FormRequest
             } elseif (isset($instructorData['dias_formacion']) && is_array($instructorData['dias_formacion'])) {
                 $diasSeleccionados = collect($instructorData['dias_formacion'])->pluck('dia_id')->filter()->toArray();
             }
-            
+
             if (empty($diasSeleccionados)) {
                 return 0;
             }
@@ -805,7 +805,7 @@ class AsignarInstructoresRequest extends FormRequest
                     $diaFormacionFicha = $ficha->diasFormacion->firstWhere('dia_id', $diaId);
                     $horaInicio = $diaFormacionFicha->hora_inicio ?? '08:00';
                     $horaFin = $diaFormacionFicha->hora_fin ?? '12:00';
-                    
+
                     $diasParaCalculo[] = [
                         'dia_id' => $diaId,
                         'hora_inicio' => $horaInicio,
@@ -823,7 +823,7 @@ class AsignarInstructoresRequest extends FormRequest
             // Usar el servicio para generar fechas efectivas
             $diasService = app(\App\Services\InstructorFichaDiasService::class);
             $fechasEfectivas = $diasService->generarFechasEfectivas($instructorFichaTemp, $diasParaCalculo);
-            
+
             // Calcular horas totales
             $totalHoras = 0;
             foreach ($fechasEfectivas as $fecha) {
@@ -832,9 +832,9 @@ class AsignarInstructoresRequest extends FormRequest
                     $totalHoras += $horas;
                 }
             }
-            
+
             return (int) round($totalHoras);
-            
+
         } catch (\Exception $e) {
             \Log::error('Error calculando horas trabajadas en validación', [
                 'error' => $e->getMessage(),
@@ -856,12 +856,12 @@ class AsignarInstructoresRequest extends FormRequest
         try {
             $inicio = Carbon::parse($horaInicio);
             $fin = Carbon::parse($horaFin);
-            
+
             // Si la hora fin es menor que inicio, asumir que es del día siguiente
             if ($fin->lt($inicio)) {
                 $fin->addDay();
             }
-            
+
             $diferencia = $inicio->diffInMinutes($fin);
             return $diferencia / 60; // Convertir minutos a horas
         } catch (\Exception $e) {

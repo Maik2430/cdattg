@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Services\Concerns\PersonaImport;
+
+trait HandlesPersonaImportDocumentConfigHelpers
+{
+    private const CHUNK_SIZE = 250;
+
+    private const DUPLICATE_ENTRY_TEXT = 'Duplicate entry';
+
+    private const DOC_CEDULA_CIUDADANIA = 'CEDULA DE CIUDADANIA';
+
+    private const DOC_CEDULA_EXTRANJERIA = 'CEDULA DE EXTRANJERIA';
+
+    private const DOC_PASAPORTE = 'PASAPORTE';
+
+    private const DOC_PERMISO_PROTECCION = 'PERMISO POR PROTECCION TEMPORAL';
+
+    private const DOC_TARJETA_IDENTIDAD = 'TARJETA DE IDENTIDAD';
+
+    private const DOC_REGISTRO_CIVIL = 'REGISTRO CIVIL';
+
+    private const DOC_SIN_IDENTIFICACION = 'SIN IDENTIFICACION';
+
+    private array $documentAliasMap = [
+        'CC' => self::DOC_CEDULA_CIUDADANIA,
+        'C.C' => self::DOC_CEDULA_CIUDADANIA,
+        'C.C.' => self::DOC_CEDULA_CIUDADANIA,
+        'CEDULA DE CIUDADANIA' => self::DOC_CEDULA_CIUDADANIA,
+        'CEDULA CIUDADANIA' => self::DOC_CEDULA_CIUDADANIA,
+        'CEDULA DE CIUDADANÍA' => self::DOC_CEDULA_CIUDADANIA,
+        'CEDULA CIUDADANÍA' => self::DOC_CEDULA_CIUDADANIA,
+        'CEDULA' => self::DOC_CEDULA_CIUDADANIA,
+        'CÉDULA' => self::DOC_CEDULA_CIUDADANIA,
+        'CÉDULA DE CIUDADANÍA' => self::DOC_CEDULA_CIUDADANIA,
+        'CE' => self::DOC_CEDULA_EXTRANJERIA,
+        'C.E' => self::DOC_CEDULA_EXTRANJERIA,
+        'C.E.' => self::DOC_CEDULA_EXTRANJERIA,
+        'CEDULA DE EXTRANJERIA' => self::DOC_CEDULA_EXTRANJERIA,
+        'CEDULA EXTRANJERIA' => self::DOC_CEDULA_EXTRANJERIA,
+        'CEDULA DE EXTRANJERÍA' => self::DOC_CEDULA_EXTRANJERIA,
+        'CÉDULA DE EXTRANJERÍA' => self::DOC_CEDULA_EXTRANJERIA,
+        'PASAPORTE' => self::DOC_PASAPORTE,
+        'PA' => self::DOC_PASAPORTE,
+        'P.P' => self::DOC_PASAPORTE,
+        'P.P.' => self::DOC_PASAPORTE,
+        'PPT' => self::DOC_PERMISO_PROTECCION,
+        'PERMISO POR PROTECCION TEMPORAL' => self::DOC_PERMISO_PROTECCION,
+        'PERMISO POR PROTECCIÓN TEMPORAL' => self::DOC_PERMISO_PROTECCION,
+        'PERMISO PROTECCION TEMPORAL' => self::DOC_PERMISO_PROTECCION,
+        'PERMISO PROTECCIÓN TEMPORAL' => self::DOC_PERMISO_PROTECCION,
+        'TI' => self::DOC_TARJETA_IDENTIDAD,
+        'T.I' => self::DOC_TARJETA_IDENTIDAD,
+        'T.I.' => self::DOC_TARJETA_IDENTIDAD,
+        'TARJETA DE IDENTIDAD' => self::DOC_TARJETA_IDENTIDAD,
+        'TARJETA IDENTIDAD' => self::DOC_TARJETA_IDENTIDAD,
+        'RC' => self::DOC_REGISTRO_CIVIL,
+        'R.C' => self::DOC_REGISTRO_CIVIL,
+        'R.C.' => self::DOC_REGISTRO_CIVIL,
+        'REGISTRO CIVIL' => self::DOC_REGISTRO_CIVIL,
+        'SIN DOCUMENTO' => self::DOC_SIN_IDENTIFICACION,
+        'SIN' => self::DOC_SIN_IDENTIFICACION,
+        'SD' => self::DOC_SIN_IDENTIFICACION,
+        'S/D' => self::DOC_SIN_IDENTIFICACION,
+        'SIN IDENTIFICACION' => self::DOC_SIN_IDENTIFICACION,
+        'SIN IDENTIFICACIÓN' => self::DOC_SIN_IDENTIFICACION,
+        'NIS' => self::DOC_SIN_IDENTIFICACION,
+    ];
+}
