@@ -4,9 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
-use App\Models\Persona;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class ComplementariosSeeder extends Seeder
 {

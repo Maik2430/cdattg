@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\ComplementarioOfertado;
-use App\Models\Persona;
 use Illuminate\Database\Seeder;
 
 class ComplementariosAvanzadoSeeder extends Seeder
@@ -97,7 +96,7 @@ class ComplementariosAvanzadoSeeder extends Seeder
 
             AspiranteComplementario::factory()
                 ->count($cantidadAspirantes)
-                ->state(function () {
+                ->state(function (): array {
                     return ['estado' => rand(1, 3)]; // Estados variados
                 })
                 ->paraPrograma($programa)
@@ -133,7 +132,7 @@ class ComplementariosAvanzadoSeeder extends Seeder
                 
                 AspiranteComplementario::factory()
                     ->count($cantidadAgregar)
-                    ->state(function () {
+                    ->state(function (): array {
                         return ['estado' => rand(1, 2)]; // En proceso o completo
                     })
                     ->paraPrograma($programa)

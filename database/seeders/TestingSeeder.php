@@ -2,12 +2,19 @@
 
 namespace Database\Seeders;
 
+use App\Models\Parametro;
+use Carbon\Carbon;
+use App\Models\Sede;
+use App\Models\Ambiente;
+use App\Models\ParametroTema;
+use App\Models\FichaDiasFormacion;
+use App\Services\AsignacionInstructorService;
+use Exception;
+use App\Models\Persona;
 use App\Models\Aprendiz;
 use App\Models\Competencia;
 use App\Models\FichaCaracterizacion;
 use App\Models\Instructor;
-use App\Models\InstructorFichaCaracterizacion;
-use App\Models\InstructorFichaDias;
 use App\Models\ProgramaFormacion;
 use App\Models\RedConocimiento;
 use App\Models\Regional;
@@ -89,9 +96,9 @@ class TestingSeeder extends Seeder
         // Crear programas de formación
         $this->command->info('📘 Creando programas de formación...');
         $programasFormacion = [];
-        $nivelFormacionId = \App\Models\Parametro::whereIn('name', ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO'])
+        $nivelFormacionId = Parametro::whereIn('name', ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO'])
             ->inRandomOrder()
-            ->value('id') ?? \App\Models\Parametro::inRandomOrder()->value('id');
+            ->value('id') ?? Parametro::inRandomOrder()->value('id');
         
         $nombresProgramas = [
             'Tecnología en Desarrollo de Software',
@@ -233,7 +240,7 @@ class TestingSeeder extends Seeder
                 
                 // Validar fechas: fecha_inicio >= hace 2 años, fecha_fin > fecha_inicio
                 // No fines de semana, duración mínima de 30 días
-                $fechaInicio = \Carbon\Carbon::now()->subMonths(rand(0, 6));
+                $fechaInicio = Carbon::now()->subMonths(rand(0, 6));
                 // Asegurar que no sea fin de semana
                 while ($fechaInicio->isWeekend()) {
                     $fechaInicio->addDay();
@@ -248,7 +255,7 @@ class TestingSeeder extends Seeder
                 }
                 
                 // Asegurar que fecha_inicio >= hace 2 años
-                $fechaMinima = \Carbon\Carbon::now()->subYears(2);
+                $fechaMinima = Carbon::now()->subYears(2);
                 if ($fechaInicio->lt($fechaMinima)) {
                     $fechaInicio = clone $fechaMinima;
                     while ($fechaInicio->isWeekend()) {
@@ -261,12 +268,12 @@ class TestingSeeder extends Seeder
                 }
                 
                 // Obtener IDs válidos para relaciones
-                $sedeId = \App\Models\Sede::inRandomOrder()->value('id');
-                $ambienteId = \App\Models\Ambiente::inRandomOrder()->value('id');
-                $instructorId = \App\Models\Instructor::inRandomOrder()->value('id');
+                $sedeId = Sede::inRandomOrder()->value('id');
+                $ambienteId = Ambiente::inRandomOrder()->value('id');
+                $instructorId = Instructor::inRandomOrder()->value('id');
                 
                 // Obtener jornada desde parametros_temas del tema JORNADAS
-                $jornadaId = \App\Models\ParametroTema::whereHas('tema', function($q) {
+                $jornadaId = ParametroTema::whereHas('tema', function($q): void {
                     $q->where('name', 'LIKE', '%JORNADAS%');
                 })->inRandomOrder()->value('id');
                 
@@ -311,7 +318,7 @@ class TestingSeeder extends Seeder
                 $horaInicio = '08:00:00';
                 $horaFin = '12:00:00';
                 
-                \App\Models\FichaDiasFormacion::create([
+                FichaDiasFormacion::create([
                     'ficha_id' => $ficha->id,
                     'dia_id' => $diaId,
                     'hora_inicio' => $horaInicio,
@@ -332,7 +339,7 @@ class TestingSeeder extends Seeder
         // Asignar instructores a fichas usando el servicio con todas las validaciones
         $this->command->info('🔗 Asignando instructores a fichas (con validaciones)...');
         $asignacionesCreadas = 0;
-        $asignacionService = app(\App\Services\AsignacionInstructorService::class);
+        $asignacionService = app(AsignacionInstructorService::class);
         
         foreach ($fichas as $ficha) {
             // Recargar ficha con relaciones necesarias
@@ -365,8 +372,8 @@ class TestingSeeder extends Seeder
                 $diasSeleccionados = collect($diasFicha)->random(min(rand(3, count($diasFicha)), count($diasFicha)));
 
                 // Crear fechas dentro del rango de la ficha
-                $fechaInicioFicha = \Carbon\Carbon::parse($ficha->fecha_inicio);
-                $fechaFinFicha = \Carbon\Carbon::parse($ficha->fecha_fin);
+                $fechaInicioFicha = Carbon::parse($ficha->fecha_inicio);
+                $fechaFinFicha = Carbon::parse($ficha->fecha_fin);
                 
                 // Fecha inicio del instructor (dentro del rango de la ficha)
                 $diasDesdeInicio = rand(0, min(30, $fechaInicioFicha->diffInDays($fechaFinFicha)));
@@ -409,7 +416,7 @@ class TestingSeeder extends Seeder
                     } else {
                         $this->command->warn("⚠ No se pudieron asignar instructores a la ficha {$ficha->id}: " . $resultado['message']);
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->command->warn("⚠ Error al asignar instructores a la ficha {$ficha->id}: " . $e->getMessage());
                 }
             }
@@ -425,7 +432,7 @@ class TestingSeeder extends Seeder
             for ($k = 0; $k < $numAprendices; $k++) {
                 $contadorEmail++;
                 // Crear persona con email único
-                $persona = \App\Models\Persona::factory()->create([
+                $persona = Persona::factory()->create([
                     'email' => 'aprendiz' . $contadorEmail . '_' . time() . '_' . rand(1000, 9999) . '@example.com',
                 ]);
                 

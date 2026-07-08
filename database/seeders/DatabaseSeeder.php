@@ -2,30 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Ambiente;
-use App\Models\Aprendiz;
-use App\Models\AprendizFicha;
-use App\Models\Complementarios\AspiranteComplementario;
-use App\Models\ComplementarioOfertado;
-use App\Models\FichaCaracterizacion;
-use App\Models\FichaDiasFormacion;
-use App\Models\Instructor;
-use App\Models\InstructorFichaCaracterizacion;
-use App\Models\InstructorFichaDias;
-use App\Models\Inventario\Aprobacion;
-use App\Models\Inventario\ContratoConvenio;
-use App\Models\Inventario\DetalleOrden;
-use App\Models\Inventario\Orden;
-use App\Models\Inventario\Producto;
-use App\Models\Inventario\Proveedor;
-use App\Models\Parametro;
-use App\Models\ProgramaFormacion;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use App\Models\CompetenciaPrograma;
 
 class DatabaseSeeder extends Seeder
 {

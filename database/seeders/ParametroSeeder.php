@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Exception;
 use Illuminate\Database\Seeder;
 use App\Models\Parametro; // Asegúrate de usar la notación correcta
 use Database\Seeders\Concerns\TruncatesTables;
@@ -405,7 +406,7 @@ class ParametroSeeder extends Seeder
             // intentamos truncar, pero manejamos errores de foreign key gracefully
             try {
                 $this->truncateModel(Parametro::class);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Si falla por foreign key, simplemente continuamos
                 // RefreshDatabase ya limpiará todo al final del test
             }
