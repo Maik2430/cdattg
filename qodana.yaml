@@ -20,3 +20,8 @@ exclude:
       - public/build
       - database/seeders/MunicipioSeeder.php
       - database/seeders/AmbienteSeeder.php
+
+# Fase 3: bloquear CI si hay hallazgos Critical (regresión imposible tras Fase 1)
+failureConditions:
+  severityThresholds:
+    critical: 0
