@@ -36,12 +36,12 @@ class UpdateInstructorRequest extends FormRequest
             'jornadas.*' => 'required|exists:parametros_temas,id',
             'fecha_ingreso_sena' => 'nullable|date|before_or_equal:today',
             'status' => 'required|boolean',
-            
+
             // Experiencia
             'anos_experiencia' => 'nullable|integer|min:0|max:50',
             'experiencia_instructor_meses' => 'nullable|integer|min:0',
             'experiencia_laboral' => 'nullable|string|max:1000',
-            
+
             // Formación académica
             'nivel_academico_id' => 'nullable|integer|exists:parametros,id',
             'formacion_pedagogia' => 'nullable|string|max:500',
@@ -53,7 +53,7 @@ class UpdateInstructorRequest extends FormRequest
             'certificaciones_tecnicas.*' => 'nullable|string|max:255',
             'cursos_complementarios' => 'nullable|array',
             'cursos_complementarios.*' => 'nullable|string|max:255',
-            
+
             // Competencias y habilidades
             'areas_experticia' => 'nullable',
             'competencias_tic' => 'nullable',
@@ -62,11 +62,11 @@ class UpdateInstructorRequest extends FormRequest
             'idiomas.*.nivel' => 'nullable|string|in:básico,intermedio,avanzado,nativo',
             'modalidades' => 'nullable|array',
             'modalidades.*' => 'required|exists:parametros_temas,id',
-            
+
             // Especialidades
             'especialidades' => 'required|array|min:1',
             'especialidades.*' => 'required|exists:red_conocimientos,id',
-            
+
             // Información administrativa
             'numero_contrato' => 'nullable|string|max:100',
             'fecha_inicio_contrato' => 'nullable|date',

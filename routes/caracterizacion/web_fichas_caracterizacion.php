@@ -15,7 +15,7 @@ use App\Http\Controllers\FichaCaracterizacionController;
 
 // Rutas Resource para CRUD completo
 Route::middleware(['auth'])->group(function () {
-    
+
     // Rutas básicas de CRUD
     Route::resource('fichaCaracterizacion', FichaCaracterizacionController::class, [
         'names' => [
@@ -30,12 +30,12 @@ Route::middleware(['auth'])->group(function () {
     ]);
 
     // Rutas adicionales con middleware de permisos específicos
-    
+
     // Búsqueda y filtros
     Route::middleware('can:VER FICHA CARACTERIZACION')->group(function () {
         Route::get('/fichaCaracterizacion/search', [FichaCaracterizacionController::class, 'search'])
             ->name('fichaCaracterizacion.search');
-        
+
         Route::get('/fichaCaracterizacion/estadisticas', [FichaCaracterizacionController::class, 'getEstadisticasFichas'])
             ->name('fichaCaracterizacion.estadisticas');
     });
@@ -56,13 +56,13 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('can:EDITAR FICHA CARACTERIZACION')->group(function () {
         Route::get('/fichaCaracterizacion/{id}/instructores', [FichaCaracterizacionController::class, 'gestionarInstructores'])
             ->name('fichaCaracterizacion.gestionarInstructores');
-        
+
         Route::get('/fichaCaracterizacion/{id}/instructores-disponibles', [FichaCaracterizacionController::class, 'obtenerInstructoresDisponiblesParaFicha'])
             ->name('fichaCaracterizacion.instructoresDisponibles');
-        
+
         Route::post('/fichaCaracterizacion/{id}/instructores', [FichaCaracterizacionController::class, 'asignarInstructores'])
             ->name('fichaCaracterizacion.asignarInstructores');
-        
+
         Route::delete('/fichaCaracterizacion/{id}/instructores/{instructorId}', [FichaCaracterizacionController::class, 'desasignarInstructor'])
             ->name('fichaCaracterizacion.desasignarInstructor');
     });
@@ -71,13 +71,13 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('can:EDITAR FICHA CARACTERIZACION')->group(function () {
         Route::get('/fichaCaracterizacion/{id}/dias-formacion', [FichaCaracterizacionController::class, 'gestionarDiasFormacion'])
             ->name('fichaCaracterizacion.gestionarDiasFormacion');
-        
+
         Route::post('/fichaCaracterizacion/{id}/dias-formacion', [FichaCaracterizacionController::class, 'guardarDiasFormacion'])
             ->name('fichaCaracterizacion.guardarDiasFormacion');
-        
+
         Route::put('/fichaCaracterizacion/{id}/dias-formacion/{diaId}', [FichaCaracterizacionController::class, 'actualizarDiaFormacion'])
             ->name('fichaCaracterizacion.actualizarDiaFormacion');
-        
+
         Route::delete('/fichaCaracterizacion/{id}/dias-formacion/{diaId}', [FichaCaracterizacionController::class, 'eliminarDiaFormacion'])
             ->name('fichaCaracterizacion.eliminarDiaFormacion');
     });
@@ -86,10 +86,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('can:GESTIONAR APRENDICES FICHA')->group(function () {
         Route::get('/fichaCaracterizacion/{id}/gestionar-aprendices', [FichaCaracterizacionController::class, 'gestionarAprendices'])
             ->name('fichaCaracterizacion.gestionarAprendices');
-        
+
         Route::post('/fichaCaracterizacion/{id}/asignar-aprendices', [FichaCaracterizacionController::class, 'asignarAprendices'])
             ->name('fichaCaracterizacion.asignarAprendices');
-        
+
         Route::post('/fichaCaracterizacion/{id}/desasignar-aprendices', [FichaCaracterizacionController::class, 'desasignarAprendices'])
             ->name('fichaCaracterizacion.desasignarAprendices');
     });
@@ -99,20 +99,20 @@ Route::middleware(['auth'])->group(function () {
         // Consultas por criterios específicos
         Route::get('/fichas-por-jornada/{jornadaId}', [FichaCaracterizacionController::class, 'getFichasCaracterizacionPorJornada'])
             ->name('fichaCaracterizacion.porJornada');
-        
+
         Route::get('/fichas-por-programa/{programaId}', [FichaCaracterizacionController::class, 'getFichasCaracterizacionPorPrograma'])
             ->name('fichaCaracterizacion.porPrograma');
-        
+
         Route::get('/fichas-por-sede/{sedeId}', [FichaCaracterizacionController::class, 'getFichasCaracterizacionPorSede'])
             ->name('fichaCaracterizacion.porSede');
-        
+
         Route::get('/fichas-por-instructor/{instructorId}', [FichaCaracterizacionController::class, 'getFichasCaracterizacionPorInstructor'])
             ->name('fichaCaracterizacion.porInstructor');
-        
+
         // Estadísticas específicas
         Route::get('/fichaCaracterizacion/{id}/cantidad-aprendices', [FichaCaracterizacionController::class, 'getCantidadAprendicesPorFicha'])
             ->name('fichaCaracterizacion.cantidadAprendices');
-        
+
         Route::get('/fichaCaracterizacion/{id}/aprendices', [FichaCaracterizacionController::class, 'getAprendicesPorFicha'])
             ->name('fichaCaracterizacion.aprendices');
     });
@@ -121,7 +121,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('can:VER FICHA CARACTERIZACION')->group(function () {
         Route::get('/fichaCaracterizacion/{id}/reporte', [FichaCaracterizacionController::class, 'generarReporteFicha'])
             ->name('fichaCaracterizacion.reporte');
-        
+
         Route::get('/fichas-reporte', [FichaCaracterizacionController::class, 'generarReporteGeneral'])
             ->name('fichaCaracterizacion.reporteGeneral');
     });
@@ -130,10 +130,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['can:CREAR FICHA CARACTERIZACION', 'can:EDITAR FICHA CARACTERIZACION'])->group(function () {
         Route::get('/fichas-exportar', [FichaCaracterizacionController::class, 'exportarFichas'])
             ->name('fichaCaracterizacion.exportar');
-        
+
         Route::get('/fichas-plantilla-importacion', [FichaCaracterizacionController::class, 'descargarPlantillaImportacion'])
             ->name('fichaCaracterizacion.plantillaImportacion');
-        
+
         Route::post('/fichas-importar', [FichaCaracterizacionController::class, 'importarFichas'])
             ->name('fichaCaracterizacion.importar');
     });

@@ -213,7 +213,7 @@ class UpdateFichaCaracterizacionRequest extends FormRequest
                         $q->where('name', 'LIKE', '%JORNADA%');
                     })
                     ->first();
-                
+
                 if (!$jornadaParametroTema) {
                     $validator->errors()->add('jornada_id', 'La jornada seleccionada no pertenece al tema JORNADA.');
                 }

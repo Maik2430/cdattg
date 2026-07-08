@@ -13,22 +13,22 @@ route::middleware('can:VER FICHA CARACTERIZACION')->group(function () {
     Route::get('/fichaCaracterizacion/{id}/edit', [FichaCaracterizacionController::class, 'edit'])->name('ficha.edit');
     Route::post('/fichaCaracterizacion/{id}', [FichaCaracterizacionController::class, 'update'])->name('ficha.update');
     Route::delete('/fichaCaracterizacion/{id}', [FichaCaracterizacionController::class, 'destroy'])->name('ficha.destroy');
-    
+
     // Rutas para validaciones de negocio
     Route::post('/ficha/validar', [FichaCaracterizacionController::class, 'validarFicha'])->name('ficha.validar');
     Route::post('/ficha/validar-ambiente', [FichaCaracterizacionController::class, 'validarDisponibilidadAmbiente'])->name('ficha.validar.ambiente');
     Route::post('/ficha/validar-instructor', [FichaCaracterizacionController::class, 'validarDisponibilidadInstructor'])->name('ficha.validar.instructor');
     Route::get('/ficha/{id}/validar-eliminacion', [FichaCaracterizacionController::class, 'validarEliminacionFicha'])->name('ficha.validar.eliminacion');
     Route::get('/ficha/{id}/validar-edicion', [FichaCaracterizacionController::class, 'validarEdicionFicha'])->name('ficha.validar.edicion');
-    
+
     // Ruta para obtener ambientes por sede
     Route::get('/ficha/ambientes-por-sede/{sedeId}', [FichaCaracterizacionController::class, 'getAmbientesPorSede'])->name('ficha.ambientes.por.sede');
-    
+
     // Rutas para gestión de instructores
     Route::get('/fichaCaracterizacion/{id}/gestionar-instructores', [FichaCaracterizacionController::class, 'gestionarInstructores'])->name('fichaCaracterizacion.legacy.gestionarInstructores');
     Route::post('/fichaCaracterizacion/{id}/asignar-instructores', [FichaCaracterizacionController::class, 'asignarInstructores'])->name('fichaCaracterizacion.legacy.asignarInstructores');
     Route::post('/fichaCaracterizacion/{id}/desasignar-instructores', [FichaCaracterizacionController::class, 'desasignarInstructores'])->name('fichaCaracterizacion.legacy.desasignarInstructores');
-    
+
     // Rutas para gestión de días de formación de instructores en fichas
     Route::get('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/gestionar-dias', [FichaCaracterizacionController::class, 'gestionarDiasInstructor'])->name('fichaCaracterizacion.legacy.instructor.gestionarDias');
     Route::post('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/asignar-dias', [FichaCaracterizacionController::class, 'asignarDiasInstructor'])->name('fichaCaracterizacion.legacy.instructor.asignarDias');
@@ -38,12 +38,12 @@ route::middleware('can:VER FICHA CARACTERIZACION')->group(function () {
     Route::post('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/actualizar-competencias', [FichaCaracterizacionController::class, 'actualizarCompetenciasInstructor'])->name('fichaCaracterizacion.legacy.instructor.actualizarCompetencias');
     Route::post('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/actualizar-asignacion', [FichaCaracterizacionController::class, 'actualizarAsignacionInstructor'])->name('fichaCaracterizacion.legacy.instructor.actualizarAsignacion');
     Route::post('/fichaCaracterizacion/{fichaId}/instructor/{instructorFichaId}/preview-fechas', [FichaCaracterizacionController::class, 'previewFechasInstructor'])->name('fichaCaracterizacion.legacy.instructor.previewFechas');
-    
+
     // Rutas para gestión de días de formación
     Route::get('/fichaCaracterizacion/{id}/gestionar-dias-formacion', [FichaCaracterizacionController::class, 'gestionarDiasFormacion'])->name('fichaCaracterizacion.legacy.gestionarDiasFormacion');
     Route::post('/fichaCaracterizacion/{id}/agregar-dia-formacion', [FichaCaracterizacionController::class, 'agregarDiaFormacion'])->name('fichaCaracterizacion.legacy.agregarDiaFormacion');
     Route::delete('/fichaCaracterizacion/{id}/eliminar-dia-formacion/{diaId}', [FichaCaracterizacionController::class, 'eliminarDiaFormacion'])->name('fichaCaracterizacion.legacy.eliminarDiaFormacion');
-    
+
     // Rutas para gestión de aprendices
     Route::get('/fichaCaracterizacion/{id}/gestionar-aprendices', [FichaCaracterizacionController::class, 'gestionarAprendices'])->name('fichaCaracterizacion.legacy.gestionarAprendices');
     Route::post('/fichaCaracterizacion/{id}/asignar-aprendices', [FichaCaracterizacionController::class, 'asignarAprendices'])->name('fichaCaracterizacion.legacy.asignarAprendices');

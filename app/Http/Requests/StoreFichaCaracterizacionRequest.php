@@ -19,7 +19,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
         $user = $this->user();
         // Verificar ambos permisos por compatibilidad
         $canCreate = $user->can('CREAR FICHA CARACTERIZACION') || $user->can('CREAR FICHA DE CARACTERIZACION');
-        
+
         \Log::info('StoreFichaCaracterizacionRequest authorize', [
             'user_id' => $user->id,
             'user_roles' => $user->getRoleNames(),
@@ -287,7 +287,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                         $q->where('name', 'LIKE', '%JORNADA%');
                     })
                     ->first();
-                
+
                 if (!$jornadaParametroTema) {
                     $validator->errors()->add('jornada_id', 'La jornada seleccionada no pertenece al tema JORNADA.');
                 }
@@ -335,7 +335,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
             if ($this->fecha_inicio && $this->fecha_fin && $this->dias_formacion && is_array($this->dias_formacion)) {
                 $fechaInicio = \Carbon\Carbon::parse($this->fecha_inicio);
                 $fechaFin = \Carbon\Carbon::parse($this->fecha_fin);
-                
+
                 // Mapeo de IDs de días a días de la semana (0 = Domingo, 1 = Lunes, ..., 6 = Sábado)
                 $mapeoDias = [
                     12 => 1, // LUNES -> 1
@@ -346,7 +346,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     17 => 6, // SÁBADO -> 6
                     18 => 0  // DOMINGO -> 0
                 ];
-                
+
                 // Calcular qué días de la semana están en el rango
                 $diasEnRango = [];
                 $fechaActual = $fechaInicio->copy();
@@ -357,7 +357,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     }
                     $fechaActual->addDay();
                 }
-                
+
                 // Validar cada día seleccionado
                 $diasInvalidos = [];
                 foreach ($this->dias_formacion as $diaId) {
@@ -369,7 +369,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                         }
                     }
                 }
-                
+
                 if (!empty($diasInvalidos)) {
                     // Obtener nombres de los días inválidos
                     $nombresDias = [
@@ -384,7 +384,7 @@ class StoreFichaCaracterizacionRequest extends FormRequest
                     $nombresInvalidos = array_map(function($id) use ($nombresDias) {
                         return $nombresDias[$id] ?? "Día ID {$id}";
                     }, $diasInvalidos);
-                    
+
                     $validator->errors()->add(
                         'dias_formacion',
                         'Los días ' . implode(', ', $nombresInvalidos) . ' no están dentro del rango de fechas seleccionado (' . $fechaInicio->format('d/m/Y') . ' a ' . $fechaFin->format('d/m/Y') . ').'

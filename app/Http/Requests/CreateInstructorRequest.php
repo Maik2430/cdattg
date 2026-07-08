@@ -237,12 +237,12 @@ class CreateInstructorRequest extends FormRequest
                             $q->where('name', 'LIKE', '%JORNADA%');
                         })
                         ->first();
-                    
+
                     if (!$jornadaParametroTema) {
                         $jornadasInvalidas[] = $jornadaId;
                     }
                 }
-                
+
                 if (!empty($jornadasInvalidas)) {
                     $validator->errors()->add('jornadas', 'Una o más jornadas seleccionadas no pertenecen al tema JORNADA.');
                 }
