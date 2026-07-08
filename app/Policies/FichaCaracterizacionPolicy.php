@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\FichaCaracterizacion;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class FichaCaracterizacionPolicy
 {
@@ -347,10 +346,6 @@ class FichaCaracterizacionPolicy
 
     /**
      * Verifica si la ficha está asignada al instructor.
-     *
-     * @param User $user
-     * @param FichaCaracterizacion $fichaCaracterizacion
-     * @return bool
      */
     private function fichaAsignadaAInstructor(User $user, FichaCaracterizacion $fichaCaracterizacion): bool
     {

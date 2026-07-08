@@ -4,9 +4,6 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\GuiasAprendizaje;
-use App\Models\ResultadosAprendizaje;
-use App\Models\Evidencias;
-use Illuminate\Auth\Access\Response;
 
 class GuiaAprendizajePolicy
 {
@@ -442,10 +439,6 @@ class GuiaAprendizajePolicy
     /**
      * Verifica si el instructor puede ver la guía de aprendizaje.
      * Los instructores pueden ver guías relacionadas con sus competencias.
-     *
-     * @param User $user
-     * @param GuiasAprendizaje $guiaAprendizaje
-     * @return bool
      */
     private function instructorPuedeVerGuia(User $user, GuiasAprendizaje $guiaAprendizaje): bool
     {
@@ -470,10 +463,6 @@ class GuiaAprendizajePolicy
     /**
      * Verifica si el instructor puede editar la guía de aprendizaje.
      * Los instructores pueden editar guías que han creado o que están asignadas.
-     *
-     * @param User $user
-     * @param GuiasAprendizaje $guiaAprendizaje
-     * @return bool
      */
     private function instructorPuedeEditarGuia(User $user, GuiasAprendizaje $guiaAprendizaje): bool
     {

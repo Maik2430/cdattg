@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Instructor;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class InstructorPolicy
 {
@@ -742,10 +741,6 @@ class InstructorPolicy
 
     /**
      * Verifica si el usuario es el mismo instructor.
-     *
-     * @param User $user
-     * @param Instructor $instructor
-     * @return bool
      */
     private function esElMismoInstructor(User $user, Instructor $instructor): bool
     {
@@ -762,10 +757,6 @@ class InstructorPolicy
     /**
      * Verifica si el instructor puede ver otro instructor.
      * Los instructores pueden ver otros instructores de su regional.
-     *
-     * @param User $user
-     * @param Instructor $instructor
-     * @return bool
      */
     private function instructorPuedeVer(User $user, Instructor $instructor): bool
     {

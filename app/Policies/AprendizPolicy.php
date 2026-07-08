@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Aprendiz;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AprendizPolicy
 {
@@ -103,10 +102,6 @@ class AprendizPolicy
 
     /**
      * Verifica si el aprendiz pertenece a una ficha asignada al instructor.
-     *
-     * @param User $user
-     * @param Aprendiz $aprendiz
-     * @return bool
      */
     private function aprendizPerteneceAFichaDeInstructor(User $user, Aprendiz $aprendiz): bool
     {
@@ -131,11 +126,9 @@ class AprendizPolicy
         // Verificar si el aprendiz está en alguna de las fichas adicionales del instructor
         $fichasInstructor = $instructor->instructorFichas()->pluck('ficha_id');
 
-        $perteneceAFicha = $aprendiz->fichasCaracterizacion()
+        return $aprendiz->fichasCaracterizacion()
             ->whereIn('fichas_caracterizacion.id', $fichasInstructor)
             ->exists();
-
-        return $perteneceAFicha;
     }
 
     /**
