@@ -76,7 +76,8 @@
         "deptrac": "vendor/bin/deptrac analyse --no-progress",
         "rector:dry-run": "vendor/bin/rector process --dry-run",
         "rector:inventario": "vendor/bin/rector process app/Inventario",
-        "rector:complementarios": "vendor/bin/rector process app/Services/Complementarios app/Repositories/Complementarios app/Http/Controllers/Complementarios app/Models/Complementarios"
+        "rector:complementarios": "vendor/bin/rector process app/Services/Complementarios app/Repositories/Complementarios app/Http/Controllers/Complementarios app/Models/Complementarios",
+        "rector:asistencias": "vendor/bin/rector process app/Http/Controllers/AsistenceQrController.php app/Http/Controllers/RegistroAsistenciaController.php app/Http/Controllers/AsistenciaConsultaController.php app/Http/Controllers/AsistenciaAprendicesController.php app/Services/AsistenciaService.php app/Services/AsistenceQrService.php"
     },
     "extra": {
         "laravel": {

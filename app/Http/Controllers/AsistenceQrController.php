@@ -2,6 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Asistencia;
+use Exception;
+use DateTimeInterface;
+use Carbon\WeekDay;
+use Carbon\Month;
+use App\Models\RegistroActividades;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 use App\Models\InstructorFichaCaracterizacion;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -9,12 +20,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\AsistenciaAprendiz;
 use App\Models\ParametroTema;
 use App\Models\FichaCaracterizacion;
-use Herramientas;
 use Illuminate\Support\Facades\Log;
 use App\Models\Aprendiz;
 use App\Models\Persona;
-use App\Models\Instructor;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use App\Services\AsistenceQrService;
 use App\Events\NuevaAsistenciaRegistrada;
@@ -25,8 +33,8 @@ use App\Services\RegistroActividadesServices;
 class AsistenceQrController extends Controller
 {
 
-    protected $asistenceQrService;
-    protected $registroActividadesService;
+    protected AsistenceQrService $asistenceQrService;
+    protected RegistroActividadesServices $registroActividadesService;
 
     public function __construct(AsistenceQrService $asistenceQrService, RegistroActividadesServices $registroActividadesService)
     {
@@ -41,7 +49,7 @@ class AsistenceQrController extends Controller
      * Este método recupera todas las fichas de caracterización junto con su
      * relación 'programaFormacion' y las pasa a la vista 'fichas.index'.
      *
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse La vista que muestra la lista de fichas de caracterización o redirección con mensaje.
+     * @return View|RedirectResponse La vista que muestra la lista de fichas de caracterización o redirección con mensaje.
      */
     public function index()
     {
@@ -87,7 +95,7 @@ class AsistenceQrController extends Controller
      * Muestra la vista para seleccionar la caracterización.
      *
      * @param int $id El ID de la caracterización.
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse La vista de selección de caracterización o redirección de error.
+     * @return View|RedirectResponse La vista de selección de caracterización o redirección de error.
      */
     public function caracterSelected(InstructorFichaCaracterizacion $caracterizacion, $asistencia_id = null)
     {
@@ -108,7 +116,7 @@ class AsistenceQrController extends Controller
                 Log::info('Buscando asistencia activa para ficha_id: ' . $caracterizacion->ficha_id);
                 
                 // Buscar asistencia activa para esta ficha
-                $asistencia = \App\Models\Asistencia::deFicha($caracterizacion->ficha_id)
+                $asistencia = Asistencia::deFicha($caracterizacion->ficha_id)
                     ->activa()
                     ->first();
                 
@@ -118,7 +126,7 @@ class AsistenceQrController extends Controller
                     // No hay asistencia activa, crear una nueva
                     Log::info('Creando nueva evidencia y asistencia...');
                     
-                    $evidencia = \App\Models\Evidencias::create([
+                    $evidencia = Evidencias::create([
                         'nombre' => 'Evidencia por defecto',
                         'id_estado' => 1,
                         'fecha_evidencia' => now(),
@@ -128,7 +136,7 @@ class AsistenceQrController extends Controller
                     
                     Log::info('Evidencia creada: ' . $evidencia->id);
                     
-                    $asistencia = \App\Models\Asistencia::create([
+                    $asistencia = Asistencia::create([
                         'evidencia_id' => $evidencia->id,
                         'instructor_ficha_id' => $caracterizacion->ficha_id,
                         'fecha' => now()->toDateString(),
@@ -144,7 +152,7 @@ class AsistenceQrController extends Controller
                 }
             } else {
                 // Se proporcionó asistencia_id, buscar esa asistencia específica
-                $asistencia = \App\Models\Asistencia::find($asistencia_id);
+                $asistencia = Asistencia::find($asistencia_id);
                 
                 if (!$asistencia) {
                     return redirect()->back()->with('error', 'Asistencia no encontrada.');
@@ -194,7 +202,7 @@ class AsistenceQrController extends Controller
                 // 'rapActual' => $rapActual,
                 // 'actividades' => $actividades,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error en caracterSelected - ERROR COMPLETO:');
             Log::error('Mensaje: ' . $e->getMessage());
             Log::error('Archivo: ' . $e->getFile());
@@ -212,8 +220,8 @@ class AsistenceQrController extends Controller
     /**
      * Almacena la asistencia de los aprendices en la base de datos.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos de la asistencia.
-     * @return \Illuminate\Http\RedirectResponse Redirige a la ruta 'qr_asistence.index' con un mensaje de éxito o error.
+     * @param Request $request La solicitud HTTP que contiene los datos de la asistencia.
+     * @return RedirectResponse Redirige a la ruta 'qr_asistence.index' con un mensaje de éxito o error.
      */
     public function store(Request $request)
     {
@@ -224,7 +232,7 @@ class AsistenceQrController extends Controller
         }
 
         // Obtener la asistencia activa para esta ficha
-        $asistenciaActiva = \App\Models\Asistencia::deFicha($data['caracterizacion_id'])
+        $asistenciaActiva = Asistencia::deFicha($data['caracterizacion_id'])
             ->activa()
             ->first();
 
@@ -272,7 +280,7 @@ class AsistenceQrController extends Controller
      *
      * @param string $ficha El identificador de la ficha.
      * @param string $jornada El identificador de la jornada.
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View Redirige de vuelta con un mensaje de error o muestra la vista con la lista de asistencias.
+     * @return RedirectResponse|View Redirige de vuelta con un mensaje de error o muestra la vista con la lista de asistencias.
      */
     public function getAsistenceWebList (string $ficha, string $jornada) {
 
@@ -281,9 +289,9 @@ class AsistenceQrController extends Controller
         $fechaActual = Carbon::now()->format('Y-m-d');
 
         // Obtiene la jornada de formación basada en el identificador de jornada desde parametros_temas
-        $obJornada = ParametroTema::whereHas('tema', function($q) {
+        $obJornada = ParametroTema::whereHas('tema', function($q): void {
             $q->where('name', 'LIKE', '%JORNADAS%');
-        })->whereHas('parametro', function($query) use ($jornada) {
+        })->whereHas('parametro', function($query) use ($jornada): void {
             $query->where('name', $jornada);
         })->with('parametro')->first();
 
@@ -294,10 +302,10 @@ class AsistenceQrController extends Controller
         $m2F = 0;
 
         // Obtiene las asistencias de los aprendices para la ficha y jornada especificadas en la fecha actual
-        $asistencias = AsistenciaAprendiz::whereHas('caracterizacion', function ($query) use ($ficha, $jornada) {
-            $query->whereHas('ficha', function ($query) use ($ficha) {
+        $asistencias = AsistenciaAprendiz::whereHas('caracterizacion', function ($query) use ($ficha, $jornada): void {
+            $query->whereHas('ficha', function ($query) use ($ficha): void {
                 $query->where('ficha', $ficha);
-            })->whereHas('jornada', function ($query) use ($jornada) {
+            })->whereHas('jornada', function ($query) use ($jornada): void {
                 $query->where('jornada', $jornada);
             });
         })->whereDate('created_at', $fechaActual)->get();
@@ -327,7 +335,7 @@ class AsistenceQrController extends Controller
 
     ///***** METODOS QUE PERMITEN OBTENER LA LISTA DE ASISTENCIA POR HORARIO Y JORNADA    **** */
 
-    public function validateHour($ingreso, $jornada, $hora1, $min1, $hora2, $min2)
+    public function validateHour(DateTimeInterface|WeekDay|Month|string|int|float|null $ingreso, $jornada, $hora1, $min1, $hora2, $min2): bool
     {
         $horaInicio = Carbon::createFromTime($hora1, $min1 , 0);
         $horaFin = Carbon::createFromTime($hora2, $min2, 0);
@@ -354,7 +362,7 @@ class AsistenceQrController extends Controller
      * @param string $jornada La jornada a verificar.
      * @return bool Retorna true si la hora de ingreso está entre las 06:00 y las 13:10 y la jornada es "Mañana", de lo contrario retorna false.
      */
-    public function morning($ingreso, $jornada)
+    public function morning(DateTimeInterface|WeekDay|Month|string|int|float|null $ingreso, $jornada): bool
     {
         $horaInicio = Carbon::createFromTime(06, 00, 0);
         $horaFin = Carbon::createFromTime(13, 10, 0);
@@ -376,7 +384,7 @@ class AsistenceQrController extends Controller
      * @param string $jornada La jornada a verificar, debe ser 'Tarde'.
      * @return bool Retorna true si la hora de ingreso está entre las 13:00 y las 18:10 y la jornada es 'Tarde', de lo contrario retorna false.
      */
-    public function afternoon ($ingreso, $jornada){
+    public function afternoon (DateTimeInterface|WeekDay|Month|string|int|float|null $ingreso, $jornada): bool{
         $horaInicio = Carbon::createFromTime(13, 00, 0);
         $horaFin = Carbon::createFromTime(18, 10, 0);
         $morning = 'Tarde';
@@ -397,7 +405,7 @@ class AsistenceQrController extends Controller
      * @param string $jornada El tipo de jornada (debe ser 'Noche' para que coincida).
      * @return bool Retorna true si la hora de ingreso está entre las 17:50 y las 23:10 y la jornada es 'Noche', de lo contrario retorna false.
      */
-    public function night($ingreso, $jornada)
+    public function night(DateTimeInterface|WeekDay|Month|string|int|float|null $ingreso, $jornada): bool
     {
         $horaInicio = Carbon::createFromTime(17, 50, 0);
         $horaFin = Carbon::createFromTime(23, 10, 0);
@@ -415,8 +423,7 @@ class AsistenceQrController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function storeEvidencia(Request $request)
     {
@@ -438,7 +445,7 @@ class AsistenceQrController extends Controller
             $nombreFinal = $nombreOriginal;
             $contador = 1;
             
-            while (\App\Models\Evidencias::where('nombre', $nombreFinal)->exists()) {
+            while (Evidencias::where('nombre', $nombreFinal)->exists()) {
                 $nombreFinal = $nombreOriginal . ' ' . $contador;
                 $contador++;
             }
@@ -448,7 +455,7 @@ class AsistenceQrController extends Controller
             }
             
             // Crear la evidencia sin dependencias de competencias
-            $evidencia = \App\Models\Evidencias::create([
+            $evidencia = Evidencias::create([
                 'nombre' => $nombreFinal,
                 'id_estado' => 1, // Estado activo por defecto
                 'fecha_evidencia' => now(),
@@ -469,7 +476,7 @@ class AsistenceQrController extends Controller
             
             return response()->json($responseData);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error en storeEvidencia: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
             
@@ -483,7 +490,6 @@ class AsistenceQrController extends Controller
     }
 
     /*** METODOS PARA REDIRIGIR A FORMULARIO DE ENTRADA Y SALIDA DE LA ASISTENCIA WEB */
-
     /**
      * Redirige al aprendiz a la vista de salida de asistencia.
      *
@@ -495,7 +501,7 @@ class AsistenceQrController extends Controller
      * @param string $identificacion El número de identificación del aprendiz.
      * @param string $ingreso La hora de ingreso del aprendiz.
      * @param string $fecha La fecha de la asistencia en formato 'Y-m-d'.
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View Redirección con mensaje de error o vista de nueva salida de asistencia.
+     * @return RedirectResponse|View Redirección con mensaje de error o vista de nueva salida de asistencia.
      */
     public function redirectAprenticeExit (string $identificacion , string $ingreso , string $fecha) {
 
@@ -519,7 +525,7 @@ class AsistenceQrController extends Controller
      * @param string $identificacion Número de identificación del aprendiz.
      * @param string $ingreso Hora de ingreso del aprendiz.
      * @param string $fecha Fecha de la asistencia en formato 'Y-m-d'.
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return RedirectResponse|View
      *         Redirige de vuelta con un mensaje de error si no se encuentra la asistencia,
      *         o muestra la vista 'qr_asistence.newEntranceAsistence' con los datos de la asistencia.
      */
@@ -541,12 +547,11 @@ class AsistenceQrController extends Controller
 
 
     /**** METODOS PARA SALIDDA DE FORMACIÓN Y ACTUALIZACION DE NOVEDADES DE ENTRADA Y SALIDA */
-
     /**
      * Actualiza la hora de salida de las asistencias de un aprendiz para una fecha específica.
      *
      * @param string $caracterizacion_id El ID de la caracterización del aprendiz.
-     * @return \Illuminate\Http\RedirectResponse Redirige de vuelta con un mensaje de éxito o error.
+     * @return RedirectResponse Redirige de vuelta con un mensaje de éxito o error.
      *
      * Este método busca las asistencias del aprendiz para la fecha actual y actualiza la hora de salida
      * con la hora actual. Si no se encuentran asistencias, redirige de vuelta con un mensaje de error.
@@ -576,11 +581,11 @@ class AsistenceQrController extends Controller
     /**
      * Actualiza la hora de salida y la novedad de salida de un registro de asistencia existente.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos necesarios.
+     * @param Request $request La solicitud HTTP que contiene los datos necesarios.
      *
-     * @return \Illuminate\Http\RedirectResponse Redirige de vuelta con un mensaje de éxito.
+     * @return RedirectResponse Redirige de vuelta con un mensaje de éxito.
      *
-     * @throws \Illuminate\Validation\ValidationException Si la validación de los datos falla.
+     * @throws ValidationException Si la validación de los datos falla.
      *
      * Validación de los datos de entrada:
      * - 'identificacion': Requerido, cadena de texto, máximo 255 caracteres.
@@ -622,10 +627,10 @@ class AsistenceQrController extends Controller
     /**
      * Establece una nueva novedad de entrada para la asistencia web.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos de la novedad de entrada.
-     * @return \Illuminate\Http\RedirectResponse Redirige de vuelta con un mensaje de éxito.
+     * @param Request $request La solicitud HTTP que contiene los datos de la novedad de entrada.
+     * @return RedirectResponse Redirige de vuelta con un mensaje de éxito.
      *
-     * @throws \Illuminate\Validation\ValidationException Si la validación de los datos de la solicitud falla.
+     * @throws ValidationException Si la validación de los datos de la solicitud falla.
      *
      * Validación de la solicitud:
      * - 'identificacion': requerido, cadena de texto, máximo 255 caracteres.
@@ -663,8 +668,7 @@ class AsistenceQrController extends Controller
      * y si ya tiene asistencia de entrada registrada para el día actual.
      * Si no tiene, registra la asistencia de entrada.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function verifyDocument(Request $request)
     {
@@ -758,7 +762,7 @@ class AsistenceQrController extends Controller
             Log::info('Validación de ficha omitida - permitiendo registro de asistencia');
             
             // Buscar el aprendiz correcto que pertenece a esta ficha usando el mismo documento
-            $aprendizCorrecto = \App\Models\Aprendiz::whereHas('persona', function($query) use ($numeroDocumento) {
+            $aprendizCorrecto = Aprendiz::whereHas('persona', function($query) use ($numeroDocumento): void {
                 $query->where('numero_documento', $numeroDocumento);
             })->where('ficha_caracterizacion_id', $fichaId)->first();
             
@@ -771,7 +775,7 @@ class AsistenceQrController extends Controller
             }
 
             // 6. Obtener la sesión activa (Asistencia) para esta ficha y usarla como origen de verdad
-            $asistenciaActiva = \App\Models\Asistencia::deFicha($fichaId)
+            $asistenciaActiva = Asistencia::deFicha($fichaId)
                 ->activa()
                 ->first();
 
@@ -895,7 +899,7 @@ class AsistenceQrController extends Controller
             
             return response()->json($responseData, 201);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error al verificar o registrar asistencia QR: ' . $e->getMessage());
             return response()->json([
@@ -908,8 +912,7 @@ class AsistenceQrController extends Controller
     /**
      * Obtiene la próxima clase para una ficha específica
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getProximaClase(Request $request)
     {
@@ -968,7 +971,7 @@ class AsistenceQrController extends Controller
                 ]
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al obtener próxima clase: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
@@ -981,7 +984,7 @@ class AsistenceQrController extends Controller
      * Obtiene la próxima clase para una ficha específica (versión web)
      *
      * @param int $fichaId
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getProximaClaseWeb($fichaId)
     {
@@ -1019,7 +1022,7 @@ class AsistenceQrController extends Controller
                 'clase_actual' => $claseActual
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al obtener próxima clase web: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
@@ -1031,8 +1034,7 @@ class AsistenceQrController extends Controller
         /**
      * Agrega una nueva actividad a la ficha de caracterización.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function agregar_actividad(Request $request)
     {
@@ -1046,7 +1048,7 @@ class AsistenceQrController extends Controller
 
         try {
             // Crear la actividad (suponiendo que existe el modelo Actividad y la relación)
-            $actividad = new \App\Models\RegistroActividades();
+            $actividad = new RegistroActividades();
             $actividad->ficha_id = $request->input('ficha_id');
             $actividad->titulo = $request->input('titulo');
             $actividad->descripcion = $request->input('descripcion');
@@ -1059,7 +1061,7 @@ class AsistenceQrController extends Controller
                 'actividad' => $actividad
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al agregar actividad: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
@@ -1071,8 +1073,7 @@ class AsistenceQrController extends Controller
     /**
      * Guarda un mensaje de alerta en la sesión de Laravel
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function setSessionAlert(Request $request)
     {
@@ -1093,7 +1094,7 @@ class AsistenceQrController extends Controller
                 'message' => 'Alerta guardada en sesión'
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al guardar alerta en sesión: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
@@ -1105,8 +1106,7 @@ class AsistenceQrController extends Controller
     /**
      * Registra asistencia para múltiples aprendices seleccionados
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function registrarAsistenciaSeleccionados(Request $request)
     {
@@ -1133,7 +1133,7 @@ class AsistenceQrController extends Controller
             Log::info('Documento manual: ' . $documentoManual);
 
             // Obtener la asistencia activa
-            $asistencia = \App\Models\Asistencia::find($asistenciaId);
+            $asistencia = Asistencia::find($asistenciaId);
             if (!$asistencia) {
                 return response()->json([
                     'status' => 'error',
@@ -1150,14 +1150,14 @@ class AsistenceQrController extends Controller
                 $aprendizId = $aprendizData['aprendiz_id'];
                 
                 try {
-                    $aprendiz = \App\Models\Aprendiz::find($aprendizId);
+                    $aprendiz = Aprendiz::find($aprendizId);
                     if (!$aprendiz) {
                         $errores[] = "Aprendiz ID {$aprendizId} no encontrado";
                         continue;
                     }
 
                     // Verificar si ya tiene asistencia hoy
-                    $asistenciaExistente = \App\Models\AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
+                    $asistenciaExistente = AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
                         ->where('aprendiz_ficha_id', $aprendizId)
                         ->first();
 
@@ -1182,7 +1182,7 @@ class AsistenceQrController extends Controller
                         }
                     } else {
                         // No tiene asistencia, crear registro de entrada
-                        $nuevaAsistencia = \App\Models\AsistenciaAprendiz::create([
+                        $nuevaAsistencia = AsistenciaAprendiz::create([
                             'asistencia_id' => $asistenciaId,
                             'instructor_ficha_id' => $asistencia->instructor_ficha_id,
                             'aprendiz_ficha_id' => $aprendizId,
@@ -1200,7 +1200,7 @@ class AsistenceQrController extends Controller
                         ];
                     }
 
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Error registrando asistencia para aprendiz ID ' . $aprendizId . ': ' . $e->getMessage());
                     $errores[] = "Error al registrar asistencia para aprendiz ID {$aprendizId}";
                 }
@@ -1210,15 +1210,15 @@ class AsistenceQrController extends Controller
             if ($documentoManual) {
                 try {
                     // Buscar aprendiz por documento
-                    $persona = \App\Models\Persona::where('numero_documento', $documentoManual)->first();
+                    $persona = Persona::where('numero_documento', $documentoManual)->first();
                     if ($persona) {
-                        $aprendiz = \App\Models\Aprendiz::where('persona_id', $persona->id)
+                        $aprendiz = Aprendiz::where('persona_id', $persona->id)
                             ->where('ficha_caracterizacion_id', $fichaId)
                             ->first();
 
                         if ($aprendiz) {
                             // Verificar si ya tiene asistencia
-                            $asistenciaExistente = \App\Models\AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
+                            $asistenciaExistente = AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
                                 ->where('aprendiz_ficha_id', $aprendiz->id)
                                 ->first();
 
@@ -1236,7 +1236,7 @@ class AsistenceQrController extends Controller
                                 }
                             } else {
                                 // No tiene asistencia, crear registro de entrada
-                                \App\Models\AsistenciaAprendiz::create([
+                                AsistenciaAprendiz::create([
                                     'asistencia_id' => $asistenciaId,
                                     'instructor_ficha_id' => $asistencia->instructor_ficha_id,
                                     'aprendiz_ficha_id' => $aprendiz->id,
@@ -1253,7 +1253,7 @@ class AsistenceQrController extends Controller
                     } else {
                         $errores[] = "No se encontró persona con documento {$documentoManual}";
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Error registrando asistencia manual para documento ' . $documentoManual . ': ' . $e->getMessage());
                     $errores[] = "Error al registrar asistencia manual para documento {$documentoManual}";
                 }
@@ -1272,7 +1272,7 @@ class AsistenceQrController extends Controller
                 'aprendices_actualizados' => $aprendicesActualizados
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error general en registrarAsistenciaSeleccionados: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
@@ -1284,8 +1284,7 @@ class AsistenceQrController extends Controller
     /**
      * Finaliza la asistencia del día, genera PDF y bloquea hasta el día siguiente
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function finalizar_asistencia(Request $request)
     {
@@ -1312,7 +1311,7 @@ class AsistenceQrController extends Controller
             Log::info('Observaciones aprendices: ' . json_encode($observacionesAprendices));
             
             // Obtener la asistencia
-            $asistencia = \App\Models\Asistencia::find($asistenciaId);
+            $asistencia = Asistencia::find($asistenciaId);
             
             if (!$asistencia) {
                 return response()->json([
@@ -1329,10 +1328,10 @@ class AsistenceQrController extends Controller
             
             // Guardar observaciones de aprendices
             foreach ($observacionesAprendices as $aprendizId => $obsText) {
-                $aprendiz = \App\Models\Aprendiz::find($aprendizId);
+                $aprendiz = Aprendiz::find($aprendizId);
                 if ($aprendiz) {
                     // Buscar si ya existe registro de asistencia para este aprendiz
-                    $asistenciaAprendiz = \App\Models\AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
+                    $asistenciaAprendiz = AsistenciaAprendiz::where('asistencia_id', $asistenciaId)
                         ->where('aprendiz_ficha_id', $aprendizId)
                         ->first();
                     
@@ -1342,7 +1341,7 @@ class AsistenceQrController extends Controller
                         $asistenciaAprendiz->save();
                     } else {
                         // Crear nuevo registro si no existe
-                        \App\Models\AsistenciaAprendiz::create([
+                        AsistenciaAprendiz::create([
                             'asistencia_id' => $asistenciaId,
                             'instructor_ficha_id' => $asistencia->instructor_ficha_id,
                             'aprendiz_ficha_id' => $aprendizId,
@@ -1360,7 +1359,7 @@ class AsistenceQrController extends Controller
             $asistencia->finalizar();
             
             // Obtener datos de la ficha
-            $fichaCaracterizacion = \App\Models\FichaCaracterizacion::with([
+            $fichaCaracterizacion = FichaCaracterizacion::with([
                 'programaFormacion',
                 'ambiente.piso.bloque.sede',
                 'jornadaFormacion',
@@ -1375,7 +1374,7 @@ class AsistenceQrController extends Controller
             }
             
             // Obtener instructor
-            $caracterizacion = \App\Models\InstructorFichaCaracterizacion::with([
+            $caracterizacion = InstructorFichaCaracterizacion::with([
                 'instructor.persona'
             ])->find($caracterizacionId);
             
@@ -1383,12 +1382,12 @@ class AsistenceQrController extends Controller
             $evidencia = $asistencia->evidencia;
             
             // Obtener todos los aprendices de la ficha
-            $todosLosAprendices = \App\Models\Aprendiz::with('persona')
+            $todosLosAprendices = Aprendiz::with('persona')
                 ->where('ficha_caracterizacion_id', $fichaId)
                 ->get();
             
             // Obtener aprendices con asistencia de esta sesión (usando asistencia_id)
-            $aprendicesConAsistencia = \App\Models\AsistenciaAprendiz::with('aprendiz.persona')
+            $aprendicesConAsistencia = AsistenciaAprendiz::with('aprendiz.persona')
                 ->where('asistencia_id', $asistenciaId) // Cambiado de evidencia_id a asistencia_id
                 ->get();
             
@@ -1406,13 +1405,13 @@ class AsistenceQrController extends Controller
                 Log::info('Aprendiz ID: ' . $aprendiz->id . ', Nombre: ' . $aprendiz->persona->getNombreCompletoAttribute());
             }
             
-            $asistieron = $todosLosAprendices->filter(function($aprendiz) use ($aprendicesQueAsistieron) {
+            $asistieron = $todosLosAprendices->filter(function($aprendiz) use ($aprendicesQueAsistieron): bool {
                 $asistio = in_array($aprendiz->id, $aprendicesQueAsistieron);
                 Log::info('Aprendiz ' . $aprendiz->id . ' (' . $aprendiz->persona->getNombreCompletoAttribute() . ') asistió: ' . ($asistio ? 'SÍ' : 'NO'));
                 return $asistio;
             });
             
-            $noAsistieron = $todosLosAprendices->filter(function($aprendiz) use ($aprendicesQueAsistieron) {
+            $noAsistieron = $todosLosAprendices->filter(function($aprendiz) use ($aprendicesQueAsistieron): bool {
                 return !in_array($aprendiz->id, $aprendicesQueAsistieron);
             });
             
@@ -1446,7 +1445,7 @@ class AsistenceQrController extends Controller
                 'redirect_url' => route('asistence.web')
             ]);
             
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al finalizar asistencia: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
@@ -1472,7 +1471,7 @@ class AsistenceQrController extends Controller
             }
             
             // Generar PDF (usando DOMPDF)
-            $pdf = \Barryvdh\DomPDF\Facade\PDF::loadView('pdf.asistencia_reporte', [
+            $pdf = Pdf::loadView('pdf.asistencia_reporte', [
                 'fichaCaracterizacion' => $fichaCaracterizacion,
                 'caracterizacion' => $caracterizacion,
                 'evidencia' => $evidencia,
@@ -1492,7 +1491,7 @@ class AsistenceQrController extends Controller
                 'filename' => $nombreArchivo
             ];
             
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al generar PDF: ' . $e->getMessage());
             throw $e;
         }
@@ -1504,7 +1503,7 @@ class AsistenceQrController extends Controller
             Evidencias::terminarActividad($request->input('evidencia_id'));
             $caracterizacion = InstructorFichaCaracterizacion::findOrFail($request->input('caracterizacion'));
             return redirect()->route('registro-actividades.index', $caracterizacion)->with('success', 'Actividad terminada correctamente.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al terminar actividad: ' . $e->getMessage());
             return redirect()->back()->with('error', 'No se pudo terminar la actividad.');
         }

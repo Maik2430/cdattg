@@ -2,6 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\FichaCaracterizacion;
+use Carbon\Carbon;
+use App\Models\InstructorFichaCaracterizacion;
+use App\Models\Aprendiz;
+use App\Models\AsistenciaAprendiz;
 use App\Repositories\InstructorFichaCaracterizacionRepository;
 use App\Repositories\InstructorRepository;
 use App\Repositories\PersonaRepository;
@@ -11,10 +16,10 @@ use Illuminate\Support\Facades\Log;
 class AsistenceQrService
 {
 
-    protected $instructorFichaCaracterizacionRepository;
-    protected $instructorRepository;
-    protected $personaRepository;
-    protected $parametroRepository;
+    protected InstructorFichaCaracterizacionRepository $instructorFichaCaracterizacionRepository;
+    protected InstructorRepository $instructorRepository;
+    protected PersonaRepository $personaRepository;
+    protected ParametroRepository $parametroRepository;
 
     public function __construct(
         InstructorFichaCaracterizacionRepository $instructorFichaCaracterizacionRepository,
@@ -74,9 +79,7 @@ class AsistenceQrService
     /**
      * Obtiene datos de caracterización con aprendices y horarios
      *
-     * @param int $caracterizacionId
      * @param mixed $user
-     * @return array
      */
     public function obtenerDatosCaracterizacion(int $caracterizacionId, $user, ?int $asistenciaId = null): array
     {
@@ -85,7 +88,7 @@ class AsistenceQrService
         Log::info('User ID: ' . ($user ? $user->id : 'NULL'));
         Log::info('Asistencia ID (filtro tabla): ' . ($asistenciaId ?? 'NULL'));
         
-        $fichaCaracterizacion = \App\Models\FichaCaracterizacion::with([
+        $fichaCaracterizacion = FichaCaracterizacion::with([
             'diasFormacion.dia',
             'programaFormacion',
             'instructor.persona',
@@ -120,8 +123,8 @@ class AsistenceQrService
                 ->first();
 
             if ($horarioHoy) {
-                $horarioHoy->hora_inicio = \Carbon\Carbon::parse($horarioHoy->hora_inicio)->format('h:i A');
-                $horarioHoy->hora_fin = \Carbon\Carbon::parse($horarioHoy->hora_fin)->format('h:i A');
+                $horarioHoy->hora_inicio = Carbon::parse($horarioHoy->hora_inicio)->format('h:i A');
+                $horarioHoy->hora_fin = Carbon::parse($horarioHoy->hora_fin)->format('h:i A');
             }
         }
 
@@ -129,7 +132,7 @@ class AsistenceQrService
         $instructorFichaId = null;
         if ($user && $user->persona && $user->persona->instructor) {
             $instructor = $user->persona->instructor;
-            $instructorFicha = \App\Models\InstructorFichaCaracterizacion::where('instructor_id', $instructor->id)
+            $instructorFicha = InstructorFichaCaracterizacion::where('instructor_id', $instructor->id)
                 ->where('ficha_id', $fichaCaracterizacion->id)
                 ->first();
             if ($instructorFicha) {
@@ -139,7 +142,7 @@ class AsistenceQrService
 
         // Obtener aprendices con asistencias
         Log::info('Obteniendo aprendices de la ficha: ' . $fichaCaracterizacion->id);
-        $aprendicesFicha = \App\Models\Aprendiz::where('ficha_caracterizacion_id', $fichaCaracterizacion->id)->get();
+        $aprendicesFicha = Aprendiz::where('ficha_caracterizacion_id', $fichaCaracterizacion->id)->get();
         Log::info('Cantidad de aprendices encontrados: ' . $aprendicesFicha->count());
         
         foreach ($aprendicesFicha as $index => $aprendiz) {
@@ -147,7 +150,7 @@ class AsistenceQrService
         }
         
         $aprendizPersonaConAsistencia = collect();
-        $fechaActual = \Carbon\Carbon::now()->format('Y-m-d');
+        $fechaActual = Carbon::now()->format('Y-m-d');
 
         foreach ($aprendicesFicha as $aprendiz) {
             if ($aprendiz && $aprendiz->persona) {
@@ -155,7 +158,7 @@ class AsistenceQrService
 
                 $asistenciaHoy = null;
                 if ($instructorFichaId) {
-                    $query = \App\Models\AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendiz->id)
+                    $query = AsistenciaAprendiz::where('aprendiz_ficha_id', $aprendiz->id)
                         ->where('instructor_ficha_id', $instructorFichaId);
 
                     if ($asistenciaId) {
@@ -171,9 +174,9 @@ class AsistenceQrService
                 $persona->aprendiz_id = $aprendiz->id; // Agregar el ID del aprendiz
 
                 if ($persona->asistenciaHoy) {
-                    $persona->asistenciaHoy->formatted_hora_ingreso = \Carbon\Carbon::parse($persona->asistenciaHoy->hora_ingreso)->format('h:i A');
+                    $persona->asistenciaHoy->formatted_hora_ingreso = Carbon::parse($persona->asistenciaHoy->hora_ingreso)->format('h:i A');
                     $persona->asistenciaHoy->formatted_hora_salida = $persona->asistenciaHoy->hora_salida
-                        ? \Carbon\Carbon::parse($persona->asistenciaHoy->hora_salida)->format('h:i A')
+                        ? Carbon::parse($persona->asistenciaHoy->hora_salida)->format('h:i A')
                         : null;
                 }
 

@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 use App\Services\AsistenciaService;
 use App\Services\JornadaValidationService;
 use App\Models\FichaCaracterizacion;
@@ -33,7 +37,7 @@ class AsistenciaAprendicesController extends Controller
      *
      * @return \Illuminate\View\View La vista 'asistencias.index' con las fichas de caracterización.
      */
-    public function index (){
+    public function index (): Factory|View{
         $fichas = FichaCaracterizacion::select('id', 'ficha')->get();
         return view('asistencias.index', compact('fichas'));
     }
@@ -41,10 +45,10 @@ class AsistenciaAprendicesController extends Controller
     /**
      * Obtiene las asistencias de los aprendices por ficha.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene el ID de la ficha.
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View Una respuesta JSON con un mensaje de error o una vista con las asistencias encontradas.
+     * @param Request $request La solicitud HTTP que contiene el ID de la ficha.
+     * @return JsonResponse|\Illuminate\View\View Una respuesta JSON con un mensaje de error o una vista con las asistencias encontradas.
      *
-     * @throws \Exception Si ocurre un error al obtener las asistencias.
+     * @throws Exception Si ocurre un error al obtener las asistencias.
      */
     public function getAttendanceByFicha (Request $request){
         try {
@@ -70,10 +74,8 @@ class AsistenciaAprendicesController extends Controller
     /**
      * Retrieve attendance records by date range and ficha.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * @return JsonResponse|\Illuminate\View\View
+     * @throws ValidationException
      *
      * This method expects the following input parameters:
      * - 'ficha': The ID of the ficha (required).
@@ -113,11 +115,11 @@ class AsistenciaAprendicesController extends Controller
     /**
      * Obtiene los documentos asociados a una ficha específica.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene el ID de la ficha.
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View Una respuesta JSON con los documentos encontrados o un mensaje de error,
+     * @param Request $request La solicitud HTTP que contiene el ID de la ficha.
+     * @return JsonResponse|\Illuminate\View\View Una respuesta JSON con los documentos encontrados o un mensaje de error,
      *         o una vista con los documentos si se encuentran.
      *
-     * @throws \Exception Si ocurre un error al obtener los documentos.
+     * @throws Exception Si ocurre un error al obtener los documentos.
      */
     public function getDocumentsByFicha(Request $request)
     {
@@ -144,8 +146,8 @@ class AsistenciaAprendicesController extends Controller
     /**
      * Obtiene las asistencias de un aprendiz por su número de documento.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene el número de documento.
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View Una respuesta JSON con un mensaje de error o una vista con las asistencias encontradas.
+     * @param Request $request La solicitud HTTP que contiene el número de documento.
+     * @return JsonResponse|\Illuminate\View\View Una respuesta JSON con un mensaje de error o una vista con las asistencias encontradas.
      */
     public function getAttendanceByDocument(Request $request){
         $document = $request->input('documento');
@@ -176,8 +178,8 @@ class AsistenciaAprendicesController extends Controller
      * Si se proporciona una lista de asistencias, se guarda cada una de ellas. Si se proporciona una sola asistencia, se guarda individualmente.
      * En caso de datos incompletos, se devuelve una respuesta con un mensaje de error.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos de asistencia.
-     * @return \Illuminate\Http\JsonResponse La respuesta JSON con un mensaje de éxito o error.
+     * @param Request $request La solicitud HTTP que contiene los datos de asistencia.
+     * @return JsonResponse La respuesta JSON con un mensaje de éxito o error.
      */
     public function store(Request $request)
     {
@@ -212,11 +214,11 @@ class AsistenciaAprendicesController extends Controller
     /**
      * Actualiza la hora de salida de las asistencias de los aprendices.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos necesarios para la actualización.
+     * @param Request $request La solicitud HTTP que contiene los datos necesarios para la actualización.
      *
-     * @return \Illuminate\Http\JsonResponse La respuesta JSON con un mensaje de éxito o error.
+     * @return JsonResponse La respuesta JSON con un mensaje de éxito o error.
      *
-     * @throws \Illuminate\Validation\ValidationException Si los datos proporcionados son incompletos.
+     * @throws ValidationException Si los datos proporcionados son incompletos.
      *
      * Datos esperados en la solicitud:
      * - caracterizacion_id: ID de la caracterización del aprendiz.
@@ -258,11 +260,11 @@ class AsistenciaAprendicesController extends Controller
     /**
      * Maneja la solicitud de novedad de asistencia de aprendices.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos de la novedad.
+     * @param Request $request La solicitud HTTP que contiene los datos de la novedad.
      *
-     * @return \Illuminate\Http\JsonResponse La respuesta JSON con el mensaje correspondiente y el código de estado HTTP.
+     * @return JsonResponse La respuesta JSON con el mensaje correspondiente y el código de estado HTTP.
      *
-     * @throws \Illuminate\Validation\ValidationException Si los datos de la solicitud están incompletos.
+     * @throws ValidationException Si los datos de la solicitud están incompletos.
      *
      * Este método verifica si la solicitud contiene los campos necesarios: 'caracterizacion_id', 'numero_identificacion', 'hora_entrada' y 'novedad'.
      * Si alguno de estos campos falta, devuelve una respuesta JSON con un mensaje de error y un código de estado 400.
@@ -308,7 +310,7 @@ class AsistenciaAprendicesController extends Controller
      *
      * @param string $ficha El ID de la ficha.
      * @param string $jornada La jornada de formación.
-     * @return \Illuminate\Http\JsonResponse Una respuesta JSON con las asistencias encontradas o un mensaje de error.
+     * @return JsonResponse Una respuesta JSON con las asistencias encontradas o un mensaje de error.
      */
     public function getList(String $ficha, String $jornada)
     {
@@ -317,9 +319,9 @@ class AsistenciaAprendicesController extends Controller
         $fechaActual = Carbon::now()->format('Y-m-d');
 
         // Obtiene la jornada de formación correspondiente desde parametros_temas
-        $obJornada = ParametroTema::whereHas('tema', function($q) {
+        $obJornada = ParametroTema::whereHas('tema', function($q): void {
             $q->where('name', 'LIKE', '%JORNADAS%');
-        })->whereHas('parametro', function($query) use ($jornada) {
+        })->whereHas('parametro', function($query) use ($jornada): void {
             $query->where('name', $jornada);
         })->with('parametro')->first();
 
@@ -332,10 +334,10 @@ class AsistenciaAprendicesController extends Controller
         $m2Fin = Carbon::parse($obJornada->hora_fin)->format('i');
 
         // Obtiene las asistencias para la ficha y jornada especificadas en la fecha actual
-        $asistencias = AsistenciaAprendiz::whereHas('caracterizacion', function ($query) use ($ficha, $jornada) {
-            $query->whereHas('ficha', function ($query) use ($ficha) {
+        $asistencias = AsistenciaAprendiz::whereHas('caracterizacion', function ($query) use ($ficha, $jornada): void {
+            $query->whereHas('ficha', function ($query) use ($ficha): void {
                 $query->where('ficha', $ficha);
-            })->whereHas('jornada', function ($query) use ($jornada) {
+            })->whereHas('jornada', function ($query) use ($jornada): void {
                 $query->where('jornada', $jornada);
             });
         })->whereDate('created_at', $fechaActual)->get();
@@ -359,16 +361,13 @@ class AsistenciaAprendicesController extends Controller
      * Ahora se usa JornadaValidationService->validarHorarioJornada()
      * Configuración en config/jornadas.php
      */
-
-
     /***********Metodos para actulizar novedades de estrada y salida**************/
-
     /**
      * Actualiza la hora de salida y la novedad de salida de la asistencia de un aprendiz.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos necesarios para actualizar la asistencia.
+     * @param Request $request La solicitud HTTP que contiene los datos necesarios para actualizar la asistencia.
      *
-     * @return \Illuminate\Http\JsonResponse Una respuesta JSON con un mensaje indicando el resultado de la operación.
+     * @return JsonResponse Una respuesta JSON con un mensaje indicando el resultado de la operación.
      *
      * Este método realiza las siguientes acciones:
      * - Obtiene la fecha y hora actual.
@@ -378,7 +377,7 @@ class AsistenciaAprendicesController extends Controller
      * - Si se cumplen las condiciones, actualiza la novedad de salida y la hora de salida de la asistencia y guarda los cambios.
      * - Si no se encuentra la asistencia, devuelve una respuesta JSON con un mensaje de error.
      *
-     * @throws \Exception Si ocurre un error al procesar la solicitud.
+     * @throws Exception Si ocurre un error al procesar la solicitud.
      */
     public function updateExitAsistence(Request $request){
         try {
@@ -417,8 +416,8 @@ class AsistenciaAprendicesController extends Controller
     /**
      * Actualiza la novedad de entrada de la asistencia de un aprendiz.
      *
-     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos de la asistencia.
-     * @return \Illuminate\Http\JsonResponse Una respuesta JSON con un mensaje de éxito o error.
+     * @param Request $request La solicitud HTTP que contiene los datos de la asistencia.
+     * @return JsonResponse Una respuesta JSON con un mensaje de éxito o error.
      *
      * Este método realiza las siguientes acciones:
      * - Obtiene la fecha y hora actual.
@@ -432,7 +431,7 @@ class AsistenciaAprendicesController extends Controller
      * - Devuelve una respuesta JSON con un mensaje de éxito.
      * - Si no se encuentra la asistencia, devuelve una respuesta JSON con un mensaje de error.
      *
-     * @throws \Exception Si ocurre un error al procesar la solicitud.
+     * @throws Exception Si ocurre un error al procesar la solicitud.
      */
     public function updateEntraceAsistence (Request $request){
         try {

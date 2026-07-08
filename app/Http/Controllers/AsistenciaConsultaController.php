@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Asistencia;
 use App\Models\Instructor;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AsistenciaConsultaController extends Controller
@@ -30,10 +33,10 @@ class AsistenciaConsultaController extends Controller
 
         $isMine = Asistencia::query()
             ->whereKey($asistencia->id)
-            ->whereHas('instructorFicha', function ($q) use ($instructorId) {
-                $q->where(function ($sub) use ($instructorId) {
+            ->whereHas('instructorFicha', function ($q) use ($instructorId): void {
+                $q->where(function ($sub) use ($instructorId): void {
                     $sub->where('instructor_id', $instructorId)
-                        ->orWhereHas('instructorFicha', function ($aux) use ($instructorId) {
+                        ->orWhereHas('instructorFicha', function ($aux) use ($instructorId): void {
                             $aux->where('instructor_id', $instructorId);
                         });
                 });
@@ -52,7 +55,7 @@ class AsistenciaConsultaController extends Controller
 
         $aprendicesFicha = $asistencia->instructorFicha?->aprendicesTodos ?? collect();
 
-        return $aprendicesFicha->map(function ($aprendiz) use ($registrosPorAprendizId) {
+        return $aprendicesFicha->map(function ($aprendiz) use ($registrosPorAprendizId): array {
             $registro = $registrosPorAprendizId->get($aprendiz->id);
 
             return [
@@ -63,7 +66,7 @@ class AsistenciaConsultaController extends Controller
         });
     }
 
-    public function show(Asistencia $asistencia)
+    public function show(Asistencia $asistencia): Factory|View
     {
         $this->authorizeAsistencia($asistencia);
 
@@ -87,7 +90,7 @@ class AsistenciaConsultaController extends Controller
         ]);
     }
 
-    public function pdf(Asistencia $asistencia)
+    public function pdf(Asistencia $asistencia): Response
     {
         $this->authorizeAsistencia($asistencia);
 
@@ -109,7 +112,7 @@ class AsistenciaConsultaController extends Controller
         $fecha = $asistencia->fecha?->format('Y-m-d') ?? now()->format('Y-m-d');
         $filename = 'asistencia_' . $fichaNumero . '_' . $fecha . '.pdf';
 
-        $pdf = \Barryvdh\DomPDF\Facade\PDF::loadView('pdf.asistencia_consulta', [
+        $pdf = Pdf::loadView('pdf.asistencia_consulta', [
             'asistencia' => $asistencia,
             'aprendicesTabla' => $aprendicesTabla,
         ])->setPaper('a4', 'portrait');

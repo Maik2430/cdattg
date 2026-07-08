@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Repositories\AsistenciaAprendizRepository;
 use App\Services\JornadaValidationService;
 use App\Models\AsistenciaAprendiz;
@@ -26,9 +27,6 @@ class AsistenciaService
 
     /**
      * Obtiene asistencias por ficha
-     *
-     * @param int $fichaId
-     * @return Collection
      */
     public function obtenerPorFicha(int $fichaId): Collection
     {
@@ -37,11 +35,6 @@ class AsistenciaService
 
     /**
      * Obtiene asistencias por ficha y rango de fechas
-     *
-     * @param int $fichaId
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @return Collection
      */
     public function obtenerPorFichaYFechas(int $fichaId, string $fechaInicio, string $fechaFin): Collection
     {
@@ -50,9 +43,6 @@ class AsistenciaService
 
     /**
      * Obtiene asistencias por número de documento
-     *
-     * @param string $numeroDocumento
-     * @return Collection
      */
     public function obtenerPorDocumento(string $numeroDocumento): Collection
     {
@@ -61,9 +51,6 @@ class AsistenciaService
 
     /**
      * Obtiene documentos únicos por ficha
-     *
-     * @param int $fichaId
-     * @return Collection
      */
     public function obtenerDocumentosPorFicha(int $fichaId): Collection
     {
@@ -72,10 +59,6 @@ class AsistenciaService
 
     /**
      * Obtiene lista de asistencias del día por ficha y jornada
-     *
-     * @param string $ficha
-     * @param string $jornada
-     * @return Collection|null
      */
     public function obtenerListaDelDia(string $ficha, string $jornada): ?Collection
     {
@@ -92,13 +75,10 @@ class AsistenciaService
 
     /**
      * Registra asistencia individual
-     *
-     * @param array $datos
-     * @return AsistenciaAprendiz
      */
     public function registrarAsistencia(array $datos): AsistenciaAprendiz
     {
-        return DB::transaction(function () use ($datos) {
+        return DB::transaction(function () use ($datos): AsistenciaAprendiz {
             $asistencia = $this->repository->crear($datos);
 
             // Disparar evento de nueva asistencia
@@ -121,14 +101,10 @@ class AsistenciaService
 
     /**
      * Registra múltiples asistencias en lote
-     *
-     * @param array $asistencias
-     * @param int $caracterizacionId
-     * @return int
      */
     public function registrarAsistenciaLote(array $asistencias, int $caracterizacionId): int
     {
-        return DB::transaction(function () use ($asistencias, $caracterizacionId) {
+        return DB::transaction(function () use ($asistencias, $caracterizacionId): int {
             $cantidad = $this->repository->crearLote($asistencias, $caracterizacionId);
 
             Log::info('Asistencias registradas en lote', [
@@ -142,15 +118,10 @@ class AsistenciaService
 
     /**
      * Actualiza hora de salida para todas las asistencias del día
-     *
-     * @param int $caracterizacionId
-     * @param string $fecha
-     * @param string $horaSalida
-     * @return int
      */
     public function actualizarHoraSalida(int $caracterizacionId, string $fecha, string $horaSalida): int
     {
-        return DB::transaction(function () use ($caracterizacionId, $fecha, $horaSalida) {
+        return DB::transaction(function () use ($caracterizacionId, $fecha, $horaSalida): int {
             $cantidad = $this->repository->actualizarHoraSalida($caracterizacionId, $fecha, $horaSalida);
 
             Log::info('Horas de salida actualizadas', [
@@ -166,13 +137,7 @@ class AsistenciaService
     /**
      * Actualiza novedad de entrada con validaciones
      *
-     * @param int $caracterizacionId
-     * @param string $numeroIdentificacion
-     * @param string $horaIngreso
-     * @param string $novedadEntrada
-     * @param string $jornada
-     * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function actualizarNovedadEntrada(
         int $caracterizacionId,
@@ -186,18 +151,18 @@ class AsistenciaService
 
         // Validar que estamos en la jornada correcta
         if (!$this->jornadaValidation->validarAsistenciaEnJornada($horaIngreso, $horaActual, $jornada)) {
-            throw new \Exception('No se puede actualizar la novedad fuera de la jornada correspondiente.');
+            throw new Exception('No se puede actualizar la novedad fuera de la jornada correspondiente.');
         }
 
         $asistencia = $this->repository->buscarAsistencia($caracterizacionId, $numeroIdentificacion, $horaIngreso);
 
         if (!$asistencia) {
-            throw new \Exception('Asistencia no encontrada.');
+            throw new Exception('Asistencia no encontrada.');
         }
 
         // Validar que la asistencia sea del día actual
         if ($asistencia->created_at->format('Y-m-d') !== $fechaActual) {
-            throw new \Exception('Solo se pueden actualizar novedades de asistencias del día actual.');
+            throw new Exception('Solo se pueden actualizar novedades de asistencias del día actual.');
         }
 
         // Solo actualizar hora_ingreso para jornada Mañana
@@ -217,13 +182,7 @@ class AsistenciaService
     /**
      * Actualiza novedad de salida con validaciones
      *
-     * @param int $caracterizacionId
-     * @param string $numeroIdentificacion
-     * @param string $horaIngreso
-     * @param string $novedadSalida
-     * @param string $jornada
-     * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function actualizarNovedadSalida(
         int $caracterizacionId,
@@ -237,18 +196,18 @@ class AsistenciaService
 
         // Validar que estamos en la jornada correcta
         if (!$this->jornadaValidation->validarAsistenciaEnJornada($horaIngreso, $horaActual, $jornada)) {
-            throw new \Exception('No se puede actualizar la novedad fuera de la jornada correspondiente.');
+            throw new Exception('No se puede actualizar la novedad fuera de la jornada correspondiente.');
         }
 
         $asistencia = $this->repository->buscarAsistencia($caracterizacionId, $numeroIdentificacion, $horaIngreso);
 
         if (!$asistencia) {
-            throw new \Exception('Asistencia no encontrada.');
+            throw new Exception('Asistencia no encontrada.');
         }
 
         // Validar que la asistencia sea del día actual
         if ($asistencia->created_at->format('Y-m-d') !== $fechaActual) {
-            throw new \Exception('Solo se pueden actualizar novedades de asistencias del día actual.');
+            throw new Exception('Solo se pueden actualizar novedades de asistencias del día actual.');
         }
 
         $horaSalida = Carbon::now()->format('H:i:s');
@@ -273,11 +232,6 @@ class AsistenciaService
 
     /**
      * Obtiene estadísticas de asistencia
-     *
-     * @param int $fichaId
-     * @param string|null $fechaInicio
-     * @param string|null $fechaFin
-     * @return array
      */
     public function obtenerEstadisticas(int $fichaId, ?string $fechaInicio = null, ?string $fechaFin = null): array
     {
@@ -286,10 +240,6 @@ class AsistenciaService
 
     /**
      * Verifica si ya existe asistencia del día para un aprendiz
-     *
-     * @param string $numeroDocumento
-     * @param string|null $fecha
-     * @return bool
      */
     public function existeAsistenciaDelDia(string $numeroDocumento, ?string $fecha = null): bool
     {

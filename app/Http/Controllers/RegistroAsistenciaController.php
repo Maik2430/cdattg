@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use Illuminate\Http\JsonResponse;
 use App\Events\NuevaAsistenciaRegistrada;
 use App\Models\AsistenciaAprendiz;
 use App\Models\FichaCaracterizacion;
@@ -20,8 +22,7 @@ class RegistroAsistenciaController extends Controller
      * Registra una entrada de asistencia
      * Dispara evento WebSocket en tiempo real
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function registrarEntrada(Request $request)
     {
@@ -93,7 +94,7 @@ class RegistroAsistenciaController extends Controller
                 ]
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error al registrar entrada: ' . $e->getMessage());
 
@@ -109,8 +110,7 @@ class RegistroAsistenciaController extends Controller
      * Registra una salida de asistencia
      * Dispara evento WebSocket en tiempo real
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function registrarSalida(Request $request)
     {
@@ -176,7 +176,7 @@ class RegistroAsistenciaController extends Controller
                 ]
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error al registrar salida: ' . $e->getMessage());
 
@@ -191,8 +191,7 @@ class RegistroAsistenciaController extends Controller
     /**
      * Obtiene las asistencias del día actual por jornada
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function obtenerAsistenciasPorJornada(Request $request)
     {
@@ -208,7 +207,7 @@ class RegistroAsistenciaController extends Controller
 
             // Filtrar por jornada si se especifica
             if ($jornadaId) {
-                $query->whereHas('aprendiz.fichaCaracterizacion', function ($q) use ($jornadaId) {
+                $query->whereHas('aprendiz.fichaCaracterizacion', function ($q) use ($jornadaId): void {
                     $q->where('jornada_formacion_id', $jornadaId);
                 });
             }
@@ -216,7 +215,7 @@ class RegistroAsistenciaController extends Controller
             $asistencias = $query->orderBy('created_at', 'desc')->get();
 
             // Formatear datos
-            $asistenciasFormateadas = $asistencias->map(function ($asistencia) {
+            $asistenciasFormateadas = $asistencias->map(function ($asistencia): array {
                 $ficha = $asistencia->aprendiz->fichaCaracterizacion;
                 return [
                     'id' => $asistencia->id,
@@ -243,7 +242,7 @@ class RegistroAsistenciaController extends Controller
                 'por_jornada' => $agrupadoPorJornada,
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al obtener asistencias por jornada: ' . $e->getMessage());
 
             return response()->json([
@@ -258,7 +257,7 @@ class RegistroAsistenciaController extends Controller
      * Obtiene todas las fichas con sus jornadas
      * Útil para listar opciones al registrar asistencia
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function obtenerFichasConJornadas()
     {
@@ -266,7 +265,7 @@ class RegistroAsistenciaController extends Controller
             $fichas = FichaCaracterizacion::with(['jornadaFormacion', 'programaFormacion'])
                 ->where('status', 1) // Solo fichas activas
                 ->get()
-                ->map(function ($ficha) {
+                ->map(function ($ficha): array {
                     return [
                         'id' => $ficha->id,
                         'ficha' => $ficha->ficha,
@@ -281,7 +280,7 @@ class RegistroAsistenciaController extends Controller
                 'fichas' => $fichas,
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al obtener fichas con jornadas: ' . $e->getMessage());
 
             return response()->json([
