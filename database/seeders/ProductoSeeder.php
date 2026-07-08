@@ -21,7 +21,7 @@ class ProductoSeeder extends Seeder
         }
 
         // Ruta del archivo JSON
-        $jsonPath = database_path('seeders/data/productos.json');
+        $jsonPath = database_path('seeders/Data/productos.json');
 
         // Cargar JSON
         $productos = json_decode(file_get_contents($jsonPath), true);
