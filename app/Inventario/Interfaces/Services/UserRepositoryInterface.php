@@ -10,4 +10,3 @@ interface UserRepositoryInterface
 {
     public function obtenerSuperAdministradores(): Collection;
 }
-

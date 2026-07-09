@@ -27,4 +27,3 @@ class CompetenciaResource extends JsonResource
         ];
     }
 }
-

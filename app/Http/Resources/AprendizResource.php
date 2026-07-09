@@ -39,4 +39,3 @@ class AprendizResource extends JsonResource
         ];
     }
 }
-

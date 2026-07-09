@@ -7,8 +7,10 @@ namespace App\Inventario\Interfaces\Services;
 interface TransactionServiceInterface
 {
     public function beginTransaction(): void;
+
     public function commit(): void;
+
     public function rollBack(): void;
+
     public function transaction(callable $callback);
 }
-

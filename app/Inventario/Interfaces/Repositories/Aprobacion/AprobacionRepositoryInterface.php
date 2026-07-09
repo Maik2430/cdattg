@@ -10,4 +10,3 @@ interface AprobacionRepositoryInterface
 {
     public function crear(array $datos): Aprobacion;
 }
-

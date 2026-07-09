@@ -27,4 +27,3 @@ class ResultadoAprendizajeResource extends JsonResource
         ];
     }
 }
-
