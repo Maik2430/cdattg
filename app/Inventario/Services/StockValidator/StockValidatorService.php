@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Inventario\Services\StockValidator;
 
 use App\Exceptions\OrdenException;
-use App\Models\Inventario\Producto;
 use App\Inventario\Interfaces\Services\NotificationServiceInterface;
 use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
+use App\Models\Inventario\Producto;
 
 /**
  * Servicio para validación de stock y notificaciones
@@ -29,6 +29,7 @@ class StockValidatorService implements StockValidatorServiceInterface
     public function estaBajoUmbralMinimo(Producto $producto): bool
     {
         $umbralMinimo = config('inventario.stock.umbral_minimo', 10);
+
         return $producto->cantidad <= $umbralMinimo;
     }
 
@@ -38,6 +39,7 @@ class StockValidatorService implements StockValidatorServiceInterface
     public function estaNivelCritico(Producto $producto): bool
     {
         $umbralCritico = config('inventario.stock.umbral_critico', 5);
+
         return $producto->cantidad <= $umbralCritico;
     }
 
@@ -67,7 +69,7 @@ class StockValidatorService implements StockValidatorServiceInterface
     private function debeNotificarCambioStock(Producto $producto, int $cantidadAnterior): bool
     {
         // Si las notificaciones están deshabilitadas, no notificar
-        if (!config('inventario.stock.notificar_stock_bajo', true)) {
+        if (! config('inventario.stock.notificar_stock_bajo', true)) {
             return false;
         }
 
@@ -148,12 +150,11 @@ class StockValidatorService implements StockValidatorServiceInterface
      */
     public function validarStockSuficiente(Producto $producto, int $cantidadRequerida): void
     {
-        if (!$this->hayStockSuficiente($producto, $cantidadRequerida)) {
+        if (! $this->hayStockSuficiente($producto, $cantidadRequerida)) {
             throw new OrdenException(
-                "Stock insuficiente para '{$producto->name}'. " .
+                "Stock insuficiente para '{$producto->name}'. ".
                 "Disponible: {$producto->cantidad}, Solicitado: {$cantidadRequerida}"
             );
         }
     }
 }
-

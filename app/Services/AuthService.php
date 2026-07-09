@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\LoginRepository;
 use App\Repositories\UserRepository;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
     protected LoginRepository $loginRepo;
+
     protected UserRepository $userRepo;
 
     public function __construct(
@@ -24,10 +25,6 @@ class AuthService
 
     /**
      * Intenta autenticar un usuario
-     *
-     * @param string $email
-     * @param string $password
-     * @return array
      */
     public function intentarLogin(string $email, string $password): array
     {
@@ -89,8 +86,6 @@ class AuthService
 
     /**
      * Registra logout
-     *
-     * @return void
      */
     public function logout(): void
     {
@@ -106,21 +101,17 @@ class AuthService
     /**
      * Cambia contraseña de usuario
      *
-     * @param int $userId
-     * @param string $passwordActual
-     * @param string $passwordNueva
-     * @return bool
      * @throws \Exception
      */
     public function cambiarPassword(int $userId, string $passwordActual, string $passwordNueva): bool
     {
         $user = User::find($userId);
 
-        if (!$user) {
+        if (! $user) {
             throw new \Exception('Usuario no encontrado.');
         }
 
-        if (!Hash::check($passwordActual, $user->password)) {
+        if (! Hash::check($passwordActual, $user->password)) {
             throw new \Exception('La contraseña actual es incorrecta.');
         }
 
@@ -139,10 +130,6 @@ class AuthService
 
     /**
      * Genera token de API para usuario
-     *
-     * @param User $user
-     * @param string $nombre
-     * @return string
      */
     public function generarTokenApi(User $user, string $nombre = 'API Token'): string
     {
@@ -156,4 +143,3 @@ class AuthService
         return $token;
     }
 }
-

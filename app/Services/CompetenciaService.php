@@ -2,16 +2,18 @@
 
 namespace App\Services;
 
+use App\Models\Competencia;
 use App\Repositories\CompetenciaRepository;
 use App\Repositories\ResultadosAprendizajeRepository;
 use App\Repositories\ResultadosCompetenciaRepository;
-use App\Models\Competencia;
 use Illuminate\Database\Eloquent\Collection;
 
 class CompetenciaService
 {
     protected CompetenciaRepository $competenciaRepo;
+
     protected ResultadosAprendizajeRepository $resultadosRepo;
+
     protected ResultadosCompetenciaRepository $resultadosCompetenciaRepo;
 
     public function __construct(
@@ -26,28 +28,22 @@ class CompetenciaService
 
     /**
      * Obtiene competencias por programa
-     *
-     * @param int $programaId
-     * @return Collection
      */
     public function obtenerPorPrograma(int $programaId): Collection
     {
-        return Competencia::whereHas('programasFormacion', function($query) use ($programaId) {
+        return Competencia::whereHas('programasFormacion', function ($query) use ($programaId) {
             $query->where('id', $programaId);
         })->get();
     }
 
     /**
      * Obtiene competencia con sus resultados de aprendizaje
-     *
-     * @param int $competenciaId
-     * @return array
      */
     public function obtenerConResultados(int $competenciaId): array
     {
         $competencia = Competencia::with(['resultadosAprendizaje', 'resultadosCompetencia'])->find($competenciaId);
 
-        if (!$competencia) {
+        if (! $competencia) {
             throw new \Exception('Competencia no encontrada.');
         }
 
@@ -62,9 +58,6 @@ class CompetenciaService
 
     /**
      * Obtiene árbol de competencias (programa > competencias > RAPs)
-     *
-     * @param int $programaId
-     * @return array
      */
     public function obtenerArbolCompetencias(int $programaId): array
     {
@@ -94,4 +87,3 @@ class CompetenciaService
         return $arbol;
     }
 }
-

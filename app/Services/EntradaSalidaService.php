@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\EntradaSalidaRepository;
 use App\Models\EntradaSalida;
+use App\Repositories\EntradaSalidaRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -21,8 +21,6 @@ class EntradaSalidaService
     /**
      * Registra entrada de una persona
      *
-     * @param int $personaId
-     * @return EntradaSalida
      * @throws \Exception
      */
     public function registrarEntrada(int $personaId): EntradaSalida
@@ -52,8 +50,6 @@ class EntradaSalidaService
     /**
      * Registra salida de una persona
      *
-     * @param int $personaId
-     * @return bool
      * @throws \Exception
      */
     public function registrarSalida(int $personaId): bool
@@ -63,7 +59,7 @@ class EntradaSalidaService
 
             $registroAbierto = $this->repository->obtenerRegistroAbierto($personaId, $fecha);
 
-            if (!$registroAbierto) {
+            if (! $registroAbierto) {
                 throw new \Exception('No hay registro de entrada para registrar salida.');
             }
 
@@ -82,9 +78,6 @@ class EntradaSalidaService
 
     /**
      * Obtiene registros de entrada/salida por fecha
-     *
-     * @param string $fecha
-     * @return Collection
      */
     public function obtenerPorFecha(string $fecha): Collection
     {
@@ -93,11 +86,6 @@ class EntradaSalidaService
 
     /**
      * Obtiene historial de una persona
-     *
-     * @param int $personaId
-     * @param string|null $fechaInicio
-     * @param string|null $fechaFin
-     * @return Collection
      */
     public function obtenerHistorialPersona(int $personaId, ?string $fechaInicio = null, ?string $fechaFin = null): Collection
     {
@@ -106,9 +94,6 @@ class EntradaSalidaService
 
     /**
      * Obtiene reporte de asistencia diaria
-     *
-     * @param string $fecha
-     * @return array
      */
     public function obtenerReporteDiario(string $fecha): array
     {
@@ -128,4 +113,3 @@ class EntradaSalidaService
         ];
     }
 }
-

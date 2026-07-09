@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\FormOptions;
 
-use Illuminate\Support\Collection;
-use App\Models\ParametroTema;
-use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
 use App\Inventario\Interfaces\Repositories\ParametroTema\ParametroTemaRepositoryInterface;
+use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
+use App\Models\ParametroTema;
+use Illuminate\Support\Collection;
 
 class FormOptionsService implements FormOptionsServiceInterface
 {
@@ -112,6 +112,7 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene el estado "AGOTADO" de productos
+     *
      * @return ParametroTema|null
      */
     public function obtenerEstadoAgotado(?string $temaEstados = null)
@@ -123,6 +124,7 @@ class FormOptionsService implements FormOptionsServiceInterface
 
     /**
      * Obtiene un estado de orden por nombre
+     *
      * @return ParametroTema|null
      */
     public function obtenerEstadoOrdenPorNombre(string $nombreEstado, ?string $temaEstados = null)
@@ -132,4 +134,3 @@ class FormOptionsService implements FormOptionsServiceInterface
         return $this->parametroTemaRepository->obtenerEstadoPorNombre($nombreEstado, $temaEstados);
     }
 }
-

@@ -3,16 +3,19 @@
 namespace App\Services;
 
 use App\Repositories\AprendizRepository;
-use App\Repositories\InstructorRepository;
 use App\Repositories\FichaRepository;
+use App\Repositories\InstructorRepository;
 use App\Repositories\ProgramaFormacionRepository;
 use Illuminate\Support\Collection;
 
 class BusquedaService
 {
     protected AprendizRepository $aprendizRepo;
+
     protected InstructorRepository $instructorRepo;
+
     protected FichaRepository $fichaRepo;
+
     protected ProgramaFormacionRepository $programaRepo;
 
     public function __construct(
@@ -29,10 +32,6 @@ class BusquedaService
 
     /**
      * Búsqueda global en todo el sistema
-     *
-     * @param string $termino
-     * @param array $tipos
-     * @return array
      */
     public function busquedaGlobal(string $termino, array $tipos = []): array
     {
@@ -65,9 +64,6 @@ class BusquedaService
 
     /**
      * Búsqueda avanzada de aprendices
-     *
-     * @param array $criterios
-     * @return Collection
      */
     public function busquedaAvanzadaAprendices(array $criterios): Collection
     {
@@ -76,9 +72,6 @@ class BusquedaService
 
     /**
      * Sugerencias de búsqueda
-     *
-     * @param string $termino
-     * @return array
      */
     public function obtenerSugerencias(string $termino): array
     {
@@ -112,4 +105,3 @@ class BusquedaService
         return $sugerencias;
     }
 }
-

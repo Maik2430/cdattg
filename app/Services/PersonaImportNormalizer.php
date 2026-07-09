@@ -33,7 +33,7 @@ class PersonaImportNormalizer
      */
     public static function normalizarEmail(?string $valor): ?string
     {
-        if (!$valor) {
+        if (! $valor) {
             return null;
         }
 
@@ -47,7 +47,7 @@ class PersonaImportNormalizer
      */
     public static function normalizarTelefono(?string $valor): ?string
     {
-        if (!$valor) {
+        if (! $valor) {
             return null;
         }
 
@@ -56,4 +56,3 @@ class PersonaImportNormalizer
         return $soloDigitos ?: null;
     }
 }
-

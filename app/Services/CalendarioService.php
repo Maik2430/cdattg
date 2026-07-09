@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
+use App\Repositories\FichaDiasFormacionRepository;
 use App\Repositories\FichaRepository;
 use App\Repositories\InstructorFichaRepository;
-use App\Repositories\FichaDiasFormacionRepository;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 class CalendarioService
 {
     protected FichaRepository $fichaRepo;
+
     protected InstructorFichaRepository $instructorFichaRepo;
+
     protected FichaDiasFormacionRepository $fichaDiasRepo;
 
     public function __construct(
@@ -26,11 +27,6 @@ class CalendarioService
 
     /**
      * Genera eventos de calendario para un instructor
-     *
-     * @param int $instructorId
-     * @param string|null $fechaInicio
-     * @param string|null $fechaFin
-     * @return array
      */
     public function generarEventosInstructor(int $instructorId, ?string $fechaInicio = null, ?string $fechaFin = null): array
     {
@@ -63,11 +59,8 @@ class CalendarioService
     /**
      * Genera eventos para un día específico de formación
      *
-     * @param object $ficha
-     * @param object $diaFormacion
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @return array
+     * @param  object  $ficha
+     * @param  object  $diaFormacion
      */
     protected function generarEventosPorDia($ficha, $diaFormacion, string $fechaInicio, string $fechaFin): array
     {
@@ -83,8 +76,8 @@ class CalendarioService
             if ($this->esDiaFormacion($fechaActual, $diaFormacion->diaFormacion->dia_nombre ?? '')) {
                 $eventos[] = [
                     'title' => $ficha->programaFormacion->nombre ?? 'Sin programa',
-                    'start' => $fechaActual->format('Y-m-d') . 'T' . $diaFormacion->hora_inicio,
-                    'end' => $fechaActual->format('Y-m-d') . 'T' . $diaFormacion->hora_fin,
+                    'start' => $fechaActual->format('Y-m-d').'T'.$diaFormacion->hora_inicio,
+                    'end' => $fechaActual->format('Y-m-d').'T'.$diaFormacion->hora_fin,
                     'backgroundColor' => '#3498db',
                     'ficha_id' => $ficha->id,
                     'ambiente' => $ficha->ambiente->nombre ?? 'Sin ambiente',
@@ -98,10 +91,6 @@ class CalendarioService
 
     /**
      * Verifica si una fecha corresponde a un día de formación
-     *
-     * @param Carbon $fecha
-     * @param string $diaNombre
-     * @return bool
      */
     protected function esDiaFormacion(Carbon $fecha, string $diaNombre): bool
     {
@@ -120,10 +109,6 @@ class CalendarioService
 
     /**
      * Obtiene conflictos de horario
-     *
-     * @param int $instructorId
-     * @param string $fecha
-     * @return array
      */
     public function obtenerConflictosHorario(int $instructorId, string $fecha): array
     {
@@ -147,10 +132,6 @@ class CalendarioService
 
     /**
      * Verifica si hay conflicto entre dos eventos
-     *
-     * @param array $evento1
-     * @param array $evento2
-     * @return bool
      */
     protected function hayConflicto(array $evento1, array $evento2): bool
     {
@@ -162,4 +143,3 @@ class CalendarioService
         return $inicio1->lt($fin2) && $fin1->gt($inicio2);
     }
 }
-

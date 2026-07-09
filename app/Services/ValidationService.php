@@ -11,9 +11,6 @@ class ValidationService
 
     /**
      * Valida datos de aprendiz
-     *
-     * @param array $datos
-     * @return array
      */
     public function validarAprendiz(array $datos): array
     {
@@ -38,9 +35,6 @@ class ValidationService
 
     /**
      * Valida datos de instructor
-     *
-     * @param array $datos
-     * @return array
      */
     public function validarInstructor(array $datos): array
     {
@@ -67,9 +61,6 @@ class ValidationService
 
     /**
      * Valida datos de ficha
-     *
-     * @param array $datos
-     * @return array
      */
     public function validarFicha(array $datos): array
     {
@@ -99,10 +90,6 @@ class ValidationService
 
     /**
      * Valida número de documento según tipo
-     *
-     * @param string $numeroDocumento
-     * @param int $tipoDocumento
-     * @return array
      */
     public function validarDocumento(string $numeroDocumento, int $tipoDocumento): array
     {
@@ -115,7 +102,7 @@ class ValidationService
 
         $patron = $reglas[$tipoDocumento] ?? $reglas[8];
 
-        if (!preg_match($patron, $numeroDocumento)) {
+        if (! preg_match($patron, $numeroDocumento)) {
             return [
                 'valido' => false,
                 'mensaje' => 'El formato del documento no es válido para el tipo seleccionado',
@@ -130,9 +117,6 @@ class ValidationService
 
     /**
      * Valida email institucional SENA
-     *
-     * @param string $email
-     * @return array
      */
     public function validarEmailSena(string $email): array
     {
@@ -154,4 +138,3 @@ class ValidationService
         ];
     }
 }
-

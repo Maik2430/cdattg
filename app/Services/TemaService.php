@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\TemaRepository;
 use App\Models\Tema;
+use App\Repositories\TemaRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -19,9 +19,6 @@ class TemaService
 
     /**
      * Lista temas paginados
-     *
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function listar(int $perPage = 10): LengthAwarePaginator
     {
@@ -30,9 +27,6 @@ class TemaService
 
     /**
      * Obtiene tema con parámetros
-     *
-     * @param int $id
-     * @return Tema|null
      */
     public function obtenerConParametros(int $id): ?Tema
     {
@@ -41,9 +35,6 @@ class TemaService
 
     /**
      * Crea un tema
-     *
-     * @param array $datos
-     * @return Tema
      */
     public function crear(array $datos): Tema
     {
@@ -60,10 +51,6 @@ class TemaService
 
     /**
      * Actualiza un tema
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -80,9 +67,6 @@ class TemaService
 
     /**
      * Elimina un tema
-     *
-     * @param int $id
-     * @return bool
      */
     public function eliminar(int $id): bool
     {
@@ -99,11 +83,6 @@ class TemaService
 
     /**
      * Actualiza parámetros de un tema
-     *
-     * @param int $temaId
-     * @param array $parametrosIds
-     * @param array $estados
-     * @return bool
      */
     public function actualizarParametros(int $temaId, array $parametrosIds, array $estados): bool
     {
@@ -132,16 +111,12 @@ class TemaService
 
     /**
      * Cambia el estado de un tema
-     *
-     * @param int $id
-     * @return bool
      */
     public function cambiarEstado(int $id): bool
     {
         $tema = Tema::find($id);
-        $nuevoEstado = !$tema->status;
+        $nuevoEstado = ! $tema->status;
 
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }
-

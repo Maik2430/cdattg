@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\ProductoEnrichment;
 
+use App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface;
+use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
 use App\Models\Inventario\Producto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
-use App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface;
-
 
 /**
  * Servicio para enriquecer productos con relaciones
@@ -40,11 +39,11 @@ class ProductoEnrichmentService
         }
 
         // Cargar todos los parámetros usando repositorios
-        $marcas = !empty($marcaIds)
+        $marcas = ! empty($marcaIds)
             ? $this->marcaRepository->encontrarMultiples(array_unique($marcaIds))
             : collect();
 
-        $categorias = !empty($categoriaIds)
+        $categorias = ! empty($categoriaIds)
             ? $this->categoriaRepository->encontrarMultiples(array_unique($categoriaIds))
             : collect();
 
@@ -79,4 +78,3 @@ class ProductoEnrichmentService
         }
     }
 }
-

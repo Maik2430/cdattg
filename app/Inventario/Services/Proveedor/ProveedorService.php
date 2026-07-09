@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Proveedor;
 
+use App\Exceptions\ProveedorException;
 use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface;
 use App\Models\Inventario\Proveedor;
-use App\Exceptions\ProveedorException;
 use Illuminate\Support\Facades\DB;
 
 class ProveedorService

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Marca;
 
+use App\Exceptions\MarcaException;
 use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
 use App\Models\Inventario\Marca;
-use App\Exceptions\MarcaException;
 use Illuminate\Database\QueryException;
 
 class MarcaService
@@ -38,7 +38,7 @@ class MarcaService
 
             return $marca;
         } catch (QueryException $e) {
-            throw new MarcaException('Error al crear la marca: ' . $e->getMessage());
+            throw new MarcaException('Error al crear la marca: '.$e->getMessage());
         }
     }
 
@@ -68,11 +68,10 @@ class MarcaService
 
         $temaMarcas = $this->repository->obtenerTemaMarcas();
 
-        if (!$temaMarcas) {
+        if (! $temaMarcas) {
             throw new MarcaException('No existe el tema "MARCAS" en la base de datos.');
         }
 
         return $this->repository->eliminar($marca, $temaMarcas->id);
     }
 }
-

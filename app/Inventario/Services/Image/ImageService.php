@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Image;
 
-use Exception;
 use App\Inventario\Interfaces\Services\ImageServiceInterface;
 use App\Models\Inventario\Producto;
+use Exception;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ImageService implements ImageServiceInterface
 {
@@ -31,19 +31,20 @@ class ImageService implements ImageServiceInterface
 
     public function procesarImagen(?UploadedFile $imagen): string
     {
-        if (!$imagen || !$imagen->isValid()) {
+        if (! $imagen || ! $imagen->isValid()) {
             return $this->getDefaultImage();
         }
 
         try {
             $directory = $this->getImageDirectory();
-            $nombreArchivo = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+            $nombreArchivo = time().'_'.uniqid().'.'.$imagen->getClientOriginalExtension();
 
             $rutaStorage = Storage::disk('public')->putFileAs($directory, $imagen, $nombreArchivo);
 
-            return 'storage/' . $rutaStorage;
+            return 'storage/'.$rutaStorage;
         } catch (Exception $e) {
-            Log::error('Error al procesar imagen de producto: ' . $e->getMessage());
+            Log::error('Error al procesar imagen de producto: '.$e->getMessage());
+
             return $this->getDefaultImage();
         }
     }
@@ -52,7 +53,7 @@ class ImageService implements ImageServiceInterface
         ?UploadedFile $imagen,
         Producto $producto
     ): string {
-        if (!$imagen || !$imagen->isValid()) {
+        if (! $imagen || ! $imagen->isValid()) {
             return $producto->imagen ?? $this->getDefaultImage();
         }
 
@@ -82,4 +83,3 @@ class ImageService implements ImageServiceInterface
         }
     }
 }
-

@@ -15,7 +15,7 @@ class UserService
     {
         $existingUser = User::where('email', $data['email'])->first();
 
-        if (!$existingUser) {
+        if (! $existingUser) {
             return $this->createUserForAspirante($data, $persona);
         }
 

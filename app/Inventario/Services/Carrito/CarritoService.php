@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Carrito;
 
-use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use App\Exceptions\CarritoException;
+use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
 use Illuminate\Support\Collection;
 
 class CarritoService
@@ -20,8 +20,9 @@ class CarritoService
     /**
      * Verifica la disponibilidad de productos en el carrito
      *
-     * @param array $items Array de items con 'producto_id' y 'cantidad'
+     * @param  array  $items  Array de items con 'producto_id' y 'cantidad'
      * @return array Array con errores de stock si los hay
+     *
      * @throws CarritoException
      */
     public function verificarDisponibilidad(array $items): array
@@ -30,15 +31,15 @@ class CarritoService
 
         foreach ($items as $item) {
             $productoId = $item['producto_id'] ?? $item['id'] ?? null;
-            $cantidad = (int)($item['cantidad'] ?? $item['quantity'] ?? 0);
+            $cantidad = (int) ($item['cantidad'] ?? $item['quantity'] ?? 0);
 
-            if (!$productoId || $cantidad <= 0) {
+            if (! $productoId || $cantidad <= 0) {
                 continue;
             }
 
             $producto = $this->productoRepository->encontrar($productoId);
 
-            if (!$producto) {
+            if (! $producto) {
                 throw new CarritoException("Producto con ID {$productoId} no encontrado.");
             }
 
@@ -46,7 +47,7 @@ class CarritoService
                 $erroresStock[] = [
                     'producto' => $producto->name,
                     'solicitado' => $cantidad,
-                    'disponible' => $producto->cantidad
+                    'disponible' => $producto->cantidad,
                 ];
             }
         }
@@ -63,7 +64,7 @@ class CarritoService
     {
         $producto = $this->productoRepository->encontrar($productoId);
 
-        if (!$producto) {
+        if (! $producto) {
             throw new CarritoException('Producto no encontrado');
         }
 
@@ -71,7 +72,7 @@ class CarritoService
             return [
                 'success' => false,
                 'message' => 'Stock insuficiente',
-                'stock_disponible' => $producto->cantidad
+                'stock_disponible' => $producto->cantidad,
             ];
         }
 
@@ -81,15 +82,15 @@ class CarritoService
             'producto' => [
                 'id' => $producto->id,
                 'nombre' => $producto->name,
-                'stock' => $producto->cantidad
-            ]
+                'stock' => $producto->cantidad,
+            ],
         ];
     }
 
     /**
      * Obtiene información de productos para el carrito
      *
-     * @param array $items Array de items con 'id'
+     * @param  array  $items  Array de items con 'id'
      */
     public function obtenerProductosParaCarrito(array $items): Collection
     {
@@ -98,7 +99,7 @@ class CarritoService
         foreach ($items as $item) {
             $productoId = $item['id'] ?? $item['producto_id'] ?? null;
 
-            if (!$productoId) {
+            if (! $productoId) {
                 continue;
             }
 
@@ -113,7 +114,7 @@ class CarritoService
                     'stock' => $producto->cantidad,
                     'categoria' => $producto->categoria->name ?? 'Sin categoría',
                     'marca' => $producto->marca->name ?? 'Sin marca',
-                    'descripcion' => $producto->descripcion
+                    'descripcion' => $producto->descripcion,
                 ]);
             }
         }
@@ -121,4 +122,3 @@ class CarritoService
         return $productos;
     }
 }
-

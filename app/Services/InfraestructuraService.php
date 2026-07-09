@@ -2,15 +2,17 @@
 
 namespace App\Services;
 
-use App\Repositories\SedeRepository;
 use App\Repositories\AmbienteRepository;
 use App\Repositories\CentroFormacionRepository;
+use App\Repositories\SedeRepository;
 use Illuminate\Database\Eloquent\Collection;
 
 class InfraestructuraService
 {
     protected SedeRepository $sedeRepo;
+
     protected AmbienteRepository $ambienteRepo;
+
     protected CentroFormacionRepository $centroRepo;
 
     public function __construct(
@@ -25,9 +27,6 @@ class InfraestructuraService
 
     /**
      * Obtiene estructura completa de infraestructura
-     *
-     * @param int|null $regionalId
-     * @return array
      */
     public function obtenerEstructuraCompleta(?int $regionalId = null): array
     {
@@ -63,12 +62,6 @@ class InfraestructuraService
 
     /**
      * Verifica disponibilidad de ambiente
-     *
-     * @param int $ambienteId
-     * @param string $fecha
-     * @param string $horaInicio
-     * @param string $horaFin
-     * @return array
      */
     public function verificarDisponibilidadAmbiente(int $ambienteId, string $fecha, string $horaInicio, string $horaFin): array
     {
@@ -84,12 +77,6 @@ class InfraestructuraService
 
     /**
      * Obtiene ambientes disponibles por sede y horario
-     *
-     * @param int $sedeId
-     * @param string $fecha
-     * @param string $horaInicio
-     * @param string $horaFin
-     * @return Collection
      */
     public function obtenerAmbientesDisponibles(int $sedeId, string $fecha, string $horaInicio, string $horaFin): Collection
     {
@@ -100,4 +87,3 @@ class InfraestructuraService
         });
     }
 }
-

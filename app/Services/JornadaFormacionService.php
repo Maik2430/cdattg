@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\JornadaFormacionRepository;
 use App\Models\JornadaFormacion;
+use App\Repositories\JornadaFormacionRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -69,7 +69,7 @@ class JornadaFormacionService
     public function cambiarEstado(int $id): bool
     {
         $jornada = JornadaFormacion::find($id);
-        $nuevoEstado = !$jornada->status;
+        $nuevoEstado = ! $jornada->status;
 
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
@@ -79,4 +79,3 @@ class JornadaFormacionService
         return strtotime($horaFin) > strtotime($horaInicio);
     }
 }
-

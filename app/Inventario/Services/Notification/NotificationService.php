@@ -56,4 +56,3 @@ class NotificationService implements NotificationServiceInterface
         Notification::send($superadmins, new DevolucionRegistradaNotification($devolucion));
     }
 }
-

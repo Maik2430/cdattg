@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Producto;
 
-use Illuminate\Http\UploadedFile;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
-use App\Inventario\Interfaces\Services\ImageServiceInterface;
 use App\Inventario\Interfaces\Services\BarcodeServiceInterface;
+use App\Inventario\Interfaces\Services\ImageServiceInterface;
 use App\Inventario\Interfaces\Services\StockValidatorServiceInterface;
 use App\Models\Inventario\Producto;
+use Illuminate\Http\UploadedFile;
 
 /**
  * Servicio para gestión de productos de inventario
@@ -17,8 +17,11 @@ use App\Models\Inventario\Producto;
 class ProductoService
 {
     protected ProductoRepositoryInterface $repository;
+
     protected ImageServiceInterface $imageService;
+
     protected BarcodeServiceInterface $barcodeService;
+
     protected StockValidatorServiceInterface $stockValidator;
 
     public function __construct(
@@ -58,7 +61,7 @@ class ProductoService
                 $datos['imagen'],
                 $producto
             );
-        } elseif (!isset($datos['imagen'])) {
+        } elseif (! isset($datos['imagen'])) {
             // Mantener imagen actual si no se envía nueva
             unset($datos['imagen']);
         }
@@ -90,7 +93,7 @@ class ProductoService
     public function eliminar(Producto $producto): bool
     {
         $this->imageService->eliminarImagenSiExiste($producto);
+
         return $this->repository->eliminar($producto);
     }
 }
-

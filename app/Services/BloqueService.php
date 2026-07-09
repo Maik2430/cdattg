@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\BloqueRepository;
 use App\Models\Bloque;
+use App\Repositories\BloqueRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -68,9 +68,8 @@ class BloqueService
     public function cambiarEstado(int $id): bool
     {
         $bloque = Bloque::find($id);
-        $nuevoEstado = !$bloque->status;
+        $nuevoEstado = ! $bloque->status;
 
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }
-

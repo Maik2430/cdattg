@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\PisoRepository;
 use App\Models\Piso;
+use App\Repositories\PisoRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -68,9 +68,8 @@ class PisoService
     public function cambiarEstado(int $id): bool
     {
         $piso = Piso::find($id);
-        $nuevoEstado = !$piso->status;
+        $nuevoEstado = ! $piso->status;
 
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }
-

@@ -36,16 +36,14 @@ trait HasCache
 
     /**
      * Inicializa el servicio de caché
-     *
-     * @return void
      */
     protected function initializeCache(): void
     {
-        if (!$this->cacheService) {
+        if (! $this->cacheService) {
             $this->cacheService = app(CacheService::class);
         }
 
-        if (!$this->cachePrefix) {
+        if (! $this->cachePrefix) {
             // Generar prefijo automático basado en el nombre de la clase
             $className = class_basename($this);
             $this->cachePrefix = strtolower(str_replace(['Repository', 'Service'], '', $className));
@@ -55,9 +53,6 @@ trait HasCache
     /**
      * Recuerda un valor en caché
      *
-     * @param string $key
-     * @param callable $callback
-     * @param int|null $ttl
      * @return mixed
      */
     protected function cache(string $key, callable $callback, ?int $ttl = null)
@@ -72,9 +67,6 @@ trait HasCache
     /**
      * Recuerda un valor en caché con tags
      *
-     * @param string $key
-     * @param callable $callback
-     * @param int|null $ttl
      * @return mixed
      */
     protected function cacheWithTags(string $key, callable $callback, ?int $ttl = null)
@@ -89,9 +81,6 @@ trait HasCache
 
     /**
      * Olvida un valor de caché
-     *
-     * @param string $key
-     * @return bool
      */
     protected function forgetCache(string $key): bool
     {
@@ -104,8 +93,6 @@ trait HasCache
 
     /**
      * Limpia toda la caché de esta clase
-     *
-     * @return bool
      */
     protected function flushCache(): bool
     {
@@ -119,8 +106,7 @@ trait HasCache
     /**
      * Genera clave de caché
      *
-     * @param mixed ...$parts
-     * @return string
+     * @param  mixed  ...$parts
      */
     protected function cacheKey(...$parts): string
     {
@@ -129,4 +115,3 @@ trait HasCache
         return $this->cacheService->key($this->cachePrefix, ...$parts);
     }
 }
-

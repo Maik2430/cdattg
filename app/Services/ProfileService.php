@@ -14,8 +14,8 @@ class ProfileService
             $user->name = $datos['name'];
             $user->email = $datos['email'];
 
-            if (isset($datos['password']) && !empty($datos['password'])) {
-                if (!Hash::check($datos['current_password'], $user->password)) {
+            if (isset($datos['password']) && ! empty($datos['password'])) {
+                if (! Hash::check($datos['current_password'], $user->password)) {
                     throw new \Exception('La contraseña actual no es correcta');
                 }
                 $user->password = Hash::make($datos['password']);
@@ -27,7 +27,7 @@ class ProfileService
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Error al actualizar perfil: ' . $e->getMessage());
+            Log::error('Error al actualizar perfil: '.$e->getMessage());
             throw $e;
         }
     }
@@ -35,7 +35,7 @@ class ProfileService
     public function cambiarContrasena(User $user, string $currentPassword, string $newPassword): bool
     {
         try {
-            if (!Hash::check($currentPassword, $user->password)) {
+            if (! Hash::check($currentPassword, $user->password)) {
                 throw new \Exception('La contraseña actual no es correcta');
             }
 
@@ -46,9 +46,8 @@ class ProfileService
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Error al cambiar contraseña: ' . $e->getMessage());
+            Log::error('Error al cambiar contraseña: '.$e->getMessage());
             throw $e;
         }
     }
 }
-

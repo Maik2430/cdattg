@@ -29,4 +29,3 @@ class TransactionService implements TransactionServiceInterface
         return DB::transaction($callback);
     }
 }
-

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\ParametroRepository;
 use App\Models\Parametro;
+use App\Repositories\ParametroRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -65,9 +65,8 @@ class ParametroService
     public function cambiarEstado(int $id): bool
     {
         $parametro = Parametro::find($id);
-        $nuevoEstado = !$parametro->status;
+        $nuevoEstado = ! $parametro->status;
 
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }
-

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Barcode;
 
-use App\Inventario\Interfaces\Services\BarcodeServiceInterface;
 use App\Inventario\Interfaces\Repositories\Producto\ProductoRepositoryInterface;
+use App\Inventario\Interfaces\Services\BarcodeServiceInterface;
 
 class BarcodeService implements BarcodeServiceInterface
 {
@@ -46,7 +46,7 @@ class BarcodeService implements BarcodeServiceInterface
         $code = str_pad((string) $next, $barcodeLength, '0', STR_PAD_LEFT);
 
         for ($i = 0; $i < 3; $i++) {
-            if (!$this->productoRepository->existeCodigoBarras($code)) {
+            if (! $this->productoRepository->existeCodigoBarras($code)) {
                 return $code;
             }
 
@@ -75,4 +75,3 @@ class BarcodeService implements BarcodeServiceInterface
         return $digits;
     }
 }
-

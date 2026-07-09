@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\SedeRepository;
 use App\Models\Sede;
+use App\Repositories\SedeRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -78,9 +78,8 @@ class SedeService
     public function cambiarEstado(int $id): bool
     {
         $sede = Sede::find($id);
-        $nuevoEstado = !$sede->status;
+        $nuevoEstado = ! $sede->status;
 
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }
-

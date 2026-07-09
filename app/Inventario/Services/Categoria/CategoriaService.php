@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Categoria;
 
+use App\Exceptions\CategoriaException;
 use App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface;
 use App\Models\Inventario\Categoria;
-use App\Exceptions\CategoriaException;
 use Illuminate\Database\QueryException;
 
 class CategoriaService
@@ -38,7 +38,7 @@ class CategoriaService
 
             return $categoria;
         } catch (QueryException $e) {
-            throw new CategoriaException('Error al crear la categoria: ' . $e->getMessage());
+            throw new CategoriaException('Error al crear la categoria: '.$e->getMessage());
         }
     }
 
@@ -68,11 +68,10 @@ class CategoriaService
 
         $temaCategorias = $this->repository->obtenerTemaCategorias();
 
-        if (!$temaCategorias) {
+        if (! $temaCategorias) {
             throw new CategoriaException('No existe el tema "CATEGORIAS" en la base de datos.');
         }
 
         return $this->repository->eliminar($categoria, $temaCategorias->id);
     }
 }
-

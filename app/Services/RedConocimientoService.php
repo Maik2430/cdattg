@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\RedConocimientoRepository;
 use App\Models\RedConocimiento;
+use App\Repositories\RedConocimientoRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -64,9 +64,8 @@ class RedConocimientoService
     public function cambiarEstado(int $id): bool
     {
         $red = RedConocimiento::find($id);
-        $nuevoEstado = !$red->status;
+        $nuevoEstado = ! $red->status;
 
         return $this->actualizar($id, ['status' => $nuevoEstado]);
     }
 }
-

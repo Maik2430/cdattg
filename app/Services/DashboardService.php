@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\Services\EstadisticasService;
-use App\Services\AsistenciaService;
-use App\Repositories\FichaRepository;
 use App\Core\Traits\HasCache;
+use App\Repositories\FichaRepository;
 use Carbon\Carbon;
 
 class DashboardService
@@ -13,8 +11,11 @@ class DashboardService
     use HasCache;
 
     protected EstadisticasService $estadisticasService;
+
     protected AsistenciaService $asistenciaService;
+
     protected FichaRepository $fichaRepo;
+
     public function __construct(
         EstadisticasService $estadisticasService,
         AsistenciaService $asistenciaService,
@@ -28,8 +29,6 @@ class DashboardService
 
     /**
      * Obtiene datos completos del dashboard administrativo
-     *
-     * @return array
      */
     public function obtenerDashboardAdministrativo(): array
     {
@@ -49,9 +48,6 @@ class DashboardService
 
     /**
      * Obtiene dashboard para instructor
-     *
-     * @param int $instructorId
-     * @return array
      */
     public function obtenerDashboardInstructor(int $instructorId): array
     {
@@ -61,7 +57,7 @@ class DashboardService
             $fichasActivas = $instructor->instructorFichas()
                 ->whereHas('ficha', function ($q) {
                     $q->where('status', true)
-                      ->where('fecha_fin', '>=', now());
+                        ->where('fecha_fin', '>=', now());
                 })
                 ->count();
 
@@ -78,9 +74,6 @@ class DashboardService
 
     /**
      * Obtiene dashboard para aprendiz
-     *
-     * @param int $aprendizId
-     * @return array
      */
     public function obtenerDashboardAprendiz(int $aprendizId): array
     {
@@ -104,8 +97,6 @@ class DashboardService
 
     /**
      * Obtiene alertas del sistema
-     *
-     * @return array
      */
     protected function obtenerAlertas(): array
     {
@@ -115,6 +106,7 @@ class DashboardService
         $fichasProximasAFinalizar = $this->fichaRepo->obtenerVigentes()
             ->filter(function ($ficha) {
                 $diasRestantes = Carbon::parse($ficha->fecha_fin)->diffInDays(now());
+
                 return $diasRestantes <= 30;
             });
 
@@ -132,9 +124,6 @@ class DashboardService
 
     /**
      * Obtiene próximas clases del instructor
-     *
-     * @param int $instructorId
-     * @return array
      */
     protected function obtenerProximasClases(int $instructorId): array
     {
@@ -144,9 +133,6 @@ class DashboardService
 
     /**
      * Calcula porcentaje de asistencia del aprendiz
-     *
-     * @param int $aprendizId
-     * @return float
      */
     protected function calcularPorcentajeAsistencia(int $aprendizId): float
     {
@@ -154,4 +140,3 @@ class DashboardService
         return 85.0;
     }
 }
-

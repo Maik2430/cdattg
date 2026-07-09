@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\Devolucion;
 
-use Exception;
-use App\Models\Parametro;
-use App\Models\ParametroTema;
 use App\Exceptions\DevolucionException;
-use App\Models\Inventario\Devolucion;
-use App\Models\Tema;
 use App\Inventario\Interfaces\Services\NotificationServiceInterface;
 use App\Inventario\Interfaces\Services\TransactionServiceInterface;
+use App\Models\Inventario\Devolucion;
+use App\Models\Parametro;
+use App\Models\ParametroTema;
+use App\Models\Tema;
+use Exception;
 
 /**
  * Servicio para gestión de devoluciones
@@ -20,6 +20,7 @@ use App\Inventario\Interfaces\Services\TransactionServiceInterface;
 class DevolucionService
 {
     protected TransactionServiceInterface $transactionService;
+
     protected NotificationServiceInterface $notificationService;
 
     public function __construct(
@@ -34,6 +35,7 @@ class DevolucionService
      * Registra una devolución y construye mensaje de respuesta
      *
      * @return array ['devolucion' => Devolucion, 'mensaje' => string]
+     *
      * @throws DevolucionException
      */
     public function registrarDevolucionConMensaje(
@@ -55,20 +57,20 @@ class DevolucionService
             $this->transactionService->commit();
         } catch (Exception $e) {
             $this->transactionService->rollBack();
-            throw new DevolucionException('Error al registrar la devolución: ' . $e->getMessage());
+            throw new DevolucionException('Error al registrar la devolución: '.$e->getMessage());
         }
 
         try {
             $this->notificationService->notificarDevolucion($devolucion);
         } catch (Exception $e) {
-            throw new DevolucionException('Error al notificar la devolución: ' . $e->getMessage());
+            throw new DevolucionException('Error al notificar la devolución: '.$e->getMessage());
         }
 
         $mensaje = $this->construirMensajeDevolucion($devolucion);
 
         return [
             'devolucion' => $devolucion,
-            'mensaje' => $mensaje
+            'mensaje' => $mensaje,
         ];
     }
 
@@ -96,17 +98,18 @@ class DevolucionService
      * Necesita devolver ParametroTema porque el repositorio usa estado_orden_id que referencia a parametros_temas
      *
      * @return ParametroTema
+     *
      * @throws DevolucionException
      */
     public function obtenerEstadoAprobada()
     {
         $tema = Tema::where('name', 'ESTADOS DE ORDEN')->first();
-        if (!$tema) {
+        if (! $tema) {
             throw new DevolucionException("Tema 'ESTADOS DE ORDEN' no encontrado.");
         }
 
         $parametro = Parametro::where('name', 'APROBADA')->first();
-        if (!$parametro) {
+        if (! $parametro) {
             throw new DevolucionException("Parámetro 'APROBADA' no encontrado.");
         }
 
@@ -115,11 +118,10 @@ class DevolucionService
             ->where('status', 1)
             ->first();
 
-        if (!$parametroTema) {
+        if (! $parametroTema) {
             throw new DevolucionException("Estado 'APROBADA' no encontrado en el tema 'ESTADOS DE ORDEN'.");
         }
 
         return $parametroTema;
     }
 }
-

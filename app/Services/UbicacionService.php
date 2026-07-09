@@ -2,15 +2,17 @@
 
 namespace App\Services;
 
-use App\Repositories\PaisRepository;
 use App\Repositories\DepartamentoRepository;
 use App\Repositories\MunicipioRepository;
+use App\Repositories\PaisRepository;
 use Illuminate\Support\Collection;
 
 class UbicacionService
 {
     protected PaisRepository $paisRepo;
+
     protected DepartamentoRepository $departamentoRepo;
+
     protected MunicipioRepository $municipioRepo;
 
     public function __construct(
@@ -25,8 +27,6 @@ class UbicacionService
 
     /**
      * Obtiene estructura completa de ubicación (País > Departamento > Municipio)
-     *
-     * @return array
      */
     public function obtenerEstructuraCompleta(): array
     {
@@ -49,8 +49,6 @@ class UbicacionService
 
     /**
      * Obtiene países activos con alias de nombre normalizados
-     *
-     * @return Collection
      */
     public function obtenerPaisesActivos(): Collection
     {
@@ -69,15 +67,13 @@ class UbicacionService
 
     /**
      * Obtiene departamentos por país (con caché)
-     *
-     * @param int $paisId
-     * @return Collection
      */
     public function obtenerDepartamentosPorPais(int $paisId): Collection
     {
         return $this->departamentoRepo->obtenerPorPais($paisId)
             ->map(function ($departamento) {
                 $nombre = data_get($departamento, 'nombre', data_get($departamento, 'departamento', ''));
+
                 return [
                     'id' => data_get($departamento, 'id'),
                     'nombre' => $nombre,
@@ -89,15 +85,13 @@ class UbicacionService
 
     /**
      * Obtiene municipios por departamento (con caché)
-     *
-     * @param int $departamentoId
-     * @return Collection
      */
     public function obtenerMunicipiosPorDepartamento(int $departamentoId): Collection
     {
         return $this->municipioRepo->obtenerPorDepartamento($departamentoId)
             ->map(function ($municipio) {
                 $nombre = $municipio->municipio ?? $municipio->nombre ?? '';
+
                 return [
                     'id' => data_get($municipio, 'id'),
                     'nombre' => $nombre,
@@ -109,9 +103,6 @@ class UbicacionService
 
     /**
      * Busca ubicación completa
-     *
-     * @param string $termino
-     * @return array
      */
     public function buscarUbicacion(string $termino): array
     {

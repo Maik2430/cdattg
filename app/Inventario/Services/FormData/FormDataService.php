@@ -34,7 +34,7 @@ class FormDataService
         return [
             'contratosConvenios' => $this->contratoConvenioRepository->obtenerTodos(),
             'ambientes' => Ambiente::all(),
-            'proveedores' => $this->proveedorRepository->obtenerTodos()
+            'proveedores' => $this->proveedorRepository->obtenerTodos(),
         ];
     }
 
@@ -62,4 +62,3 @@ class FormDataService
         return $this->proveedorRepository->obtenerTodos();
     }
 }
-

@@ -2,26 +2,29 @@
 
 namespace App\Services;
 
+use App\Models\EvidenciaGuiaAprendizaje;
+use App\Models\Evidencias;
 use App\Models\InstructorFichaCaracterizacion;
-use App\Repositories\FichaCaracterizacionRepository;
-use App\Repositories\ResultadosAprendizajeRepository;
+use App\Models\Parametro;
 use App\Repositories\CompetenciaRepository;
 use App\Repositories\EvidenciasRepository;
-use App\Models\Evidencias;
-use App\Models\EvidenciaGuiaAprendizaje;
-use App\Models\Parametro;
+use App\Repositories\FichaCaracterizacionRepository;
+use App\Repositories\ResultadosAprendizajeRepository;
 
 class RegistroActividadesServices
 {
     protected $fichaCaracterizacionRepository;
+
     protected $resultadosAprendizajeRepository;
+
     protected $competenciaRepository;
+
     protected $evidenciaRepository;
 
     public function __construct(FichaCaracterizacionRepository $fichaCaracterizacionRepository,
-                                ResultadosAprendizajeRepository $resultadosAprendizajeRepository,
-                                CompetenciaRepository $competenciaRepository,
-                                EvidenciasRepository $evidenciaRepository)
+        ResultadosAprendizajeRepository $resultadosAprendizajeRepository,
+        CompetenciaRepository $competenciaRepository,
+        EvidenciasRepository $evidenciaRepository)
     {
         $this->fichaCaracterizacionRepository = $fichaCaracterizacionRepository;
         $this->resultadosAprendizajeRepository = $resultadosAprendizajeRepository;
@@ -88,7 +91,7 @@ class RegistroActividadesServices
             }
         }
 
-        if (!$guiaAprendizaje) {
+        if (! $guiaAprendizaje) {
             throw new \Exception('No se encontró ninguna guía de aprendizaje asociada a los RAPs asignados. Contacte al administrador para asignar guías de aprendizaje.');
         }
 
@@ -98,7 +101,7 @@ class RegistroActividadesServices
             'evidencia_id' => $evidenciaId->id,
             'guia_aprendizaje_id' => $guiaAprendizaje->id,
             'user_create_id' => $data['user_create_id'],
-            'user_edit_id' => $data['user_edit_id']
+            'user_edit_id' => $data['user_edit_id'],
         ];
 
         EvidenciaGuiaAprendizaje::create($dataEvidenciaGuia);
@@ -110,8 +113,8 @@ class RegistroActividadesServices
             $query->where('parametros_temas.id', $evidencia->id_estado);
         })->first();
 
-        if (!$parametro) {
-            throw new \Exception('Parámetro de estado no encontrado para la evidencia ID: ' . $evidencia->id . ' con estado ID: ' . $evidencia->id_estado);
+        if (! $parametro) {
+            throw new \Exception('Parámetro de estado no encontrado para la evidencia ID: '.$evidencia->id.' con estado ID: '.$evidencia->id_estado);
         }
 
         return $parametro->name;

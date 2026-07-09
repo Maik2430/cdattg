@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Repositories\ProgramaFormacionRepository;
 use App\Models\ProgramaFormacion;
-use Illuminate\Database\Eloquent\Collection;
+use App\Repositories\ProgramaFormacionRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -75,4 +75,3 @@ class ProgramaFormacionService
         });
     }
 }
-

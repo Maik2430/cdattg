@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Events\FichaAsignadaAInstructor;
+use App\Models\FichaCaracterizacion;
 use App\Repositories\FichaRepository;
 use App\Repositories\InstructorFichaRepository;
-use App\Models\FichaCaracterizacion;
-use App\Events\FichaAsignadaAInstructor;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 class FichaService
 {
     protected FichaRepository $fichaRepo;
+
     protected InstructorFichaRepository $instructorFichaRepo;
 
     public function __construct(
@@ -25,9 +26,6 @@ class FichaService
 
     /**
      * Lista fichas con filtros
-     *
-     * @param array $filtros
-     * @return LengthAwarePaginator
      */
     public function listarConFiltros(array $filtros = []): LengthAwarePaginator
     {
@@ -36,9 +34,6 @@ class FichaService
 
     /**
      * Obtiene ficha con relaciones
-     *
-     * @param int $id
-     * @return FichaCaracterizacion|null
      */
     public function obtener(int $id): ?FichaCaracterizacion
     {
@@ -47,9 +42,6 @@ class FichaService
 
     /**
      * Crea una nueva ficha
-     *
-     * @param array $datos
-     * @return FichaCaracterizacion
      */
     public function crear(array $datos): FichaCaracterizacion
     {
@@ -67,10 +59,6 @@ class FichaService
 
     /**
      * Actualiza una ficha
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -87,11 +75,6 @@ class FichaService
 
     /**
      * Asigna instructor a ficha
-     *
-     * @param int $fichaId
-     * @param int $instructorId
-     * @param array $datosAsignacion
-     * @return bool
      */
     public function asignarInstructor(int $fichaId, int $instructorId, array $datosAsignacion): bool
     {
@@ -105,7 +88,7 @@ class FichaService
             $asignacion = $this->instructorFichaRepo->crear([
                 'instructor_id' => $instructorId,
                 'ficha_caracterizacion_id' => $fichaId,
-                ...$datosAsignacion
+                ...$datosAsignacion,
             ]);
 
             $instructor = \App\Models\Instructor::find($instructorId);
@@ -125,8 +108,6 @@ class FichaService
 
     /**
      * Obtiene estadísticas de fichas
-     *
-     * @return array
      */
     public function obtenerEstadisticas(): array
     {
@@ -135,15 +116,12 @@ class FichaService
 
     /**
      * Verifica disponibilidad de ficha
-     *
-     * @param int $fichaId
-     * @return array
      */
     public function verificarDisponibilidad(int $fichaId): array
     {
         $ficha = $this->fichaRepo->encontrarConRelaciones($fichaId);
 
-        if (!$ficha) {
+        if (! $ficha) {
             return [
                 'disponible' => false,
                 'razon' => 'Ficha no encontrada',
@@ -164,4 +142,3 @@ class FichaService
         ];
     }
 }
-

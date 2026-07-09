@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Inventario\Services\ContratoConvenio;
 
+use App\Exceptions\ContratoConvenioException;
 use App\Inventario\Interfaces\Repositories\ContratoConvenio\ContratoConvenioRepositoryInterface;
 use App\Models\Inventario\ContratoConvenio;
-use App\Exceptions\ContratoConvenioException;
 
 class ContratoConvenioService
 {
@@ -34,6 +34,7 @@ class ContratoConvenioService
     public function actualizar(ContratoConvenio $contrato, array $datos, int $userId): bool
     {
         $datos['user_update_id'] = $userId;
+
         return $this->repository->actualizar($contrato->id, $datos);
     }
 
@@ -51,4 +52,3 @@ class ContratoConvenioService
         return $this->repository->eliminar($contrato->id);
     }
 }
-

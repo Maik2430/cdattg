@@ -8,37 +8,43 @@ class SofiaStateMapper
 {
     // IDs de parámetros según ParametroSeeder
     private const ESTADO_NO_REGISTRADO = 277;
+
     private const ESTADO_REGISTRADO = 278;
+
     private const ESTADO_REQUIERE_CAMBIO = 279;
 
     private const RESULTADO_ERROR = 'ERROR';
+
     private const RESULTADO_YA_EXISTE = 'YA_EXISTE';
+
     private const RESULTADO_NO_REGISTRADO = 'NO_REGISTRADO';
+
     private const RESULTADO_REQUIERE_CAMBIO = 'REQUIERE_CAMBIO';
+
     private const RESULTADO_DESCONOCIDO = 'DESCONOCIDO';
 
     private const PATRONES_REQUIERE_CAMBIO = [
         'requiere_cambio',
         'actualizar tu documento',
         'cambiar tu documento',
-        'tarjeta de identidad'
+        'tarjeta de identidad',
     ];
 
     private const PATRONES_REGISTRADO = [
         'ya existe',
         'ya cuentas con un registro',
-        'cuenta registrada'
+        'cuenta registrada',
     ];
 
     private const PATRONES_NO_REGISTRADO = [
         'no_registrado',
-        'desconocido'
+        'desconocido',
     ];
 
     /**
      * Mapear resultado de validación a estado Sofia
      *
-     * @param string $resultado Resultado de la validación
+     * @param  string  $resultado  Resultado de la validación
      * @return int Estado Sofia (277: No registrado, 278: Registrado, 279: Requiere cambio)
      */
     public function mapToState(string $resultado): int
@@ -71,7 +77,7 @@ class SofiaStateMapper
      */
     public function getStateLabel(int $estado): string
     {
-        return match($estado) {
+        return match ($estado) {
             self::ESTADO_NO_REGISTRADO => 'No registrado',
             self::ESTADO_REGISTRADO => 'Registrado',
             self::ESTADO_REQUIERE_CAMBIO => 'Requiere cambio',
@@ -86,8 +92,10 @@ class SofiaStateMapper
     {
         if ($resultado === self::RESULTADO_ERROR || str_contains($resultadoLower, 'error')) {
             Log::warning('Error en validacion de SenaSofiaPlus', ['resultado' => $resultado]);
+
             return true;
         }
+
         return false;
     }
 
@@ -98,7 +106,7 @@ class SofiaStateMapper
     {
         $resultadoUpper = strtoupper($resultado);
 
-        return match($resultadoUpper) {
+        return match ($resultadoUpper) {
             self::RESULTADO_YA_EXISTE => self::ESTADO_REGISTRADO,
             self::RESULTADO_NO_REGISTRADO, self::RESULTADO_DESCONOCIDO => self::ESTADO_NO_REGISTRADO,
             self::RESULTADO_REQUIERE_CAMBIO => self::ESTADO_REQUIERE_CAMBIO,
@@ -116,6 +124,7 @@ class SofiaStateMapper
                 return true;
             }
         }
+
         return false;
     }
 
@@ -129,6 +138,7 @@ class SofiaStateMapper
                 return true;
             }
         }
+
         return false;
     }
 
@@ -142,7 +152,7 @@ class SofiaStateMapper
                 return true;
             }
         }
+
         return trim($resultado) === '';
     }
 }
-

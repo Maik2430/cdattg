@@ -2,16 +2,21 @@
 
 namespace App\Services;
 
-use App\Repositories\LoginRepository;
 use App\Repositories\AsignacionInstructorLogRepository;
+use App\Repositories\LoginRepository;
 use App\Repositories\SenasofiaplusValidationLogRepository;
-use App\Models\Login;
-use Illuminate\Support\Facades\Log;
+use App\Services\Concerns\Auditoria\HandlesAuditoriaConsultaActions;
+use App\Services\Concerns\Auditoria\HandlesAuditoriaRegistroActions;
 
 class AuditoriaService
 {
+    use HandlesAuditoriaConsultaActions;
+    use HandlesAuditoriaRegistroActions;
+
     protected LoginRepository $loginRepo;
+
     protected AsignacionInstructorLogRepository $asignacionLogRepo;
+
     protected SenasofiaplusValidationLogRepository $senasofiaplusLogRepo;
 
     public function __construct(
@@ -23,152 +28,4 @@ class AuditoriaService
         $this->asignacionLogRepo = $asignacionLogRepo;
         $this->senasofiaplusLogRepo = $senasofiaplusLogRepo;
     }
-
-    /**
-     * Registra intento de login
-     *
-     * @param array $datos
-     * @return void
-     */
-    public function registrarLogin(array $datos): void
-    {
-        try {
-            $this->loginRepo->registrar($datos);
-
-            if (!$datos['exitoso']) {
-                Log::warning('Intento de login fallido', [
-                    'email' => $datos['email'],
-                    'ip' => $datos['ip_address'] ?? request()->ip(),
-                ]);
-
-                // Verificar intentos fallidos recientes
-                $intentosFallidos = $this->loginRepo->contarIntentosFallidosRecientes($datos['email']);
-
-                if ($intentosFallidos >= 5) {
-                    Log::alert('Múltiples intentos fallidos detectados', [
-                        'email' => $datos['email'],
-                        'intentos' => $intentosFallidos,
-                    ]);
-                }
-            }
-        } catch (\Exception $e) {
-            Log::error('Error registrando login', [
-                'error' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    /**
-     * Registra cambio en asignación de instructor
-     *
-     * @param int $instructorId
-     * @param int $fichaId
-     * @param string $accion
-     * @param array $detalles
-     * @return void
-     */
-    public function registrarCambioAsignacion(int $instructorId, int $fichaId, string $accion, array $detalles = []): void
-    {
-        try {
-            $this->asignacionLogRepo->registrar([
-                'instructor_id' => $instructorId,
-                'ficha_caracterizacion_id' => $fichaId,
-                'accion' => $accion,
-                'detalles' => json_encode($detalles),
-                'user_id' => auth()->id(),
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error registrando cambio de asignación', [
-                'error' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    /**
-     * Registra validación de SenaSofiaPlus
-     *
-     * @param int $aspiranteId
-     * @param string $resultado
-     * @param string $mensaje
-     * @param array $detalles
-     * @return void
-     */
-    public function registrarValidacionSenasofiaplus(int $aspiranteId, string $resultado, string $mensaje, array $detalles = []): void
-    {
-        try {
-            $this->senasofiaplusLogRepo->registrar([
-                'aspirante_id' => $aspiranteId,
-                'accion' => 'validar',
-                'detalles' => $detalles,
-                'resultado' => $resultado,
-                'mensaje' => $mensaje,
-                'user_id' => 1, // Bot user
-                'fecha_accion' => now(),
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error registrando validación SenaSofiaPlus', [
-                'error' => $e->getMessage(),
-                'aspirante_id' => $aspiranteId,
-            ]);
-        }
-    }
-
-    /**
-     * Obtiene reporte de auditoría
-     *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @param string $tipo
-     * @return array
-     */
-    public function obtenerReporteAuditoria(string $fechaInicio, string $fechaFin, string $tipo = 'todo'): array
-    {
-        $resultado = [];
-
-        if ($tipo === 'todo' || $tipo === 'logins') {
-            $resultado['logins'] = $this->loginRepo->obtenerEstadisticas($fechaInicio, $fechaFin);
-        }
-
-        if ($tipo === 'todo' || $tipo === 'asignaciones') {
-            $resultado['asignaciones'] = $this->asignacionLogRepo->obtenerAuditoria($fechaInicio, $fechaFin);
-        }
-
-        if ($tipo === 'todo' || $tipo === 'senasofiaplus') {
-            $resultado['senasofiaplus'] = $this->senasofiaplusLogRepo->obtenerAuditoria($fechaInicio, $fechaFin);
-        }
-
-        return $resultado;
-    }
-
-    /**
-     * Detecta actividades sospechosas
-     *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @return array
-     */
-    public function detectarActividadesSospechosas(string $fechaInicio, string $fechaFin): array
-    {
-        $sospechosas = [];
-
-        // Detectar múltiples intentos fallidos
-        $loginsFallidos = Login::where('exitoso', false)
-            ->whereBetween('fecha_hora', [$fechaInicio, $fechaFin])
-            ->get()
-            ->groupBy('email');
-
-        foreach ($loginsFallidos as $email => $intentos) {
-            if ($intentos->count() >= 5) {
-                $sospechosas[] = [
-                    'tipo' => 'intentos_fallidos',
-                    'email' => $email,
-                    'intentos' => $intentos->count(),
-                    'ultimo_intento' => $intentos->first()->fecha_hora,
-                ];
-            }
-        }
-
-        return $sospechosas;
-    }
 }
-

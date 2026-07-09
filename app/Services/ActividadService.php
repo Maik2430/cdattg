@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Repositories\RegistroActividadesRepository;
 use App\Models\RegistroActividades;
+use App\Repositories\RegistroActividadesRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -20,10 +19,6 @@ class ActividadService
 
     /**
      * Obtiene actividades por instructor
-     *
-     * @param int $instructorId
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function obtenerPorInstructor(int $instructorId, int $perPage = 15): LengthAwarePaginator
     {
@@ -32,9 +27,6 @@ class ActividadService
 
     /**
      * Registra una nueva actividad
-     *
-     * @param array $datos
-     * @return RegistroActividades
      */
     public function registrar(array $datos): RegistroActividades
     {
@@ -53,10 +45,6 @@ class ActividadService
 
     /**
      * Actualiza una actividad
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -75,9 +63,6 @@ class ActividadService
 
     /**
      * Elimina una actividad
-     *
-     * @param int $id
-     * @return bool
      */
     public function eliminar(int $id): bool
     {
@@ -96,11 +81,6 @@ class ActividadService
 
     /**
      * Obtiene reporte de actividades por período
-     *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @param int|null $instructorId
-     * @return array
      */
     public function obtenerReportePeriodo(string $fechaInicio, string $fechaFin, ?int $instructorId = null): array
     {
@@ -123,4 +103,3 @@ class ActividadService
         ];
     }
 }
-

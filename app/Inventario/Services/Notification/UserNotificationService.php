@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Inventario\Services\Notification;
 
 use App\Inventario\Interfaces\Repositories\Notification\NotificationRepositoryInterface;
-use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * Servicio para gestión de notificaciones de usuario del módulo de inventario
@@ -24,18 +24,20 @@ class UserNotificationService
     /**
      * Obtiene notificaciones paginadas del usuario
      */
-    public function obtenerNotificacionesPaginadas(int $userId, int $perPage = null): LengthAwarePaginator
+    public function obtenerNotificacionesPaginadas(int $userId, ?int $perPage = null): LengthAwarePaginator
     {
         $perPage = $perPage ?? config('inventario.notificaciones.per_page', 10);
+
         return $this->repository->obtenerPorUsuarioPaginadas($userId, $perPage);
     }
 
     /**
      * Obtiene notificaciones no leídas del usuario
      */
-    public function obtenerNoLeidas(int $userId, int $limit = null): Collection
+    public function obtenerNoLeidas(int $userId, ?int $limit = null): Collection
     {
         $limit = $limit ?? config('inventario.notificaciones.dropdown_limit', 5);
+
         return $this->repository->obtenerNoLeidasLimitadas($userId, $limit);
     }
 
@@ -82,8 +84,7 @@ class UserNotificationService
 
         return [
             'notificaciones' => $this->obtenerNoLeidas($userId, $limit),
-            'count' => $this->contarNoLeidas($userId)
+            'count' => $this->contarNoLeidas($userId),
         ];
     }
 }
-
