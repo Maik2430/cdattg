@@ -58,7 +58,7 @@ class ProcesarSalidasPendientesCommand extends Command
 
             return 0;
         } catch (\Exception $e) {
-            $this->error('Error procesando salidas pendientes: ' . $e->getMessage());
+            $this->error('Error procesando salidas pendientes: '.$e->getMessage());
             Log::error('Error procesando salidas pendientes', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -68,4 +68,3 @@ class ProcesarSalidasPendientesCommand extends Command
         }
     }
 }
-

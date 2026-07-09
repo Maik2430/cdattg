@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\Parametro;
 use App\Models\Tema;
+use Illuminate\Console\Command;
 
 class VerificarTiposDocumento extends Command
 {
@@ -32,12 +31,13 @@ class VerificarTiposDocumento extends Command
         // Buscar el tema "TIPO DE DOCUMENTO"
         $temaTipoDoc = Tema::where('name', 'TIPO DE DOCUMENTO')->first();
 
-        if (!$temaTipoDoc) {
+        if (! $temaTipoDoc) {
             $this->warn('⚠️  No se encontró el tema "TIPO DE DOCUMENTO"');
             $this->info('📋 Temas disponibles:');
-            Tema::all(['id', 'name'])->each(function($tema) {
+            Tema::all(['id', 'name'])->each(function ($tema) {
                 $this->line("   - ID {$tema->id}: {$tema->name}");
             });
+
             return 0;
         }
 
@@ -50,7 +50,7 @@ class VerificarTiposDocumento extends Command
             $this->warn('⚠️  No hay parámetros activos para el tema "TIPO DE DOCUMENTO"');
         } else {
             $this->info('📋 Tipos de documento disponibles:');
-            $parametros->each(function($parametro) {
+            $parametros->each(function ($parametro) {
                 $this->line("   - ID {$parametro->id}: {$parametro->name}");
             });
         }
@@ -62,4 +62,3 @@ class VerificarTiposDocumento extends Command
         return 0;
     }
 }
-

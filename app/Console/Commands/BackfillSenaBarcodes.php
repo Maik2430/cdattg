@@ -19,7 +19,7 @@ class BackfillSenaBarcodes extends Command
         $dryRun = (bool) $this->option('dry-run');
         $chunk = (int) $this->option('chunk');
 
-        $this->info('Iniciando asignación de códigos SENA de 11 dígitos' . ($dryRun ? ' (dry-run)' : ''));
+        $this->info('Iniciando asignación de códigos SENA de 11 dígitos'.($dryRun ? ' (dry-run)' : ''));
 
         $normalizados = $this->normalizarCodigosExistentes($chunk, $dryRun);
         if ($normalizados > 0) {
@@ -58,7 +58,7 @@ class BackfillSenaBarcodes extends Command
         }
 
         $nuevo = str_pad(substr($soloDigitos, -11), 11, '0', STR_PAD_LEFT);
-        if (!$dryRun) {
+        if (! $dryRun) {
             $producto->codigo_barras_sena = $nuevo;
             $producto->saveQuietly();
         }
@@ -122,7 +122,7 @@ class BackfillSenaBarcodes extends Command
     {
         return DB::transaction(function () use ($producto, $siguiente) {
             $modelo = Producto::lockForUpdate()->find($producto->id);
-            if (!$modelo) {
+            if (! $modelo) {
                 return false;
             }
             if ($modelo->codigo_barras_sena) {

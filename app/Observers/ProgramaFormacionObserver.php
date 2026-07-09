@@ -58,4 +58,3 @@ class ProgramaFormacionObserver
         Cache::tags(['programas', 'configuracion', 'fichas'])->flush();
     }
 }
-

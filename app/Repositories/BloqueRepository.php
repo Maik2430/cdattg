@@ -10,16 +10,14 @@ class BloqueRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['bloques', 'infraestructura'];
-    }    /**
+    }
+
+    /**
      * Obtiene bloques por sede
-     *
-     * @param int $sedeId
-     * @return Collection
      */
     public function obtenerPorSede(int $sedeId): Collection
     {
@@ -32,12 +30,9 @@ class BloqueRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

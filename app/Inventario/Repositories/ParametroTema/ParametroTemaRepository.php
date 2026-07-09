@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Inventario\Repositories\ParametroTema;
 
 use App\Inventario\Interfaces\Repositories\ParametroTema\ParametroTemaRepositoryInterface;
-use App\Models\Tema;
 use App\Models\Parametro;
 use App\Models\ParametroTema;
+use App\Models\Tema;
 use Illuminate\Support\Collection;
 
 class ParametroTemaRepository implements ParametroTemaRepositoryInterface
@@ -19,7 +19,7 @@ class ParametroTemaRepository implements ParametroTemaRepositoryInterface
     {
         $tema = Tema::where('name', $nombreTema)->first();
 
-        if (!$tema) {
+        if (! $tema) {
             return collect([]);
         }
 
@@ -51,13 +51,13 @@ class ParametroTemaRepository implements ParametroTemaRepositoryInterface
     {
         $tema = Tema::where('name', $nombreTema)->first();
 
-        if (!$tema) {
+        if (! $tema) {
             return null;
         }
 
         $parametro = Parametro::where('name', $nombreEstado)->first();
 
-        if (!$parametro) {
+        if (! $parametro) {
             return null;
         }
 

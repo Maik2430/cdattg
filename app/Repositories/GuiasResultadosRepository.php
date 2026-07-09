@@ -9,9 +9,6 @@ class GuiasResultadosRepository
 {
     /**
      * Obtiene guías por resultado de aprendizaje
-     *
-     * @param int $resultadoId
-     * @return Collection
      */
     public function obtenerPorResultado(int $resultadoId): Collection
     {
@@ -22,13 +19,9 @@ class GuiasResultadosRepository
 
     /**
      * Crea relación guía-resultado
-     *
-     * @param array $datos
-     * @return GuiasResultados
      */
     public function crear(array $datos): GuiasResultados
     {
         return GuiasResultados::create($datos);
     }
 }
-

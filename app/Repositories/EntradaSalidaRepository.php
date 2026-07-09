@@ -10,9 +10,6 @@ class EntradaSalidaRepository
 {
     /**
      * Obtiene registros de entrada/salida por fecha
-     *
-     * @param string $fecha
-     * @return Collection
      */
     public function obtenerPorFecha(string $fecha): Collection
     {
@@ -24,11 +21,6 @@ class EntradaSalidaRepository
 
     /**
      * Obtiene registros por persona
-     *
-     * @param int $personaId
-     * @param string|null $fechaInicio
-     * @param string|null $fechaFin
-     * @return Collection
      */
     public function obtenerPorPersona(int $personaId, ?string $fechaInicio = null, ?string $fechaFin = null): Collection
     {
@@ -43,9 +35,6 @@ class EntradaSalidaRepository
 
     /**
      * Registra entrada
-     *
-     * @param int $personaId
-     * @return EntradaSalida
      */
     public function registrarEntrada(int $personaId): EntradaSalida
     {
@@ -58,9 +47,6 @@ class EntradaSalidaRepository
 
     /**
      * Registra salida
-     *
-     * @param int $entradaSalidaId
-     * @return bool
      */
     public function registrarSalida(int $entradaSalidaId): bool
     {
@@ -71,10 +57,6 @@ class EntradaSalidaRepository
 
     /**
      * Verifica si hay registro abierto (sin salida)
-     *
-     * @param int $personaId
-     * @param string $fecha
-     * @return EntradaSalida|null
      */
     public function obtenerRegistroAbierto(int $personaId, string $fecha): ?EntradaSalida
     {
@@ -84,4 +66,3 @@ class EntradaSalidaRepository
             ->first();
     }
 }
-

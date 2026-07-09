@@ -15,4 +15,3 @@ class UserRepository implements UserRepositoryInterface
         return User::role('SUPER ADMINISTRADOR')->get();
     }
 }
-

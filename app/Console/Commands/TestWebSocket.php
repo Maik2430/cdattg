@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Events\QrScanned;
 use App\Events\NuevaAsistenciaRegistrada;
+use App\Events\QrScanned;
+use Illuminate\Console\Command;
 
 class TestWebSocket extends Command
 {
@@ -35,10 +35,12 @@ class TestWebSocket extends Command
             $this->testAsistenciaEvent();
         } else {
             $this->error('Tipo no válido. Use "qr" o "asistencia"');
+
             return 1;
         }
 
         $this->info('Evento de prueba enviado correctamente');
+
         return 0;
     }
 

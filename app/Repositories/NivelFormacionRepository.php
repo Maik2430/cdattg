@@ -10,15 +10,14 @@ class NivelFormacionRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['niveles', 'configuracion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todos los niveles de formación activos
-     *
-     * @return Collection
      */
     public function obtenerActivos(): Collection
     {
@@ -31,12 +30,9 @@ class NivelFormacionRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

@@ -45,8 +45,6 @@ class ModuleRouteServiceProvider extends ServiceProvider
 
     /**
      * Define las rutas del módulo
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -55,8 +53,6 @@ class ModuleRouteServiceProvider extends ServiceProvider
 
     /**
      * Registra las rutas de los módulos
-     *
-     * @return void
      */
     public function map(): void
     {
@@ -104,14 +100,9 @@ class ModuleRouteServiceProvider extends ServiceProvider
 
     /**
      * Registra una ruta de módulo personalizada
-     *
-     * @param string $module
-     * @param array $config
-     * @return void
      */
     public function registerModule(string $module, array $config): void
     {
         $this->modules[$module] = $config;
     }
 }
-

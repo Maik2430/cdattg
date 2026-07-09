@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 class VerificarRelacionPersona extends Command
 {
     protected $signature = 'aprendices:verificar-relacion-persona';
+
     protected $description = 'Verifica la relación entre aprendices y personas';
 
     public function handle()
@@ -20,8 +21,9 @@ class VerificarRelacionPersona extends Command
         // Verificar primer aprendiz
         $aprendiz = Aprendiz::first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             $this->error('No hay aprendices en la base de datos.');
+
             return Command::FAILURE;
         }
 
@@ -33,22 +35,22 @@ class VerificarRelacionPersona extends Command
         $persona = $aprendiz->persona;
 
         if ($persona) {
-            $this->info("✅ Relación carga correctamente");
+            $this->info('✅ Relación carga correctamente');
             $this->line("👤 Nombre: {$persona->nombre_completo}");
             $this->line("📧 Email: {$persona->email}");
             $this->line("🆔 Documento: {$persona->numero_documento}");
         } else {
-            $this->error("❌ La relación NO carga");
+            $this->error('❌ La relación NO carga');
 
             // Verificar si existe la persona en la tabla
             $personaDirecta = Persona::find($aprendiz->persona_id);
             if ($personaDirecta) {
-                $this->warn("⚠️  La persona SÍ existe en la tabla personas");
+                $this->warn('⚠️  La persona SÍ existe en la tabla personas');
                 $this->line("👤 Nombre: {$personaDirecta->nombre_completo}");
                 $this->newLine();
-                $this->error("🔥 PROBLEMA: La relación está rota en el modelo");
+                $this->error('🔥 PROBLEMA: La relación está rota en el modelo');
             } else {
-                $this->error("⚠️  La persona NO existe en la tabla personas");
+                $this->error('⚠️  La persona NO existe en la tabla personas');
                 $this->line("El persona_id {$aprendiz->persona_id} no existe");
             }
         }
@@ -57,8 +59,8 @@ class VerificarRelacionPersona extends Command
         $this->info('📊 Verificando la definición de la relación...');
 
         // Verificar la tabla y columnas
-        $aprendizTable = (new Aprendiz())->getTable();
-        $personaTable = (new Persona())->getTable();
+        $aprendizTable = (new Aprendiz)->getTable();
+        $personaTable = (new Persona)->getTable();
 
         $this->line("Tabla aprendiz: {$aprendizTable}");
         $this->line("Tabla persona: {$personaTable}");
@@ -83,10 +85,9 @@ class VerificarRelacionPersona extends Command
         if ($aprendizConPersona && $aprendizConPersona->persona) {
             $this->info("✅ Eager loading funciona: {$aprendizConPersona->persona->nombre_completo}");
         } else {
-            $this->error("❌ Eager loading NO funciona");
+            $this->error('❌ Eager loading NO funciona');
         }
 
         return Command::SUCCESS;
     }
 }
-

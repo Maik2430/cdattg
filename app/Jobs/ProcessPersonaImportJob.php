@@ -24,9 +24,11 @@ class ProcessPersonaImportJob implements ShouldQueue
      * Cola dedicada para importaciones con configuración independiente.
      */
     private const CONNECTION = 'long-running';
+
     private const QUEUE = 'long-running';
 
     public int $tries = 3;
+
     public int $timeout;
 
     public function __construct(int $importId)
@@ -35,7 +37,7 @@ class ProcessPersonaImportJob implements ShouldQueue
         $this->onConnection(self::CONNECTION);
         $this->onQueue(self::QUEUE);
 
-        $retryAfter = (int) config('queue.connections.' . self::CONNECTION . '.retry_after', 2400);
+        $retryAfter = (int) config('queue.connections.'.self::CONNECTION.'.retry_after', 2400);
         $this->timeout = max(300, $retryAfter - 120);
     }
 
@@ -43,8 +45,9 @@ class ProcessPersonaImportJob implements ShouldQueue
     {
         $import = PersonaImport::find($this->importId);
 
-        if (!$import) {
+        if (! $import) {
             Log::warning('Importación de personas no encontrada', ['import_id' => $this->importId]);
+
             return;
         }
 

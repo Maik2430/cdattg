@@ -3,14 +3,13 @@
 namespace App\Jobs;
 
 use App\Services\CarnetService;
-use App\Models\Aprendiz;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class GenerarCarnetsMasivosJob implements ShouldQueue
 {
@@ -19,6 +18,7 @@ class GenerarCarnetsMasivosJob implements ShouldQueue
     public Collection $aprendices;
 
     public $tries = 2;
+
     public $timeout = 1800; // 30 minutos
 
     /**
@@ -79,4 +79,3 @@ class GenerarCarnetsMasivosJob implements ShouldQueue
         ]);
     }
 }
-

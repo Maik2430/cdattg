@@ -10,16 +10,14 @@ class UserRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['usuarios', 'auth'];
-    }    /**
+    }
+
+    /**
      * Encuentra usuario por email
-     *
-     * @param string $email
-     * @return User|null
      */
     public function encontrarPorEmail(string $email): ?User
     {
@@ -28,9 +26,6 @@ class UserRepository
 
     /**
      * Encuentra usuario por persona
-     *
-     * @param int $personaId
-     * @return User|null
      */
     public function encontrarPorPersona(int $personaId): ?User
     {
@@ -41,9 +36,6 @@ class UserRepository
 
     /**
      * Obtiene usuarios por rol
-     *
-     * @param string $rol
-     * @return Collection
      */
     public function obtenerPorRol(string $rol): Collection
     {
@@ -56,39 +48,31 @@ class UserRepository
 
     /**
      * Crea un nuevo usuario
-     *
-     * @param array $datos
-     * @return User
      */
     public function crear(array $datos): User
     {
         $user = User::create($datos);
         $this->invalidarCache();
+
         return $user;
     }
 
     /**
      * Actualiza usuario
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
         $actualizado = User::where('id', $id)->update($datos);
         $this->invalidarCache();
+
         return $actualizado;
     }
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

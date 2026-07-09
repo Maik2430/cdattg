@@ -3,9 +3,8 @@
 namespace App\Observers;
 
 use App\Models\Instructor;
-use App\Models\User;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Role;
 
 class InstructorObserver
 {
@@ -47,27 +46,26 @@ class InstructorObserver
 
     /**
      * Asigna el rol INSTRUCTOR al usuario asociado a la persona del instructor.
-     *
-     * @param Instructor $instructor
-     * @return void
      */
     private function assignInstructorRole(Instructor $instructor): void
     {
         try {
             $persona = $instructor->persona;
-            if (!$persona) {
+            if (! $persona) {
                 Log::warning('Instructor sin persona asociada', [
                     'instructor_id' => $instructor->id,
-                    'persona_id' => $instructor->persona_id
+                    'persona_id' => $instructor->persona_id,
                 ]);
+
                 return;
             }
 
-            if (!$persona->user) {
+            if (! $persona->user) {
                 Log::warning('Instructor sin usuario asociado', [
                     'instructor_id' => $instructor->id,
-                    'persona_id' => $persona->id
+                    'persona_id' => $persona->id,
                 ]);
+
                 return;
             }
 
@@ -83,7 +81,7 @@ class InstructorObserver
                 'instructor_id' => $instructor->id,
                 'user_id' => $user->id,
                 'persona_id' => $persona->id,
-                'status' => $instructor->status
+                'status' => $instructor->status,
             ]);
 
         } catch (\Exception $e) {
@@ -91,16 +89,13 @@ class InstructorObserver
                 'instructor_id' => $instructor->id,
                 'persona_id' => $instructor->persona_id,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }
 
     /**
      * Remueve el rol INSTRUCTOR del usuario asociado.
-     *
-     * @param Instructor $instructor
-     * @return void
      */
     private function removeInstructorRole(Instructor $instructor): void
     {
@@ -121,13 +116,13 @@ class InstructorObserver
                 Log::info('Rol INSTRUCTOR removido automáticamente', [
                     'instructor_id' => $instructor->id,
                     'user_id' => $user->id,
-                    'persona_id' => $persona->id
+                    'persona_id' => $persona->id,
                 ]);
             }
         } catch (\Exception $e) {
             Log::error('Error al remover rol INSTRUCTOR', [
                 'instructor_id' => $instructor->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }

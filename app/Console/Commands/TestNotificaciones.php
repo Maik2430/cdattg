@@ -2,16 +2,17 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\User;
-use App\Models\Inventario\Producto;
 use App\Models\Inventario\Orden;
-use App\Notifications\StockBajoNotification;
+use App\Models\Inventario\Producto;
+use App\Models\User;
 use App\Notifications\NuevaOrdenNotification;
+use App\Notifications\StockBajoNotification;
+use Illuminate\Console\Command;
 
 class TestNotificaciones extends Command
 {
     protected $signature = 'test:notificaciones';
+
     protected $description = 'Crear notificaciones de prueba para el sistema';
 
     public function handle()
@@ -22,8 +23,9 @@ class TestNotificaciones extends Command
         // 1. Obtener usuario SUPER ADMINISTRADOR
         $superadmin = User::role('SUPER ADMINISTRADOR')->first();
 
-        if (!$superadmin) {
+        if (! $superadmin) {
             $this->error('❌ No se encontró ningún usuario con rol SUPER ADMINISTRADOR');
+
             return 1;
         }
 
@@ -32,7 +34,7 @@ class TestNotificaciones extends Command
         $this->newLine();
 
         // 2. Verificar permiso
-        if (!$superadmin->hasPermissionTo('VER NOTIFICACION')) {
+        if (! $superadmin->hasPermissionTo('VER NOTIFICACION')) {
             $this->warn('⚠️  El usuario NO tiene el permiso VER NOTIFICACION');
             $this->info('   Asignando permiso...');
             $superadmin->givePermissionTo('VER NOTIFICACION');

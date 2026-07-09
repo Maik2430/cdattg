@@ -9,9 +9,6 @@ class FichaDiasFormacionRepository
 {
     /**
      * Obtiene días de formación por ficha
-     *
-     * @param int $fichaId
-     * @return Collection
      */
     public function obtenerPorFicha(int $fichaId): Collection
     {
@@ -23,9 +20,6 @@ class FichaDiasFormacionRepository
 
     /**
      * Crea relación ficha-día
-     *
-     * @param array $datos
-     * @return FichaDiasFormacion
      */
     public function crear(array $datos): FichaDiasFormacion
     {
@@ -34,9 +28,6 @@ class FichaDiasFormacionRepository
 
     /**
      * Elimina días de una ficha
-     *
-     * @param int $fichaId
-     * @return bool
      */
     public function eliminarPorFicha(int $fichaId): bool
     {
@@ -45,10 +36,6 @@ class FichaDiasFormacionRepository
 
     /**
      * Asigna múltiples días a una ficha
-     *
-     * @param int $fichaId
-     * @param array $diasIds
-     * @return int
      */
     public function asignarDias(int $fichaId, array $diasIds): int
     {
@@ -66,4 +53,3 @@ class FichaDiasFormacionRepository
         return count($registros);
     }
 }
-

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\Orden;
 
-use App\Models\Inventario\DetalleOrden;
 use App\Inventario\Interfaces\Repositories\Orden\DetalleOrdenRepositoryInterface;
+use App\Models\Inventario\DetalleOrden;
 
 class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
 {
@@ -58,8 +58,7 @@ class DetalleOrdenRepository implements DetalleOrdenRepositoryInterface
             'orden.tipoOrden.parametro',
             'producto',
             'estadoOrden.parametro',
-            'devoluciones'
+            'devoluciones',
         ])->find($id);
     }
 }
-

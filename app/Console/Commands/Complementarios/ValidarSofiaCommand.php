@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands\Complementarios;
 
-use Illuminate\Console\Command;
-use App\Services\Complementarios\Sofia\SofiaValidationService;
 use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
+use Illuminate\Console\Command;
 
 class ValidarSofiaCommand extends Command
 {
     private const DELAY_SECONDS = 2;
+
     private const ESTADO_REGISTRADO = 1;
 
     /**
@@ -28,7 +29,6 @@ class ValidarSofiaCommand extends Command
     /**
      * Execute the console command.
      */
-
     public function handle(
         SofiaValidationService $validationService,
         SofiaValidationProcessor $processor
@@ -39,6 +39,7 @@ class ValidarSofiaCommand extends Command
 
         if ($aspirantes->isEmpty()) {
             $this->info('No hay aspirantes que necesiten validacion.');
+
             return Command::SUCCESS;
         }
 
@@ -71,7 +72,7 @@ class ValidarSofiaCommand extends Command
         $bar->finish();
         $this->newLine(2);
 
-        $this->info("Validacion completada:");
+        $this->info('Validacion completada:');
         $this->info("Registrados: {$exitosos}");
         $this->info("Errores: {$errores}");
 

@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\ContratoConvenio;
 
-use App\Models\Inventario\ContratoConvenio;
 use App\Inventario\Interfaces\Repositories\ContratoConvenio\ContratoConvenioRepositoryInterface;
+use App\Models\Inventario\ContratoConvenio;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
 {
-
     /**
      * Obtiene todos los contratos y convenios
      */
@@ -29,10 +28,10 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
             'proveedor',
             'estado.parametro',
             'userCreate.persona',
-            'userUpdate.persona'
+            'userUpdate.persona',
         ])->latest();
 
-        if (!empty($filtros['search'])) {
+        if (! empty($filtros['search'])) {
             $search = $filtros['search'];
             $query->where(function ($q) use ($search): void {
                 $q->where('name', 'LIKE', "%{$search}%")
@@ -44,6 +43,7 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
         }
 
         $perPage = $filtros['per_page'] ?? 10;
+
         return $query->paginate($perPage);
     }
 
@@ -57,7 +57,7 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
             'productos',
             'estado.parametro',
             'userCreate.persona',
-            'userUpdate.persona'
+            'userUpdate.persona',
         ])->find($id);
     }
 
@@ -95,4 +95,3 @@ class ContratoConvenioRepository implements ContratoConvenioRepositoryInterface
             ->exists();
     }
 }
-

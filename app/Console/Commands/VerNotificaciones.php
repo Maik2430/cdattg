@@ -2,18 +2,19 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Inventario\Notificacion;
+use Illuminate\Console\Command;
 
 class VerNotificaciones extends Command
 {
     protected $signature = 'ver:notificaciones';
+
     protected $description = 'Ver las últimas notificaciones en la base de datos';
 
     public function handle()
     {
         $this->info('=== NOTIFICACIONES EN LA BASE DE DATOS ===');
-        $this->info('Total: ' . Notificacion::count());
+        $this->info('Total: '.Notificacion::count());
         $this->newLine();
 
         $notificaciones = Notificacion::latest()->take(10)->get();
@@ -23,7 +24,7 @@ class VerNotificaciones extends Command
             $this->line("ID: {$notif->id}");
             $this->line("Tipo: {$tipo}");
             $this->line("Usuario: {$notif->notifiable_id}");
-            $this->line("Leída: " . ($notif->leida_en ? 'Sí' : 'No'));
+            $this->line('Leída: '.($notif->leida_en ? 'Sí' : 'No'));
             $this->line("Fecha: {$notif->created_at}");
 
             // Decodificar datos

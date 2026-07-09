@@ -24,7 +24,7 @@ class ApiRateLimiter
             $seconds = RateLimiter::availableIn($key);
 
             return response()->json([
-                'message' => 'Demasiadas solicitudes. Por favor, intente de nuevo en ' . $seconds . ' segundos.',
+                'message' => 'Demasiadas solicitudes. Por favor, intente de nuevo en '.$seconds.' segundos.',
                 'retry_after' => $seconds,
             ], 429);
         }
@@ -46,10 +46,10 @@ class ApiRateLimiter
     protected function resolveRequestSignature(Request $request): string
     {
         if ($user = $request->user()) {
-            return sha1('api_rate_limit|' . $user->id);
+            return sha1('api_rate_limit|'.$user->id);
         }
 
-        return sha1('api_rate_limit|' . $request->ip());
+        return sha1('api_rate_limit|'.$request->ip());
     }
 
     /**
@@ -63,4 +63,3 @@ class ApiRateLimiter
         return $response;
     }
 }
-

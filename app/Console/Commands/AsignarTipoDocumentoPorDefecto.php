@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\Persona;
 use App\Models\Parametro;
+use App\Models\Persona;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class AsignarTipoDocumentoPorDefecto extends Command
@@ -37,6 +37,7 @@ class AsignarTipoDocumentoPorDefecto extends Command
 
         if ($personasSinTipoDoc->isEmpty()) {
             $this->info('✅ Todas las personas ya tienen tipo de documento asignado.');
+
             return 0;
         }
 
@@ -45,8 +46,9 @@ class AsignarTipoDocumentoPorDefecto extends Command
         // Obtener el tipo de documento por defecto (CÉDULA DE CIUDADANÍA)
         $tipoDocDefecto = Parametro::where('name', 'CEDULA DE CIUDADANIA')->first();
 
-        if (!$tipoDocDefecto) {
+        if (! $tipoDocDefecto) {
             $this->error('❌ No se encontró el parámetro "CEDULA DE CIUDADANIA"');
+
             return 1;
         }
 
@@ -54,22 +56,24 @@ class AsignarTipoDocumentoPorDefecto extends Command
 
         // Mostrar algunas personas que se actualizarían
         $this->info('👥 Primeras 5 personas que se actualizarían:');
-        $personasSinTipoDoc->take(5)->each(function($persona, $index) {
-            $this->line("   " . ($index + 1) . ". {$persona->nombre_completo} - {$persona->numero_documento}");
+        $personasSinTipoDoc->take(5)->each(function ($persona, $index) {
+            $this->line('   '.($index + 1).". {$persona->nombre_completo} - {$persona->numero_documento}");
         });
 
         if ($personasSinTipoDoc->count() > 5) {
-            $this->line("   ... y " . ($personasSinTipoDoc->count() - 5) . " más");
+            $this->line('   ... y '.($personasSinTipoDoc->count() - 5).' más');
         }
 
         if ($isDryRun) {
             $this->info('🔍 Modo dry-run: No se realizarán cambios.');
             $this->info('💡 Ejecuta sin --dry-run para asignar el tipo de documento.');
+
             return 0;
         }
 
-        if (!$this->confirm('¿Deseas asignar el tipo de documento por defecto a todas estas personas?')) {
+        if (! $this->confirm('¿Deseas asignar el tipo de documento por defecto a todas estas personas?')) {
             $this->info('❌ Operación cancelada.');
+
             return 0;
         }
 
@@ -88,6 +92,7 @@ class AsignarTipoDocumentoPorDefecto extends Command
         } catch (\Exception $e) {
             DB::rollBack();
             $this->error("❌ Error durante la actualización: {$e->getMessage()}");
+
             return 1;
         }
 
@@ -103,4 +108,3 @@ class AsignarTipoDocumentoPorDefecto extends Command
         return 0;
     }
 }
-

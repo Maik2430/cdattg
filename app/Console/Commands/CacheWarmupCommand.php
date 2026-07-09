@@ -56,4 +56,3 @@ class CacheWarmupCommand extends Command
         return 0;
     }
 }
-

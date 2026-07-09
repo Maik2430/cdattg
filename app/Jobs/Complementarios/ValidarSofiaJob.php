@@ -2,11 +2,11 @@
 
 namespace App\Jobs\Complementarios;
 
+use App\Models\Complementarios\SofiaValidationProgress;
+use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
+use App\Services\Complementarios\Sofia\SofiaValidationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Services\Complementarios\Sofia\SofiaValidationService;
-use App\Services\Complementarios\Sofia\SofiaValidationProcessor;
-use App\Models\Complementarios\SofiaValidationProgress;
 use Illuminate\Support\Facades\Log;
 
 class ValidarSofiaJob implements ShouldQueue
@@ -14,7 +14,9 @@ class ValidarSofiaJob implements ShouldQueue
     use Queueable;
 
     protected $complementarioId;
+
     protected $userId;
+
     protected $progressId;
 
     /**
@@ -59,7 +61,7 @@ class ValidarSofiaJob implements ShouldQueue
         SofiaValidationProcessor $processor
     ): void {
         Log::info('Iniciando validacion SenaSofiaPlus', [
-            'complementario_id' => $this->complementarioId
+            'complementario_id' => $this->complementarioId,
         ]);
 
         $progress = $this->initializeProgress();
@@ -71,6 +73,7 @@ class ValidarSofiaJob implements ShouldQueue
             if ($progress) {
                 $progress->markAsCompleted();
             }
+
             return;
         }
 
@@ -89,7 +92,7 @@ class ValidarSofiaJob implements ShouldQueue
             'complementario_id' => $this->complementarioId,
             'user_id' => $this->userId,
             'exception_message' => $exception->getMessage(),
-            'exception' => $exception
+            'exception' => $exception,
         ]);
     }
 
@@ -98,7 +101,7 @@ class ValidarSofiaJob implements ShouldQueue
      */
     private function initializeProgress(): ?SofiaValidationProgress
     {
-        if (!$this->progressId) {
+        if (! $this->progressId) {
             return null;
         }
 
@@ -116,13 +119,13 @@ class ValidarSofiaJob implements ShouldQueue
      */
     private function finalizeProgress(?SofiaValidationProgress $progress, array $resultado): void
     {
-        if (!$progress) {
+        if (! $progress) {
             return;
         }
 
         if ($resultado['errores'] > 0) {
             Log::warning('Validacion completada con errores', [
-                'errores' => $resultado['errores']
+                'errores' => $resultado['errores'],
             ]);
             $progress->markAsFailed($resultado['errores_detalle']);
         } else {
@@ -144,7 +147,7 @@ class ValidarSofiaJob implements ShouldQueue
             'total' => $resultado['total'],
             'exitosos' => $resultado['exitosos'],
             'errores' => $resultado['errores'],
-            'tasa_exito' => $tasaExito
+            'tasa_exito' => $tasaExito,
         ]);
     }
 }

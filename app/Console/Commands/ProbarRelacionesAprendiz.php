@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Aprendiz;
+use Illuminate\Console\Command;
 
 class ProbarRelacionesAprendiz extends Command
 {
@@ -39,34 +39,35 @@ class ProbarRelacionesAprendiz extends Command
             ])->findOrFail($id);
 
             $this->info('✅ Aprendiz encontrado');
-            $this->line("   Nombre: " . ($aprendiz->persona?->nombre_completo ?? 'N/A'));
-            $this->line("   Documento: " . ($aprendiz->persona?->numero_documento ?? 'N/A'));
+            $this->line('   Nombre: '.($aprendiz->persona?->nombre_completo ?? 'N/A'));
+            $this->line('   Documento: '.($aprendiz->persona?->numero_documento ?? 'N/A'));
 
             // Probar tipo de documento
             $this->info('📋 Tipo de Documento:');
             if ($aprendiz->persona?->tipoDocumento) {
-                $this->line("   ✅ Relación cargada: " . ($aprendiz->persona->tipoDocumento?->name ?? 'N/A'));
+                $this->line('   ✅ Relación cargada: '.($aprendiz->persona->tipoDocumento->name ?? 'N/A'));
             } else {
-                $this->warn("   ⚠️  No se pudo cargar el tipo de documento");
-                $this->line("   ID tipo_documento en persona: " . ($aprendiz->persona?->tipo_documento ?? 'NULL'));
+                $this->warn('   ⚠️  No se pudo cargar el tipo de documento');
+                $this->line('   ID tipo_documento en persona: '.($aprendiz->persona?->tipo_documento ?? 'NULL'));
             }
 
             // Probar jornada
             $this->info('🕐 Jornada:');
             if ($aprendiz->fichaCaracterizacion?->jornadaFormacion) {
-                $this->line("   ✅ Relación cargada: " . $aprendiz->fichaCaracterizacion->jornadaFormacion->parametro->name);
+                $this->line('   ✅ Relación cargada: '.$aprendiz->fichaCaracterizacion->jornadaFormacion->parametro->name);
             } else {
-                $this->warn("   ⚠️  No se pudo cargar la jornada");
-                $this->line("   ID jornada_id en ficha: " . ($aprendiz->fichaCaracterizacion?->jornada_id ?? 'NULL'));
+                $this->warn('   ⚠️  No se pudo cargar la jornada');
+                $this->line('   ID jornada_id en ficha: '.($aprendiz->fichaCaracterizacion?->jornada_id ?? 'NULL'));
             }
 
             // Mostrar información completa
             $this->info('📊 Información completa:');
-            $this->line("   Ficha: " . ($aprendiz->fichaCaracterizacion?->ficha ?? 'N/A'));
-            $this->line("   Programa: " . ($aprendiz->fichaCaracterizacion?->programaFormacion?->nombre ?? 'N/A'));
+            $this->line('   Ficha: '.($aprendiz->fichaCaracterizacion?->ficha ?? 'N/A'));
+            $this->line('   Programa: '.($aprendiz->fichaCaracterizacion?->programaFormacion?->nombre ?? 'N/A'));
 
         } catch (\Exception $e) {
-            $this->error("❌ Error: " . $e->getMessage());
+            $this->error('❌ Error: '.$e->getMessage());
+
             return 1;
         }
 
@@ -75,4 +76,3 @@ class ProbarRelacionesAprendiz extends Command
         return 0;
     }
 }
-

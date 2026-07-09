@@ -10,9 +10,6 @@ class LoginRepository
 {
     /**
      * Registra un intento de login
-     *
-     * @param array $datos
-     * @return Login
      */
     public function registrar(array $datos): Login
     {
@@ -28,10 +25,6 @@ class LoginRepository
 
     /**
      * Obtiene intentos recientes por usuario
-     *
-     * @param int $userId
-     * @param int $limite
-     * @return Collection
      */
     public function obtenerIntentosPorUsuario(int $userId, int $limite = 10): Collection
     {
@@ -43,10 +36,6 @@ class LoginRepository
 
     /**
      * Obtiene intentos fallidos recientes por email
-     *
-     * @param string $email
-     * @param int $minutos
-     * @return int
      */
     public function contarIntentosFallidosRecientes(string $email, int $minutos = 15): int
     {
@@ -58,10 +47,6 @@ class LoginRepository
 
     /**
      * Obtiene estadísticas de login
-     *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @return array
      */
     public function obtenerEstadisticas(string $fechaInicio, string $fechaFin): array
     {
@@ -75,4 +60,3 @@ class LoginRepository
         ];
     }
 }
-

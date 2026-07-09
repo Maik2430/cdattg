@@ -8,7 +8,7 @@ class ParametroRepository
 {
     public function getDiasFormacion()
     {
-        return Parametro::whereHas('temas', function($query) {
+        return Parametro::whereHas('temas', function ($query) {
             $query->where('tema_id', 4);
         })->get()->toArray();
     }

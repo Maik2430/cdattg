@@ -67,4 +67,3 @@ class FichaCaracterizacionObserver
         Cache::tags(['fichas', 'configuracion'])->flush();
     }
 }
-

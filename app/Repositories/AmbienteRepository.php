@@ -18,8 +18,6 @@ class AmbienteRepository
 
     /**
      * Obtiene todos los ambientes activos
-     *
-     * @return Collection
      */
     public function obtenerActivos(): Collection
     {
@@ -33,9 +31,6 @@ class AmbienteRepository
 
     /**
      * Obtiene ambientes por sede
-     *
-     * @param int $sedeId
-     * @return Collection
      */
     public function obtenerPorSede(int $sedeId): Collection
     {
@@ -50,9 +45,6 @@ class AmbienteRepository
 
     /**
      * Encuentra un ambiente con sus relaciones
-     *
-     * @param int $id
-     * @return Ambiente|null
      */
     public function encontrar(int $id): ?Ambiente
     {
@@ -61,9 +53,6 @@ class AmbienteRepository
 
     /**
      * Obtiene ambientes por piso
-     *
-     * @param int $pisoId
-     * @return Collection
      */
     public function obtenerPorPiso(int $pisoId): Collection
     {
@@ -76,12 +65,9 @@ class AmbienteRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

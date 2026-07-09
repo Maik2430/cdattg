@@ -21,7 +21,8 @@ class UploadSecurityServiceProvider extends ServiceProvider
     {
         // Registrar singleton de UploadLimits para acceso global
         $this->app->singleton('upload.limits', function ($app) {
-            return new class {
+            return new class
+            {
                 public function getImportLimit(string $format = 'MB'): int|float
                 {
                     return UploadLimits::getImportLimit($format);
@@ -68,7 +69,7 @@ class UploadSecurityServiceProvider extends ServiceProvider
         try {
             $config = UploadLimits::isPhpConfigSafe();
 
-            if (!$config['is_safe']) {
+            if (! $config['is_safe']) {
                 Log::warning('⚠️  Configuración de PHP insegura para cargas de archivos', [
                     'issues' => $config['issues'],
                     'current' => $config['current'],
@@ -90,4 +91,3 @@ class UploadSecurityServiceProvider extends ServiceProvider
         }
     }
 }
-

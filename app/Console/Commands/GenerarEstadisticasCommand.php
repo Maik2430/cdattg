@@ -60,9 +60,9 @@ class GenerarEstadisticasCommand extends Command
 
             return 0;
         } catch (\Exception $e) {
-            $this->error('Error: ' . $e->getMessage());
+            $this->error('Error: '.$e->getMessage());
+
             return 1;
         }
     }
 }
-

@@ -9,9 +9,6 @@ class InstructorFichaDiasRepository
 {
     /**
      * Obtiene días asignados por instructor-ficha
-     *
-     * @param int $instructorFichaId
-     * @return Collection
      */
     public function obtenerPorInstructorFicha(int $instructorFichaId): Collection
     {
@@ -23,9 +20,6 @@ class InstructorFichaDiasRepository
 
     /**
      * Crea relación instructor-ficha-día
-     *
-     * @param array $datos
-     * @return InstructorFichaDias
      */
     public function crear(array $datos): InstructorFichaDias
     {
@@ -34,10 +28,6 @@ class InstructorFichaDiasRepository
 
     /**
      * Asigna días a instructor-ficha
-     *
-     * @param int $instructorFichaId
-     * @param array $diasIds
-     * @return int
      */
     public function asignarDias(int $instructorFichaId, array $diasIds): int
     {
@@ -55,4 +45,3 @@ class InstructorFichaDiasRepository
         return count($registros);
     }
 }
-

@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Services\ReporteService;
 use App\Models\User;
+use App\Services\ReporteService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,9 +17,13 @@ class GenerarReporteAsistenciaJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $fichaId;
+
     public string $fechaInicio;
+
     public string $fechaFin;
+
     public string $formato;
+
     public User $usuario;
 
     /**
@@ -100,4 +104,3 @@ class GenerarReporteAsistenciaJob implements ShouldQueue
         // Mail::to($this->usuario->email)->send(new ReporteFallido());
     }
 }
-

@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Instructor;
+use Illuminate\Console\Command;
 use Spatie\Permission\Models\Role;
 
 class FixInstructorRoles extends Command
 {
     protected $signature = 'roles:fix-instructors {--dry-run : Solo mostrar qué se haría sin ejecutar cambios}';
+
     protected $description = 'Asigna el rol INSTRUCTOR a todos los instructores que no lo tienen';
 
     public function handle()
@@ -33,14 +34,14 @@ class FixInstructorRoles extends Command
         foreach ($instructores as $instructor) {
             if ($instructor->persona && $instructor->persona->user) {
                 $user = $instructor->persona->user;
-                $nombre = trim($instructor->persona->primer_nombre . ' ' . $instructor->persona->primer_apellido);
+                $nombre = trim($instructor->persona->primer_nombre.' '.$instructor->persona->primer_apellido);
 
-                if (!$user->hasRole('INSTRUCTOR')) {
-                    if (!$dryRun) {
+                if (! $user->hasRole('INSTRUCTOR')) {
+                    if (! $dryRun) {
                         $user->syncRoles(['INSTRUCTOR']);
                     }
                     $corregidos++;
-                    $this->line("✅ {$nombre}: " . ($dryRun ? "Se asignaría rol INSTRUCTOR" : "Rol INSTRUCTOR asignado"));
+                    $this->line("✅ {$nombre}: ".($dryRun ? 'Se asignaría rol INSTRUCTOR' : 'Rol INSTRUCTOR asignado'));
                 } else {
                     $yaTienenRol++;
                     $this->line("ℹ️  {$nombre}: Ya tiene rol INSTRUCTOR");
@@ -49,17 +50,16 @@ class FixInstructorRoles extends Command
         }
 
         $this->newLine();
-        $this->info("📊 RESUMEN:");
+        $this->info('📊 RESUMEN:');
         $this->line("   - Corregidos: {$corregidos}");
         $this->line("   - Ya tenían rol: {$yaTienenRol}");
-        $this->line("   - Total procesados: " . $instructores->count());
+        $this->line('   - Total procesados: '.$instructores->count());
 
         if ($corregidos > 0) {
             $this->newLine();
-            $this->info("✅ " . ($dryRun ? "Se corregirían" : "Se corrigieron") . " {$corregidos} instructores.");
+            $this->info('✅ '.($dryRun ? 'Se corregirían' : 'Se corrigieron')." {$corregidos} instructores.");
         } else {
-            $this->info("✅ Todos los instructores ya tienen el rol correcto.");
+            $this->info('✅ Todos los instructores ya tienen el rol correcto.');
         }
     }
 }
-

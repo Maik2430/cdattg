@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\Notification;
 
-use App\Models\User;
 use App\Inventario\Interfaces\Repositories\Notification\NotificationRepositoryInterface;
-use Illuminate\Support\Collection;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class NotificationRepository implements NotificationRepositoryInterface
 {
@@ -17,6 +17,7 @@ class NotificationRepository implements NotificationRepositoryInterface
     public function obtenerPorUsuarioPaginadas(int $userId, int $perPage): LengthAwarePaginator
     {
         $user = User::findOrFail($userId);
+
         return $user->notifications()->paginate($perPage);
     }
 
@@ -26,6 +27,7 @@ class NotificationRepository implements NotificationRepositoryInterface
     public function obtenerNoLeidasLimitadas(int $userId, int $limit): Collection
     {
         $user = User::findOrFail($userId);
+
         return $user->unreadNotifications()->take($limit)->get();
     }
 
@@ -35,6 +37,7 @@ class NotificationRepository implements NotificationRepositoryInterface
     public function contarNoLeidas(int $userId): int
     {
         $user = User::findOrFail($userId);
+
         return $user->unreadNotifications()->count();
     }
 
@@ -48,6 +51,7 @@ class NotificationRepository implements NotificationRepositoryInterface
 
         if ($notification) {
             $notification->markAsRead();
+
             return true;
         }
 
@@ -80,10 +84,10 @@ class NotificationRepository implements NotificationRepositoryInterface
 
         if ($notification) {
             $notification->delete();
+
             return true;
         }
 
         return false;
     }
 }
-

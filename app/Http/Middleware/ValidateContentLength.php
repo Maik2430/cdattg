@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ValidateContentLength
 {
-
     /**
      * Handle an incoming request.
      *
@@ -36,7 +35,7 @@ class ValidateContentLength
                     'message' => 'La petición debe incluir el header Content-Length.',
                 ],
             ];
-        } elseif ($contentLength !== null && !is_numeric($contentLength)) {
+        } elseif ($contentLength !== null && ! is_numeric($contentLength)) {
             $error = [
                 'status' => Response::HTTP_BAD_REQUEST,
                 'payload' => [

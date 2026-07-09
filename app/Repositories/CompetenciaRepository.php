@@ -3,8 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\Competencia;
-use Carbon\Carbon;
 use App\Models\FichaCaracterizacion;
+use Carbon\Carbon;
 
 class CompetenciaRepository
 {
@@ -19,13 +19,13 @@ class CompetenciaRepository
     {
         $hoy = Carbon::now()->startOfDay();
 
-        return Competencia::where(function($query) use ($hoy) {
+        return Competencia::where(function ($query) use ($hoy) {
             // Fecha de inicio después de hoy
             $query->where('fecha_inicio', '>', $hoy)
                 // O fecha de fin es nula o mayor o igual a hoy
-                ->orWhere(function($q) use ($hoy) {
+                ->orWhere(function ($q) use ($hoy) {
                     $q->where('fecha_fin', '>=', $hoy)
-                      ->orWhereNull('fecha_fin');
+                        ->orWhereNull('fecha_fin');
                 });
         })->get();
     }
@@ -45,9 +45,9 @@ class CompetenciaRepository
         $competenciaActual = $programaFormacion->competenciaActual();
 
         return $competenciaActual->where('fecha_inicio', '<=', $hoy)
-            ->where(function($query) use ($hoy) {
+            ->where(function ($query) use ($hoy) {
                 $query->where('fecha_fin', '>=', $hoy)
-                      ->orWhereNull('fecha_fin');
+                    ->orWhereNull('fecha_fin');
             })
             ->first();
     }

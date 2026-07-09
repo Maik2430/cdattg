@@ -10,16 +10,14 @@ class MunicipioRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['municipios', 'ubicacion'];
-    }    /**
+    }
+
+    /**
      * Obtiene municipios por departamento
-     *
-     * @param int $departamentoId
-     * @return Collection
      */
     public function obtenerPorDepartamento(int $departamentoId): Collection
     {
@@ -32,10 +30,6 @@ class MunicipioRepository
 
     /**
      * Busca municipios por nombre
-     *
-     * @param string $termino
-     * @param int|null $departamentoId
-     * @return Collection
      */
     public function buscar(string $termino, ?int $departamentoId = null): Collection
     {
@@ -50,12 +44,9 @@ class MunicipioRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

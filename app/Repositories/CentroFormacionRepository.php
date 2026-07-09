@@ -10,15 +10,14 @@ class CentroFormacionRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['centros', 'infraestructura'];
-    }    /**
+    }
+
+    /**
      * Obtiene todos los centros activos
-     *
-     * @return Collection
      */
     public function obtenerActivos(): Collection
     {
@@ -32,9 +31,6 @@ class CentroFormacionRepository
 
     /**
      * Obtiene centros por regional
-     *
-     * @param int $regionalId
-     * @return Collection
      */
     public function obtenerPorRegional(int $regionalId): Collection
     {
@@ -48,12 +44,9 @@ class CentroFormacionRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

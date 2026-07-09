@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\Marca;
 
+use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
+use App\Models\Inventario\Marca;
+use App\Models\Inventario\Producto;
 use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\Tema;
-use App\Models\Inventario\Marca;
-use App\Inventario\Interfaces\Repositories\Marca\MarcaRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use App\Models\Inventario\Producto;
 use Illuminate\Database\Eloquent\Collection;
 
 class MarcaRepository implements MarcaRepositoryInterface
@@ -32,7 +32,7 @@ class MarcaRepository implements MarcaRepositoryInterface
     {
         $temaMarcas = $this->obtenerTemaMarcas();
 
-        if (!$temaMarcas) {
+        if (! $temaMarcas) {
             return new LengthAwarePaginator([], 0, 10);
         }
 
@@ -40,7 +40,7 @@ class MarcaRepository implements MarcaRepositoryInterface
             ->with(['userCreate.persona', 'userUpdate.persona'])
             ->wherePivot('status', 1);
 
-        if (!empty($filtros['search'])) {
+        if (! empty($filtros['search'])) {
             $search = $filtros['search'];
             $query->where(function ($q) use ($search): void {
                 $q->where('parametros.name', 'LIKE', "%{$search}%");
@@ -111,4 +111,3 @@ class MarcaRepository implements MarcaRepositoryInterface
         return Producto::where('marca_id', $id)->exists();
     }
 }
-

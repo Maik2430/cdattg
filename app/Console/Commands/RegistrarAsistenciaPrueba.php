@@ -35,8 +35,9 @@ class RegistrarAsistenciaPrueba extends Command
     {
         $tipo = $this->argument('tipo');
 
-        if (!in_array($tipo, ['entrada', 'salida'])) {
+        if (! in_array($tipo, ['entrada', 'salida'])) {
             $this->error('❌ Tipo no válido. Use "entrada" o "salida"');
+
             return 1;
         }
 
@@ -44,21 +45,23 @@ class RegistrarAsistenciaPrueba extends Command
             // Obtener cualquier aprendiz disponible
             $aprendiz = \App\Models\Aprendiz::with([
                 'persona',
-                'fichaCaracterizacion.jornadaFormacion.parametro'
+                'fichaCaracterizacion.jornadaFormacion.parametro',
             ])->whereNotNull('ficha_caracterizacion_id')->inRandomOrder()->first();
 
-            if (!$aprendiz) {
+            if (! $aprendiz) {
                 $this->error('❌ No se encontró ningún aprendiz en la base de datos.');
                 $this->info('💡 Por favor, crea al menos un aprendiz primero.');
+
                 return 1;
             }
 
             // Obtener cualquier instructor_ficha disponible
             $instructorFicha = InstructorFichaCaracterizacion::inRandomOrder()->first();
 
-            if (!$instructorFicha) {
+            if (! $instructorFicha) {
                 $this->error('❌ No se encontró ningún instructor asignado a una ficha.');
                 $this->info('💡 Por favor, crea al menos una asignación de instructor a ficha primero.');
+
                 return 1;
             }
 
@@ -81,9 +84,10 @@ class RegistrarAsistenciaPrueba extends Command
                     ->latest()
                     ->first();
 
-                if (!$asistencia) {
+                if (! $asistencia) {
                     $this->error('❌ No se encontró una asistencia de entrada para registrar la salida.');
                     $this->info('💡 Primero registra una entrada con: php artisan asistencia:registrar entrada');
+
                     return 1;
                 }
 
@@ -97,7 +101,7 @@ class RegistrarAsistenciaPrueba extends Command
             // Cargar relaciones
             $asistencia->load([
                 'aprendiz.persona',
-                'aprendiz.fichaCaracterizacion.jornadaFormacion'
+                'aprendiz.fichaCaracterizacion.jornadaFormacion',
             ]);
 
             // Obtener información
@@ -138,8 +142,9 @@ class RegistrarAsistenciaPrueba extends Command
             return 0;
 
         } catch (\Exception $e) {
-            $this->error('❌ Error al registrar la asistencia: ' . $e->getMessage());
-            $this->error('📍 Trace: ' . $e->getTraceAsString());
+            $this->error('❌ Error al registrar la asistencia: '.$e->getMessage());
+            $this->error('📍 Trace: '.$e->getTraceAsString());
+
             return 1;
         }
     }

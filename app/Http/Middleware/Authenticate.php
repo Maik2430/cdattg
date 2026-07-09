@@ -24,7 +24,6 @@ class Authenticate extends Middleware
      * Handle an unauthenticated user.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  array  $guards
      * @return void
      *
      * @throws \Illuminate\Auth\AuthenticationException
@@ -36,7 +35,7 @@ class Authenticate extends Middleware
             abort(response()->json([
                 'success' => false,
                 'message' => 'No autenticado. Token requerido.',
-                'error' => 'Unauthenticated'
+                'error' => 'Unauthenticated',
             ], 401));
         }
 

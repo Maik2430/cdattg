@@ -7,11 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TemaRepository
 {
-
     /**
      * Obtiene todos los temas con parámetros activos
-     *
-     * @return Collection
      */
     public function obtenerConParametros(): Collection
     {
@@ -22,9 +19,6 @@ class TemaRepository
 
     /**
      * Obtiene un tema específico con parámetros
-     *
-     * @param int $id
-     * @return Tema|null
      */
     public function encontrarConParametros(int $id): ?Tema
     {
@@ -35,8 +29,6 @@ class TemaRepository
 
     /**
      * Obtiene tipos de documento
-     *
-     * @return Tema|null
      */
     public function obtenerTiposDocumento(): ?Tema
     {
@@ -45,8 +37,6 @@ class TemaRepository
 
     /**
      * Obtiene géneros
-     *
-     * @return Tema|null
      */
     public function obtenerGeneros(): ?Tema
     {
@@ -55,8 +45,6 @@ class TemaRepository
 
     /**
      * Obtiene caracterizaciones complementarias
-     *
-     * @return Tema|null
      */
     public function obtenerCaracterizacionesComplementarias(): ?Tema
     {
@@ -65,8 +53,6 @@ class TemaRepository
 
     /**
      * Obtiene vias
-     *
-     * @return Tema|null
      */
     public function obtenerVias(): ?Tema
     {
@@ -75,8 +61,6 @@ class TemaRepository
 
     /**
      * Obtiene letras
-     *
-     * @return Tema|null
      */
     public function obtenerLetras(): ?Tema
     {
@@ -85,14 +69,12 @@ class TemaRepository
 
     /**
      * Obtiene cardinales
-     *
-     * @return Tema|null
      */
     public function obtenerCardinales(): ?Tema
     {
         $tema = $this->encontrarConParametros(18);
 
-        if (!$tema) {
+        if (! $tema) {
             return null;
         }
 
@@ -108,8 +90,6 @@ class TemaRepository
 
     /**
      * Obtiene nivel de escolaridad
-     *
-     * @return Tema|null
      */
     public function obtenerNivelEscolaridad(): ?Tema
     {

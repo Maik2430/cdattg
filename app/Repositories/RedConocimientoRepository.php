@@ -10,15 +10,14 @@ class RedConocimientoRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['redes_conocimiento', 'configuracion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todas las redes de conocimiento activas
-     *
-     * @return Collection
      */
     public function obtenerActivas(): Collection
     {
@@ -31,9 +30,6 @@ class RedConocimientoRepository
 
     /**
      * Obtiene redes por regional
-     *
-     * @param int $regionalId
-     * @return Collection
      */
     public function obtenerPorRegional(int $regionalId): Collection
     {
@@ -47,12 +43,9 @@ class RedConocimientoRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

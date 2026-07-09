@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Notifications\ChannelManager;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Notifications\Channels\DatabaseChannel;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\ServiceProvider;
 
 class NotificationServiceProvider extends ServiceProvider
 {
@@ -25,7 +25,8 @@ class NotificationServiceProvider extends ServiceProvider
         // Sobrescribir el canal de base de datos para usar nombres en español
         Notification::resolved(function (ChannelManager $service) {
             $service->extend('database', function ($app) {
-                return new class($app->make('db')) extends DatabaseChannel {
+                return new class($app->make('db')) extends DatabaseChannel
+                {
                     protected function buildPayload($notifiable, \Illuminate\Notifications\Notification $notification)
                     {
                         return [

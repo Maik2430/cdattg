@@ -10,15 +10,14 @@ class ProgramaFormacionRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'programas';
         $this->cacheTags = ['programas', 'configuracion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todos los programas activos con relaciones
-     *
-     * @return Collection
      */
     public function obtenerActivos(): Collection
     {
@@ -32,9 +31,6 @@ class ProgramaFormacionRepository
 
     /**
      * Obtiene programas por red de conocimiento
-     *
-     * @param int $redId
-     * @return Collection
      */
     public function obtenerPorRed(int $redId): Collection
     {
@@ -48,9 +44,6 @@ class ProgramaFormacionRepository
 
     /**
      * Busca programas por nombre
-     *
-     * @param string $termino
-     * @return Collection
      */
     public function buscar(string $termino): Collection
     {
@@ -63,12 +56,9 @@ class ProgramaFormacionRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

@@ -9,9 +9,6 @@ class GuiaAprendizajeRapRepository
 {
     /**
      * Obtiene guías por resultado de aprendizaje
-     *
-     * @param int $rapId
-     * @return Collection
      */
     public function obtenerPorRap(int $rapId): Collection
     {
@@ -22,9 +19,6 @@ class GuiaAprendizajeRapRepository
 
     /**
      * Obtiene guías por guía de aprendizaje
-     *
-     * @param int $guiaId
-     * @return Collection
      */
     public function obtenerPorGuia(int $guiaId): Collection
     {
@@ -35,13 +29,9 @@ class GuiaAprendizajeRapRepository
 
     /**
      * Crea relación guía-RAP
-     *
-     * @param array $datos
-     * @return GuiaAprendizajeRap
      */
     public function crear(array $datos): GuiaAprendizajeRap
     {
         return GuiaAprendizajeRap::create($datos);
     }
 }
-

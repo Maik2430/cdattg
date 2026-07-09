@@ -15,8 +15,8 @@ class EliminarPersonasDespuesDe extends Command
      * @var string
      */
     protected $signature = 'personas:eliminar-despues-de '
-        . '{id : ID límite (se eliminarán todos los registros con ID mayor a este)} '
-        . '{--force : Ejecutar sin confirmación}';
+        .'{id : ID límite (se eliminarán todos los registros con ID mayor a este)} '
+        .'{--force : Ejecutar sin confirmación}';
 
     /**
      * The console command description.
@@ -33,7 +33,7 @@ class EliminarPersonasDespuesDe extends Command
         $idLimite = (int) $this->argument('id');
         $force = $this->option('force');
 
-        if (!$this->validarId($idLimite)) {
+        if (! $this->validarId($idLimite)) {
             return Command::FAILURE;
         }
 
@@ -113,7 +113,7 @@ class EliminarPersonasDespuesDe extends Command
             return true;
         }
 
-        if (!$this->confirm('¿Deseas continuar con la eliminación?', false)) {
+        if (! $this->confirm('¿Deseas continuar con la eliminación?', false)) {
             $this->warn('Operación cancelada.');
 
             return false;

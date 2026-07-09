@@ -10,15 +10,14 @@ class DiasFormacionRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['dias_formacion', 'configuracion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todos los días de formación
-     *
-     * @return Collection
      */
     public function obtenerTodos(): Collection
     {
@@ -29,9 +28,6 @@ class DiasFormacionRepository
 
     /**
      * Obtiene días por ficha
-     *
-     * @param int $fichaId
-     * @return Collection
      */
     public function obtenerPorFicha(int $fichaId): Collection
     {
@@ -42,12 +38,9 @@ class DiasFormacionRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

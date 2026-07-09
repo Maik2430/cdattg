@@ -9,9 +9,6 @@ class AsignacionInstructorLogRepository
 {
     /**
      * Registra un log de asignación
-     *
-     * @param array $datos
-     * @return AsignacionInstructorLog
      */
     public function registrar(array $datos): AsignacionInstructorLog
     {
@@ -20,9 +17,6 @@ class AsignacionInstructorLogRepository
 
     /**
      * Obtiene logs por instructor
-     *
-     * @param int $instructorId
-     * @return Collection
      */
     public function obtenerPorInstructor(int $instructorId): Collection
     {
@@ -34,9 +28,6 @@ class AsignacionInstructorLogRepository
 
     /**
      * Obtiene logs por ficha
-     *
-     * @param int $fichaId
-     * @return Collection
      */
     public function obtenerPorFicha(int $fichaId): Collection
     {
@@ -48,10 +39,6 @@ class AsignacionInstructorLogRepository
 
     /**
      * Obtiene auditoría de cambios
-     *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @return Collection
      */
     public function obtenerAuditoria(string $fechaInicio, string $fechaFin): Collection
     {
@@ -61,4 +48,3 @@ class AsignacionInstructorLogRepository
             ->get();
     }
 }
-

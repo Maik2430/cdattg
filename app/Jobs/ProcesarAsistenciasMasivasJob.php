@@ -15,9 +15,11 @@ class ProcesarAsistenciasMasivasJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public array $asistencias;
+
     public int $caracterizacionId;
 
     public $tries = 3;
+
     public $timeout = 600;
 
     /**
@@ -68,4 +70,3 @@ class ProcesarAsistenciasMasivasJob implements ShouldQueue
         ]);
     }
 }
-

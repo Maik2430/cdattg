@@ -33,6 +33,7 @@ class CheckUploadLimitsCommand extends Command
 
         if ($this->option('json')) {
             $this->line(json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
             return $config['is_safe'] ? Command::SUCCESS : Command::FAILURE;
         }
 
@@ -75,7 +76,7 @@ class CheckUploadLimitsCommand extends Command
         $this->newLine();
 
         // Mostrar problemas si existen
-        if (!empty($config['issues'])) {
+        if (! empty($config['issues'])) {
             $this->error('❌ Se encontraron problemas de configuración:');
             $this->newLine();
 
@@ -111,4 +112,3 @@ class CheckUploadLimitsCommand extends Command
         return '✅ OK';
     }
 }
-

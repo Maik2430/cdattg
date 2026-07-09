@@ -10,16 +10,14 @@ class CompetenciaProgramaRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'programas';
         $this->cacheTags = ['competencias_programa', 'programas'];
-    }    /**
+    }
+
+    /**
      * Obtiene competencias por programa
-     *
-     * @param int $programaId
-     * @return Collection
      */
     public function obtenerPorPrograma(int $programaId): Collection
     {
@@ -33,25 +31,20 @@ class CompetenciaProgramaRepository
 
     /**
      * Crea relación competencia-programa
-     *
-     * @param array $datos
-     * @return CompetenciaPrograma
      */
     public function crear(array $datos): CompetenciaPrograma
     {
         $relacion = CompetenciaPrograma::create($datos);
         $this->invalidarCache();
+
         return $relacion;
     }
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

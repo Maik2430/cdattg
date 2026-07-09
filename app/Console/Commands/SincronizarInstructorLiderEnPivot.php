@@ -22,7 +22,7 @@ class SincronizarInstructorLiderEnPivot extends Command
                 ->where('ficha_id', $ficha->id)
                 ->exists();
 
-            if (!$yaExiste) {
+            if (! $yaExiste) {
                 InstructorFichaCaracterizacion::create([
                     'instructor_id' => $ficha->instructor_id,
                     'ficha_id' => $ficha->id,
@@ -36,6 +36,7 @@ class SincronizarInstructorLiderEnPivot extends Command
         }
 
         $this->info("Listo. Registros creados: {$creados}");
+
         return Command::SUCCESS;
     }
 }

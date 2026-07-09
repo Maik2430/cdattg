@@ -10,15 +10,14 @@ class PaisRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['paises', 'ubicacion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todos los países
-     *
-     * @return Collection
      */
     public function obtenerTodos(): Collection
     {
@@ -32,12 +31,9 @@ class PaisRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

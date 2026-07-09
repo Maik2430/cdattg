@@ -10,15 +10,14 @@ class SedeRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['sedes', 'infraestructura'];
-    }    /**
+    }
+
+    /**
      * Obtiene todas las sedes activas
-     *
-     * @return Collection
      */
     public function obtenerActivas(): Collection
     {
@@ -34,9 +33,6 @@ class SedeRepository
      * Obtiene sedes por centro de formación
      * NOTA: Este método está obsoleto ya que la tabla sedes no tiene centro_formacion_id
      * Se mantiene por compatibilidad pero retorna todas las sedes activas
-     *
-     * @param int $centroId
-     * @return Collection
      */
     public function obtenerPorCentro(int $centroId): Collection
     {
@@ -46,9 +42,6 @@ class SedeRepository
 
     /**
      * Encuentra una sede con sus relaciones
-     *
-     * @param int $id
-     * @return Sede|null
      */
     public function encontrarConRelaciones(int $id): ?Sede
     {
@@ -60,12 +53,9 @@ class SedeRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

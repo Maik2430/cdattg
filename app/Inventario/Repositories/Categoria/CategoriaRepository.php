@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\Categoria;
 
+use App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface;
+use App\Models\Inventario\Categoria;
+use App\Models\Inventario\Producto;
 use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\Tema;
-use App\Models\Inventario\Producto;
-use App\Models\Inventario\Categoria;
-use App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -32,7 +32,7 @@ class CategoriaRepository implements CategoriaRepositoryInterface
     {
         $temaCategorias = $this->obtenerTemaCategorias();
 
-        if (!$temaCategorias) {
+        if (! $temaCategorias) {
             return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10);
         }
 
@@ -40,7 +40,7 @@ class CategoriaRepository implements CategoriaRepositoryInterface
             ->with(['userCreate.persona', 'userUpdate.persona'])
             ->wherePivot('status', 1);
 
-        if (!empty($filtros['search'])) {
+        if (! empty($filtros['search'])) {
             $search = $filtros['search'];
             $query->where(function ($q) use ($search): void {
                 $q->where('parametros.name', 'LIKE', "%{$search}%");
@@ -111,4 +111,3 @@ class CategoriaRepository implements CategoriaRepositoryInterface
         return Producto::where('categoria_id', $id)->exists();
     }
 }
-

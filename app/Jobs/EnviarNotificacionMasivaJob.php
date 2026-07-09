@@ -8,15 +8,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class EnviarNotificacionMasivaJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public Collection $aprendices;
+
     public string $mensaje;
+
     public string $tipo;
 
     /**
@@ -81,4 +83,3 @@ class EnviarNotificacionMasivaJob implements ShouldQueue
         ]);
     }
 }
-

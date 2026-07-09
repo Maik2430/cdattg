@@ -10,16 +10,14 @@ class PisoRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['pisos', 'infraestructura'];
-    }    /**
+    }
+
+    /**
      * Obtiene pisos por sede
-     *
-     * @param int $sedeId
-     * @return Collection
      */
     public function obtenerPorSede(int $sedeId): Collection
     {
@@ -32,12 +30,9 @@ class PisoRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

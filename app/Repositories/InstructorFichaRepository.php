@@ -9,10 +9,6 @@ class InstructorFichaRepository
 {
     /**
      * Obtiene fichas por instructor
-     *
-     * @param int $instructorId
-     * @param bool $soloActivas
-     * @return Collection
      */
     public function obtenerPorInstructor(int $instructorId, bool $soloActivas = false): Collection
     {
@@ -22,7 +18,7 @@ class InstructorFichaRepository
         if ($soloActivas) {
             $query->whereHas('ficha', function ($q) {
                 $q->where('status', true)
-                  ->where('fecha_fin', '>=', now());
+                    ->where('fecha_fin', '>=', now());
             });
         }
 
@@ -31,9 +27,6 @@ class InstructorFichaRepository
 
     /**
      * Obtiene instructores por ficha
-     *
-     * @param int $fichaId
-     * @return Collection
      */
     public function obtenerPorFicha(int $fichaId): Collection
     {
@@ -45,9 +38,6 @@ class InstructorFichaRepository
 
     /**
      * Crea asignación de instructor a ficha
-     *
-     * @param array $datos
-     * @return InstructorFichaCaracterizacion
      */
     public function crear(array $datos): InstructorFichaCaracterizacion
     {
@@ -56,10 +46,6 @@ class InstructorFichaRepository
 
     /**
      * Actualiza asignación
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -68,10 +54,6 @@ class InstructorFichaRepository
 
     /**
      * Verifica si instructor está asignado a ficha
-     *
-     * @param int $instructorId
-     * @param int $fichaId
-     * @return bool
      */
     public function estaAsignado(int $instructorId, int $fichaId): bool
     {
@@ -83,10 +65,6 @@ class InstructorFichaRepository
 
     /**
      * Obtiene carga horaria semanal del instructor
-     *
-     * @param int $instructorId
-     * @param string $fecha
-     * @return int
      */
     public function obtenerCargaSemanal(int $instructorId, string $fecha): int
     {
@@ -94,9 +72,8 @@ class InstructorFichaRepository
             ->where('status', true)
             ->whereHas('ficha', function ($q) use ($fecha) {
                 $q->where('fecha_inicio', '<=', $fecha)
-                  ->where('fecha_fin', '>=', $fecha);
+                    ->where('fecha_fin', '>=', $fecha);
             })
             ->sum('horas_semanales') ?? 0;
     }
 }
-

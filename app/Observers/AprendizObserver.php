@@ -3,10 +3,8 @@
 namespace App\Observers;
 
 use App\Models\Aprendiz;
-use App\Models\User;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AprendizObserver
 {
@@ -51,28 +49,27 @@ class AprendizObserver
 
     /**
      * Asigna el rol APRENDIZ al usuario asociado a la persona del aprendiz.
-     *
-     * @param Aprendiz $aprendiz
-     * @return void
      */
     private function assignAprendizRole(Aprendiz $aprendiz): void
     {
         try {
             $persona = $aprendiz->persona;
-            if (!$persona) {
+            if (! $persona) {
                 Log::warning('Aprendiz sin persona asociada', [
                     'aprendiz_id' => $aprendiz->id,
-                    'persona_id' => $aprendiz->persona_id
+                    'persona_id' => $aprendiz->persona_id,
                 ]);
+
                 return;
             }
 
             // No crear usuario automáticamente: si no existe, registrar y salir
-            if (!$persona->user) {
+            if (! $persona->user) {
                 Log::info('No se creó usuario automáticamente para aprendiz (creación deshabilitada)', [
                     'aprendiz_id' => $aprendiz->id,
                     'persona_id' => $persona->id,
                 ]);
+
                 return;
             }
             $user = $persona->user;
@@ -87,14 +84,14 @@ class AprendizObserver
                 'aprendiz_id' => $aprendiz->id,
                 'user_id' => $user->id,
                 'persona_id' => $persona->id,
-                'ficha_id' => $aprendiz->ficha_caracterizacion_id
+                'ficha_id' => $aprendiz->ficha_caracterizacion_id,
             ]);
         } catch (\Exception $e) {
             Log::error('Error al asignar rol APRENDIZ automáticamente', [
                 'aprendiz_id' => $aprendiz->id,
                 'persona_id' => $aprendiz->persona_id,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }

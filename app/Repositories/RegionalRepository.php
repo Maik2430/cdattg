@@ -10,15 +10,14 @@ class RegionalRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'regionales';
         $this->cacheTags = ['regionales', 'configuracion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todas las regionales activas
-     *
-     * @return Collection
      */
     public function obtenerActivas(): Collection
     {
@@ -31,9 +30,6 @@ class RegionalRepository
 
     /**
      * Encuentra una regional por ID
-     *
-     * @param int $id
-     * @return Regional|null
      */
     public function encontrar(int $id): ?Regional
     {
@@ -44,9 +40,6 @@ class RegionalRepository
 
     /**
      * Busca regionales por nombre
-     *
-     * @param string $termino
-     * @return Collection
      */
     public function buscar(string $termino): Collection
     {
@@ -58,12 +51,9 @@ class RegionalRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

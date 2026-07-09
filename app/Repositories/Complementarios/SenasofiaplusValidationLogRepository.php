@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Complementarios;
 
-use Illuminate\Database\Eloquent\Collection;
 use App\Models\Complementarios\SenasofiaplusValidationLog;
+use Illuminate\Database\Eloquent\Collection;
 
 class SenasofiaplusValidationLogRepository
 {

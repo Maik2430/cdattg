@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\Proveedor;
 
-use App\Models\Inventario\Proveedor;
 use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface;
+use App\Models\Inventario\Proveedor;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class ProveedorRepository implements ProveedorRepositoryInterface
 {
-
     /**
      * Obtiene todos los proveedores
      */
@@ -32,12 +31,12 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             'pais',
             'departamento',
             'municipio',
-            'persona'
+            'persona',
         ])
-        ->withCount('contratosConvenios')
-        ->latest();
+            ->withCount('contratosConvenios')
+            ->latest();
 
-        if (!empty($filtros['search'])) {
+        if (! empty($filtros['search'])) {
             $search = $filtros['search'];
             $query->where(function ($q) use ($search): void {
                 $q->where('name', 'LIKE', "%{$search}%")
@@ -63,6 +62,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
         }
 
         $perPage = $filtros['per_page'] ?? 10;
+
         return $query->paginate($perPage);
     }
 
@@ -79,7 +79,7 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             'pais',
             'departamento',
             'municipio',
-            'persona'
+            'persona',
         ])->find($id);
     }
 
@@ -127,4 +127,3 @@ class ProveedorRepository implements ProveedorRepositoryInterface
             ->exists();
     }
 }
-

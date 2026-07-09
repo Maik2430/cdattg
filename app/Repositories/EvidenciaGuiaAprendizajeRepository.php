@@ -9,9 +9,6 @@ class EvidenciaGuiaAprendizajeRepository
 {
     /**
      * Obtiene evidencias por guía
-     *
-     * @param int $guiaId
-     * @return Collection
      */
     public function obtenerPorGuia(int $guiaId): Collection
     {
@@ -23,9 +20,6 @@ class EvidenciaGuiaAprendizajeRepository
 
     /**
      * Obtiene evidencias por aprendiz
-     *
-     * @param int $aprendizId
-     * @return Collection
      */
     public function obtenerPorAprendiz(int $aprendizId): Collection
     {
@@ -37,9 +31,6 @@ class EvidenciaGuiaAprendizajeRepository
 
     /**
      * Crea evidencia de guía
-     *
-     * @param array $datos
-     * @return EvidenciaGuiaAprendizaje
      */
     public function crear(array $datos): EvidenciaGuiaAprendizaje
     {
@@ -48,11 +39,6 @@ class EvidenciaGuiaAprendizajeRepository
 
     /**
      * Califica evidencia
-     *
-     * @param int $id
-     * @param float $calificacion
-     * @param string|null $observaciones
-     * @return bool
      */
     public function calificar(int $id, float $calificacion, ?string $observaciones = null): bool
     {
@@ -63,4 +49,3 @@ class EvidenciaGuiaAprendizajeRepository
         ]);
     }
 }
-

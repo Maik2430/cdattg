@@ -10,15 +10,14 @@ class DepartamentoRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['departamentos', 'ubicacion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todos los departamentos
-     *
-     * @return Collection
      */
     public function obtenerTodos(): Collection
     {
@@ -31,9 +30,6 @@ class DepartamentoRepository
 
     /**
      * Obtiene departamentos por país
-     *
-     * @param int $paisId
-     * @return Collection
      */
     public function obtenerPorPais(int $paisId): Collection
     {
@@ -47,10 +43,6 @@ class DepartamentoRepository
 
     /**
      * Busca departamentos por nombre
-     *
-     * @param string $termino
-     * @param int|null $paisId
-     * @return Collection
      */
     public function buscar(string $termino, ?int $paisId = null): Collection
     {
@@ -64,12 +56,9 @@ class DepartamentoRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

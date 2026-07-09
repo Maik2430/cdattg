@@ -10,15 +10,14 @@ class TipoProgramaRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['tipos_programa', 'configuracion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todos los tipos de programa activos
-     *
-     * @return Collection
      */
     public function obtenerActivos(): Collection
     {
@@ -31,12 +30,9 @@ class TipoProgramaRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

@@ -10,16 +10,14 @@ class GuiasAprendizajeRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'programas';
         $this->cacheTags = ['guias', 'aprendizaje'];
-    }    /**
+    }
+
+    /**
      * Obtiene guías por programa
-     *
-     * @param int $programaId
-     * @return Collection
      */
     public function obtenerPorPrograma(int $programaId): Collection
     {
@@ -33,8 +31,6 @@ class GuiasAprendizajeRepository
 
     /**
      * Obtiene guías activas
-     *
-     * @return Collection
      */
     public function obtenerActivas(): Collection
     {
@@ -48,12 +44,9 @@ class GuiasAprendizajeRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

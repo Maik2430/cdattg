@@ -3,17 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\RegistroActividades;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class RegistroActividadesRepository
 {
     /**
      * Obtiene actividades por instructor
-     *
-     * @param int $instructorId
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function obtenerPorInstructor(int $instructorId, int $perPage = 15): LengthAwarePaginator
     {
@@ -25,9 +21,6 @@ class RegistroActividadesRepository
 
     /**
      * Obtiene actividades por ficha
-     *
-     * @param int $fichaId
-     * @return Collection
      */
     public function obtenerPorFicha(int $fichaId): Collection
     {
@@ -39,11 +32,6 @@ class RegistroActividadesRepository
 
     /**
      * Obtiene actividades por rango de fechas
-     *
-     * @param string $fechaInicio
-     * @param string $fechaFin
-     * @param int|null $instructorId
-     * @return Collection
      */
     public function obtenerPorFechas(string $fechaInicio, string $fechaFin, ?int $instructorId = null): Collection
     {
@@ -59,9 +47,6 @@ class RegistroActividadesRepository
 
     /**
      * Crea un registro de actividad
-     *
-     * @param array $datos
-     * @return RegistroActividades
      */
     public function crear(array $datos): RegistroActividades
     {
@@ -70,10 +55,6 @@ class RegistroActividadesRepository
 
     /**
      * Actualiza un registro
-     *
-     * @param int $id
-     * @param array $datos
-     * @return bool
      */
     public function actualizar(int $id, array $datos): bool
     {
@@ -82,13 +63,9 @@ class RegistroActividadesRepository
 
     /**
      * Elimina un registro
-     *
-     * @param int $id
-     * @return bool
      */
     public function eliminar(int $id): bool
     {
         return RegistroActividades::where('id', $id)->delete();
     }
 }
-

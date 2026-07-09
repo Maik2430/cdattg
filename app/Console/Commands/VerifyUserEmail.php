@@ -30,13 +30,15 @@ class VerifyUserEmail extends Command
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             $this->error("No se encontró un usuario con el correo: {$email}");
+
             return Command::FAILURE;
         }
 
         if ($user->hasVerifiedEmail()) {
             $this->info("El correo {$email} ya está verificado.");
+
             return Command::SUCCESS;
         }
 

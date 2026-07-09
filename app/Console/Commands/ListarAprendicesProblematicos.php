@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class ListarAprendicesProblematicos extends Command
 {
     protected $signature = 'aprendices:listar-problematicos';
+
     protected $description = 'Lista todos los aprendices con datos problemáticos';
 
     public function handle()
@@ -33,8 +34,8 @@ class ListarAprendicesProblematicos extends Command
             }
         }
 
-        if (!empty($problematicos)) {
-            $this->error("⚠️  Encontrados " . count($problematicos) . " aprendices con problemas:");
+        if (! empty($problematicos)) {
+            $this->error('⚠️  Encontrados '.count($problematicos).' aprendices con problemas:');
             $this->newLine();
             $this->table(
                 ['ID Aprendiz', 'Persona ID', 'Ficha ID', 'Estado', 'Creado'],
@@ -53,4 +54,3 @@ class ListarAprendicesProblematicos extends Command
         return Command::SUCCESS;
     }
 }
-

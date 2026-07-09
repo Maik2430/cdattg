@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\Devolucion;
 
-use Illuminate\Support\Collection;
-use Exception;
+use App\Inventario\Interfaces\Repositories\Devolucion\DevolucionRepositoryInterface;
 use App\Models\Inventario\DetalleOrden;
 use App\Models\Inventario\Devolucion;
-use App\Inventario\Interfaces\Repositories\Devolucion\DevolucionRepositoryInterface;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class DevolucionRepository implements DevolucionRepositoryInterface
 {
@@ -29,7 +29,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
             ->where('estado_orden_id', $estadoAprobadaId)
             ->get()
             ->filter(function ($detalle): bool {
-                return !$detalle->estaCompletamenteDevuelto();
+                return ! $detalle->estaCompletamenteDevuelto();
             });
 
         return $this->paginacionManual($prestamos, 10);
@@ -61,7 +61,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
             'detalleOrden.producto',
             'detalleOrden.orden',
             'userCreate',
-            'userUpdate'
+            'userUpdate',
         ])->find($id);
     }
 
@@ -78,7 +78,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
             ->where('estado_orden_id', $estadoAprobadaId)
             ->get()
             ->filter(function ($detalle): bool {
-                return !$detalle->estaCompletamenteDevuelto();
+                return ! $detalle->estaCompletamenteDevuelto();
             });
 
         return $this->paginacionManual($prestamos, 10);
@@ -112,7 +112,7 @@ class DevolucionRepository implements DevolucionRepositoryInterface
             $path = route('inventario.devoluciones.index');
         }
 
-        if (!$path) {
+        if (! $path) {
             $path = route('inventario.devoluciones.index');
         }
 
@@ -127,4 +127,3 @@ class DevolucionRepository implements DevolucionRepositoryInterface
         );
     }
 }
-

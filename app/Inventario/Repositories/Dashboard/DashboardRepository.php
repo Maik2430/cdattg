@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Inventario\Repositories\Dashboard;
 
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardRepository
 {
@@ -152,4 +152,3 @@ class DashboardRepository
             ->toArray();
     }
 }
-

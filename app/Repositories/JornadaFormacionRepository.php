@@ -10,15 +10,14 @@ class JornadaFormacionRepository
 {
     use HasCache;
 
-
     public function __construct()
     {
         $this->cacheType = 'parametros';
         $this->cacheTags = ['jornadas', 'configuracion'];
-    }    /**
+    }
+
+    /**
      * Obtiene todas las jornadas activas
-     *
-     * @return Collection
      */
     public function obtenerActivas(): Collection
     {
@@ -31,9 +30,6 @@ class JornadaFormacionRepository
 
     /**
      * Encuentra jornada por nombre
-     *
-     * @param string $nombre
-     * @return JornadaFormacion|null
      */
     public function encontrarPorNombre(string $nombre): ?JornadaFormacion
     {
@@ -44,12 +40,9 @@ class JornadaFormacionRepository
 
     /**
      * Invalida caché
-     *
-     * @return void
      */
     public function invalidarCache(): void
     {
         $this->flushCache();
     }
 }
-

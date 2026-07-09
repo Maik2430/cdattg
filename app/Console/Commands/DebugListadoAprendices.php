@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class DebugListadoAprendices extends Command
 {
     protected $signature = 'aprendices:debug-listado';
+
     protected $description = 'Debug del listado de aprendices como lo hace el controlador';
 
     public function handle()
@@ -45,14 +46,14 @@ class DebugListadoAprendices extends Command
         $this->newLine();
 
         // Verificar si hay alguno sin persona
-        $sinPersona = $aprendices->filter(function($a) {
+        $sinPersona = $aprendices->filter(function ($a) {
             return is_null($a->persona);
         });
 
         if ($sinPersona->count() > 0) {
             $this->error("⚠️  Hay {$sinPersona->count()} aprendices sin persona cargada");
         } else {
-            $this->info("✅ Todos los aprendices tienen persona cargada correctamente");
+            $this->info('✅ Todos los aprendices tienen persona cargada correctamente');
         }
 
         // Verificar las relaciones cargadas
@@ -61,7 +62,7 @@ class DebugListadoAprendices extends Command
         $primer = $aprendices->first();
         if ($primer) {
             $relaciones = $primer->getRelations();
-            $this->line('Relaciones cargadas: ' . implode(', ', array_keys($relaciones)));
+            $this->line('Relaciones cargadas: '.implode(', ', array_keys($relaciones)));
 
             if (isset($relaciones['persona'])) {
                 $this->info('✅ Relación "persona" está cargada');
@@ -73,4 +74,3 @@ class DebugListadoAprendices extends Command
         return Command::SUCCESS;
     }
 }
-

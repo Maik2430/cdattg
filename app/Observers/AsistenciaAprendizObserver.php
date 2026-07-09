@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\Models\AsistenciaAprendiz;
 use App\Events\AsistenciaCreated;
+use App\Models\AsistenciaAprendiz;
 
 class AsistenciaAprendizObserver
 {
