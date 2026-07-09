@@ -29,7 +29,7 @@ class UpdateRedConocimientoRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('red_conocimientos', 'nombre')->ignore($redConocimientoId)
+                Rule::unique('red_conocimientos', 'nombre')->ignore($redConocimientoId),
             ],
             'regionals_id' => ['nullable', 'integer', 'exists:regionals,id'],
         ];

@@ -24,7 +24,7 @@ class DevolucionRequest extends FormRequest
         return [
             'detalle_orden_id' => 'required|integer|exists:detalle_ordenes,id',
             'cantidad_devuelta' => 'required|integer|min:0',
-            'observaciones' => 'nullable|string|max:500'
+            'observaciones' => 'nullable|string|max:500',
         ];
     }
 }

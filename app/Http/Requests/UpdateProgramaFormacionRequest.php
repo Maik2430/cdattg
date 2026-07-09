@@ -25,8 +25,8 @@ class UpdateProgramaFormacionRequest extends FormRequest
         $programaId = $this->route('programa');
 
         return [
-            'codigo' => 'required|string|max:50|unique:programas_formacion,codigo,' . $programaId,
-            'nombre' => 'required|string|max:255|unique:programas_formacion,nombre,' . $programaId,
+            'codigo' => 'required|string|max:50|unique:programas_formacion,codigo,'.$programaId,
+            'nombre' => 'required|string|max:255|unique:programas_formacion,nombre,'.$programaId,
             'red_conocimiento_id' => 'required|exists:red_conocimientos,id',
             'nivel_formacion_id' => 'required|exists:parametros,id',
             'horas_totales' => 'required|integer|min:1|max:20000',

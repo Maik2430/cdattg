@@ -64,4 +64,3 @@ class RechazarAspiranteRequest extends FormRequest
         }
     }
 }
-

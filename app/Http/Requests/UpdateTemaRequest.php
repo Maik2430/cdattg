@@ -25,7 +25,7 @@ class UpdateTemaRequest extends FormRequest
         $temaId = $this->route('tema')->id;
 
         return [
-            'name'   => 'required|string|max:255|unique:temas,name,' . $temaId,
+            'name' => 'required|string|max:255|unique:temas,name,'.$temaId,
             'status' => 'required|boolean',
         ];
     }

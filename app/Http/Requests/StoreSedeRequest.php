@@ -25,7 +25,7 @@ class StoreSedeRequest extends FormRequest
             'sede' => 'required|string',
             'direccion' => 'required',
             'municipio_id' => 'required',
-            'regional_id' => 'required'
+            'regional_id' => 'required',
         ];
     }
 }

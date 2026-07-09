@@ -22,7 +22,7 @@ class UpdateAprendizRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'persona_id' => "required|exists:personas,id",
+            'persona_id' => 'required|exists:personas,id',
             'ficha_caracterizacion_id' => 'required|exists:fichas_caracterizacion,id',
             'estado' => 'required|boolean',
         ];
@@ -45,4 +45,3 @@ class UpdateAprendizRequest extends FormRequest
         ];
     }
 }
-

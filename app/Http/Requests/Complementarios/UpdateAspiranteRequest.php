@@ -66,4 +66,3 @@ class UpdateAspiranteRequest extends FormRequest
         }
     }
 }
-

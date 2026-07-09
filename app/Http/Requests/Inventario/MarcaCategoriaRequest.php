@@ -26,8 +26,9 @@ class MarcaCategoriaRequest extends FormRequest
         // Update - el route parameter puede ser 'categoria' o 'marca'
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $parametroId = $this->obtenerParametroId();
+
             return [
-                'name' => 'required|string|unique:parametros,name,' . $parametroId,
+                'name' => 'required|string|unique:parametros,name,'.$parametroId,
             ];
         }
 

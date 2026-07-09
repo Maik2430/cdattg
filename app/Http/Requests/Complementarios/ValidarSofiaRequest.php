@@ -42,13 +42,15 @@ class ValidarSofiaRequest extends FormRequest
 
             if ($complementarioId === null) {
                 $validator->errors()->add('complementario_id', 'ID del programa no proporcionado.');
+
                 return;
             }
 
             // Validar que exista el programa
             $programa = \App\Models\Complementarios\ComplementarioOfertado::find($complementarioId);
-            if (!$programa) {
+            if (! $programa) {
                 $validator->errors()->add('complementario_id', 'Programa no encontrado.');
+
                 return;
             }
 
@@ -62,6 +64,7 @@ class ValidarSofiaRequest extends FormRequest
 
             if ($aspirantesCount === 0) {
                 $validator->errors()->add('complementario_id', 'No hay aspirantes que necesiten validación en este programa.');
+
                 return;
             }
 

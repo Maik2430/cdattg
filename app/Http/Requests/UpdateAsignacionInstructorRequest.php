@@ -57,4 +57,3 @@ class UpdateAsignacionInstructorRequest extends FormRequest
         ];
     }
 }
-

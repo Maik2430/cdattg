@@ -4,8 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Carbon\Carbon;
-use App\Models\Evidencias;
 
 class UpdateRegistroActividadesRequest extends FormRequest
 {
@@ -31,12 +29,12 @@ class UpdateRegistroActividadesRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('evidencias', 'nombre')->ignore($actividad->id)
+                Rule::unique('evidencias', 'nombre')->ignore($actividad->id),
             ],
             'fecha_evidencia' => [
                 'required',
                 'date',
-                'after_or_equal:today'
+                'after_or_equal:today',
             ],
         ];
     }

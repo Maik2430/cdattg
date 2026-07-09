@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Complementarios;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Carbon\Carbon;
+use Illuminate\Foundation\Http\FormRequest;
 
 class InscripcionComplementarioRequest extends FormRequest
 {
@@ -56,7 +56,7 @@ class InscripcionComplementarioRequest extends FormRequest
             'acepto_terminos' => 'required|accepted',
         ];
 
-        if (!$this->isUpdatingExistingPerson()) {
+        if (! $this->isUpdatingExistingPerson()) {
             $rules['numero_documento'] .= '|unique:personas,numero_documento';
             $rules['email'] .= '|unique:personas,email';
         }
@@ -105,7 +105,7 @@ class InscripcionComplementarioRequest extends FormRequest
      */
     private function isUpdatingExistingPerson(): bool
     {
-        if (!$this->has('numero_documento') || !$this->has('email')) {
+        if (! $this->has('numero_documento') || ! $this->has('email')) {
             return false;
         }
 

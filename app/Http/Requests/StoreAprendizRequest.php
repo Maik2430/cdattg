@@ -26,7 +26,7 @@ class StoreAprendizRequest extends FormRequest
             'persona_id' => [
                 'required',
                 'exists:personas,id',
-                Rule::unique('aprendices', 'persona_id')->whereNull('deleted_at')
+                Rule::unique('aprendices', 'persona_id')->whereNull('deleted_at'),
             ],
             'ficha_caracterizacion_id' => 'required|exists:fichas_caracterizacion,id',
             'estado' => 'required|boolean',
@@ -51,4 +51,3 @@ class StoreAprendizRequest extends FormRequest
         ];
     }
 }
-

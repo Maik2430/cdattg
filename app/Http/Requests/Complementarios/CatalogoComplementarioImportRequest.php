@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CatalogoComplementarioImportRequest extends FormRequest
 {
     private const MAX_FILE_SIZE_KB = UploadLimits::IMPORT_FILE_SIZE_KB;
+
     private const MAX_CONTENT_LENGTH_BYTES = UploadLimits::IMPORT_CONTENT_LENGTH_BYTES;
 
     public function authorize(): bool
@@ -25,7 +26,7 @@ class CatalogoComplementarioImportRequest extends FormRequest
                 'required',
                 'file',
                 'mimes:xlsx,xls',
-                'max:' . self::MAX_FILE_SIZE_KB,
+                'max:'.self::MAX_FILE_SIZE_KB,
                 function (string $attribute, $value, $fail): void {
                     /** @var \Illuminate\Http\UploadedFile|null $uploadedFile */
                     $uploadedFile = $value instanceof \Illuminate\Http\UploadedFile
@@ -52,29 +53,32 @@ class CatalogoComplementarioImportRequest extends FormRequest
 
     private function validateFileIntegrity(?\Illuminate\Http\UploadedFile $file, callable $fail): void
     {
-        if ($file === null || !$file->isValid()) {
+        if ($file === null || ! $file->isValid()) {
             $fail('El archivo no es válido o está corrupto.');
+
             return;
         }
 
         $realSize = $file->getSize();
 
-        if (!UploadLimits::isWithinLimit($realSize, UploadLimits::IMPORT_FILE_SIZE_BYTES)) {
+        if (! UploadLimits::isWithinLimit($realSize, UploadLimits::IMPORT_FILE_SIZE_BYTES)) {
             $sizeMb = round($realSize / 1024 / 1024, 2);
             $maxMb = UploadLimits::IMPORT_FILE_SIZE_MB;
             $fail("El tamaño real del archivo ({$sizeMb}MB) excede el límite permitido de {$maxMb}MB.");
+
             return;
         }
 
         if ($realSize === 0) {
             $fail('El archivo está vacío.');
+
             return;
         }
 
         $extension = strtolower($file->getClientOriginalExtension());
         $mimeType = $file->getMimeType();
 
-        if (!UploadLimits::isValidExcelMimeType($extension, $mimeType)) {
+        if (! UploadLimits::isValidExcelMimeType($extension, $mimeType)) {
             $fail("El tipo MIME del archivo ({$mimeType}) no coincide con la extensión ({$extension}).");
         }
     }
@@ -133,5 +137,3 @@ class CatalogoComplementarioImportRequest extends FormRequest
         }
     }
 }
-
-

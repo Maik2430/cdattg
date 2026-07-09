@@ -27,7 +27,7 @@ class UpdateCompetenciaRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('competencias', 'codigo')->ignore($competenciaId)
+                Rule::unique('competencias', 'codigo')->ignore($competenciaId),
             ],
             'nombre' => 'required|string|max:255',
             'duracion' => 'required|numeric|min:1|max:9999',
@@ -72,4 +72,3 @@ class UpdateCompetenciaRequest extends FormRequest
         ];
     }
 }
-

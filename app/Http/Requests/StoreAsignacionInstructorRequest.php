@@ -40,4 +40,3 @@ class StoreAsignacionInstructorRequest extends FormRequest
         ];
     }
 }
-

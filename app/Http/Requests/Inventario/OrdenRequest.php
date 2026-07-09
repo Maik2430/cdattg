@@ -29,7 +29,7 @@ class OrdenRequest extends FormRequest
                 'tipo' => 'required|in:prestamo,salida',
                 'fecha_devolucion' => 'required_if:tipo,prestamo|nullable|date|after:today',
                 'descripcion' => 'required|string',
-                'carrito' => 'required|json'
+                'carrito' => 'required|json',
             ];
         }
 
@@ -41,7 +41,7 @@ class OrdenRequest extends FormRequest
             'productos' => 'required|array|min:1',
             'productos.*.producto_id' => 'required|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1',
-            'productos.*.estado_orden_id' => 'required|exists:parametros_temas,id'
+            'productos.*.estado_orden_id' => 'required|exists:parametros_temas,id',
         ];
     }
 

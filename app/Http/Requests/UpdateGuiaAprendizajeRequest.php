@@ -27,7 +27,7 @@ class UpdateGuiaAprendizajeRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('guia_aprendizajes', 'codigo')->ignore($this->route('guia_aprendizaje'))
+                Rule::unique('guia_aprendizajes', 'codigo')->ignore($this->route('guia_aprendizaje')),
             ],
             'nombre' => 'required|string|max:255',
             'resultados_aprendizaje' => 'sometimes|array',

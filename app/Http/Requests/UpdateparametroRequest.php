@@ -26,7 +26,7 @@ class UpdateparametroRequest extends FormRequest
         $parametroId = $this->route('parametro')->id;
 
         return [
-            'name'   => 'required|string|max:255|unique:parametros,name,' . $parametroId,
+            'name' => 'required|string|max:255|unique:parametros,name,'.$parametroId,
             'status' => 'required|boolean',
         ];
     }

@@ -25,7 +25,7 @@ class ProductoRequest extends FormRequest
         if ($this->routeIs('inventario.productos.agregar-carrito')) {
             return [
                 'producto_id' => 'required|exists:productos,id',
-                'cantidad' => 'required|integer|min:1'
+                'cantidad' => 'required|integer|min:1',
             ];
         }
 
@@ -34,7 +34,7 @@ class ProductoRequest extends FormRequest
 
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $productoId = $this->route('producto');
-            $rules['name'] = 'required|unique:productos,name,' . $productoId;
+            $rules['name'] = 'required|unique:productos,name,'.$productoId;
             $rules['cantidad'] = 'required|integer|min:0';
         } else {
             $rules['name'] = 'required|unique:productos,name';
@@ -64,7 +64,7 @@ class ProductoRequest extends FormRequest
             'contrato_convenio_id' => 'required|exists:contratos_convenios,id',
             'ambiente_id' => 'required|exists:ambientes,id',
             'fecha_vencimiento' => 'nullable|date',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:5120'
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ];
     }
 }

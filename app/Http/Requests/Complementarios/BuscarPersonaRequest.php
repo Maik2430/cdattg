@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Complementarios;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class BuscarPersonaRequest extends FormRequest
@@ -48,9 +48,8 @@ class BuscarPersonaRequest extends FormRequest
             response()->json([
                 'success' => false,
                 'message' => 'Error de validación',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422)
         );
     }
 }
-

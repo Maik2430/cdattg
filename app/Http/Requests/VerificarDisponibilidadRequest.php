@@ -14,7 +14,7 @@ class VerificarDisponibilidadRequest extends FormRequest
         /** @var Instructor|null $instructor */
         $instructor = $this->route('instructor');
 
-        if (!$user || !$instructor) {
+        if (! $user || ! $instructor) {
             return false;
         }
 

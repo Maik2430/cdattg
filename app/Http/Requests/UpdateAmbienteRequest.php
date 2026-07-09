@@ -24,7 +24,7 @@ class UpdateAmbienteRequest extends FormRequest
         return [
             'piso_id' => 'required',
             'title' => 'required',
-            'status' => 'required|boolean'
+            'status' => 'required|boolean',
         ];
     }
 }

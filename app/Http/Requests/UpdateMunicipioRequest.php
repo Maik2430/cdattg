@@ -26,7 +26,7 @@ class UpdateMunicipioRequest extends FormRequest
         $municipioId = $this->route('municipio')->id;
 
         return [
-            'municipio'   => 'required|string|max:255,' . $municipioId,
+            'municipio' => 'required|string|max:255,'.$municipioId,
             'status' => 'required|boolean',
         ];
     }

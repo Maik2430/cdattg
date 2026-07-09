@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Complementarios;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreAspiranteRequest extends FormRequest
 {
@@ -42,7 +41,7 @@ class StoreAspiranteRequest extends FormRequest
         if ($programaId !== null) {
             $rules['numero_documento'][] = function ($value, $fail) use ($programaId) {
                 $persona = \App\Models\Persona::where('numero_documento', $value)->first();
-                if (!$persona) {
+                if (! $persona) {
                     // No validar existencia aquí, dejar que el servicio lo maneje
                     return;
                 }
@@ -87,4 +86,3 @@ class StoreAspiranteRequest extends FormRequest
         }
     }
 }
-

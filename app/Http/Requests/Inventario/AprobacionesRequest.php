@@ -22,7 +22,7 @@ class AprobacionesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'motivo_rechazo' => 'required|string|max:1000'
+            'motivo_rechazo' => 'required|string|max:1000',
         ];
     }
 }

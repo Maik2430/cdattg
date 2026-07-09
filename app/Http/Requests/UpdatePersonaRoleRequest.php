@@ -34,4 +34,3 @@ class UpdatePersonaRoleRequest extends FormRequest
         ];
     }
 }
-

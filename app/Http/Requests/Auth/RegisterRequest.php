@@ -21,13 +21,13 @@ class RegisterRequest extends FormRequest
             'numero_documento' => [
                 'required',
                 'string',
-                'max:' . 10,
-                'unique:personas,numero_documento'
+                'max:'. 10,
+                'unique:personas,numero_documento',
             ],
-            'primer_nombre' => ['required', 'string', 'max:' . self::STRING_MAX_LENGTH],
-            'segundo_nombre' => ['nullable', 'string', 'max:' . self::STRING_MAX_LENGTH],
-            'primer_apellido' => ['required', 'string', 'max:' . self::STRING_MAX_LENGTH],
-            'segundo_apellido' => ['nullable', 'string', 'max:' . self::STRING_MAX_LENGTH],
+            'primer_nombre' => ['required', 'string', 'max:'.self::STRING_MAX_LENGTH],
+            'segundo_nombre' => ['nullable', 'string', 'max:'.self::STRING_MAX_LENGTH],
+            'primer_apellido' => ['required', 'string', 'max:'.self::STRING_MAX_LENGTH],
+            'segundo_apellido' => ['nullable', 'string', 'max:'.self::STRING_MAX_LENGTH],
             'fecha_nacimiento' => [
                 'required',
                 'date',
@@ -42,19 +42,19 @@ class RegisterRequest extends FormRequest
                 },
             ],
             'genero' => ['required', 'integer'],
-            'telefono' => ['nullable', 'string', 'max:' . 7],
-            'celular' => ['nullable', 'string', 'max:' . 10],
+            'telefono' => ['nullable', 'string', 'max:'. 7],
+            'celular' => ['nullable', 'string', 'max:'. 10],
             'email' => [
                 'required',
                 'email',
-                'max:' . self::STRING_MAX_LENGTH,
+                'max:'.self::STRING_MAX_LENGTH,
                 'unique:personas,email',
-                'unique:users,email'
+                'unique:users,email',
             ],
             'pais_id' => ['required', 'exists:pais,id'],
             'departamento_id' => ['required', 'exists:departamentos,id'],
             'municipio_id' => ['required', 'exists:municipios,id'],
-            'direccion' => ['nullable', 'string', 'max:' . self::STRING_MAX_LENGTH],
+            'direccion' => ['nullable', 'string', 'max:'.self::STRING_MAX_LENGTH],
             'caracterizacion_ids' => ['required', 'array', 'min:1'],
             'caracterizacion_ids.*' => ['integer', 'exists:parametros,id'],
         ];
@@ -82,7 +82,7 @@ class RegisterRequest extends FormRequest
         $validator->after(function ($validator) {
             $caracterizacionIds = collect($this->input('caracterizacion_ids', []))
                 ->filter()
-                ->map(fn($id) => (int) $id)
+                ->map(fn ($id) => (int) $id)
                 ->values()
                 ->all();
 

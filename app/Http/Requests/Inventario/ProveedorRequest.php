@@ -52,7 +52,7 @@ class ProveedorRequest extends FormRequest
                 'departamento_id' => 'nullable|exists:departamentos,id',
                 'municipio_id' => 'nullable|exists:municipios,id',
                 'persona_id' => 'nullable|exists:personas,id',
-                'estado_id' => 'nullable|exists:parametros_temas,id'
+                'estado_id' => 'nullable|exists:parametros_temas,id',
             ];
         }
 
@@ -67,7 +67,7 @@ class ProveedorRequest extends FormRequest
             'departamento_id' => 'nullable|exists:departamentos,id',
             'municipio_id' => 'nullable|exists:municipios,id',
             'persona_id' => 'nullable|exists:personas,id',
-            'estado_id' => 'nullable|exists:parametros_temas,id'
+            'estado_id' => 'nullable|exists:parametros_temas,id',
         ];
     }
 }

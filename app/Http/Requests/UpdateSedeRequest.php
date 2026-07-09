@@ -23,8 +23,9 @@ class UpdateSedeRequest extends FormRequest
     {
 
         $sedeId = $this->route('sede')->id;
+
         return [
-            'sede' => 'required|unique:sedes,sede,' . $sedeId,
+            'sede' => 'required|unique:sedes,sede,'.$sedeId,
             'direccion' => 'required',
             'status' => 'required',
             'municipio_id' => 'required',

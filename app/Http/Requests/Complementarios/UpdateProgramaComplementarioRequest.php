@@ -17,7 +17,7 @@ class UpdateProgramaComplementarioRequest extends FormRequest
 
         return [
             'catalogo_id' => 'nullable|exists:complementarios_catalogo,id',
-            'codigo' => 'required_without:catalogo_id|string|unique:complementarios_ofertados,codigo,' . $programaId,
+            'codigo' => 'required_without:catalogo_id|string|unique:complementarios_ofertados,codigo,'.$programaId,
             // nombre, duracion, requisitos_ingreso y modalidad ahora se obtienen del catálogo
             'justificacion' => 'required|string|max:600',
             'cupos' => 'required|integer|min:1',
@@ -27,13 +27,13 @@ class UpdateProgramaComplementarioRequest extends FormRequest
                 'required',
                 'exists:parametros_temas,id',
                 function ($attribute, $value, $fail) {
-                    $parametroTema = \App\Models\ParametroTema::whereHas('tema', function($q) {
+                    $parametroTema = \App\Models\ParametroTema::whereHas('tema', function ($q) {
                         $q->where('name', 'LIKE', '%JORNADAS%');
                     })->find($value);
-                    if (!$parametroTema) {
+                    if (! $parametroTema) {
                         $fail('La jornada seleccionada no pertenece al tema JORNADAS.');
                     }
-                }
+                },
             ],
             'ambiente_id' => 'required|exists:ambientes,id',
             'ambiente_comentario' => 'nullable|string|max:500',
@@ -73,8 +73,8 @@ class UpdateProgramaComplementarioRequest extends FormRequest
     /**
      * Obtiene los datos validados y normalizados.
      *
-     * @param string|null $key
-     * @param mixed $default
+     * @param  string|null  $key
+     * @param  mixed  $default
      * @return array<string, mixed>|mixed
      */
     public function validated($key = null, $default = null)
@@ -91,8 +91,8 @@ class UpdateProgramaComplementarioRequest extends FormRequest
                     return isset($dia['dia_id'])
                         && isset($dia['hora_inicio'])
                         && isset($dia['hora_fin'])
-                        && !empty($dia['hora_inicio'])
-                        && !empty($dia['hora_fin']);
+                        && ! empty($dia['hora_inicio'])
+                        && ! empty($dia['hora_fin']);
                 })
                 ->map(static function ($dia) {
                     return [
@@ -109,4 +109,3 @@ class UpdateProgramaComplementarioRequest extends FormRequest
         return $validated;
     }
 }
-

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Complementarios;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Carbon\Carbon;
+use Illuminate\Foundation\Http\FormRequest;
 
 class InscripcionGeneralRequest extends FormRequest
 {

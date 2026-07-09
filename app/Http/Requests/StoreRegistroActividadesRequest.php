@@ -3,9 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use Carbon\Carbon;
-use App\Models\InstructorFichaCaracterizacion;
 
 class StoreRegistroActividadesRequest extends FormRequest
 {
@@ -29,7 +26,7 @@ class StoreRegistroActividadesRequest extends FormRequest
             'fecha_evidencia' => [
                 'required',
                 'date',
-                'after_or_equal:today'
+                'after_or_equal:today',
             ],
         ];
     }

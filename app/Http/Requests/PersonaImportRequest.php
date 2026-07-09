@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Configuration\UploadLimits;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,6 +14,7 @@ class PersonaImportRequest extends FormRequest
      * Reexporta los límites de UploadLimits para que SonarQube detecte valores constantes.
      */
     private const MAX_FILE_SIZE_KB = UploadLimits::IMPORT_FILE_SIZE_KB;
+
     private const MAX_CONTENT_LENGTH_BYTES = UploadLimits::IMPORT_CONTENT_LENGTH_BYTES;
 
     /**
@@ -34,7 +35,7 @@ class PersonaImportRequest extends FormRequest
                 'required',
                 'file',
                 'mimes:xlsx,xls',
-                'max:' . self::MAX_FILE_SIZE_KB,
+                'max:'.self::MAX_FILE_SIZE_KB,
                 function (string $attribute, $value, $fail) {
                     /** @var \Illuminate\Http\UploadedFile|null $uploadedFile */
                     $uploadedFile = $value instanceof \Illuminate\Http\UploadedFile
@@ -67,24 +68,27 @@ class PersonaImportRequest extends FormRequest
      */
     private function validateFileIntegrity(?\Illuminate\Http\UploadedFile $file, $fail): void
     {
-        if (!$file || !$file->isValid()) {
+        if (! $file || ! $file->isValid()) {
             $fail('El archivo no es válido o está corrupto.');
+
             return;
         }
 
         // Validar que el tamaño real del archivo coincida con lo declarado
         $realSize = $file->getSize();
 
-        if (!UploadLimits::isWithinLimit($realSize, UploadLimits::IMPORT_FILE_SIZE_BYTES)) {
+        if (! UploadLimits::isWithinLimit($realSize, UploadLimits::IMPORT_FILE_SIZE_BYTES)) {
             $sizeMB = round($realSize / 1024 / 1024, 2);
             $maxMB = UploadLimits::IMPORT_FILE_SIZE_MB;
             $fail("El tamaño real del archivo ({$sizeMB}MB) excede el límite permitido de {$maxMB}MB.");
+
             return;
         }
 
         // Validar que el archivo tenga contenido
         if ($realSize === 0) {
             $fail('El archivo está vacío.');
+
             return;
         }
 
@@ -92,7 +96,7 @@ class PersonaImportRequest extends FormRequest
         $extension = strtolower($file->getClientOriginalExtension());
         $mimeType = $file->getMimeType();
 
-        if (!UploadLimits::isValidExcelMimeType($extension, $mimeType)) {
+        if (! UploadLimits::isValidExcelMimeType($extension, $mimeType)) {
             $fail("El tipo MIME del archivo ({$mimeType}) no coincide con la extensión ({$extension}).");
         }
     }

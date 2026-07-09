@@ -19,7 +19,7 @@ class UpdateResultadosAprendizajeRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('resultados_aprendizajes', 'codigo')->ignore($this->route('resultado_aprendizaje'))
+                Rule::unique('resultados_aprendizajes', 'codigo')->ignore($this->route('resultado_aprendizaje')),
             ],
             'nombre' => 'required|string|max:500',
             'competencia_id' => 'nullable|exists:competencias,id',

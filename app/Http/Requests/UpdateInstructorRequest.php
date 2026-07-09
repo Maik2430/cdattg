@@ -2,11 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Instructor;
-use App\Models\Persona;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateInstructorRequest extends FormRequest
 {
@@ -106,7 +103,7 @@ class UpdateInstructorRequest extends FormRequest
             'especialidades.min' => 'Debe seleccionar al menos una especialidad (red de conocimiento).',
             'especialidades.*.required' => 'Cada especialidad seleccionada es obligatoria.',
             'especialidades.*.exists' => 'Una o más especialidades seleccionadas no son válidas.',
-            'fecha_fin_contrato.after_or_equal' => 'La fecha de fin de contrato debe ser posterior o igual a la fecha de inicio.'
+            'fecha_fin_contrato.after_or_equal' => 'La fecha de fin de contrato debe ser posterior o igual a la fecha de inicio.',
         ];
     }
 
@@ -142,7 +139,7 @@ class UpdateInstructorRequest extends FormRequest
             'fecha_fin_contrato' => 'fecha de fin de contrato',
             'supervisor_contrato' => 'supervisor de contrato',
             'eps' => 'EPS',
-            'arl' => 'ARL'
+            'arl' => 'ARL',
         ];
     }
 }
