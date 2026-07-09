@@ -14,7 +14,7 @@ class GoogleDriveController extends Controller
      */
     public function connect(Request $request)
     {
-        $client = new \Google\Client();
+        $client = new \Google\Client;
         $client->setClientId(config('filesystems.disks.google.clientId'));
         $client->setClientSecret(config('filesystems.disks.google.clientSecret'));
         $client->setAccessType('offline');
@@ -31,10 +31,11 @@ class GoogleDriveController extends Controller
 
         // IMPORTANTE: Debe coincidir EXACTAMENTE con alguna redirect URI permitida en Google Cloud.
         // Construimos dinámicamente según el host actual (localhost o 127.0.0.1)
-        $redirectUri = $request->getSchemeAndHttpHost() . '/google-drive-callback';
+        $redirectUri = $request->getSchemeAndHttpHost().'/google-drive-callback';
         $client->setRedirectUri($redirectUri);
 
         $authUrl = $client->createAuthUrl();
+
         return redirect()->away($authUrl);
     }
 
@@ -44,14 +45,14 @@ class GoogleDriveController extends Controller
     public function callback(Request $request)
     {
         $code = $request->query('code');
-        if (!$code) {
+        if (! $code) {
             return response()->json([
                 'success' => false,
-                'message' => 'Falta el parámetro "code" en la URL'
+                'message' => 'Falta el parámetro "code" en la URL',
             ], 400);
         }
 
-        $client = new \Google\Client();
+        $client = new \Google\Client;
         $client->setClientId(config('filesystems.disks.google.clientId'));
         $client->setClientSecret(config('filesystems.disks.google.clientSecret'));
         $client->setAccessType('offline');
@@ -66,7 +67,7 @@ class GoogleDriveController extends Controller
             ]);
         }
 
-        $redirectUri = $request->getSchemeAndHttpHost() . '/google-drive-callback';
+        $redirectUri = $request->getSchemeAndHttpHost().'/google-drive-callback';
         $client->setRedirectUri($redirectUri);
 
         $token = $client->fetchAccessTokenWithAuthCode($code);
@@ -76,7 +77,7 @@ class GoogleDriveController extends Controller
         }
 
         $refreshToken = $client->getRefreshToken();
-        if (!$refreshToken && isset($token['refresh_token'])) {
+        if (! $refreshToken && isset($token['refresh_token'])) {
             $refreshToken = $token['refresh_token'];
         }
 
@@ -95,7 +96,7 @@ class GoogleDriveController extends Controller
             // Silently ignore storage write errors
         }
 
-        $message = "Copia y pega el siguiente valor en tu .env como GOOGLE_DRIVE_REFRESH_TOKEN y luego ejecuta: php artisan config:clear";
+        $message = 'Copia y pega el siguiente valor en tu .env como GOOGLE_DRIVE_REFRESH_TOKEN y luego ejecuta: php artisan config:clear';
         $html = "<html><body style='font-family:system-ui; padding:20px;'>
         <h2>Token obtenido correctamente</h2>
         <p>{$message}</p>
@@ -112,14 +113,16 @@ class GoogleDriveController extends Controller
     public function test(Request $request)
     {
         try {
-            $path = 'documentos_aspirantes/_connectivity_check_' . time() . '.txt';
-            $content = 'Drive connectivity OK at ' . now()->toDateTimeString();
+            $path = 'documentos_aspirantes/_connectivity_check_'.time().'.txt';
+            $content = 'Drive connectivity OK at '.now()->toDateTimeString();
 
             Storage::disk('google')->put($path, $content);
 
             return response()->json(['success' => true, 'path' => $path]);
         } catch (\Throwable $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            Log::error('Error en prueba de conectividad Google Drive', ['error' => $e->getMessage()]);
+
+            return response()->json(['success' => false, 'error' => 'Error al conectar con Google Drive.'], 500);
         }
     }
 
@@ -138,11 +141,13 @@ class GoogleDriveController extends Controller
                     'client_secret' => $config['clientSecret'] ? 'SET' : 'NOT SET',
                     'refresh_token' => $config['refreshToken'] ? 'SET' : 'NOT SET',
                     'folder_id' => $config['folderId'] ? 'SET' : 'NOT SET',
-                    'team_drive_id' => $config['teamDriveId'] ? 'SET' : 'NOT SET'
-                ]
+                    'team_drive_id' => $config['teamDriveId'] ? 'SET' : 'NOT SET',
+                ],
             ]);
         } catch (\Throwable $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            Log::error('Error al verificar configuración Google Drive', ['error' => $e->getMessage()]);
+
+            return response()->json(['success' => false, 'error' => 'Error al verificar la configuración.'], 500);
         }
     }
 }

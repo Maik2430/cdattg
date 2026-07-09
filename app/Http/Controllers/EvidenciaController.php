@@ -10,7 +10,6 @@ class EvidenciaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
@@ -34,13 +33,13 @@ class EvidenciaController extends Controller
                 'success' => true,
                 'message' => 'Evidencia creada exitosamente',
                 'evidencia_id' => $evidencia->id,
-                'evidencia' => $evidencia
+                'evidencia' => $evidencia,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear la evidencia: ' . $e->getMessage()
+                'message' => 'Error al crear la evidencia: '.$e->getMessage(),
             ], 500);
         }
     }

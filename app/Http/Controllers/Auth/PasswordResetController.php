@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
 class PasswordResetController extends Controller
@@ -65,13 +65,13 @@ class PasswordResetController extends Controller
                 str_contains($errorMsg, 'mailpit') ||
                 str_contains($errorMsg, 'getaddrinfo')) {
                 $errorMessage = 'Error de conexión con el servidor de correo. '
-                    . 'Verifique la configuración del servidor SMTP.';
+                    .'Verifique la configuración del servidor SMTP.';
             } elseif (str_contains($errorMsg, 'Authentication') ||
                       str_contains($errorMsg, '535') ||
                       str_contains($errorMsg, 'Invalid login') ||
                       str_contains($errorMsg, 'authentication failed')) {
                 $errorMessage = 'Error de autenticación con el servidor de correo. '
-                    . 'Verifique que el usuario y contraseña sean correctos en el archivo .env.';
+                    .'Verifique que el usuario y contraseña sean correctos en el archivo .env.';
             } elseif (str_contains($errorMsg, 'SSL') ||
                       str_contains($errorMsg, 'TLS') ||
                       str_contains($errorMsg, 'certificate')) {

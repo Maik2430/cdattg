@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AmbienteService;
 use App\Http\Requests\StoreAmbienteRequest;
 use App\Http\Requests\UpdateAmbienteRequest;
 use App\Models\Ambiente;
 use App\Models\Regional;
+use App\Services\AmbienteService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,18 +27,21 @@ class AmbienteController extends Controller
         $this->middleware('can:EDITAR AMBIENTE')->only(['edit', 'update']);
         $this->middleware('can:ELIMINAR AMBIENTE')->only('destroy');
     }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $ambientes = $this->ambienteService->listar(10);
+
         return view('ambiente.index', compact('ambientes'));
     }
 
     public function cargarAmbientes($piso_id)
     {
         $resultado = $this->ambienteService->obtenerPorPiso($piso_id);
+
         return response()->json($resultado);
     }
 
@@ -46,13 +49,12 @@ class AmbienteController extends Controller
     {
         $resultado = $this->ambienteService->obtenerPorRegional($request->regional_id);
 
-        if (!$resultado['success']) {
+        if (! $resultado['success']) {
             return response()->json(['error' => $resultado['message'] ?? 'Error'], 404);
         }
 
         return response()->json($resultado['ambientes'], 200);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -60,6 +62,7 @@ class AmbienteController extends Controller
     public function create()
     {
         $regionales = Regional::where('status', 1)->get();
+
         return view('ambiente.create', compact('regionales'));
     }
 
@@ -80,7 +83,8 @@ class AmbienteController extends Controller
 
             return redirect()->route('ambiente.index')->with('success', '¡Registro Exitoso!');
         } catch (\Exception $e) {
-            Log::error('Error al crear ambiente: ' . $e->getMessage());
+            Log::error('Error al crear ambiente: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al crear ambiente.');
         }
     }
@@ -99,6 +103,7 @@ class AmbienteController extends Controller
     public function edit(Ambiente $ambiente)
     {
         $regionales = Regional::where('status', 1)->get();
+
         return view('ambiente.edit', ['regionales' => $regionales, 'ambiente' => $ambiente]);
     }
 
@@ -119,7 +124,8 @@ class AmbienteController extends Controller
 
             return redirect()->route('ambiente.show', $ambiente->id)->with('success', 'Ambiente actualizado con éxito.');
         } catch (\Exception $e) {
-            Log::error('Error al actualizar ambiente: ' . $e->getMessage());
+            Log::error('Error al actualizar ambiente: '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Error al actualizar ambiente.');
         }
     }
@@ -137,6 +143,7 @@ class AmbienteController extends Controller
             if ($e->getCode() == 23000) {
                 return redirect()->back()->with('error', 'El ambiente está siendo usado y no puede ser eliminado!');
             }
+
             return redirect()->back()->with('error', 'Error al eliminar ambiente.');
         }
     }
@@ -148,7 +155,8 @@ class AmbienteController extends Controller
 
             return redirect()->back()->with('success', 'Estado cambiado exitosamente.');
         } catch (\Exception $e) {
-            Log::error('Error al cambiar estado: ' . $e->getMessage());
+            Log::error('Error al cambiar estado: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'No se pudo cambiar el estado del ambiente.');
         }
     }

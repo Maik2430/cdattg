@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Complementarios;
 
-use App\Models\Complementarios\AspiranteComplementario;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Complementarios\AspiranteComplementario;
 use App\Services\Complementarios\ComplementarioService;
+use Illuminate\Support\Facades\Auth;
 
 class PerfilComplementarioController extends Controller
 {
@@ -24,7 +24,7 @@ class PerfilComplementarioController extends Controller
         $user = Auth::user();
 
         // Verificar que el usuario esté autenticado
-        if (!$user) {
+        if (! $user) {
             return redirect('/login')->with('error', 'Debe iniciar sesión para acceder a su perfil.');
         }
 
@@ -33,7 +33,7 @@ class PerfilComplementarioController extends Controller
         // Obtener la persona del usuario
         $persona = $user->persona;
 
-        if (!$persona) {
+        if (! $persona) {
             return redirect()->route('home')->with('error', 'No se encontró información de persona para este usuario.');
         }
 
@@ -60,4 +60,3 @@ class PerfilComplementarioController extends Controller
         ]);
     }
 }
-

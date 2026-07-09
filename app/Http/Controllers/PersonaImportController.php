@@ -7,8 +7,8 @@ use App\Http\Requests\PersonaImportRequest;
 use App\Models\PersonaImport;
 use App\Services\PersonaImportService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -22,7 +22,7 @@ class PersonaImportController extends Controller
         $this->middleware('can:CREAR PERSONA');
 
         // Validar Content-Length para importaciones (8MB límite)
-        $this->middleware('validate.content.length:' . UploadLimits::IMPORT_CONTENT_LENGTH_BYTES)->only('store');
+        $this->middleware('validate.content.length:'.UploadLimits::IMPORT_CONTENT_LENGTH_BYTES)->only('store');
     }
 
     public function create(): View
@@ -45,7 +45,7 @@ class PersonaImportController extends Controller
             ], 201);
         } catch (\Throwable $e) {
             return response()->json([
-                'message' => 'Error al iniciar la importación: ' . $e->getMessage(),
+                'message' => 'Error al iniciar la importación: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -99,12 +99,12 @@ class PersonaImportController extends Controller
 
             DB::table('jobs')
                 ->where('queue', 'persona-import')
-                ->where('payload', 'like', '%"importId";i:' . $personaImport->id . '%')
+                ->where('payload', 'like', '%"importId";i:'.$personaImport->id.'%')
                 ->delete();
 
             DB::table('failed_jobs')
                 ->where('queue', 'persona-import')
-                ->where('payload', 'like', '%"importId";i:' . $personaImport->id . '%')
+                ->where('payload', 'like', '%"importId";i:'.$personaImport->id.'%')
                 ->delete();
 
             $personaImport->delete();
@@ -142,6 +142,7 @@ class PersonaImportController extends Controller
 
         if ($issueType === 'persist_error') {
             $detalle = $errorMessage ? Str::limit($errorMessage, 120) : 'detalle no disponible';
+
             return "Error al guardar el registro ({$detalle})";
         }
 

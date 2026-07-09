@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\UbicacionService;
-use App\Models\Municipio;
 use App\Http\Requests\StoreMunicipioRequest;
 use App\Http\Requests\UpdateMunicipioRequest;
+use App\Models\Municipio;
+use App\Services\UbicacionService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class MunicipioController extends Controller
 {
@@ -20,6 +20,7 @@ class MunicipioController extends Controller
     {
         $this->ubicacionService = $ubicacionService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -28,20 +29,24 @@ class MunicipioController extends Controller
         $departamento_id = Auth::user()->persona->departamento_id;
 
         $municipios = Municipio::where('departamento_id', $departamento_id)->paginate(10);
+
         return view('municipios.index', compact('municipios'));
     }
 
     public function cargarMunicipios($departamento_id)
     {
         $municipios = $this->ubicacionService->obtenerMunicipiosPorDepartamento($departamento_id);
+
         return response()->json(['success' => true, 'municipios' => $municipios]);
     }
 
     public function apiCargarMunicipios(Request $request)
     {
         $municipios = $this->ubicacionService->obtenerMunicipiosPorDepartamento($request->departamento_id);
+
         return response()->json($municipios, 200);
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -53,9 +58,11 @@ class MunicipioController extends Controller
 
         try {
             Municipio::create($data);
+
             return redirect()->back()->with('success', '¡Municipio creado exitosamente!');
         } catch (\Exception $e) {
-            Log::error('Error al crear municipio: ' . $e->getMessage());
+            Log::error('Error al crear municipio: '.$e->getMessage());
+
             return redirect()->back()->withInput()->withErrors(['error' => 'Ocurrió un error al crear el municipio.']);
         }
     }
@@ -96,14 +103,16 @@ class MunicipioController extends Controller
             $municipio->update($data);
 
             DB::commit();
+
             return redirect()->route('municipio.show', $municipio)
                 ->with('success', 'Municipio actualizado exitosamente');
         } catch (QueryException $e) {
             DB::rollBack();
-            Log::error('Error al actualizar municipio: ' . $e->getMessage());
+            Log::error('Error al actualizar municipio: '.$e->getMessage());
             if ($e->getCode() == 23000) {
                 return redirect()->back()->withErrors(['error' => 'El nombre asignado al municipio ya existe.']);
             }
+
             return redirect()->back()->withErrors(['error' => 'Ocurrió un error al actualizar el municipio.']);
         }
     }
@@ -117,11 +126,13 @@ class MunicipioController extends Controller
             DB::beginTransaction();
             $municipio->delete();
             DB::commit();
+
             return redirect()->route('municipio.index')
                 ->with('success', 'Municipio eliminado exitosamente');
         } catch (QueryException $e) {
             DB::rollBack();
-            Log::error('Error al eliminar municipio: ' . $e->getMessage());
+            Log::error('Error al eliminar municipio: '.$e->getMessage());
+
             return redirect()->back()->withErrors(['error' => 'Ocurrió un error al eliminar el municipio.']);
         }
     }
@@ -134,11 +145,13 @@ class MunicipioController extends Controller
                 'status' => $municipio->status === 1 ? 0 : 1,
             ]);
             DB::commit();
+
             return redirect()->route('municipio.index')
                 ->with('success', 'Municipio actualizado exitosamente');
         } catch (QueryException $e) {
             DB::rollBack();
-            Log::error('Error al actualizar municipio: ' . $e->getMessage());
+            Log::error('Error al actualizar municipio: '.$e->getMessage());
+
             return redirect()->back()->withErrors(['error' => 'Ocurrió un error al actualizar el municipio.']);
         }
 

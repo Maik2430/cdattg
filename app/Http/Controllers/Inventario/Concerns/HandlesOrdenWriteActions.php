@@ -20,7 +20,7 @@ trait HandlesOrdenWriteActions
             return redirect()->route('inventario.ordenes.index')
                 ->with('success', 'Orden creada exitosamente. Stock actualizado.');
         } catch (OrdenException $e) {
-            return back()->withInput()->with('error', 'Error al crear la orden: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error al crear la orden: '.$e->getMessage());
         }
     }
 
@@ -34,7 +34,7 @@ trait HandlesOrdenWriteActions
                 ->with('success', 'Solicitud creada exitosamente. Está pendiente de aprobación por el administrador.')
                 ->with('clear_cart', true);
         } catch (OrdenException $e) {
-            return back()->withInput()->with('error', 'Error al crear la solicitud: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error al crear la solicitud: '.$e->getMessage());
         }
     }
 
@@ -55,7 +55,7 @@ trait HandlesOrdenWriteActions
             return redirect()->route('inventario.ordenes.index', $orden->id)
                 ->with('success', 'Orden actualizada exitosamente. Stock actualizado.');
         } catch (OrdenException $e) {
-            return back()->withInput()->with('error', 'Error al actualizar la orden: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error al actualizar la orden: '.$e->getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ trait HandlesOrdenWriteActions
                 ->with('success', 'Orden eliminada exitosamente. Stock restaurado.');
         } catch (OrdenException $e) {
             return redirect()->route('inventario.ordenes.index')
-                ->with('error', 'Error al eliminar la orden: ' . $e->getMessage());
+                ->with('error', 'Error al eliminar la orden: '.$e->getMessage());
         }
     }
 
@@ -90,13 +90,13 @@ trait HandlesOrdenWriteActions
             if ($resultado['eliminadas'] === 0 && $resultado['pendientes'] > 0) {
                 $mensaje = 'No se eliminaron órdenes porque existen préstamos sin devolver.';
             } elseif ($resultado['pendientes'] > 0) {
-                $mensaje .= ' No se eliminaron ' . $resultado['pendientes'] . ' órdenes en préstamo sin devolver.';
+                $mensaje .= ' No se eliminaron '.$resultado['pendientes'].' órdenes en préstamo sin devolver.';
             }
 
             return redirect()->route('inventario.ordenes.index')->with('success', $mensaje);
         } catch (OrdenException $e) {
             return redirect()->route('inventario.ordenes.index')
-                ->with('error', 'Error al vaciar el historial de órdenes: ' . $e->getMessage());
+                ->with('error', 'Error al vaciar el historial de órdenes: '.$e->getMessage());
         }
     }
 }

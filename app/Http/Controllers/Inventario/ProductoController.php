@@ -18,18 +18,24 @@ use App\Services\ExportService;
 
 class ProductoController extends Controller
 {
+    use HandlesProductoExportActions;
     use HandlesProductoReadActions;
     use HandlesProductoWriteActions;
-    use HandlesProductoExportActions;
 
     private const THEME_PRODUCT_STATES = 'ESTADOS DE PRODUCTO';
 
     protected ProductoRepositoryInterface $repository;
+
     protected ProductoService $service;
+
     protected FormOptionsServiceInterface $formOptionsService;
+
     protected StockValidatorServiceInterface $stockValidator;
+
     protected ProductoEnrichmentService $enrichmentService;
+
     protected FormDataService $formDataService;
+
     protected ExportService $exportService;
 
     public function __construct(

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pais;
 use App\Http\Requests\StorePaisRequest;
 use App\Http\Requests\UpdatePaisRequest;
+use App\Models\Pais;
 
 class PaisController extends Controller
 {

@@ -43,7 +43,7 @@ trait HandlesAsistenciaAprendicesReadActions
         } catch (Exception $e) {
             Log::error('Error obteniendo asistencias por ficha: '.$e->getMessage());
 
-            return response()->json(['message' => 'Error obteniendo asistencias', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error obteniendo asistencias'], 500);
         }
     }
 
@@ -68,7 +68,7 @@ trait HandlesAsistenciaAprendicesReadActions
         } catch (Exception $e) {
             Log::error('Error obteniendo asistencias por fecha: '.$e->getMessage());
 
-            return response()->json(['message' => 'Error obteniendo asistencias', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error obteniendo asistencias'], 500);
         }
     }
 
@@ -91,7 +91,7 @@ trait HandlesAsistenciaAprendicesReadActions
         } catch (Exception $e) {
             Log::error('Error obteniendo documentos por ficha: '.$e->getMessage());
 
-            return response()->json(['message' => 'Error obteniendo documentos', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error obteniendo documentos'], 500);
         }
     }
 
@@ -114,7 +114,7 @@ trait HandlesAsistenciaAprendicesReadActions
         } catch (Exception $e) {
             Log::error('Error obteniendo asistencias por documento: '.$e->getMessage());
 
-            return response()->json(['message' => 'Error obteniendo asistencias', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error obteniendo asistencias'], 500);
         }
     }
 

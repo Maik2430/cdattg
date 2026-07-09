@@ -34,7 +34,7 @@ trait HandlesAsistenciaAprendicesWriteActions
         } catch (Exception $e) {
             Log::error('Error guardando asistencia: '.$e->getMessage());
 
-            return response()->json(['message' => 'Error guardando asistencia', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error guardando asistencia'], 500);
         }
     }
 
@@ -61,7 +61,7 @@ trait HandlesAsistenciaAprendicesWriteActions
         } catch (Exception $e) {
             Log::error('Error actualizando asistencias: '.$e->getMessage());
 
-            return response()->json(['message' => 'Error actualizando asistencias', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error actualizando asistencias'], 500);
         }
     }
 
@@ -125,7 +125,7 @@ trait HandlesAsistenciaAprendicesWriteActions
         } catch (Exception $e) {
             Log::error('Error actualizando novedad de salida: '.$e->getMessage());
 
-            return response()->json(['message' => $e->getMessage()], 400);
+            return response()->json(['message' => 'Error al actualizar la novedad de salida.'], 400);
         }
     }
 
@@ -160,7 +160,7 @@ trait HandlesAsistenciaAprendicesWriteActions
         } catch (Exception $e) {
             Log::error('Error actualizando novedad de entrada: '.$e->getMessage());
 
-            return response()->json(['message' => $e->getMessage()], 400);
+            return response()->json(['message' => 'Error al actualizar la novedad de salida.'], 400);
         }
     }
 }

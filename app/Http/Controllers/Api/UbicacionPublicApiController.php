@@ -8,9 +8,7 @@ use Illuminate\Http\JsonResponse;
 
 class UbicacionPublicApiController extends Controller
 {
-    public function __construct(private readonly UbicacionService $ubicacionService)
-    {
-    }
+    public function __construct(private readonly UbicacionService $ubicacionService) {}
 
     public function paises(): JsonResponse
     {

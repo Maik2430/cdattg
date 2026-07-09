@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\UbicacionService;
 use App\Models\Departamento;
+use App\Services\UbicacionService;
 use Illuminate\Http\Request;
 
 class DepartamentoController extends Controller
@@ -29,14 +29,17 @@ class DepartamentoController extends Controller
     public function cargarDepartamentos()
     {
         $departamentos = \App\Models\Departamento::where('status', 1)->get();
+
         return response()->json(['success' => true, 'departamentos' => $departamentos], 200);
     }
 
     public function apiCargarDepartamentos()
     {
         $departamentos = \App\Models\Departamento::where('status', 1)->get();
+
         return response()->json($departamentos, 200);
     }
+
     public function create()
     {
         //
@@ -85,6 +88,7 @@ class DepartamentoController extends Controller
     public function getByPais($paisId)
     {
         $departamentos = $this->ubicacionService->obtenerDepartamentosPorPais($paisId);
+
         return response()->json([
             'success' => true,
             'data' => $departamentos,

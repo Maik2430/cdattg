@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\VisitanteActualizado;
 use App\Events\EstadisticasVisitantesActualizadas;
+use App\Events\VisitanteActualizado;
 use App\Services\EstadisticasService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class WebSocketVisitantesController extends Controller
@@ -31,7 +31,7 @@ class WebSocketVisitantesController extends Controller
                 'data' => $estadisticas,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo estadísticas de visitantes: ' . $e->getMessage());
+            Log::error('Error obteniendo estadísticas de visitantes: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -78,7 +78,7 @@ class WebSocketVisitantesController extends Controller
                 'visitante' => $visitante,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error registrando entrada de visitante: ' . $e->getMessage());
+            Log::error('Error registrando entrada de visitante: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -121,7 +121,7 @@ class WebSocketVisitantesController extends Controller
                 'visitante' => $visitante,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error registrando salida de visitante: ' . $e->getMessage());
+            Log::error('Error registrando salida de visitante: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -145,7 +145,7 @@ class WebSocketVisitantesController extends Controller
                 'data' => $visitantesActuales,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo visitantes actuales: ' . $e->getMessage());
+            Log::error('Error obteniendo visitantes actuales: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,

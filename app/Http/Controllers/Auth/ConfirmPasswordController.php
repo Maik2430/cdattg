@@ -26,7 +26,7 @@ class ConfirmPasswordController extends Controller
         ]);
 
         $user = Auth::user();
-        if (!$user || !Hash::check($request->input('password'), $user->password)) {
+        if (! $user || ! Hash::check($request->input('password'), $user->password)) {
             return back()->withErrors([
                 'password' => 'La contraseña no coincide.',
             ]);

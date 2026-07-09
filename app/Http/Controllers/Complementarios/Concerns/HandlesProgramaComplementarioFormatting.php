@@ -25,7 +25,7 @@ trait HandlesProgramaComplementarioFormatting
         return $programa->diasFormacion->map(static function ($dia): string {
             $nombreDia = $dia->parametro?->name ?? 'Día';
 
-            return $nombreDia . ' (' . $dia->pivot->hora_inicio . ' - ' . $dia->pivot->hora_fin . ')';
+            return $nombreDia.' ('.$dia->pivot->hora_inicio.' - '.$dia->pivot->hora_fin.')';
         })->implode(', ');
     }
 

@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Regional;
 use App\Http\Requests\StoreRegionalRequest;
 use App\Http\Requests\UpdateRegionalRequest;
-use App\Models\Tema;
+use App\Models\Departamento;
+use App\Models\Regional;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use App\Models\Departamento;
 
 class RegionalController extends Controller
 {
@@ -23,6 +21,7 @@ class RegionalController extends Controller
         $this->middleware('can:CREAR REGIONAL')->only(['create', 'store', 'edit', 'update']);
         $this->middleware('can:ELIMINAR REGIONAL')->only('destroy');
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -49,8 +48,8 @@ class RegionalController extends Controller
 
         // Agregar los campos adicionales requeridos
         $data['user_create_id'] = Auth::id();
-        $data['user_edit_id']   = Auth::id();
-        $data['status']         = 1;
+        $data['user_edit_id'] = Auth::id();
+        $data['status'] = 1;
 
         try {
             DB::beginTransaction();
@@ -58,15 +57,16 @@ class RegionalController extends Controller
             $regional = Regional::create($data);
 
             DB::commit();
+
             return redirect()->route('regional.index')
                 ->with('success', 'Regional creada con éxito');
         } catch (QueryException $e) {
             DB::rollBack();
-            Log::error('Error al crear regional: ' . $e->getMessage());
+            Log::error('Error al crear regional: '.$e->getMessage());
+
             return redirect()->back()->withInput()->withErrors(['error' => 'Error al momento de crear la regional']);
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -82,6 +82,7 @@ class RegionalController extends Controller
     public function edit(Regional $regional)
     {
         $departamentos = Departamento::all();
+
         return view('regional.edit', compact('regional', 'departamentos'));
     }
 
@@ -105,9 +106,9 @@ class RegionalController extends Controller
         } catch (QueryException $e) {
 
             DB::rollBack();
-            Log::error("Error al actualizar la regional ID {$regional->id}: " . $e->getMessage());
+            Log::error("Error al actualizar la regional ID {$regional->id}: ".$e->getMessage());
 
-            return redirect()->back()->withInput()->with('error', 'Error al momento de actualizar la regional: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Error al momento de actualizar la regional: '.$e->getMessage());
         }
     }
 
@@ -124,16 +125,16 @@ class RegionalController extends Controller
             return redirect()->route('regional.index')->with('success', 'Regional eliminada exitosamente');
         } catch (QueryException $e) {
             DB::rollBack();
-            Log::error('Error al eliminar regional (QueryException): ' . $e->getMessage());
+            Log::error('Error al eliminar regional (QueryException): '.$e->getMessage());
 
             if ($e->getCode() == 23000) {
                 return redirect()->back()->with('error', 'La regional se encuentra en uso en estos momentos, no se puede eliminar');
             }
 
-            return redirect()->back()->with('error', 'Error al eliminar la regional: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al eliminar la regional: '.$e->getMessage());
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error inesperado al eliminar regional: ' . $e->getMessage());
+            Log::error('Error inesperado al eliminar regional: '.$e->getMessage());
 
             return redirect()->back()->with('error', 'Ocurrió un error inesperado al eliminar la regional');
         }
@@ -144,13 +145,13 @@ class RegionalController extends Controller
         try {
             $nuevoStatus = $regional->status === 1 ? 0 : 1;
             $regional->update([
-                'status'       => $nuevoStatus,
+                'status' => $nuevoStatus,
                 'user_edit_id' => Auth::id(),
             ]);
 
             return redirect()->back()->with('success', 'Estado actualizado exitosamente');
         } catch (\Exception $e) {
-            Log::error("Error al cambiar el estado de la regional (ID: {$regional->id}): " . $e->getMessage());
+            Log::error("Error al cambiar el estado de la regional (ID: {$regional->id}): ".$e->getMessage());
 
             return redirect()->back()->with('error', 'No se pudo actualizar el estado');
         }

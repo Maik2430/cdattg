@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\BloqueService;
-use App\Models\Bloque;
-use App\Models\Sede;
 use App\Http\Requests\StoreBloqueRequest;
 use App\Http\Requests\UpdateBloqueRequest;
+use App\Models\Bloque;
+use App\Models\Sede;
+use App\Services\BloqueService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,32 +27,38 @@ class BloqueController extends Controller
         $this->middleware('can:EDITAR BLOQUE')->only(['edit', 'update']);
         $this->middleware('can:ELIMINAR BLOQUE')->only('destroy');
     }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $bloques = $this->bloqueService->listar(10);
+
         return view('bloque.index', compact('bloques'));
     }
 
     public function cargarBloques($sede_id)
     {
         $bloques = $this->bloqueService->obtenerPorSede($sede_id);
+
         return response()->json(['success' => true, 'bloques' => $bloques]);
     }
 
     public function apiCargarBloques(Request $request)
     {
         $bloques = $this->bloqueService->obtenerPorSede($request->sede_id);
+
         return response()->json($bloques, 200);
     }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         $sedes = Sede::where('status', 1)->get();
+
         return view('bloque.create', compact('sedes'));
     }
 
@@ -73,7 +79,8 @@ class BloqueController extends Controller
 
             return redirect()->route('bloque.index')->with('success', '¡Registro Exitoso!');
         } catch (\Exception $e) {
-            Log::error('Error al crear bloque: ' . $e->getMessage());
+            Log::error('Error al crear bloque: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al crear bloque.');
         }
     }
@@ -92,6 +99,7 @@ class BloqueController extends Controller
     public function edit(Bloque $bloque)
     {
         $sedes = Sede::where('status', 1)->get();
+
         return view('bloque.edit', ['bloque' => $bloque, 'sedes' => $sedes]);
     }
 
@@ -112,7 +120,8 @@ class BloqueController extends Controller
 
             return redirect()->route('bloque.show', $bloque->id)->with('success', 'Bloque actualizado con éxito.');
         } catch (\Exception $e) {
-            Log::error('Error al actualizar bloque: ' . $e->getMessage());
+            Log::error('Error al actualizar bloque: '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Error al actualizar bloque.');
         }
     }
@@ -130,6 +139,7 @@ class BloqueController extends Controller
             if ($e->getCode() == 23000) {
                 return redirect()->back()->with('error', 'El bloque está en uso, no se puede eliminar.');
             }
+
             return redirect()->back()->with('error', 'Error al eliminar bloque.');
         }
     }
@@ -141,7 +151,8 @@ class BloqueController extends Controller
 
             return redirect()->back()->with('success', 'Estado cambiado exitosamente.');
         } catch (\Exception $e) {
-            Log::error('Error al cambiar estado: ' . $e->getMessage());
+            Log::error('Error al cambiar estado: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al actualizar estado.');
         }
     }

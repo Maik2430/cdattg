@@ -16,6 +16,7 @@ class OrdenController extends Controller
     use HandlesOrdenWriteActions;
 
     protected OrdenRepositoryInterface $repository;
+
     protected OrdenService $service;
 
     public function __construct(OrdenRepositoryInterface $repository, OrdenService $service)

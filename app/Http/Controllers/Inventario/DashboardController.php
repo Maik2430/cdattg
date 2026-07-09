@@ -16,8 +16,6 @@ class DashboardController extends Controller
 
     /**
      * Muestra el dashboard de inventario usando Livewire
-     *
-     * @return View
      */
     public function index(): View
     {

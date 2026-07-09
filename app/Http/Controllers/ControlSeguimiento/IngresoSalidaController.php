@@ -16,6 +16,7 @@ use Illuminate\View\View;
 class IngresoSalidaController extends Controller
 {
     protected SedeRepository $sedeRepository;
+
     protected PersonaIngresoSalidaService $personaIngresoSalidaService;
 
     /**
@@ -32,8 +33,6 @@ class IngresoSalidaController extends Controller
 
     /**
      * Muestra el dashboard con gráficos del estado actual por cada sede
-     *
-     * @return View
      */
     public function index(): View
     {
@@ -45,12 +44,9 @@ class IngresoSalidaController extends Controller
      *
      * Esta vista usa el componente Livewire IngresoSalidaComponent
      * que maneja toda la lógica de búsqueda y registro de ingresos/salidas.
-     *
-     * @return View
      */
     public function create(): View
     {
         return view('control-seguimiento.ingreso-salida.create');
     }
 }
-

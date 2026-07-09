@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CarnetService;
+use App\Jobs\GenerarCarnetsMasivosJob;
 use App\Models\Aprendiz;
 use App\Models\Instructor;
-use App\Jobs\GenerarCarnetsMasivosJob;
+use App\Services\CarnetService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -36,7 +36,7 @@ class CarnetController extends Controller
                 'url' => asset("storage/{$archivo}"),
             ]);
         } catch (\Exception $e) {
-            Log::error('Error generando carnet de aprendiz: ' . $e->getMessage());
+            Log::error('Error generando carnet de aprendiz: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -62,7 +62,7 @@ class CarnetController extends Controller
                 'url' => asset("storage/{$archivo}"),
             ]);
         } catch (\Exception $e) {
-            Log::error('Error generando carnet de instructor: ' . $e->getMessage());
+            Log::error('Error generando carnet de instructor: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -101,7 +101,7 @@ class CarnetController extends Controller
                 'total' => $aprendices->count(),
             ]);
         } catch (\Exception $e) {
-            Log::error('Error generando carnets masivos: ' . $e->getMessage());
+            Log::error('Error generando carnets masivos: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -127,7 +127,7 @@ class CarnetController extends Controller
                 ...$resultado,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error verificando carnet: ' . $e->getMessage());
+            Log::error('Error verificando carnet: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,

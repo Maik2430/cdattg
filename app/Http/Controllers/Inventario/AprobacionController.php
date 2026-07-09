@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
-use App\Inventario\Services\Aprobacion\AprobacionService;
 use App\Exceptions\AprobacionException;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\Inventario\AprobacionesRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventario\AprobacionesRequest;
+use App\Inventario\Services\Aprobacion\AprobacionService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class AprobacionController extends Controller
 {
@@ -40,7 +40,7 @@ class AprobacionController extends Controller
         $detalles = $this->service->obtenerDetallesPendientes();
 
         // Asegurar que siempre sea una colección
-        if (!$detalles || !($detalles instanceof \Illuminate\Support\Collection)) {
+        if (! $detalles || ! ($detalles instanceof \Illuminate\Support\Collection)) {
             $detalles = collect([]);
         }
 

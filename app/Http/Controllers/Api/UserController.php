@@ -13,7 +13,7 @@ class UserController extends Controller
      */
     public function permissions(Request $request)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
@@ -30,7 +30,7 @@ class UserController extends Controller
                 'roles' => $user->roles->pluck('name')->toArray(),
             ],
             'permissions' => $permissions,
-            'total_permissions' => count($permissions)
+            'total_permissions' => count($permissions),
         ]);
     }
 }

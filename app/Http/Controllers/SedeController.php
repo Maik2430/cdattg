@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\SedeService;
-use App\Models\Sede;
-use App\Models\Regional;
 use App\Http\Requests\StoreSedeRequest;
 use App\Http\Requests\UpdateSedeRequest;
+use App\Models\Regional;
+use App\Models\Sede;
+use App\Services\SedeService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,30 +27,35 @@ class SedeController extends Controller
         $this->middleware('can:EDITAR SEDE')->only(['edit', 'update']);
         $this->middleware('can:ELIMINAR SEDE')->only('destroy');
     }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $sedes = $this->sedeService->listar(10);
+
         return view('sede.index', compact('sedes'));
     }
 
     public function cargarSedesByMunicipio($municipio_id)
     {
         $sedes = $this->sedeService->obtenerPorMunicipio($municipio_id);
+
         return response()->json(['success' => true, 'sedes' => $sedes]);
     }
 
     public function cargarSedesByRegional($regional_id)
     {
         $sedes = $this->sedeService->obtenerPorRegional($regional_id);
+
         return response()->json(['success' => true, 'sedes' => $sedes]);
     }
 
     public function apiCargarSedes(Request $request)
     {
         $sedes = $this->sedeService->obtenerPorMunicipio($request->municipio_id);
+
         return response()->json($sedes, 200);
     }
 
@@ -62,6 +67,7 @@ class SedeController extends Controller
         $regionales = Regional::where('status', 1)->get();
         $departamentos = \App\Models\Departamento::all();
         $municipios = \App\Models\Municipio::all();
+
         return view('sede.create', compact('regionales', 'departamentos', 'municipios'));
     }
 
@@ -84,7 +90,8 @@ class SedeController extends Controller
 
             return redirect()->route('sede.index')->with('success', '¡Registro Exitoso!');
         } catch (\Exception $e) {
-            Log::error('Error al crear sede: ' . $e->getMessage());
+            Log::error('Error al crear sede: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al crear sede.');
         }
     }
@@ -105,6 +112,7 @@ class SedeController extends Controller
         $regionales = Regional::where('status', 1)->get();
         $departamentos = \App\Models\Departamento::all();
         $municipios = \App\Models\Municipio::all();
+
         return view('sede.edit', compact('sede', 'regionales', 'departamentos', 'municipios'));
     }
 
@@ -127,7 +135,8 @@ class SedeController extends Controller
 
             return redirect()->route('sede.show', $sede->id)->with('success', 'Sede actualizada con éxito!');
         } catch (\Exception $e) {
-            Log::error('Error al actualizar sede: ' . $e->getMessage());
+            Log::error('Error al actualizar sede: '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Error al actualizar sede.');
         }
     }
@@ -145,6 +154,7 @@ class SedeController extends Controller
             if ($e->getCode() == 23000) {
                 return redirect()->back()->with('error', 'La sede está en uso, no se puede eliminar');
             }
+
             return redirect()->back()->with('error', 'Error al eliminar sede.');
         }
     }
@@ -153,9 +163,11 @@ class SedeController extends Controller
     {
         try {
             $this->sedeService->cambiarEstado($sede->id);
+
             return redirect()->back()->with('success', 'Estado cambiado exitosamente.');
         } catch (\Exception $e) {
-            Log::error('Error al cambiar estado: ' . $e->getMessage());
+            Log::error('Error al cambiar estado: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al cambiar estado.');
         }
     }

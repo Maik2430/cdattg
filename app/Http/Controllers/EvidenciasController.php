@@ -48,7 +48,7 @@ class EvidenciasController extends Controller
 
             // Crear la evidencia
             $evidencia = Evidencias::create([
-                'codigo' => 'EVID-' . time(), // Generar código único
+                'codigo' => 'EVID-'.time(), // Generar código único
                 'nombre' => $data['name'],
                 'user_create_id' => auth()->id(),
                 'user_edit_id' => auth()->id(),
@@ -62,7 +62,7 @@ class EvidenciasController extends Controller
 
             return redirect()->back()->with('success', 'Actividad registrada exitosamente.');
         } catch (\Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Error al registrar la actividad: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Error al registrar la actividad: '.$e->getMessage());
         }
     }
 

@@ -79,11 +79,11 @@ trait HandlesInstructorApiActions
         } catch (QueryException $e) {
             DB::rollBack();
 
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al procesar la solicitud del instructor.'], 500);
         } catch (Exception $e) {
             DB::rollBack();
 
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al procesar la solicitud del instructor.'], 500);
         }
     }
 
@@ -129,7 +129,7 @@ trait HandlesInstructorApiActions
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener centros de formación: '.$e->getMessage(),
+                'message' => 'Error al obtener centros de formación.',
             ], 500);
         }
     }
@@ -143,9 +143,9 @@ trait HandlesInstructorApiActions
             ->where('status', true)
             ->orderBy('nombre')
             ->get(['id', 'nombre'])
-            ->map(fn ($centro) => [
+            ->map(fn (CentroFormacion $centro): array => [
                 'id' => (int) $centro->id,
-                'nombre' => $centro->nombre,
+                'nombre' => (string) $centro->nombre,
             ])
             ->values();
     }

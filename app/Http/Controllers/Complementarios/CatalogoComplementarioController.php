@@ -17,7 +17,7 @@ class CatalogoComplementarioController extends Controller
         $this->middleware('auth');
         // Usar el mismo permiso que el menú y el CRUD de programas complementarios
         $this->middleware('can:CREAR PROGRAMA COMPLEMENTARIO');
-        $this->middleware('validate.content.length:' . UploadLimits::IMPORT_CONTENT_LENGTH_BYTES)
+        $this->middleware('validate.content.length:'.UploadLimits::IMPORT_CONTENT_LENGTH_BYTES)
             ->only('store');
     }
 
@@ -48,5 +48,3 @@ class CatalogoComplementarioController extends Controller
             );
     }
 }
-
-

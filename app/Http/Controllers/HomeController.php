@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Complementarios\ComplementarioOfertado;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -30,7 +30,7 @@ class HomeController extends Controller
         $programas = $programas->get();
 
         // Asignar iconos a cada programa
-        $programas->each(function($programa) {
+        $programas->each(function ($programa) {
             $programa->icono = $this->getIconoForPrograma($programa->nombre);
         });
 
@@ -49,23 +49,23 @@ class HomeController extends Controller
             Log::info("Debug HomeController - Persona ID: {$personaId}, Aspirantes encontrados: {$aspirantesCount}");
 
             $programasInscritos = ComplementarioOfertado::with(['modalidad.parametro', 'jornada', 'diasFormacion'])
-                ->whereHas('aspirantes', function($query) use ($personaId) {
+                ->whereHas('aspirantes', function ($query) use ($personaId) {
                     $query->where('persona_id', $personaId)
-                          ->where('estado', 1); // Estado 1 = En proceso
+                        ->where('estado', 1); // Estado 1 = En proceso
                 })
                 ->get();
 
-            Log::info("Debug HomeController - Programas inscritos encontrados: " . $programasInscritos->count());
+            Log::info('Debug HomeController - Programas inscritos encontrados: '.$programasInscritos->count());
 
             // Obtener IDs de programas inscritos
             $programasInscritosIds = $programasInscritos->pluck('id');
 
             // Asignar iconos a cada programa inscrito
-            $programasInscritos->each(function($programa) {
+            $programasInscritos->each(function ($programa) {
                 $programa->icono = $this->getIconoForPrograma($programa->nombre);
             });
         } else {
-            Log::info("Debug HomeController - Usuario no autenticado o sin persona asociada");
+            Log::info('Debug HomeController - Usuario no autenticado o sin persona asociada');
         }
 
         return view('home', compact('programas', 'programasInscritos', 'programasInscritosIds'));
@@ -102,7 +102,7 @@ class HomeController extends Controller
             }
         } catch (\Exception $e) {
             // Si hay error, retornar null
-            Log::error("Error obteniendo estado_id para valor legacy {$estadoLegacy}: " . $e->getMessage());
+            Log::error("Error obteniendo estado_id para valor legacy {$estadoLegacy}: ".$e->getMessage());
         }
 
         return null;

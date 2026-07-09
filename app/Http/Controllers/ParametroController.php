@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ParametroService;
-use App\Models\Parametro;
-use App\Models\Tema;
 use App\Http\Requests\StoreParametroRequest;
 use App\Http\Requests\UpdateParametroRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Parametro;
+use App\Models\Tema;
+use App\Services\ParametroService;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ParametroController extends Controller
 {
@@ -30,12 +29,14 @@ class ParametroController extends Controller
     public function index()
     {
         $parametros = $this->parametroService->listar(10);
+
         return view('parametros.index', compact('parametros'));
     }
 
     public function apiIndex()
     {
         $parametros = $this->parametroService->obtenerTodos();
+
         return response()->json($parametros);
     }
 
@@ -43,9 +44,11 @@ class ParametroController extends Controller
     {
         try {
             $this->parametroService->cambiarEstado($parametro->id);
+
             return redirect()->back()->with('success', 'Estado cambiado exitosamente');
         } catch (\Exception $e) {
-            Log::error('Error al cambiar estado: ' . $e->getMessage());
+            Log::error('Error al cambiar estado: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al cambiar estado.');
         }
     }
@@ -61,7 +64,8 @@ class ParametroController extends Controller
 
             return redirect()->back()->with('success', '¡Parámetro creado exitosamente!');
         } catch (\Exception $e) {
-            Log::error('Error al crear parámetro: ' . $e->getMessage());
+            Log::error('Error al crear parámetro: '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Error al crear parámetro.');
         }
     }
@@ -87,11 +91,12 @@ class ParametroController extends Controller
             return redirect()->route('parametro.show', $parametro->id)
                 ->with('success', 'Parámetro actualizado exitosamente');
         } catch (QueryException $e) {
-            Log::error('Error al actualizar parámetro: ' . $e->getMessage());
+            Log::error('Error al actualizar parámetro: '.$e->getMessage());
 
             if ($e->getCode() == 23000) {
                 return redirect()->back()->withInput()->with('error', 'El nombre del parámetro ya existe.');
             }
+
             return redirect()->back()->withInput()->with('error', 'Error al actualizar parámetro.');
         }
     }
@@ -103,11 +108,12 @@ class ParametroController extends Controller
 
             return redirect()->route('parametro.index')->with('success', 'Parámetro eliminado exitosamente');
         } catch (QueryException $e) {
-            Log::error('Error al eliminar parámetro: ' . $e->getMessage());
+            Log::error('Error al eliminar parámetro: '.$e->getMessage());
 
             if ($e->getCode() == 23000) {
                 return redirect()->back()->with('error', 'El parámetro está en uso, no se puede eliminar.');
             }
+
             return redirect()->back()->with('error', 'Error al eliminar parámetro.');
         }
     }

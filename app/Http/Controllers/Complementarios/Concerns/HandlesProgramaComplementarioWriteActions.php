@@ -136,9 +136,9 @@ trait HandlesProgramaComplementarioWriteActions
     /** @param list<string> $relaciones */
     private function construirMensajeErrorRelaciones(array $relaciones): string
     {
-        $mensaje = 'No se puede eliminar el programa porque tiene ' . implode(', ', $relaciones) . '. ';
+        $mensaje = 'No se puede eliminar el programa porque tiene '.implode(', ', $relaciones).'. ';
 
-        return $mensaje . 'Por favor, elimine estas relaciones primero o cambie el estado del programa a "Sin Oferta".';
+        return $mensaje.'Por favor, elimine estas relaciones primero o cambie el estado del programa a "Sin Oferta".';
     }
 
     private function manejarExcepcion(Exception $e): JsonResponse

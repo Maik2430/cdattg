@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Asistencia;
+use App\Models\Instructor;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Asistencia;
-use App\Models\Instructor;
 use Illuminate\Support\Facades\Auth;
 
 class AsistenciaConsultaController extends Controller
@@ -18,7 +18,7 @@ class AsistenciaConsultaController extends Controller
         $roleNames = $user?->getRoleNames() ?? collect();
         $isOnlyInstructor = $user && $user->hasRole('INSTRUCTOR') && $roleNames->count() === 1;
 
-        if (!$isOnlyInstructor) {
+        if (! $isOnlyInstructor) {
             return;
         }
 
@@ -27,7 +27,7 @@ class AsistenciaConsultaController extends Controller
             $instructorId = Instructor::where('persona_id', $user->persona_id)->value('id');
         }
 
-        if (!$instructorId) {
+        if (! $instructorId) {
             abort(403);
         }
 
@@ -43,7 +43,7 @@ class AsistenciaConsultaController extends Controller
             })
             ->exists();
 
-        if (!$isMine) {
+        if (! $isMine) {
             abort(403);
         }
     }
@@ -61,7 +61,7 @@ class AsistenciaConsultaController extends Controller
             return [
                 'aprendiz' => $aprendiz,
                 'registro' => $registro,
-                'asistio' => (bool) $registro && !is_null($registro->hora_ingreso),
+                'asistio' => (bool) $registro && ! is_null($registro->hora_ingreso),
             ];
         });
     }
@@ -110,7 +110,7 @@ class AsistenciaConsultaController extends Controller
 
         $fichaNumero = $asistencia->instructorFicha?->ficha ?? 'N_A';
         $fecha = $asistencia->fecha?->format('Y-m-d') ?? now()->format('Y-m-d');
-        $filename = 'asistencia_' . $fichaNumero . '_' . $fecha . '.pdf';
+        $filename = 'asistencia_'.$fichaNumero.'_'.$fecha.'.pdf';
 
         $pdf = Pdf::loadView('pdf.asistencia_consulta', [
             'asistencia' => $asistencia,

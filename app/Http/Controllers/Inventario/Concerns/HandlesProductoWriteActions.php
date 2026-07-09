@@ -35,7 +35,7 @@ trait HandlesProductoWriteActions
 
             return redirect()->route('inventario.productos.index')->with('success', 'Producto creado correctamente.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error al crear el producto: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error al crear el producto: '.$e->getMessage());
         }
     }
 
@@ -74,7 +74,7 @@ trait HandlesProductoWriteActions
             return redirect()->route('inventario.productos.show', $producto->id)
                 ->with('success', 'Producto actualizado correctamente.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error al actualizar el producto: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error al actualizar el producto: '.$e->getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ trait HandlesProductoWriteActions
 
             return redirect()->route('inventario.productos.index')->with('success', 'Producto eliminado correctamente');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error al eliminar el producto: ' . $e->getMessage());
+            return back()->with('error', 'Error al eliminar el producto: '.$e->getMessage());
         }
     }
 }

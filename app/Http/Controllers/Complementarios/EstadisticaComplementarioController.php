@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Complementarios;
 
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
-use Exception;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Services\Complementarios\EstadisticaComplementarioService;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Exception;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EstadisticaComplementarioController extends Controller
 {
@@ -41,7 +41,7 @@ class EstadisticaComplementarioController extends Controller
         $filtros = $request->only(['fecha_inicio', 'fecha_fin', 'departamento_id', 'municipio_id', 'programa_id']);
 
         // Si hay filtros, usar el método filtrado; si no, usar el método general
-        if (!empty(array_filter($filtros))) {
+        if (! empty(array_filter($filtros))) {
             $estadisticas = $this->estadisticaService->obtenerEstadisticasFiltradas($filtros);
         } else {
             $estadisticas = $this->estadisticaService->obtenerEstadisticasReales();
@@ -67,4 +67,3 @@ class EstadisticaComplementarioController extends Controller
         }
     }
 }
-

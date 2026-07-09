@@ -54,7 +54,7 @@ trait HandlesProductoExportActions
         ];
 
         $relativePath = $this->exportService->exportarExcel($datos, $columnas, 'productos_inventario');
-        $absolutePath = storage_path('app/public/' . $relativePath);
+        $absolutePath = storage_path('app/public/'.$relativePath);
 
         return response()->download($absolutePath, 'productos_inventario.xlsx')->deleteFileAfterSend(true);
     }

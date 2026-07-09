@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario\Concerns;
 
-use App\Inventario\Services\Aprobacion\AprobacionService;
 use App\Exceptions\OrdenException;
+use App\Inventario\Services\Aprobacion\AprobacionService;
 use App\Models\Inventario\Orden;
 use App\Models\ProgramaFormacion;
 use Illuminate\Http\Request;

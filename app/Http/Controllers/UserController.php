@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\UserService;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +24,7 @@ class UserController extends Controller
 
             return redirect()->back()->with('success', 'Estado actualizado exitosamente');
         } catch (\Exception $e) {
-            Log::error('Error al actualizar estado: ' . $e->getMessage());
+            Log::error('Error al actualizar estado: '.$e->getMessage());
 
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -49,7 +49,7 @@ class UserController extends Controller
             $roles = collect($request->input('roles', []))
                 ->merge($request->input('available_roles', []))
                 ->filter()
-                ->map(static fn(string $role) => strtoupper($role))
+                ->map(static fn (string $role) => strtoupper($role))
                 ->unique()
                 ->values()
                 ->all();
@@ -58,8 +58,9 @@ class UserController extends Controller
 
             return redirect()->back()->with('success', 'Roles asignados correctamente');
         } catch (\Exception $e) {
-            Log::error('Error al asignar roles: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'No se pudieron asignar los roles: ' . $e->getMessage());
+            Log::error('Error al asignar roles: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'No se pudieron asignar los roles: '.$e->getMessage());
         }
     }
 }

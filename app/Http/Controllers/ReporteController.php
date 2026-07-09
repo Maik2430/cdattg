@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ReporteService;
-use App\Services\EstadisticasService;
 use App\Jobs\GenerarReporteAsistenciaJob;
+use App\Services\EstadisticasService;
+use App\Services\ReporteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ReporteController extends Controller
 {
     protected ReporteService $reporteService;
+
     protected EstadisticasService $estadisticasService;
 
     public function __construct(
@@ -32,7 +33,8 @@ class ReporteController extends Controller
 
             return view('reportes.index', compact('estadisticas'));
         } catch (\Exception $e) {
-            Log::error('Error cargando vista de reportes: ' . $e->getMessage());
+            Log::error('Error cargando vista de reportes: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al cargar reportes.');
         }
     }
@@ -79,7 +81,7 @@ class ReporteController extends Controller
                 'data' => $datos,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error generando reporte: ' . $e->getMessage());
+            Log::error('Error generando reporte: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -113,7 +115,7 @@ class ReporteController extends Controller
 
             return response()->download(storage_path("app/public/{$datos}"));
         } catch (\Exception $e) {
-            Log::error('Error generando reporte de aprendices: ' . $e->getMessage());
+            Log::error('Error generando reporte de aprendices: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -141,7 +143,7 @@ class ReporteController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo estadísticas: ' . $e->getMessage());
+            Log::error('Error obteniendo estadísticas: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -150,4 +152,3 @@ class ReporteController extends Controller
         }
     }
 }
-

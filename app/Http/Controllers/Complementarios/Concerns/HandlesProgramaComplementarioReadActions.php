@@ -60,7 +60,7 @@ trait HandlesProgramaComplementarioReadActions
             'nombre' => $programa->nombre,
             'justificacion' => $programa->justificacion,
             'requisitos_ingreso' => $programa->requisitos_ingreso,
-            'duracion' => ($programa->duracion ?? 0) . ' horas',
+            'duracion' => ($programa->duracion ?? 0).' horas',
             'icono' => $programa->icono,
             'modalidad' => $programa->modalidad_nombre ?? 'N/A',
             'jornada' => $programa->jornada_nombre ?? 'N/A',

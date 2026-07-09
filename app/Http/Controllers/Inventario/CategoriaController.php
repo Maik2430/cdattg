@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
+use App\Exceptions\CategoriaException;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventario\MarcaCategoriaRequest;
 use App\Inventario\Interfaces\Repositories\Categoria\CategoriaRepositoryInterface;
 use App\Inventario\Services\Categoria\CategoriaService;
 use App\Models\Parametro;
-use App\Exceptions\CategoriaException;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\Inventario\MarcaCategoriaRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
 class CategoriaController extends Controller
 {
     protected CategoriaRepositoryInterface $repository;
+
     protected CategoriaService $service;
 
     public function __construct(
@@ -38,13 +39,13 @@ class CategoriaController extends Controller
     {
         $temaCategorias = $this->repository->obtenerTemaCategorias();
 
-        if (!$temaCategorias) {
+        if (! $temaCategorias) {
             return back()->with('error', 'No existe el tema "CATEGORIAS" en la base de datos.');
         }
 
         $filtros = [
             'search' => $request->input('search'),
-            'per_page' => 10
+            'per_page' => 10,
         ];
 
         $categorias = $this->repository->obtenerConFiltros($filtros);
@@ -53,11 +54,10 @@ class CategoriaController extends Controller
         return view('inventario.categorias.index', compact('categorias'));
     }
 
-    public function create() : View
+    public function create(): View
     {
         return view('inventario.categorias.create');
     }
-
 
     public function store(MarcaCategoriaRequest $request): RedirectResponse
     {
@@ -73,7 +73,7 @@ class CategoriaController extends Controller
         }
     }
 
-    public function edit(Parametro $categoria) : View
+    public function edit(Parametro $categoria): View
     {
         return view('inventario.categorias.edit', [
             'title' => 'Editar categoria',
@@ -82,10 +82,9 @@ class CategoriaController extends Controller
             'method' => 'PUT',
             'submitText' => 'Actualizar categoria',
             'cancelRoute' => route('inventario.categorias.index'),
-            'categoria' => $categoria
+            'categoria' => $categoria,
         ]);
     }
-
 
     public function update(MarcaCategoriaRequest $request, Parametro $categoria): RedirectResponse
     {
@@ -93,7 +92,7 @@ class CategoriaController extends Controller
             $validated = $request->validated();
             $categoriaModel = $this->repository->encontrar($categoria->id);
 
-            if (!$categoriaModel) {
+            if (! $categoriaModel) {
                 abort(404);
             }
 
@@ -112,7 +111,7 @@ class CategoriaController extends Controller
         try {
             $categoriaModel = $this->repository->encontrar($categoria->id);
 
-            if (!$categoriaModel) {
+            if (! $categoriaModel) {
                 abort(404);
             }
 
@@ -130,15 +129,14 @@ class CategoriaController extends Controller
     {
         $categoria = $this->repository->encontrarConRelaciones($categoria->id);
 
-        if (!$categoria) {
+        if (! $categoria) {
             abort(404);
         }
 
         return view('inventario.categorias.show', [
             'title' => 'Detalle de la categoria',
             'icon' => 'fas fa-eye',
-            'categoria' => $categoria
+            'categoria' => $categoria,
         ]);
     }
-
 }

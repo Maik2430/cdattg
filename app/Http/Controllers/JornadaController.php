@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\JornadaFormacionService;
 use App\Models\JornadaFormacion;
+use App\Services\JornadaFormacionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -19,6 +19,7 @@ class JornadaController extends Controller
     public function index()
     {
         $jornadas = $this->jornadaService->listarTodas();
+
         return view('jornada.index', compact('jornadas'));
     }
 
@@ -40,7 +41,8 @@ class JornadaController extends Controller
 
             return redirect()->route('jornada.index')->with('success', 'Jornada creada exitosamente');
         } catch (\Exception $e) {
-            Log::error('Error al crear jornada: ' . $e->getMessage());
+            Log::error('Error al crear jornada: '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Error al crear jornada.');
         }
     }
@@ -48,6 +50,7 @@ class JornadaController extends Controller
     public function edit($id)
     {
         $jornada = JornadaFormacion::findOrFail($id);
+
         return view('jornada.edit', compact('jornada'));
     }
 
@@ -64,7 +67,8 @@ class JornadaController extends Controller
 
             return redirect()->route('jornada.index')->with('success', 'Jornada actualizada exitosamente');
         } catch (\Exception $e) {
-            Log::error('Error al actualizar jornada: ' . $e->getMessage());
+            Log::error('Error al actualizar jornada: '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Error al actualizar jornada.');
         }
     }

@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Inventario;
 
+use App\Exceptions\ContratoConvenioException;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventario\ContratoConvenioRequest;
 use App\Inventario\Interfaces\Repositories\ContratoConvenio\ContratoConvenioRepositoryInterface;
 use App\Inventario\Interfaces\Repositories\Proveedor\ProveedorRepositoryInterface;
 use App\Inventario\Services\ContratoConvenio\ContratoConvenioService;
 use App\Models\Inventario\ContratoConvenio;
 use App\Models\Tema;
-use App\Exceptions\ContratoConvenioException;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\Inventario\ContratoConvenioRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
 class ContratoConvenioController extends Controller
 {
     protected ContratoConvenioRepositoryInterface $repository;
+
     protected ContratoConvenioService $service;
+
     protected ProveedorRepositoryInterface $proveedorRepository;
 
     public function __construct(
@@ -42,7 +44,7 @@ class ContratoConvenioController extends Controller
     {
         $filtros = [
             'search' => $request->input('search'),
-            'per_page' => 10
+            'per_page' => 10,
         ];
 
         $contratosConvenios = $this->repository->obtenerConFiltros($filtros);
@@ -60,6 +62,7 @@ class ContratoConvenioController extends Controller
     public function create(): View
     {
         $proveedores = $this->proveedorRepository->obtenerTodos();
+
         return view('inventario.contratos_convenios.create', compact('proveedores'));
     }
 
@@ -67,7 +70,7 @@ class ContratoConvenioController extends Controller
     {
         $contratoConvenio = $this->repository->encontrarConRelaciones($contratoConvenio->id);
 
-        if (!$contratoConvenio) {
+        if (! $contratoConvenio) {
             abort(404);
         }
 
@@ -77,6 +80,7 @@ class ContratoConvenioController extends Controller
     public function edit(ContratoConvenio $contratoConvenio): View
     {
         $proveedores = $this->proveedorRepository->obtenerTodos();
+
         return view('inventario.contratos_convenios.edit', compact('contratoConvenio', 'proveedores'));
     }
 
@@ -112,6 +116,7 @@ class ContratoConvenioController extends Controller
     {
         try {
             $this->service->eliminar($contratoConvenio);
+
             return redirect()
                 ->route('inventario.contratos-convenios.index')
                 ->with('success', 'Contrato/Convenio eliminado exitosamente.');

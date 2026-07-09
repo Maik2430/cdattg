@@ -21,6 +21,7 @@ class ProveedorController extends Controller
     use HandlesProveedorFormActions;
 
     protected ProveedorRepositoryInterface $repository;
+
     protected ProveedorService $service;
 
     public function __construct(ProveedorRepositoryInterface $repository, ProveedorService $service)
@@ -58,7 +59,7 @@ class ProveedorController extends Controller
             return redirect()->route('inventario.proveedores.index')
                 ->with('success', 'Proveedor creado exitosamente.');
         } catch (ProveedorException $e) {
-            return back()->withInput()->with('error', 'Error al crear el proveedor: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error al crear el proveedor: '.$e->getMessage());
         }
     }
 
@@ -70,7 +71,7 @@ class ProveedorController extends Controller
             return redirect()->route('inventario.proveedores.index')
                 ->with('success', 'Proveedor actualizado exitosamente.');
         } catch (ProveedorException $e) {
-            return back()->withInput()->with('error', 'Error al actualizar el proveedor: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error al actualizar el proveedor: '.$e->getMessage());
         }
     }
 

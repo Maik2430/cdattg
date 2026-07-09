@@ -5,11 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\URL;
+use Illuminate\View\View;
 
 class VerificationController extends Controller
 {
@@ -33,7 +32,7 @@ class VerificationController extends Controller
     {
         $user = User::find($id);
 
-        if (!$user) {
+        if (! $user) {
             \Illuminate\Support\Facades\Log::warning('Intento de verificación con ID inválido', [
                 'id' => $id,
                 'hash' => $hash,
@@ -45,7 +44,7 @@ class VerificationController extends Controller
 
         // Validar que el hash coincida con el email del usuario
         // El middleware 'signed' ya validó que la URL esté firmada correctamente
-        if (!hash_equals(sha1($user->getEmailForVerification()), $hash)) {
+        if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
             \Illuminate\Support\Facades\Log::warning('Hash de verificación no coincide', [
                 'user_id' => $user->id,
                 'email' => $user->email,
@@ -91,4 +90,3 @@ class VerificationController extends Controller
             ->with('success', 'Se ha enviado un nuevo enlace de verificación a tu correo electrónico.');
     }
 }
-

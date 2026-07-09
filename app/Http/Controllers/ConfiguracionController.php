@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\ConfiguracionRepository;
-use App\Repositories\TemaRepository;
-use App\Repositories\RegionalRepository;
 use App\Repositories\ProgramaFormacionRepository;
-use Illuminate\Http\Request;
+use App\Repositories\RegionalRepository;
+use App\Repositories\TemaRepository;
 use Illuminate\Support\Facades\Log;
 
 class ConfiguracionController extends Controller
 {
     protected ConfiguracionRepository $configuracionRepo;
+
     protected TemaRepository $temaRepo;
+
     protected RegionalRepository $regionalRepo;
+
     protected ProgramaFormacionRepository $programaRepo;
 
     public function __construct(
@@ -42,7 +44,7 @@ class ConfiguracionController extends Controller
                 'data' => $fichas,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo fichas: ' . $e->getMessage());
+            Log::error('Error obteniendo fichas: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -64,7 +66,7 @@ class ConfiguracionController extends Controller
                 'data' => $regionales,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo regionales: ' . $e->getMessage());
+            Log::error('Error obteniendo regionales: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -86,7 +88,7 @@ class ConfiguracionController extends Controller
                 'data' => $programas,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo programas: ' . $e->getMessage());
+            Log::error('Error obteniendo programas: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -108,7 +110,7 @@ class ConfiguracionController extends Controller
                 'data' => $tipos->parametros ?? [],
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo tipos documento: ' . $e->getMessage());
+            Log::error('Error obteniendo tipos documento: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -130,7 +132,7 @@ class ConfiguracionController extends Controller
                 'data' => $generos->parametros ?? [],
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo géneros: ' . $e->getMessage());
+            Log::error('Error obteniendo géneros: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -155,7 +157,7 @@ class ConfiguracionController extends Controller
                 'message' => 'Caché de configuración limpiada',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error limpiando caché: ' . $e->getMessage());
+            Log::error('Error limpiando caché: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -164,4 +166,3 @@ class ConfiguracionController extends Controller
         }
     }
 }
-

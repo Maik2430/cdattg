@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Services\ProfileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -32,7 +31,7 @@ class ProfileController extends Controller
 
             $datos = $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $user->id,
+                'email' => 'required|email|unique:users,email,'.$user->id,
                 'current_password' => 'nullable|required_with:password',
                 'password' => 'nullable|min:8|confirmed',
             ]);
@@ -48,6 +47,7 @@ class ProfileController extends Controller
     public function showChangePassword()
     {
         $user = Auth::user();
+
         return view('profile.change-password', compact('user'));
     }
 

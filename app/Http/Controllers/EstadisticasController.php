@@ -28,7 +28,8 @@ class EstadisticasController extends Controller
 
             return view('estadisticas.dashboard', compact('general', 'tendencias', 'topFichas'));
         } catch (\Exception $e) {
-            Log::error('Error cargando dashboard: ' . $e->getMessage());
+            Log::error('Error cargando dashboard: '.$e->getMessage());
+
             return redirect()->back()->with('error', 'Error al cargar estadísticas.');
         }
     }
@@ -46,7 +47,7 @@ class EstadisticasController extends Controller
                 'data' => $general,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error en API estadísticas: ' . $e->getMessage());
+            Log::error('Error en API estadísticas: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -72,7 +73,7 @@ class EstadisticasController extends Controller
                 'data' => $estadisticas,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo estadísticas de ficha: ' . $e->getMessage());
+            Log::error('Error obteniendo estadísticas de ficha: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -95,7 +96,7 @@ class EstadisticasController extends Controller
                 'data' => $tendencias,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo tendencias: ' . $e->getMessage());
+            Log::error('Error obteniendo tendencias: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -118,7 +119,7 @@ class EstadisticasController extends Controller
                 'data' => $topFichas,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error obteniendo top fichas: ' . $e->getMessage());
+            Log::error('Error obteniendo top fichas: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -127,4 +128,3 @@ class EstadisticasController extends Controller
         }
     }
 }
-

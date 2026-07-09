@@ -4,17 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRegistroActividadesRequest;
 use App\Http\Requests\UpdateRegistroActividadesRequest;
-use App\Services\RegistroActividadesServices;
-use App\Models\InstructorFichaCaracterizacion;
-use App\Models\ResultadosAprendizaje;
-use App\Models\Evidencias;
 use App\Models\EvidenciaGuiaAprendizaje;
+use App\Models\Evidencias;
+use App\Models\InstructorFichaCaracterizacion;
+use App\Services\RegistroActividadesServices;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RegistroActividadesController extends Controller
 {
-
     protected $registroActividadesServices;
 
     public function __construct(RegistroActividadesServices $registroActividadesServices)
@@ -32,6 +30,7 @@ class RegistroActividadesController extends Controller
             $guiaAprendizajeActual = $this->registroActividadesServices->getGuiasAprendizaje($caracterizacion);
             // Obtener el primer RAP asignado desde instructor_ficha_resultados_aprendizaje
             $rapActual = $caracterizacion->resultadosAprendizaje->first();
+
             return view('registro_actividades.index', compact('caracterizacion', 'actividades', 'rapActual', 'guiaAprendizajeActual'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
@@ -89,6 +88,7 @@ class RegistroActividadesController extends Controller
             $actividades = $this->registroActividadesServices->getActividades($caracterizacion);
             // Obtener el primer RAP asignado desde instructor_ficha_resultados_aprendizaje
             $rapActual = $caracterizacion->resultadosAprendizaje->first();
+
             return view('registro_actividades.edit', compact('actividad', 'caracterizacion', 'actividades', 'rapActual'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
@@ -113,7 +113,7 @@ class RegistroActividadesController extends Controller
                 ->with('success', 'Registro de actividad actualizado exitosamente.');
         } catch (\Exception $e) {
             // Manejar errores y redirigir con mensaje de error
-            return redirect()->back()->withInput()->with('error', 'Ocurrió un error al actualizar el registro de actividad: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Ocurrió un error al actualizar el registro de actividad: '.$e->getMessage());
         }
     }
 
@@ -137,7 +137,7 @@ class RegistroActividadesController extends Controller
                 ->with('success', 'Actividad cancelada exitosamente.');
         } catch (\Exception $e) {
             // Manejar errores y redirigir con mensaje de error
-            return redirect()->back()->with('error', 'Ocurrió un error al cancelar la actividad: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ocurrió un error al cancelar la actividad: '.$e->getMessage());
         }
     }
 }

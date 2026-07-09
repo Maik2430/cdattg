@@ -147,9 +147,9 @@ trait HandlesProductoReadActions
 
         $barcodeImage = null;
         if (! empty($producto->codigo_barras)) {
-            $generator = new BarcodeGeneratorPNG();
+            $generator = new BarcodeGeneratorPNG;
             $binary = $generator->getBarcode((string) $producto->codigo_barras, $generator::TYPE_CODE_128, 2, 60);
-            $barcodeImage = 'data:image/png;base64,' . base64_encode($binary);
+            $barcodeImage = 'data:image/png;base64,'.base64_encode($binary);
         }
 
         return view('inventario.productos.etiqueta', [
