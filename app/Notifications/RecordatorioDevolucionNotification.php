@@ -14,6 +14,7 @@ class RecordatorioDevolucionNotification extends Notification implements ShouldQ
     use Queueable;
 
     public $orden;
+
     public $diasRestantes;
 
     /**
@@ -47,10 +48,10 @@ class RecordatorioDevolucionNotification extends Notification implements ShouldQ
 
         $diasTexto = $this->diasRestantes === 1
             ? '1 día'
-            : $this->diasRestantes . ' días';
+            : $this->diasRestantes.' días';
 
         return (new MailMessage)
-            ->subject('Recordatorio: Devolución de Préstamo en ' . $diasTexto)
+            ->subject('Recordatorio: Devolución de Préstamo en '.$diasTexto)
             ->view('inventario.email.recordatorio-devolucion', [
                 'notifiable' => $notifiable,
                 'orden' => $this->orden,
@@ -86,7 +87,7 @@ class RecordatorioDevolucionNotification extends Notification implements ShouldQ
         return [
             'tipo' => 'recordatorio_devolucion',
             'titulo' => 'Recordatorio de Devolución',
-            'mensaje' => "Tu préstamo vence en {$this->diasRestantes} " . ($this->diasRestantes === 1 ? 'día' : 'días'),
+            'mensaje' => "Tu préstamo vence en {$this->diasRestantes} ".($this->diasRestantes === 1 ? 'día' : 'días'),
             'orden_id' => $this->orden->id,
             'fecha_devolucion' => $fechaDevolucion,
             'dias_restantes' => $this->diasRestantes,

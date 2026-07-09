@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class ProgramaNoEncontradoException extends RuntimeException
-{
-}
-
+class ProgramaNoEncontradoException extends RuntimeException {}

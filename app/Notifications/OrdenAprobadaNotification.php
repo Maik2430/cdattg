@@ -12,6 +12,7 @@ class OrdenAprobadaNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $detalleOrden;
+
     public $aprobador;
 
     /**
@@ -43,7 +44,7 @@ class OrdenAprobadaNotification extends Notification implements ShouldQueue
         $tipoOrden = $orden->tipoOrden->parametro->name ?? 'N/A';
 
         return (new MailMessage)
-            ->subject('Tu Solicitud ha sido Aprobada - Orden #' . $orden->id)
+            ->subject('Tu Solicitud ha sido Aprobada - Orden #'.$orden->id)
             ->view('inventario.email.orden-aprobada', [
                 'notifiable' => $notifiable,
                 'orden' => $orden,

@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class ContratoConvenioException extends RuntimeException
-{
-}
-
+class ContratoConvenioException extends RuntimeException {}

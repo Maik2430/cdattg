@@ -11,4 +11,3 @@ class ImportFileNotFoundException extends RuntimeException
         parent::__construct("El archivo de importación no existe en la ruta: {$path}");
     }
 }
-

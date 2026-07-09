@@ -11,4 +11,3 @@ class ImportFileTempPathException extends RuntimeException
         parent::__construct('No se pudo obtener la ruta temporal del archivo de importación.');
     }
 }
-

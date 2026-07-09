@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class AmbienteFactoryException extends RuntimeException
-{
-}
-
+class AmbienteFactoryException extends RuntimeException {}

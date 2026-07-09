@@ -23,7 +23,10 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read Pais|null $pais
  * @property-read Departamento|null $departamento
  * @property-read Municipio|null $municipio
+ * @property-read string $nombre_completo
  * @property-read Instructor|null $instructor
+ * @property AsistenciaAprendiz|null $asistenciaHoy Atributo dinámico asignado en runtime (QR asistencia).
+ * @property int|null $aprendiz_id Atributo dinámico asignado en runtime (QR asistencia).
  */
 class Persona extends Model
 {

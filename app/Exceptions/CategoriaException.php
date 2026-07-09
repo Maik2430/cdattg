@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class CategoriaException extends RuntimeException
-{
-}
-
+class CategoriaException extends RuntimeException {}

@@ -18,8 +18,8 @@ class ReferenceDataNotAvailableException extends RuntimeException
     /**
      * Create a new exception instance with a descriptive message.
      *
-     * @param string $message Optional custom message
-     * @param string|null $missingData Optional description of what data is missing
+     * @param  string  $message  Optional custom message
+     * @param  string|null  $missingData  Optional description of what data is missing
      */
     public function __construct(string $message = '', ?string $missingData = null)
     {
@@ -33,4 +33,3 @@ class ReferenceDataNotAvailableException extends RuntimeException
         parent::__construct($message);
     }
 }
-

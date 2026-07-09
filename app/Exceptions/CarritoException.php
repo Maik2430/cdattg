@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class CarritoException extends RuntimeException
-{
-}
-
+class CarritoException extends RuntimeException {}

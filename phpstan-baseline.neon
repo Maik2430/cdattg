@@ -532,7 +532,7 @@ parameters:
 			message: '#^Access to an undefined property App\\Models\\Tema\:\:\$parametros\.$#'
 			identifier: property.notFound
 			count: 6
-			path: app/Http/Controllers/Auth/RegisterController.php
+			path: app/Http/Controllers/Concerns/Auth/HandlesRegisterFormDataHelpers.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sede_id\.$#'

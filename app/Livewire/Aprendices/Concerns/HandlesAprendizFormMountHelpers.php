@@ -26,6 +26,6 @@ trait HandlesAprendizFormMountHelpers
 
         $this->persona_id = $this->aprendiz->persona_id;
         $this->ficha_caracterizacion_id = $this->aprendiz->ficha_caracterizacion_id;
-        $this->estado = $this->aprendiz->estado;
+        $this->estado = (int) $this->aprendiz->estado;
     }
 }

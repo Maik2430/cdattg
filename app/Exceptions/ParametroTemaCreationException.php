@@ -15,4 +15,3 @@ class ParametroTemaCreationException extends RuntimeException
         parent::__construct($message);
     }
 }
-

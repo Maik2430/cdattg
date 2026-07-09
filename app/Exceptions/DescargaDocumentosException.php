@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class DescargaDocumentosException extends RuntimeException
-{
-}
-
+class DescargaDocumentosException extends RuntimeException {}

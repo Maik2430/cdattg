@@ -6,7 +6,4 @@ namespace App\Exceptions\Complementarios;
 
 use RuntimeException;
 
-class SofiaRequestException extends RuntimeException
-{
-}
-
+class SofiaRequestException extends RuntimeException {}

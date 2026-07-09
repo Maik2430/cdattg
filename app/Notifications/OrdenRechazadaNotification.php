@@ -12,7 +12,9 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $detalleOrden;
+
     public $aprobador;
+
     public $motivoRechazo;
 
     /**
@@ -45,7 +47,7 @@ class OrdenRechazadaNotification extends Notification implements ShouldQueue
         $tipoOrden = $orden->tipoOrden->parametro->name ?? 'N/A';
 
         return (new MailMessage)
-            ->subject('Tu Solicitud ha sido Rechazada - Orden #' . $orden->id)
+            ->subject('Tu Solicitud ha sido Rechazada - Orden #'.$orden->id)
             ->view('inventario.email.orden-rechazada', [
                 'notifiable' => $notifiable,
                 'orden' => $orden,

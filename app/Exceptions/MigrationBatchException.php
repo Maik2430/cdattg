@@ -11,4 +11,3 @@ class MigrationBatchException extends RuntimeException
         parent::__construct("Error al migrar el batch: {$batch}");
     }
 }
-

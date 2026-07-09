@@ -6,7 +6,4 @@ namespace App\Exceptions\Complementarios;
 
 use RuntimeException;
 
-class GoogleDriveException extends RuntimeException
-{
-}
-
+class GoogleDriveException extends RuntimeException {}

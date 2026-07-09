@@ -13,6 +13,7 @@ class VisitanteActualizado implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $visitante;
+
     public $tipo; // 'entrada' o 'salida'
 
     /**

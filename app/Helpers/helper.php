@@ -1,21 +1,24 @@
 <?php
 
-if (!function_exists('routes_path')) {
-    function routes_path($path = '') {
-        return base_path('routes' . ($path ? DIRECTORY_SEPARATOR . $path : $path));
+if (! function_exists('routes_path')) {
+    function routes_path($path = '')
+    {
+        return base_path('routes'.($path ? DIRECTORY_SEPARATOR.$path : $path));
     }
 }
 
-if (!function_exists('obtener_numero_evidencia')) {
-    function obtener_numero_evidencia($cadenaEvidencia){
-        if (preg_match('/^([a-zA-Z]+)-(\d+)$/', $cadenaEvidencia, $matches)){
+if (! function_exists('obtener_numero_evidencia')) {
+    function obtener_numero_evidencia($cadenaEvidencia)
+    {
+        if (preg_match('/^([a-zA-Z]+)-(\d+)$/', $cadenaEvidencia, $matches)) {
             return $matches[2];
         } // Retorna null si no coincide el patrón
     }
 }
 
-if (!function_exists('formatear_horas')) {
-    function formatear_horas($duracion) {
+if (! function_exists('formatear_horas')) {
+    function formatear_horas($duracion)
+    {
         // Convertir a entero si es decimal y eliminar .00
         return (int) $duracion;
     }

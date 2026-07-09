@@ -4,7 +4,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class InventarioFactoryException extends RuntimeException
-{
-}
-
+class InventarioFactoryException extends RuntimeException {}

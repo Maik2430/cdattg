@@ -18,8 +18,11 @@ class DevolucionRegistradaNotification extends Notification implements ShouldQue
     use Queueable;
 
     public Devolucion $devolucion;
+
     public ?DetalleOrden $detalleOrden;
+
     public ?Producto $producto;
+
     public ?User $solicitante;
 
     public function __construct(Devolucion $devolucion)
@@ -51,7 +54,7 @@ class DevolucionRegistradaNotification extends Notification implements ShouldQue
         $cantidadDevuelta = $this->devolucion->cantidad_devuelta;
         $fechaDevolucion = $this->devolucion->fecha_devolucion?->format('d/m/Y H:i') ?? 'N/A';
 
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject("Devolución registrada • Orden #{$this->detalleOrden->orden->id}")
             ->view('inventario.email.devolucion-registrada', [
                 'notifiable' => $notifiable,
@@ -95,4 +98,3 @@ class DevolucionRegistradaNotification extends Notification implements ShouldQue
         return 'devolucion_registrada';
     }
 }
-

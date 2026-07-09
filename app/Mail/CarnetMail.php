@@ -11,7 +11,9 @@ class CarnetMail extends Mailable
     use Queueable, SerializesModels;
 
     public $carnet;
+
     public $pdfPath;
+
     public $imagePath;
 
     public function __construct($carnet, $pdfPath, $imagePath = null)
@@ -24,8 +26,8 @@ class CarnetMail extends Mailable
     public function build()
     {
         $mail = $this->view('emails.carnet')
-                     ->subject('Tu Carnet Digital')
-                     ->attach($this->pdfPath);
+            ->subject('Tu Carnet Digital')
+            ->attach($this->pdfPath);
 
         if ($this->imagePath && file_exists($this->imagePath)) {
             $mail->attach($this->imagePath);

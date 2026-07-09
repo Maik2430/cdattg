@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class ProveedorException extends RuntimeException
-{
-}
-
+class ProveedorException extends RuntimeException {}

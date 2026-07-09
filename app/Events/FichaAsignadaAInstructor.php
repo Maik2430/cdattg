@@ -2,8 +2,8 @@
 
 namespace App\Events;
 
-use App\Models\Instructor;
 use App\Models\FichaCaracterizacion;
+use App\Models\Instructor;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -15,7 +15,9 @@ class FichaAsignadaAInstructor implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Instructor $instructor;
+
     public FichaCaracterizacion $ficha;
+
     public array $detalles;
 
     /**
@@ -36,15 +38,13 @@ class FichaAsignadaAInstructor implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('instructores.' . $this->instructor->id),
-            new Channel('fichas.' . $this->ficha->id),
+            new Channel('instructores.'.$this->instructor->id),
+            new Channel('fichas.'.$this->ficha->id),
         ];
     }
 
     /**
      * Datos que se enviarán en el broadcast
-     *
-     * @return array
      */
     public function broadcastWith(): array
     {
@@ -65,12 +65,9 @@ class FichaAsignadaAInstructor implements ShouldBroadcast
 
     /**
      * Nombre del evento en el broadcast
-     *
-     * @return string
      */
     public function broadcastAs(): string
     {
         return 'ficha.asignada';
     }
 }
-

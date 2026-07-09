@@ -4,7 +4,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class OrdenException extends RuntimeException
-{
-}
-
+class OrdenException extends RuntimeException {}

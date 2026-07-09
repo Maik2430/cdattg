@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -12,7 +11,9 @@ class StockBajoNotification extends Notification
     use Queueable;
 
     public $producto;
+
     public $stockActual;
+
     public $stockMinimo;
 
     /**
@@ -41,7 +42,7 @@ class StockBajoNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('⚠️ Alerta de Stock Bajo - ' . $this->producto->name)
+            ->subject('⚠️ Alerta de Stock Bajo - '.$this->producto->name)
             ->view('inventario.email.stock-bajo', [
                 'notifiable' => $notifiable,
                 'producto' => $this->producto,

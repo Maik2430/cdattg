@@ -11,4 +11,3 @@ class ImportHeaderMismatchException extends RuntimeException
         parent::__construct('El encabezado del archivo no coincide con el formato esperado.');
     }
 }
-

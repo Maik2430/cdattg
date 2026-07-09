@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class ProcesarDocumentoIdentidadException extends RuntimeException
-{
-}
-
+class ProcesarDocumentoIdentidadException extends RuntimeException {}

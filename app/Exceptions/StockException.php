@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class StockException extends RuntimeException
-{
-}
-
+class StockException extends RuntimeException {}

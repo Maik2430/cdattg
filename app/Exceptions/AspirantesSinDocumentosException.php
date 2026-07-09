@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class AspirantesSinDocumentosException extends RuntimeException
-{
-}
-
+class AspirantesSinDocumentosException extends RuntimeException {}

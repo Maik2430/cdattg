@@ -14,6 +14,7 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $orden;
+
     public $solicitante;
 
     /**
@@ -53,7 +54,7 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
         $motivo = isset($matchMotivo[1]) ? trim($matchMotivo[1]) : 'No especificado';
 
         return (new MailMessage)
-            ->subject('Nueva Solicitud de ' . $tipoOrden . ' - Orden #' . $this->orden->id)
+            ->subject('Nueva Solicitud de '.$tipoOrden.' - Orden #'.$this->orden->id)
             ->view('inventario.email.nueva-orden', [
                 'notifiable' => $notifiable,
                 'orden' => $this->orden,
@@ -82,8 +83,8 @@ class NuevaOrdenNotification extends Notification implements ShouldQueue
         // Obtener datos de la persona
         $persona = $solicitante ? $solicitante->persona : null;
         $nombreCompleto = $persona
-            ? trim(($persona->primer_nombre ?? '') . ' ' . ($persona->segundo_nombre ?? '') . ' ' .
-                   ($persona->primer_apellido ?? '') . ' ' . ($persona->segundo_apellido ?? ''))
+            ? trim(($persona->primer_nombre ?? '').' '.($persona->segundo_nombre ?? '').' '.
+                   ($persona->primer_apellido ?? '').' '.($persona->segundo_apellido ?? ''))
             : ($solicitante->name ?? 'N/A');
 
         $documento = $persona ? $persona->numero_documento ?? 'N/A' : 'N/A';

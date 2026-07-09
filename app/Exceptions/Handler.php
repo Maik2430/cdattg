@@ -28,6 +28,7 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof AuthorizationException) {
@@ -36,6 +37,7 @@ class Handler extends ExceptionHandler
             if (app()->environment('testing') || defined('PHPUNIT_COMPOSER_INSTALL')) {
                 return response('No tiene autorización para hacer esta acción.', 403);
             }
+
             return redirect()->route('home')->with('error', 'No tiene autorización para hacer esta acción.');
         }
 

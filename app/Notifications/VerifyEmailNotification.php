@@ -24,4 +24,3 @@ class VerifyEmailNotification extends VerifyEmail
             ->line(__('If you did not create an account, no further action is required.'));
     }
 }
-

@@ -6,7 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class MarcaException extends RuntimeException
-{
-}
-
+class MarcaException extends RuntimeException {}

@@ -5,8 +5,6 @@ namespace App\Events;
 use App\Models\Aprendiz;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -17,6 +15,7 @@ class AprendizAsignadoAFicha implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $aprendiz;
+
     public $fichaId;
 
     /**
@@ -30,7 +29,7 @@ class AprendizAsignadoAFicha implements ShouldBroadcast
         Log::info('Evento AprendizAsignadoAFicha disparado', [
             'aprendiz_id' => $aprendiz->id,
             'persona_id' => $aprendiz->persona_id,
-            'ficha_id' => $fichaId
+            'ficha_id' => $fichaId,
         ]);
     }
 

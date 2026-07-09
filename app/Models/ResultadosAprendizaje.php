@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 class ResultadosAprendizaje extends Model
 {
     use BuildsResultadosAprendizajeAttributes;
-
     use ChecksResultadosAprendizajeEstado;
+
     /** @use HasFactory<\Database\Factories\ResultadosAprendizajeFactory> */
     use HasFactory;
+
     use HasResultadosAprendizajeRelations;
     use ScopesResultadosAprendizaje;
 

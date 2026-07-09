@@ -2,14 +2,12 @@
 
 namespace App\Events;
 
+use App\Models\AsistenciaAprendiz;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\AsistenciaAprendiz;
 
 class AsistenciaCreated implements ShouldBroadcast
 {
@@ -58,7 +56,7 @@ class AsistenciaCreated implements ShouldBroadcast
                     'persona' => [
                         'nombre_completo' => $this->asistencia->aprendiz->persona->getNombreCompletoAttribute(),
                         'numero_documento' => $this->asistencia->aprendiz->persona->numero_documento,
-                    ]
+                    ],
                 ] : null,
                 // Información de la ficha si está disponible
                 'ficha' => $this->asistencia->aprendiz && $this->asistencia->aprendiz->fichaCaracterizacion ? [
