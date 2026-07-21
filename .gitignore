@@ -32,7 +32,6 @@ yarn-error.log
 /.idea
 /.vscode
 /.cursor
-sonar-project.properties
 /storage/coverage/
 *.sqlite
 database/testing.sqlite
