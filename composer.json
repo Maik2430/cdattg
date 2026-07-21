@@ -91,6 +91,7 @@
         "sort-packages": true,
         "platform-check": false,
         "platform": {
+            "php": "8.3.32",
             "ext-pcntl": "1.0",
             "ext-posix": "1.0"
         },
