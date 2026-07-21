@@ -28,7 +28,7 @@ Aplicación web desarrollada en Laravel para la gestión integral de:
 - **PHP**: 8.3+
 - **Composer**: 2.0+
 - **MySQL**: 8.0+
-- **Node.js**: 18+
+- **Node.js**: 22+ (requerido por Vite 8)
 - **Redis**: Recomendado (para cache, colas y WebSocket)
 - **Extensiones PHP**: BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML
 

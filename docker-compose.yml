@@ -65,7 +65,7 @@ services:
   # ===========================================
   nginx:
     profiles: ["produccion", "local"]
-    image: ${NGINX_BASE_IMAGE:-nginx:1.25-alpine}
+    image: ${NGINX_BASE_IMAGE:-nginx:1.27-alpine}
     container_name: cdattg_nginx
     ports:
       - "80:80"
@@ -85,7 +85,7 @@ services:
   # ===========================================
   db:
     profiles: ["produccion", "local", "testing"]
-    image: ${MYSQL_BASE_IMAGE:-mysql:8.0}
+    image: ${MYSQL_BASE_IMAGE:-mysql:8.4}
     container_name: cdattg_db
     command:
       - --default-authentication-plugin=mysql_native_password
@@ -116,7 +116,7 @@ services:
   # ===========================================
   frontend:
     profiles: ["local"]
-    image: ${NODE_BASE_IMAGE:-node:20-bullseye}
+    image: ${NODE_BASE_IMAGE:-node:22-bookworm}
     container_name: cdattg_frontend
     working_dir: /var/www/html
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port ${VITE_PORT:-5173}"

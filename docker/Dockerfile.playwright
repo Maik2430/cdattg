@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.56.1-noble
+FROM mcr.microsoft.com/playwright:v1.61.1-noble
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
@@ -7,7 +7,7 @@ WORKDIR /app
 # Instalar dependencias de Node.js
 RUN set -eux; \
     npm init -y; \
-    npm install playwright@^1.56.1; \
+    npm install playwright@^1.61.1; \
     npm prune --omit=dev
 
 # Copiar los archivos de la aplicación
