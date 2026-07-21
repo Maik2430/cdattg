@@ -129,5 +129,5 @@ Si encuentras bugs o quieres agregar más reglas de refactorización, edita el s
 ---
 
 **Última actualización:** 2025-11-17  
-**Versión:** Laravel 12.0, PHP 8.3+
+**Versión:** Laravel 13.0, PHP 8.4+
 

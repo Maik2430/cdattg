@@ -1,7 +1,7 @@
 # =========================================
 # === Stage 1: Composer (dependencias PHP)
 # =========================================
-FROM php:8.3-cli AS composer_vendor
+FROM php:8.4-cli AS composer_vendor
 
 ARG BUILD_ENV=production
 WORKDIR /var/www/html
@@ -41,7 +41,7 @@ RUN set -eux; \
 # =========================================
 # === Stage 2: Node / Vite (assets)
 # =========================================
-FROM node:22-bookworm-slim AS assets_builder
+FROM node:24-bookworm-slim AS assets_builder
 
 ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV
@@ -76,7 +76,7 @@ RUN npm run build && npm prune --omit=dev
 # =========================================
 # === Stage 3: Runtime (PHP-FPM final)
 # =========================================
-FROM php:8.3-fpm AS app_runtime
+FROM php:8.4-fpm AS app_runtime
 
 ARG BUILD_ENV=production
 ARG APP_ENV=production

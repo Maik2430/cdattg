@@ -129,7 +129,7 @@ Documentación histórica de correcciones y mejoras implementadas.
 
 **Backend:**
 - Laravel 12.0
-- PHP 8.3+
+- PHP 8.4+
 - MySQL 8.0+
 - Redis (cache, colas, WebSocket)
 - Laravel Horizon 5.40 (colas)

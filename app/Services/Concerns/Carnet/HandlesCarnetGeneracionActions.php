@@ -4,11 +4,24 @@ namespace App\Services\Concerns\Carnet;
 
 use App\Models\Aprendiz;
 use App\Models\Instructor;
-use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Log;
 
 trait HandlesCarnetGeneracionActions
 {
+    private function generarQrPng(string $data): string
+    {
+        $result = (new Builder(
+            writer: new PngWriter,
+            data: $data,
+            size: 200,
+            margin: 1,
+        ))->build();
+
+        return $result->getString();
+    }
+
     public function generarCarnetAprendiz(Aprendiz $aprendiz): string
     {
         try {
@@ -23,10 +36,7 @@ trait HandlesCarnetGeneracionActions
                 'generado' => now()->toDateString(),
             ]);
 
-            $qrCode = QrCode::format('png')
-                ->size(200)
-                ->margin(1)
-                ->generate($qrData);
+            $qrCode = $this->generarQrPng($qrData);
 
             $carnet = $this->crearPlantillaCarnet('aprendiz');
 
@@ -71,10 +81,7 @@ trait HandlesCarnetGeneracionActions
                 'generado' => now()->toDateString(),
             ]);
 
-            $qrCode = QrCode::format('png')
-                ->size(200)
-                ->margin(1)
-                ->generate($qrData);
+            $qrCode = $this->generarQrPng($qrData);
 
             $carnet = $this->crearPlantillaCarnet('instructor');
 

@@ -25,10 +25,10 @@ Aplicación web desarrollada en Laravel para la gestión integral de:
 ## 🚀 Inicio Rápido
 
 ### Requisitos Previos
-- **PHP**: 8.3+
+- **PHP**: 8.4+
 - **Composer**: 2.0+
 - **MySQL**: 8.0+
-- **Node.js**: 22+ (requerido por Vite 8)
+- **Node.js**: 24+ (requerido por Vite 8)
 - **Redis**: Recomendado (para cache, colas y WebSocket)
 - **Extensiones PHP**: BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML
 
@@ -101,8 +101,8 @@ Toda la documentación del proyecto está organizada en la carpeta [`docs/`](doc
 ## 🛠️ Stack Tecnológico
 
 ### Backend
-- **Framework**: Laravel 12.0
-- **PHP**: 8.3+
+- **Framework**: Laravel 13.0
+- **PHP**: 8.4+
 - **Base de Datos**: MySQL 8.0+
 - **Cache/Colas**: Redis + Predis 3.2
 - **Colas**: Laravel Horizon 5.40
@@ -120,7 +120,7 @@ Toda la documentación del proyecto está organizada en la carpeta [`docs/`](doc
 
 ### Librerías Principales
 - **PDF**: DomPDF 3.0
-- **Excel**: PHPSpreadsheet 2.1
+- **Excel**: PHPSpreadsheet 5.9
 - **QR Codes**: Endroid QR Code 5.1
 - **Google Drive**: Masbug Flysystem Google Drive 2.4
 - **Google APIs**: Google API Client 2.0
@@ -128,7 +128,7 @@ Toda la documentación del proyecto está organizada en la carpeta [`docs/`](doc
 
 ### DevOps
 - **Contenedores**: Docker + Docker Compose
-- **Testing**: PHPUnit 11.0, Playwright 1.56
+- **Testing**: PHPUnit 12.0, Playwright 1.61
 - **Code Quality**: Laravel Pint 1.0
 - **Debug**: Laravel Debugbar 3.16 (dev)
 

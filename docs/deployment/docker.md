@@ -209,4 +209,4 @@ docker-compose logs nginx
 ---
 
 **Última actualización:** 2025-11-17  
-**Versión del proyecto:** Laravel 12.0, PHP 8.3+
+**Versión del proyecto:** Laravel 13.0, PHP 8.4+
