@@ -7,7 +7,7 @@ trait HandlesInstructorFormValidationHelpers
     protected function rules(): array
     {
         return [
-            'persona_id' => $this->isEdit ? 'required|exists:personas,id' : 'required|exists:personas,id',
+            'persona_id' => 'required|exists:personas,id',
             'regional_id' => 'required|exists:regionals,id',
             'centro_formacion_id' => 'nullable|exists:centro_formacions,id',
             'tipo_vinculacion_id' => 'nullable|exists:parametros_temas,id',
