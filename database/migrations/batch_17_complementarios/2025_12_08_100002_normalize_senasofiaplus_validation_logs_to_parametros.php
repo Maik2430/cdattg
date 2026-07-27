@@ -1,179 +1,277 @@
 <?php
 
+use App\Models\Parametro;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use App\Models\Parametro;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private const TABLE = 'senasofiaplus_validation_logs';
+
+    private const SQL_ALTER_TABLE = 'ALTER TABLE ';
+
+    private const SQL_UPDATE = 'UPDATE ';
+
+    /**
+     * Elimina índices compuestos que impiden modificar columnas accion/resultado en SQLite.
+     */
+    private function dropAccionResultadoIndexes(): void
+    {
+        if (! Schema::hasTable(self::TABLE)) {
+            return;
+        }
+
+        foreach ([['accion', 'resultado'], 'senasofiaplus_validation_logs_accion_resultado_index'] as $index) {
+            try {
+                Schema::table(self::TABLE, function (Blueprint $table) use ($index) {
+                    $table->dropIndex($index);
+                });
+            } catch (Throwable) {
+                // El índice puede no existir o tener otro nombre según el driver.
+            }
+        }
+    }
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        // Obtener los IDs de los parámetros por ID (280, 281, 282, 283 según ParametroSeeder)
+        $parametros = $this->getValidationParametros();
+
+        if ($parametros === null) {
+            $this->upStructureOnly();
+
+            return;
+        }
+
+        $this->upWithDataMigration($parametros);
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        $parametros = $this->getValidationParametros();
+
+        if ($parametros === null) {
+            return;
+        }
+
+        Schema::table(self::TABLE, function (Blueprint $table) {
+            $table->dropIndex(['accion', 'resultado']);
+        });
+
+        Schema::table(self::TABLE, function (Blueprint $table) {
+            $table->dropForeign(['accion']);
+            $table->dropForeign(['resultado']);
+        });
+
+        Schema::table(self::TABLE, function (Blueprint $table) {
+            $table->enum('accion_tmp', ['validar'])->after('accion');
+            $table->enum('resultado_tmp', ['exitoso', 'error', 'advertencia'])->after('resultado');
+        });
+
+        $this->revertAccionResultadoData($parametros);
+        $this->revertColumnsToEnum();
+
+        Schema::table(self::TABLE, function (Blueprint $table) {
+            $table->index(['accion', 'resultado']);
+        });
+    }
+
+    private function getValidationParametros(): ?array
+    {
         $validar = Parametro::find(280);
         $exitoso = Parametro::find(281);
         $error = Parametro::find(282);
         $advertencia = Parametro::find(283);
 
-        // Si los parámetros no existen, solo cambiar la estructura sin migrar datos
-        if (!$validar || !$exitoso || !$error || !$advertencia) {
-            // Solo cambiar el tipo de columnas sin migrar datos
-            if (!Schema::hasTable('senasofiaplus_validation_logs')) {
-                return;
-            }
+        if (! $validar || ! $exitoso || ! $error || ! $advertencia) {
+            return null;
+        }
 
-            $driver = DB::getDriverName();
+        return compact('validar', 'exitoso', 'error', 'advertencia');
+    }
 
-            if ($driver === 'sqlite') {
-                // SQLite: crear nuevas columnas BIGINT, luego eliminar antiguas
-                if (Schema::hasColumn('senasofiaplus_validation_logs', 'accion')) {
-                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                        $table->unsignedBigInteger('accion_new')->nullable()->after('aspirante_id');
-                    });
-                    DB::statement('UPDATE senasofiaplus_validation_logs SET accion_new = NULL');
-                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                        $table->dropColumn('accion');
-                    });
-                    try {
-                        DB::statement('ALTER TABLE senasofiaplus_validation_logs RENAME COLUMN accion_new TO accion');
-                    } catch (\Exception $e) {
-                        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                            $table->unsignedBigInteger('accion')->nullable()->after('aspirante_id');
-                        });
-                        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                            $table->dropColumn('accion_new');
-                        });
-                    }
-                }
-
-                if (Schema::hasColumn('senasofiaplus_validation_logs', 'resultado')) {
-                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                        $table->unsignedBigInteger('resultado_new')->nullable()->after('accion');
-                    });
-                    DB::statement('UPDATE senasofiaplus_validation_logs SET resultado_new = NULL');
-                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                        $table->dropColumn('resultado');
-                    });
-                    try {
-                        DB::statement('ALTER TABLE senasofiaplus_validation_logs RENAME COLUMN resultado_new TO resultado');
-                    } catch (\Exception $e) {
-                        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                            $table->unsignedBigInteger('resultado')->nullable()->after('accion');
-                        });
-                        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                            $table->dropColumn('resultado_new');
-                        });
-                    }
-                }
-            } else {
-                // MySQL/MariaDB: cambiar tipo directamente
-                if (Schema::hasColumn('senasofiaplus_validation_logs', 'accion')) {
-                    DB::statement('ALTER TABLE senasofiaplus_validation_logs MODIFY COLUMN accion BIGINT UNSIGNED NULL');
-                }
-                if (Schema::hasColumn('senasofiaplus_validation_logs', 'resultado')) {
-                    DB::statement('ALTER TABLE senasofiaplus_validation_logs MODIFY COLUMN resultado BIGINT UNSIGNED NULL');
-                }
-            }
-
-            // Intentar agregar foreign keys (puede fallar si los parámetros no existen)
-            try {
-                if (Schema::hasColumn('senasofiaplus_validation_logs', 'accion')) {
-                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                        $table->foreign('accion')
-                            ->references('id')
-                            ->on('parametros')
-                            ->onDelete('restrict');
-                    });
-                }
-                if (Schema::hasColumn('senasofiaplus_validation_logs', 'resultado')) {
-                    Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                        $table->foreign('resultado')
-                            ->references('id')
-                            ->on('parametros')
-                            ->onDelete('restrict');
-                    });
-                }
-            } catch (\Exception $e) {
-                // Si falla, se agregará después cuando existan los parámetros
-            }
-
+    private function upStructureOnly(): void
+    {
+        if (! Schema::hasTable(self::TABLE)) {
             return;
         }
 
-        // Crear columnas temporales
-        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+        if (DB::getDriverName() === 'sqlite') {
+            $this->dropAccionResultadoIndexes();
+            $this->convertStringColumnToBigintNullableForSqlite('accion', 'aspirante_id');
+            $this->convertStringColumnToBigintNullableForSqlite('resultado', 'accion');
+        } else {
+            $this->convertColumnsToBigintNullableForMysql();
+        }
+
+        $this->addAccionResultadoForeignKeysIfPossible();
+    }
+
+    private function convertStringColumnToBigintNullableForSqlite(string $column, string $afterColumn): void
+    {
+        if (! Schema::hasColumn(self::TABLE, $column)) {
+            return;
+        }
+
+        $newColumn = "{$column}_new";
+
+        Schema::table(self::TABLE, function (Blueprint $table) use ($newColumn, $afterColumn) {
+            $table->unsignedBigInteger($newColumn)->nullable()->after($afterColumn);
+        });
+        DB::statement(self::SQL_UPDATE.self::TABLE." SET {$newColumn} = NULL");
+        Schema::table(self::TABLE, function (Blueprint $table) use ($column) {
+            $table->dropColumn($column);
+        });
+
+        try {
+            DB::statement(self::SQL_ALTER_TABLE.self::TABLE." RENAME COLUMN {$newColumn} TO {$column}");
+        } catch (Exception) {
+            Schema::table(self::TABLE, function (Blueprint $table) use ($column, $afterColumn) {
+                $table->unsignedBigInteger($column)->nullable()->after($afterColumn);
+            });
+            Schema::table(self::TABLE, function (Blueprint $table) use ($newColumn) {
+                $table->dropColumn($newColumn);
+            });
+        }
+    }
+
+    private function convertColumnsToBigintNullableForMysql(): void
+    {
+        foreach (['accion', 'resultado'] as $column) {
+            if (Schema::hasColumn(self::TABLE, $column)) {
+                DB::statement(self::SQL_ALTER_TABLE.self::TABLE." MODIFY COLUMN {$column} BIGINT UNSIGNED NULL");
+            }
+        }
+    }
+
+    private function addAccionResultadoForeignKeysIfPossible(): void
+    {
+        try {
+            $this->addAccionResultadoForeignKeys();
+        } catch (Exception) {
+            // Si falla, se agregará después cuando existan los parámetros
+        }
+    }
+
+    private function upWithDataMigration(array $parametros): void
+    {
+        Schema::table(self::TABLE, function (Blueprint $table) {
             $table->unsignedBigInteger('accion_parametro_id')->nullable()->after('accion');
             $table->unsignedBigInteger('resultado_parametro_id')->nullable()->after('resultado');
         });
 
-        // Migrar datos de accion (solo 'validar')
-        DB::table('senasofiaplus_validation_logs')
+        $this->migrateAccionResultadoToParametroIds($parametros);
+        $this->dropAccionResultadoCompositeIndex();
+        $this->replaceColumnsWithParametroIds();
+        $this->addAccionResultadoForeignKeysRequired();
+        $this->recreateAccionResultadoIndex();
+    }
+
+    private function migrateAccionResultadoToParametroIds(array $parametros): void
+    {
+        DB::table(self::TABLE)
             ->where('accion', 'validar')
-            ->update(['accion_parametro_id' => $validar->id]);
+            ->update(['accion_parametro_id' => $parametros['validar']->id]);
 
-        // Migrar datos de resultado
-        DB::table('senasofiaplus_validation_logs')
+        DB::table(self::TABLE)
             ->where('resultado', 'exitoso')
-            ->update(['resultado_parametro_id' => $exitoso->id]);
+            ->update(['resultado_parametro_id' => $parametros['exitoso']->id]);
 
-        DB::table('senasofiaplus_validation_logs')
+        DB::table(self::TABLE)
             ->where('resultado', 'error')
-            ->update(['resultado_parametro_id' => $error->id]);
+            ->update(['resultado_parametro_id' => $parametros['error']->id]);
 
-        DB::table('senasofiaplus_validation_logs')
+        DB::table(self::TABLE)
             ->where('resultado', 'advertencia')
-            ->update(['resultado_parametro_id' => $advertencia->id]);
+            ->update(['resultado_parametro_id' => $parametros['advertencia']->id]);
+    }
 
-        // Eliminar índices que usan las columnas antiguas
-        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+    private function dropAccionResultadoCompositeIndex(): void
+    {
+        Schema::table(self::TABLE, function (Blueprint $table) {
             $table->dropIndex(['accion', 'resultado']);
         });
+    }
 
-        $driver = DB::getDriverName();
+    private function replaceColumnsWithParametroIds(): void
+    {
+        if (DB::getDriverName() === 'sqlite') {
+            $this->replaceColumnsWithParametroIdsForSqlite();
 
-        if ($driver === 'sqlite') {
-            // SQLite: crear nuevas columnas, copiar datos, eliminar antiguas
-            Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                $table->unsignedBigInteger('accion_new')->after('aspirante_id');
-                $table->unsignedBigInteger('resultado_new')->after('accion_new');
-            });
-
-            // Copiar datos
-            DB::statement('UPDATE senasofiaplus_validation_logs SET accion_new = accion_parametro_id, resultado_new = resultado_parametro_id');
-
-            // Eliminar columnas antiguas
-            Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                $table->dropColumn(['accion', 'resultado', 'accion_parametro_id', 'resultado_parametro_id']);
-            });
-
-            // Renombrar usando RENAME COLUMN si está disponible
-            try {
-                DB::statement('ALTER TABLE senasofiaplus_validation_logs RENAME COLUMN accion_new TO accion');
-                DB::statement('ALTER TABLE senasofiaplus_validation_logs RENAME COLUMN resultado_new TO resultado');
-            } catch (\Exception $e) {
-                // Si no soporta, recrear con nombres correctos
-                Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                    $table->unsignedBigInteger('accion')->after('aspirante_id');
-                    $table->unsignedBigInteger('resultado')->after('accion');
-                });
-                DB::statement('UPDATE senasofiaplus_validation_logs SET accion = accion_new, resultado = resultado_new');
-                Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-                    $table->dropColumn(['accion_new', 'resultado_new']);
-                });
-            }
-        } else {
-            // MySQL/MariaDB
-            DB::statement('ALTER TABLE senasofiaplus_validation_logs DROP COLUMN accion, DROP COLUMN resultado');
-            DB::statement('ALTER TABLE senasofiaplus_validation_logs CHANGE accion_parametro_id accion BIGINT UNSIGNED NOT NULL');
-            DB::statement('ALTER TABLE senasofiaplus_validation_logs CHANGE resultado_parametro_id resultado BIGINT UNSIGNED NOT NULL');
+            return;
         }
 
-        // Agregar foreign keys
-        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+        $this->replaceColumnsWithParametroIdsForMysql();
+    }
+
+    private function replaceColumnsWithParametroIdsForSqlite(): void
+    {
+        $this->dropAccionResultadoIndexes();
+
+        Schema::table(self::TABLE, function (Blueprint $table) {
+            $table->unsignedBigInteger('accion_new')->after('aspirante_id');
+            $table->unsignedBigInteger('resultado_new')->after('accion_new');
+        });
+
+        DB::statement(self::SQL_UPDATE.self::TABLE.' SET accion_new = accion_parametro_id, resultado_new = resultado_parametro_id');
+
+        Schema::table(self::TABLE, function (Blueprint $table) {
+            $table->dropColumn(['accion', 'resultado', 'accion_parametro_id', 'resultado_parametro_id']);
+        });
+
+        try {
+            DB::statement(self::SQL_ALTER_TABLE.self::TABLE.' RENAME COLUMN accion_new TO accion');
+            DB::statement(self::SQL_ALTER_TABLE.self::TABLE.' RENAME COLUMN resultado_new TO resultado');
+        } catch (Exception) {
+            Schema::table(self::TABLE, function (Blueprint $table) {
+                $table->unsignedBigInteger('accion')->after('aspirante_id');
+                $table->unsignedBigInteger('resultado')->after('accion');
+            });
+            DB::statement(self::SQL_UPDATE.self::TABLE.' SET accion = accion_new, resultado = resultado_new');
+            Schema::table(self::TABLE, function (Blueprint $table) {
+                $table->dropColumn(['accion_new', 'resultado_new']);
+            });
+        }
+    }
+
+    private function replaceColumnsWithParametroIdsForMysql(): void
+    {
+        DB::statement(self::SQL_ALTER_TABLE.self::TABLE.' DROP COLUMN accion, DROP COLUMN resultado');
+        DB::statement(self::SQL_ALTER_TABLE.self::TABLE.' CHANGE accion_parametro_id accion BIGINT UNSIGNED NOT NULL');
+        DB::statement(self::SQL_ALTER_TABLE.self::TABLE.' CHANGE resultado_parametro_id resultado BIGINT UNSIGNED NOT NULL');
+    }
+
+    private function addAccionResultadoForeignKeys(): void
+    {
+        if (Schema::hasColumn(self::TABLE, 'accion')) {
+            Schema::table(self::TABLE, function (Blueprint $table) {
+                $table->foreign('accion')
+                    ->references('id')
+                    ->on('parametros')
+                    ->onDelete('restrict');
+            });
+        }
+
+        if (Schema::hasColumn(self::TABLE, 'resultado')) {
+            Schema::table(self::TABLE, function (Blueprint $table) {
+                $table->foreign('resultado')
+                    ->references('id')
+                    ->on('parametros')
+                    ->onDelete('restrict');
+            });
+        }
+    }
+
+    private function addAccionResultadoForeignKeysRequired(): void
+    {
+        Schema::table(self::TABLE, function (Blueprint $table) {
             $table->foreign('accion')
                 ->references('id')
                 ->on('parametros')
@@ -184,89 +282,55 @@ return new class extends Migration
                 ->on('parametros')
                 ->onDelete('restrict');
         });
+    }
 
-        // Recrear índice compuesto
-        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+    private function recreateAccionResultadoIndex(): void
+    {
+        Schema::table(self::TABLE, function (Blueprint $table) {
             $table->index(['accion', 'resultado']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    private function revertAccionResultadoData(array $parametros): void
     {
-        // Obtener los IDs de los parámetros por ID (280, 281, 282, 283 según ParametroSeeder)
-        $validar = Parametro::find(280);
-        $exitoso = Parametro::find(281);
-        $error = Parametro::find(282);
-        $advertencia = Parametro::find(283);
-
-        if (!$validar || !$exitoso || !$error || !$advertencia) {
-            return;
-        }
-
-        // Eliminar índices
-        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-            $table->dropIndex(['accion', 'resultado']);
-        });
-
-        // Eliminar foreign keys
-        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-            $table->dropForeign(['accion']);
-            $table->dropForeign(['resultado']);
-        });
-
-        // Crear columnas temporales enum
-        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-            $table->enum('accion_tmp', ['validar'])->after('accion');
-            $table->enum('resultado_tmp', ['exitoso', 'error', 'advertencia'])->after('resultado');
-        });
-
-        // Migrar datos de vuelta
-        DB::table('senasofiaplus_validation_logs')
-            ->where('accion', $validar->id)
+        DB::table(self::TABLE)
+            ->where('accion', $parametros['validar']->id)
             ->update(['accion_tmp' => 'validar']);
 
-        DB::table('senasofiaplus_validation_logs')
-            ->where('resultado', $exitoso->id)
+        DB::table(self::TABLE)
+            ->where('resultado', $parametros['exitoso']->id)
             ->update(['resultado_tmp' => 'exitoso']);
 
-        DB::table('senasofiaplus_validation_logs')
-            ->where('resultado', $error->id)
+        DB::table(self::TABLE)
+            ->where('resultado', $parametros['error']->id)
             ->update(['resultado_tmp' => 'error']);
 
-        DB::table('senasofiaplus_validation_logs')
-            ->where('resultado', $advertencia->id)
+        DB::table(self::TABLE)
+            ->where('resultado', $parametros['advertencia']->id)
             ->update(['resultado_tmp' => 'advertencia']);
+    }
 
-        $driver = DB::getDriverName();
-
-        if ($driver === 'sqlite') {
-            // SQLite: usar Schema para modificar
-            Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+    private function revertColumnsToEnum(): void
+    {
+        if (DB::getDriverName() === 'sqlite') {
+            Schema::table(self::TABLE, function (Blueprint $table) {
                 $table->dropColumn(['accion', 'resultado']);
             });
 
-            Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+            Schema::table(self::TABLE, function (Blueprint $table) {
                 $table->dropColumn(['accion_tmp', 'resultado_tmp']);
             });
 
-            Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
+            Schema::table(self::TABLE, function (Blueprint $table) {
                 $table->string('accion')->default('validar')->after('aspirante_id');
                 $table->string('resultado')->after('accion');
             });
-        } else {
-            // MySQL/MariaDB
-            DB::statement('ALTER TABLE senasofiaplus_validation_logs DROP COLUMN accion, DROP COLUMN resultado');
-            DB::statement("ALTER TABLE senasofiaplus_validation_logs CHANGE accion_tmp accion ENUM('validar') NOT NULL");
-            DB::statement("ALTER TABLE senasofiaplus_validation_logs CHANGE resultado_tmp resultado ENUM('exitoso', 'error', 'advertencia') NOT NULL");
+
+            return;
         }
 
-        // Recrear índice compuesto
-        Schema::table('senasofiaplus_validation_logs', function (Blueprint $table) {
-            $table->index(['accion', 'resultado']);
-        });
+        DB::statement(self::SQL_ALTER_TABLE.self::TABLE.' DROP COLUMN accion, DROP COLUMN resultado');
+        DB::statement(self::SQL_ALTER_TABLE.self::TABLE." CHANGE accion_tmp accion ENUM('validar') NOT NULL");
+        DB::statement(self::SQL_ALTER_TABLE.self::TABLE." CHANGE resultado_tmp resultado ENUM('exitoso', 'error', 'advertencia') NOT NULL");
     }
 };
-

@@ -2,199 +2,205 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private const ON_DELETE_SET_NULL = 'set null';
+
+    private const JORNADA_ID_COLUMN = 'jornada_id';
+
+    private const TABLES_WITH_JORNADA_ID = [
+        'fichas_caracterizacion',
+        'caracterizacion_programas',
+        'complementarios_ofertados',
+        'ambiente_instructor_ficha',
+    ];
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        // Cambiar foreign keys de jornadas_formacion a parametros_temas
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            $this->upForSqlite();
 
-        // 1. Cambiar foreign key de fichas_caracterizacion.jornada_id a parametros_temas
-        if (Schema::hasTable('fichas_caracterizacion') && Schema::hasColumn('fichas_caracterizacion', 'jornada_id')) {
-            // Primero hacer la columna nullable (si no lo es ya)
+            return;
+        }
+
+        $this->upForMysql();
+    }
+
+    /**
+     * SQLite no soporta ALTER TABLE ... ADD FOREIGN KEY ni MODIFY.
+     * Usamos el schema builder de Laravel para retargetear FKs y renombrar tablas.
+     */
+    private function upForSqlite(): void
+    {
+        foreach (self::TABLES_WITH_JORNADA_ID as $tableName) {
+            $this->retargetJornadaForeignKeyToParametrosTema($tableName);
+        }
+
+        $this->migrateInstructorJornadaFormacionForSqlite();
+        Schema::dropIfExists('jornadas_formacion');
+    }
+
+    private function migrateInstructorJornadaFormacionForSqlite(): void
+    {
+        if (! Schema::hasTable('instructor_jornada_formacion') || Schema::hasTable('instructor_parametro_tema')) {
+            return;
+        }
+
+        Schema::disableForeignKeyConstraints();
+
+        try {
+            Schema::table('instructor_jornada_formacion', function (Blueprint $table) {
+                $table->dropForeign(['jornada_formacion_id']);
+            });
+        } catch (Throwable) {
+            // La FK puede no existir o tener otro nombre en entornos de testing.
+        }
+
+        Schema::enableForeignKeyConstraints();
+
+        Schema::table('instructor_jornada_formacion', function (Blueprint $table) {
+            $table->renameColumn('jornada_formacion_id', 'parametro_tema_id');
+        });
+
+        Schema::rename('instructor_jornada_formacion', 'instructor_parametro_tema');
+
+        Schema::table('instructor_parametro_tema', function (Blueprint $table) {
+            $table->foreign('parametro_tema_id')
+                ->references('id')
+                ->on('parametros_temas')
+                ->cascadeOnDelete();
+        });
+    }
+
+    private function retargetJornadaForeignKeyToParametrosTema(string $tableName, string $column = self::JORNADA_ID_COLUMN): void
+    {
+        if (! Schema::hasTable($tableName) || ! Schema::hasColumn($tableName, $column)) {
+            return;
+        }
+
+        Schema::disableForeignKeyConstraints();
+
+        try {
+            Schema::table($tableName, function (Blueprint $table) use ($column) {
+                $table->dropForeign([$column]);
+            });
+        } catch (Throwable) {
+            // La FK puede no existir o tener otro nombre en entornos de testing.
+        }
+
+        Schema::table($tableName, function (Blueprint $table) use ($column) {
+            $table->foreign($column)
+                ->references('id')
+                ->on('parametros_temas')
+                ->nullOnDelete();
+        });
+
+        Schema::enableForeignKeyConstraints();
+    }
+
+    /**
+     * Cambiar foreign keys de jornadas_formacion a parametros_temas (MySQL/MariaDB).
+     */
+    private function upForMysql(): void
+    {
+        foreach (self::TABLES_WITH_JORNADA_ID as $tableName) {
+            $this->retargetJornadaForeignKeyForMysql($tableName);
+        }
+
+        $this->migrateInstructorJornadaFormacionForMysql();
+        Schema::dropIfExists('jornadas_formacion');
+    }
+
+    private function retargetJornadaForeignKeyForMysql(string $tableName, string $column = self::JORNADA_ID_COLUMN): void
+    {
+        if (! Schema::hasTable($tableName) || ! Schema::hasColumn($tableName, $column)) {
+            return;
+        }
+
+        $this->makeColumnNullableForMysql($tableName, $column, $tableName === 'fichas_caracterizacion');
+        $this->dropForeignKeyOnColumn($tableName, $column, "{$tableName}_{$column}_foreign");
+        $this->addForeignKeyToParametrosTema($tableName, $column);
+    }
+
+    private function migrateInstructorJornadaFormacionForMysql(): void
+    {
+        if (! Schema::hasTable('instructor_jornada_formacion')) {
+            return;
+        }
+
+        $this->dropForeignKeyOnColumn(
+            'instructor_jornada_formacion',
+            'jornada_formacion_id',
+            'instructor_jornada_formacion_jornada_formacion_id_foreign'
+        );
+
+        DB::statement('ALTER TABLE instructor_jornada_formacion CHANGE jornada_formacion_id parametro_tema_id BIGINT UNSIGNED');
+        $this->addForeignKeyToParametrosTema('instructor_jornada_formacion', 'parametro_tema_id', true);
+        Schema::rename('instructor_jornada_formacion', 'instructor_parametro_tema');
+    }
+
+    private function makeColumnNullableForMysql(string $tableName, string $column, bool $suppressErrors = false): void
+    {
+        if ($suppressErrors) {
             try {
-                DB::statement('ALTER TABLE fichas_caracterizacion MODIFY jornada_id BIGINT UNSIGNED NULL');
-            } catch (\Exception $e) {
+                DB::statement("ALTER TABLE {$tableName} MODIFY {$column} BIGINT UNSIGNED NULL");
+            } catch (Exception) {
                 // Continuar si ya es nullable o si hay otro error
             }
 
-            // Eliminar foreign key antigua si existe
-            try {
-                DB::statement('ALTER TABLE fichas_caracterizacion DROP FOREIGN KEY fichas_caracterizacion_jornada_id_foreign');
-            } catch (\Exception $e) {
-                // Intentar con otro nombre posible
-                try {
-                    $constraints = DB::select("
-                        SELECT CONSTRAINT_NAME
-                        FROM information_schema.KEY_COLUMN_USAGE
-                        WHERE TABLE_SCHEMA = DATABASE()
-                        AND TABLE_NAME = 'fichas_caracterizacion'
-                        AND COLUMN_NAME = 'jornada_id'
-                        AND REFERENCED_TABLE_NAME IS NOT NULL
-                    ");
-                    foreach ($constraints as $constraint) {
-                        DB::statement("ALTER TABLE fichas_caracterizacion DROP FOREIGN KEY {$constraint->CONSTRAINT_NAME}");
-                    }
-                } catch (\Exception $e2) {
-                    // Continuar si no se puede eliminar
-                }
-            }
-
-            // Agregar nueva foreign key a parametros_temas
-            try {
-                DB::statement('ALTER TABLE fichas_caracterizacion
-                    ADD CONSTRAINT fichas_caracterizacion_jornada_id_foreign
-                    FOREIGN KEY (jornada_id) REFERENCES parametros_temas(id) ON DELETE SET NULL');
-            } catch (\Exception $e) {
-                // Si falla, intentar sin nombre de constraint
-                DB::statement('ALTER TABLE fichas_caracterizacion
-                    ADD FOREIGN KEY (jornada_id) REFERENCES parametros_temas(id) ON DELETE SET NULL');
-            }
+            return;
         }
 
-        // 2. Cambiar foreign key de caracterizacion_programas.jornada_id a parametros_temas
-        if (Schema::hasTable('caracterizacion_programas') && Schema::hasColumn('caracterizacion_programas', 'jornada_id')) {
-            // Primero hacer la columna nullable
-            DB::statement('ALTER TABLE caracterizacion_programas MODIFY jornada_id BIGINT UNSIGNED NULL');
+        DB::statement("ALTER TABLE {$tableName} MODIFY {$column} BIGINT UNSIGNED NULL");
+    }
 
-            // Eliminar foreign key antigua
-            try {
-                DB::statement('ALTER TABLE caracterizacion_programas DROP FOREIGN KEY caracterizacion_programas_jornada_id_foreign');
-            } catch (\Exception $e) {
-                $constraints = DB::select("
-                    SELECT CONSTRAINT_NAME
-                    FROM information_schema.KEY_COLUMN_USAGE
-                    WHERE TABLE_SCHEMA = DATABASE()
-                    AND TABLE_NAME = 'caracterizacion_programas'
-                    AND COLUMN_NAME = 'jornada_id'
-                    AND REFERENCED_TABLE_NAME IS NOT NULL
-                ");
-                foreach ($constraints as $constraint) {
-                    DB::statement("ALTER TABLE caracterizacion_programas DROP FOREIGN KEY {$constraint->CONSTRAINT_NAME}");
-                }
-            }
-
-            // Agregar nueva foreign key a parametros_temas
-            try {
-                DB::statement('ALTER TABLE caracterizacion_programas
-                    ADD CONSTRAINT caracterizacion_programas_jornada_id_foreign
-                    FOREIGN KEY (jornada_id) REFERENCES parametros_temas(id) ON DELETE SET NULL');
-            } catch (\Exception $e) {
-                DB::statement('ALTER TABLE caracterizacion_programas
-                    ADD FOREIGN KEY (jornada_id) REFERENCES parametros_temas(id) ON DELETE SET NULL');
-            }
+    private function dropForeignKeyOnColumn(string $tableName, string $column, string $defaultConstraintName): void
+    {
+        try {
+            DB::statement("ALTER TABLE {$tableName} DROP FOREIGN KEY {$defaultConstraintName}");
+        } catch (Exception) {
+            $this->dropForeignKeysFromInformationSchema($tableName, $column);
         }
+    }
 
-        // 3. Cambiar foreign key de complementarios_ofertados.jornada_id a parametros_temas
-        if (Schema::hasTable('complementarios_ofertados') && Schema::hasColumn('complementarios_ofertados', 'jornada_id')) {
-            // Primero hacer la columna nullable
-            DB::statement('ALTER TABLE complementarios_ofertados MODIFY jornada_id BIGINT UNSIGNED NULL');
+    private function dropForeignKeysFromInformationSchema(string $tableName, string $column): void
+    {
+        try {
+            $constraints = DB::select("
+                SELECT CONSTRAINT_NAME
+                FROM information_schema.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = ?
+                AND COLUMN_NAME = ?
+                AND REFERENCED_TABLE_NAME IS NOT NULL
+            ", [$tableName, $column]);
 
-            // Eliminar foreign key antigua
-            try {
-                DB::statement('ALTER TABLE complementarios_ofertados DROP FOREIGN KEY complementarios_ofertados_jornada_id_foreign');
-            } catch (\Exception $e) {
-                $constraints = DB::select("
-                    SELECT CONSTRAINT_NAME
-                    FROM information_schema.KEY_COLUMN_USAGE
-                    WHERE TABLE_SCHEMA = DATABASE()
-                    AND TABLE_NAME = 'complementarios_ofertados'
-                    AND COLUMN_NAME = 'jornada_id'
-                    AND REFERENCED_TABLE_NAME IS NOT NULL
-                ");
-                foreach ($constraints as $constraint) {
-                    DB::statement("ALTER TABLE complementarios_ofertados DROP FOREIGN KEY {$constraint->CONSTRAINT_NAME}");
-                }
+            foreach ($constraints as $constraint) {
+                DB::statement("ALTER TABLE {$tableName} DROP FOREIGN KEY {$constraint->CONSTRAINT_NAME}");
             }
-
-            // Agregar nueva foreign key a parametros_temas
-            try {
-                DB::statement('ALTER TABLE complementarios_ofertados
-                    ADD CONSTRAINT complementarios_ofertados_jornada_id_foreign
-                    FOREIGN KEY (jornada_id) REFERENCES parametros_temas(id) ON DELETE SET NULL');
-            } catch (\Exception $e) {
-                DB::statement('ALTER TABLE complementarios_ofertados
-                    ADD FOREIGN KEY (jornada_id) REFERENCES parametros_temas(id) ON DELETE SET NULL');
-            }
+        } catch (Exception) {
+            // Continuar si no se puede eliminar
         }
+    }
 
-        // 4. Cambiar foreign key de ambiente_instructor_ficha.jornada_id a parametros_temas
-        if (Schema::hasTable('ambiente_instructor_ficha') && Schema::hasColumn('ambiente_instructor_ficha', 'jornada_id')) {
-            // Primero hacer la columna nullable
-            DB::statement('ALTER TABLE ambiente_instructor_ficha MODIFY jornada_id BIGINT UNSIGNED NULL');
+    private function addForeignKeyToParametrosTema(string $tableName, string $column, bool $cascadeOnDelete = false): void
+    {
+        $constraintName = "{$tableName}_{$column}_foreign";
+        $onDeleteClause = $cascadeOnDelete ? 'ON DELETE CASCADE' : 'ON DELETE SET NULL';
 
-            // Eliminar foreign key antigua
-            try {
-                DB::statement('ALTER TABLE ambiente_instructor_ficha DROP FOREIGN KEY ambiente_instructor_ficha_jornada_id_foreign');
-            } catch (\Exception $e) {
-                $constraints = DB::select("
-                    SELECT CONSTRAINT_NAME
-                    FROM information_schema.KEY_COLUMN_USAGE
-                    WHERE TABLE_SCHEMA = DATABASE()
-                    AND TABLE_NAME = 'ambiente_instructor_ficha'
-                    AND COLUMN_NAME = 'jornada_id'
-                    AND REFERENCED_TABLE_NAME IS NOT NULL
-                ");
-                foreach ($constraints as $constraint) {
-                    DB::statement("ALTER TABLE ambiente_instructor_ficha DROP FOREIGN KEY {$constraint->CONSTRAINT_NAME}");
-                }
-            }
-
-            // Agregar nueva foreign key a parametros_temas
-            try {
-                DB::statement('ALTER TABLE ambiente_instructor_ficha
-                    ADD CONSTRAINT ambiente_instructor_ficha_jornada_id_foreign
-                    FOREIGN KEY (jornada_id) REFERENCES parametros_temas(id) ON DELETE SET NULL');
-            } catch (\Exception $e) {
-                DB::statement('ALTER TABLE ambiente_instructor_ficha
-                    ADD FOREIGN KEY (jornada_id) REFERENCES parametros_temas(id) ON DELETE SET NULL');
-            }
-        }
-
-        // 5. Cambiar tabla pivot instructor_jornada_formacion para usar parametros_temas
-        if (Schema::hasTable('instructor_jornada_formacion')) {
-            // Eliminar foreign key antigua
-            try {
-                DB::statement('ALTER TABLE instructor_jornada_formacion DROP FOREIGN KEY instructor_jornada_formacion_jornada_formacion_id_foreign');
-            } catch (\Exception $e) {
-                $constraints = DB::select("
-                    SELECT CONSTRAINT_NAME
-                    FROM information_schema.KEY_COLUMN_USAGE
-                    WHERE TABLE_SCHEMA = DATABASE()
-                    AND TABLE_NAME = 'instructor_jornada_formacion'
-                    AND COLUMN_NAME = 'jornada_formacion_id'
-                    AND REFERENCED_TABLE_NAME IS NOT NULL
-                ");
-                foreach ($constraints as $constraint) {
-                    DB::statement("ALTER TABLE instructor_jornada_formacion DROP FOREIGN KEY {$constraint->CONSTRAINT_NAME}");
-                }
-            }
-
-            // Renombrar columna
-            DB::statement('ALTER TABLE instructor_jornada_formacion CHANGE jornada_formacion_id parametro_tema_id BIGINT UNSIGNED');
-
-            // Agregar nueva foreign key
-            try {
-                DB::statement('ALTER TABLE instructor_jornada_formacion
-                    ADD CONSTRAINT instructor_jornada_formacion_parametro_tema_id_foreign
-                    FOREIGN KEY (parametro_tema_id) REFERENCES parametros_temas(id) ON DELETE CASCADE');
-            } catch (\Exception $e) {
-                DB::statement('ALTER TABLE instructor_jornada_formacion
-                    ADD FOREIGN KEY (parametro_tema_id) REFERENCES parametros_temas(id) ON DELETE CASCADE');
-            }
-
-            // Renombrar tabla
-            Schema::rename('instructor_jornada_formacion', 'instructor_parametro_tema');
-        }
-
-        // 6. Eliminar tabla jornadas_formacion
-        if (Schema::hasTable('jornadas_formacion')) {
-            Schema::dropIfExists('jornadas_formacion');
+        try {
+            DB::statement("ALTER TABLE {$tableName}
+                ADD CONSTRAINT {$constraintName}
+                FOREIGN KEY ({$column}) REFERENCES parametros_temas(id) {$onDeleteClause}");
+        } catch (Exception) {
+            DB::statement("ALTER TABLE {$tableName}
+                ADD FOREIGN KEY ({$column}) REFERENCES parametros_temas(id) {$onDeleteClause}");
         }
     }
 
@@ -203,7 +209,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Recrear tabla jornadas_formacion
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
+        $this->downForMysql();
+    }
+
+    private function downForMysql(): void
+    {
         Schema::create('jornadas_formacion', function (Blueprint $table) {
             $table->id();
             $table->string('jornada');
@@ -212,90 +226,54 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Renombrar tabla pivot de vuelta
-        if (Schema::hasTable('instructor_parametro_tema')) {
-            Schema::rename('instructor_parametro_tema', 'instructor_jornada_formacion');
+        $this->revertInstructorParametroTemaPivot();
 
-            // Eliminar foreign key a parametros_temas
-            try {
-                DB::statement('ALTER TABLE instructor_jornada_formacion DROP FOREIGN KEY instructor_jornada_formacion_parametro_tema_id_foreign');
-            } catch (\Exception $e) {
-                $constraints = DB::select("
-                    SELECT CONSTRAINT_NAME
-                    FROM information_schema.KEY_COLUMN_USAGE
-                    WHERE TABLE_SCHEMA = DATABASE()
-                    AND TABLE_NAME = 'instructor_jornada_formacion'
-                    AND COLUMN_NAME = 'parametro_tema_id'
-                    AND REFERENCED_TABLE_NAME IS NOT NULL
-                ");
-                foreach ($constraints as $constraint) {
-                    DB::statement("ALTER TABLE instructor_jornada_formacion DROP FOREIGN KEY {$constraint->CONSTRAINT_NAME}");
-                }
-            }
+        foreach (self::TABLES_WITH_JORNADA_ID as $tableName) {
+            $this->restoreJornadaForeignKeyOnTable($tableName);
+        }
+    }
 
-            // Cambiar columna de vuelta
-            DB::statement('ALTER TABLE instructor_jornada_formacion CHANGE parametro_tema_id jornada_formacion_id BIGINT UNSIGNED');
-
-            // Agregar foreign key antigua
-            Schema::table('instructor_jornada_formacion', function (Blueprint $table) {
-                $table->foreign('jornada_formacion_id')
-                    ->references('id')
-                    ->on('jornadas_formacion')
-                    ->onDelete('cascade');
-            });
+    private function revertInstructorParametroTemaPivot(): void
+    {
+        if (! Schema::hasTable('instructor_parametro_tema')) {
+            return;
         }
 
-        // Recrear foreign keys (solo si las tablas existen)
-        if (Schema::hasTable('fichas_caracterizacion')) {
-            Schema::table('fichas_caracterizacion', function (Blueprint $table) {
-                if (Schema::hasColumn('fichas_caracterizacion', 'jornada_id')) {
-                    try {
-                        DB::statement('ALTER TABLE fichas_caracterizacion DROP FOREIGN KEY fichas_caracterizacion_jornada_id_foreign');
-                    } catch (\Exception $e) {
-                        // Continuar
-                    }
-                    $table->foreign('jornada_id')->references('id')->on('jornadas_formacion')->onDelete('set null');
-                }
-            });
+        Schema::rename('instructor_parametro_tema', 'instructor_jornada_formacion');
+
+        $this->dropForeignKeyOnColumn(
+            'instructor_jornada_formacion',
+            'parametro_tema_id',
+            'instructor_jornada_formacion_parametro_tema_id_foreign'
+        );
+
+        DB::statement('ALTER TABLE instructor_jornada_formacion CHANGE parametro_tema_id jornada_formacion_id BIGINT UNSIGNED');
+
+        Schema::table('instructor_jornada_formacion', function (Blueprint $table) {
+            $table->foreign('jornada_formacion_id')
+                ->references('id')
+                ->on('jornadas_formacion')
+                ->onDelete('cascade');
+        });
+    }
+
+    private function restoreJornadaForeignKeyOnTable(string $tableName): void
+    {
+        if (! Schema::hasTable($tableName) || ! Schema::hasColumn($tableName, self::JORNADA_ID_COLUMN)) {
+            return;
         }
 
-        if (Schema::hasTable('caracterizacion_programas')) {
-            Schema::table('caracterizacion_programas', function (Blueprint $table) {
-                if (Schema::hasColumn('caracterizacion_programas', 'jornada_id')) {
-                    try {
-                        DB::statement('ALTER TABLE caracterizacion_programas DROP FOREIGN KEY caracterizacion_programas_jornada_id_foreign');
-                    } catch (\Exception $e) {
-                        // Continuar
-                    }
-                    $table->foreign('jornada_id')->references('id')->on('jornadas_formacion')->onDelete('set null');
-                }
-            });
+        try {
+            DB::statement("ALTER TABLE {$tableName} DROP FOREIGN KEY {$tableName}_jornada_id_foreign");
+        } catch (Exception) {
+            // Continuar
         }
 
-        if (Schema::hasTable('complementarios_ofertados')) {
-            Schema::table('complementarios_ofertados', function (Blueprint $table) {
-                if (Schema::hasColumn('complementarios_ofertados', 'jornada_id')) {
-                    try {
-                        DB::statement('ALTER TABLE complementarios_ofertados DROP FOREIGN KEY complementarios_ofertados_jornada_id_foreign');
-                    } catch (\Exception $e) {
-                        // Continuar
-                    }
-                    $table->foreign('jornada_id')->references('id')->on('jornadas_formacion')->onDelete('set null');
-                }
-            });
-        }
-
-        if (Schema::hasTable('ambiente_instructor_ficha')) {
-            Schema::table('ambiente_instructor_ficha', function (Blueprint $table) {
-                if (Schema::hasColumn('ambiente_instructor_ficha', 'jornada_id')) {
-                    try {
-                        DB::statement('ALTER TABLE ambiente_instructor_ficha DROP FOREIGN KEY ambiente_instructor_ficha_jornada_id_foreign');
-                    } catch (\Exception $e) {
-                        // Continuar
-                    }
-                    $table->foreign('jornada_id')->references('id')->on('jornadas_formacion')->onDelete('set null');
-                }
-            });
-        }
+        Schema::table($tableName, function (Blueprint $table) {
+            $table->foreign(self::JORNADA_ID_COLUMN)
+                ->references('id')
+                ->on('jornadas_formacion')
+                ->onDelete(self::ON_DELETE_SET_NULL);
+        });
     }
 };

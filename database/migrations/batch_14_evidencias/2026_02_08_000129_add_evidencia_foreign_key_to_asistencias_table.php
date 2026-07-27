@@ -12,14 +12,42 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (! Schema::hasTable('asistencias') || ! Schema::hasTable('evidencias')) {
+        if (! $this->shouldAddEvidenciaForeignKey()) {
             return;
         }
 
-        if (! Schema::hasColumn('asistencias', 'evidencia_id')) {
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            $this->addEvidenciaForeignKeyForSqlite();
+
             return;
         }
 
+        $this->addEvidenciaForeignKeyForMysql();
+    }
+
+    private function shouldAddEvidenciaForeignKey(): bool
+    {
+        return Schema::hasTable('asistencias')
+            && Schema::hasTable('evidencias')
+            && Schema::hasColumn('asistencias', 'evidencia_id');
+    }
+
+    private function addEvidenciaForeignKeyForSqlite(): void
+    {
+        try {
+            Schema::table('asistencias', function (Blueprint $table) {
+                $table->foreign('evidencia_id')
+                    ->references('id')
+                    ->on('evidencias')
+                    ->cascadeOnDelete();
+            });
+        } catch (Throwable) {
+            // La FK ya existe en entornos SQLite de testing.
+        }
+    }
+
+    private function addEvidenciaForeignKeyForMysql(): void
+    {
         $foreignKeys = DB::select(
             'SELECT CONSTRAINT_NAME
              FROM information_schema.KEY_COLUMN_USAGE
@@ -30,7 +58,7 @@ return new class extends Migration
             [DB::getDatabaseName(), 'asistencias', 'evidencia_id']
         );
 
-        if (!empty($foreignKeys)) {
+        if (! empty($foreignKeys)) {
             return;
         }
 

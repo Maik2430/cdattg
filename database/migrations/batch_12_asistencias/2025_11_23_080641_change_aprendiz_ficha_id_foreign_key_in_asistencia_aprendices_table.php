@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -20,18 +20,27 @@ return new class extends Migration
         // Actualizar los valores de aprendiz_ficha_id para que apunten directamente a aprendices.id
         // Esto asume que aprendiz_ficha_id en asistencia_aprendices contiene el ID de aprendiz_fichas_caracterizacion
         // Necesitamos obtener el aprendiz_id correspondiente de la tabla aprendiz_fichas_caracterizacion
+        // Subconsulta compatible con MySQL y SQLite (el UPDATE con INNER JOIN solo funciona en MySQL)
         DB::statement('
-            UPDATE asistencia_aprendices aa
-            INNER JOIN aprendiz_fichas_caracterizacion afc ON aa.aprendiz_ficha_id = afc.id
-            SET aa.aprendiz_ficha_id = afc.aprendiz_id
+            UPDATE asistencia_aprendices
+            SET aprendiz_ficha_id = (
+                SELECT aprendiz_id
+                FROM aprendiz_fichas_caracterizacion
+                WHERE aprendiz_fichas_caracterizacion.id = asistencia_aprendices.aprendiz_ficha_id
+            )
+            WHERE EXISTS (
+                SELECT 1
+                FROM aprendiz_fichas_caracterizacion
+                WHERE aprendiz_fichas_caracterizacion.id = asistencia_aprendices.aprendiz_ficha_id
+            )
         ');
 
         // Crear la nueva foreign key que apunta a aprendices.id
         Schema::table('asistencia_aprendices', function (Blueprint $table) {
             $table->foreign('aprendiz_ficha_id')
-                  ->references('id')
-                  ->on('aprendices')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('aprendices')
+                ->onDelete('cascade');
         });
     }
 
@@ -52,9 +61,9 @@ return new class extends Migration
         // Restaurar la foreign key original
         Schema::table('asistencia_aprendices', function (Blueprint $table) {
             $table->foreign('aprendiz_ficha_id')
-                  ->references('id')
-                  ->on('aprendiz_fichas_caracterizacion')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('aprendiz_fichas_caracterizacion')
+                ->onDelete('cascade');
         });
     }
 };

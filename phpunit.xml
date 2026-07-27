@@ -43,13 +43,6 @@
         </include>
     </source>
 
-    <coverage>
-        <report>
-            <text outputFile="php://stdout"/>
-            <html outputDirectory="storage/coverage"/>
-        </report>
-    </coverage>
-
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
