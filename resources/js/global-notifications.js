@@ -9,23 +9,22 @@ let listenerSetup = false;
 // Función global para mostrar notificaciones
 function showGlobalNotify(message, type = 'success') {
     console.log('showGlobalNotify called:', message, type);
-    
-    // 🔥 SANITIZAR MENSAJE - Evitar HTML injection
+
+    // Sanitizar mensaje sin regex (evita ReDoS javascript:S5852)
     if (typeof message !== 'string') {
         message = String(message);
     }
-    
-    // Eliminar cualquier etiqueta HTML
-    message = message.replace(/<[^>]*>/g, '').trim();
-    
+
+    message = stripHtmlToPlainText(message).trim();
+
     // Limitar longitud para evitar desbordamiento
     if (message.length > 200) {
         message = message.substring(0, 200) + '...';
     }
-    
+
     const container = document.getElementById('notify-container');
     console.log('Container found:', !!container);
-    
+
     if (!container) {
         console.error('Notify container not found');
         return;
@@ -33,7 +32,7 @@ function showGlobalNotify(message, type = 'success') {
 
     const div = document.createElement('div');
     div.className = `notify notify-${type}`;
-    div.textContent = message; // 🔥 USAR textContent EN VEZ DE innerHTML
+    div.textContent = message;
 
     console.log('Created notify element:', div);
     container.appendChild(div);
@@ -51,6 +50,15 @@ function showGlobalNotify(message, type = 'success') {
         div.style.transform = 'translateX(100%)';
         setTimeout(() => div.remove(), 200);
     }, 2500);
+}
+
+/**
+ * Extrae texto plano de un string con posible HTML, sin expresiones regulares.
+ */
+function stripHtmlToPlainText(value) {
+    const doc = new DOMParser().parseFromString(value, 'text/html');
+
+    return doc.body.textContent || '';
 }
 
 // Configurar listener para Livewire 3 - SOLO UN LISTENER
