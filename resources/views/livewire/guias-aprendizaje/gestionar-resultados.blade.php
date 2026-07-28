@@ -40,7 +40,7 @@
                                     <span class="status-badge status-assigned">Asignado</span>
                                 </td>
                                 <td class="cell-accion">
-                                    <button onclick="confirmarDesasignarResultado({{ $resultado->id }}, '{{ $resultado->codigo }} - {{ $resultado->nombre }}')" 
+                                    <button onclick="confirmarDesasignarResultado({{ $resultado->id }}, '{{ $resultado->codigo }} - {{ $resultado->nombre }}')"
                                             class="btn-action btn-desasignar">
                                         <i class="fas fa-times"></i>
                                         <span>Desasignar</span>
@@ -62,7 +62,7 @@
                                 </td>
                             </tr>
                         @endforelse
-                        
+
                         @foreach($resultadosDisponibles as $resultado)
                             <tr class="table-row">
                                 <td class="cell-codigo">
@@ -73,7 +73,7 @@
                                     <span class="status-badge status-available">Disponible</span>
                                 </td>
                                 <td class="cell-accion">
-                                    <button onclick="confirmarAsignarResultado({{ $resultado->id }}, '{{ $resultado->codigo }} - {{ $resultado->nombre }}')" 
+                                    <button onclick="confirmarAsignarResultado({{ $resultado->id }}, '{{ $resultado->codigo }} - {{ $resultado->nombre }}')"
                                             class="btn-action btn-asignar">
                                         <i class="fas fa-plus"></i>
                                         <span>Asignar</span>
@@ -86,8 +86,8 @@
             </div>
         </div>
 
-        
-        
+
+
     @else
         <div class="loading-state">
             <div class="loading-content">
@@ -474,22 +474,22 @@ button.action-btn.action-remove,
     .modern-table {
         font-size: 0.8rem;
     }
-    
+
     .modern-table thead th,
     .modern-table tbody td {
         padding: 0.75rem 0.5rem;
     }
-    
+
     .action-btn {
         padding: 0.375rem 0.75rem;
         font-size: 0.75rem;
     }
-    
+
     .code-badge {
         padding: 0.25rem 0.5rem;
         font-size: 0.7rem;
     }
-    
+
     .status-badge {
         padding: 0.25rem 0.5rem;
         font-size: 0.7rem;
@@ -505,7 +505,7 @@ window.confirmarDesasignarResultado = function(resultadoId, nombreCompleto) {
     const partes = nombreCompleto.split(' - ');
     const codigo = partes[0] || resultadoId;
     const nombre = partes[1] || nombreCompleto;
-    
+
     // Deshabilitar temporalmente para evitar doble click
     const button = event.target.closest('button');
     if (button) {
@@ -514,7 +514,7 @@ window.confirmarDesasignarResultado = function(resultadoId, nombreCompleto) {
             button.disabled = false;
         }, 2000);
     }
-    
+
     if (typeof showConfirmModal === 'function') {
         showConfirmModal(
             'Desasignar resultado',
@@ -540,7 +540,7 @@ window.confirmarAsignarResultado = function(resultadoId, nombreCompleto) {
     const partes = nombreCompleto.split(' - ');
     const codigo = partes[0] || resultadoId;
     const nombre = partes[1] || nombreCompleto;
-    
+
     // Deshabilitar temporalmente para evitar doble click
     const button = event.target.closest('button');
     if (button) {
@@ -549,7 +549,7 @@ window.confirmarAsignarResultado = function(resultadoId, nombreCompleto) {
             button.disabled = false;
         }, 2000);
     }
-    
+
     if (typeof showConfirmModal === 'function') {
         showConfirmModal(
             'Asignar resultado',

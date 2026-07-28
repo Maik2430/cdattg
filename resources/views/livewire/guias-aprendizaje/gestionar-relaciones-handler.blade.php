@@ -33,15 +33,15 @@
                         Resultados Asignados
                     </h4>
                     <div class="panel-search">
-                        <input 
-                            type="text" 
-                            wire:model.live="searchAsignado" 
+                        <input
+                            type="text"
+                            wire:model.live="searchAsignado"
                             placeholder="Buscar asignados..."
                             class="search-input-small"
                         >
                     </div>
                 </div>
-                
+
                 <div class="panel-body">
                     @if($resultadosAsignados->count() > 0)
                         <div class="resultados-list">
@@ -52,7 +52,7 @@
                                         <span class="resultado-nombre">{{ $resultado->nombre }}</span>
                                     </div>
                                     <div class="resultado-actions">
-                                        <button 
+                                        <button
                                             onclick="confirmarDesasociar({{ $resultado->id }}, '{{ $resultado->codigo }} - {{ $resultado->nombre }}')"
                                             class="btn-action btn-remove"
                                             title="Desasociar resultado"
@@ -82,15 +82,15 @@
                         Resultados Disponibles
                     </h4>
                     <div class="panel-search">
-                        <input 
-                            type="text" 
-                            wire:model.live="searchDisponible" 
+                        <input
+                            type="text"
+                            wire:model.live="searchDisponible"
                             placeholder="Buscar disponibles..."
                             class="search-input-small"
                         >
                     </div>
                 </div>
-                
+
                 <div class="panel-body">
                     @if($resultadosDisponibles->count() > 0)
                         <div class="resultados-list">
@@ -101,7 +101,7 @@
                                         <span class="resultado-nombre">{{ $resultado->nombre }}</span>
                                     </div>
                                     <div class="resultado-actions">
-                                        <button 
+                                        <button
                                             onclick="confirmarAsociar({{ $resultado->id }}, '{{ $resultado->codigo }} - {{ $resultado->nombre }}')"
                                             class="btn-action btn-add"
                                             title="Asignar resultado"
@@ -476,33 +476,33 @@
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
+
     .relaciones-header {
         flex-direction: column;
         gap: 16px;
         text-align: center;
     }
-    
+
     .header-stats {
         justify-content: center;
     }
-    
+
     .relaciones-footer {
         flex-direction: column;
         gap: 16px;
         text-align: center;
     }
-    
+
     .footer-actions {
         justify-content: center;
     }
-    
+
     .resultado-item {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
     }
-    
+
     .resultado-actions {
         margin-left: 0;
         justify-content: center;
