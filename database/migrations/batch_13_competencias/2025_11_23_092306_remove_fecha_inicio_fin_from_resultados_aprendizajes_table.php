@@ -11,8 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('resultados_aprendizajes', function (Blueprint $table) {
-            $table->dropColumn(['fecha_inicio', 'fecha_fin']);
+        $columns = collect(['fecha_inicio', 'fecha_fin'])
+            ->filter(fn (string $column) => Schema::hasColumn('resultados_aprendizajes', $column))
+            ->values()
+            ->all();
+
+        if ($columns === []) {
+            return;
+        }
+
+        Schema::table('resultados_aprendizajes', function (Blueprint $table) use ($columns) {
+            $table->dropColumn($columns);
         });
     }
 

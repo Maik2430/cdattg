@@ -3,11 +3,14 @@
 namespace Tests\Unit\Commands;
 
 use App\Console\Commands\RegistrarAsistenciaPrueba;
-use App\Models\AprendizFicha;
+use App\Events\NuevaAsistenciaRegistrada;
+use App\Models\Aprendiz;
 use App\Models\AsistenciaAprendiz;
+use App\Models\FichaCaracterizacion;
 use App\Models\InstructorFichaCaracterizacion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -22,6 +25,7 @@ class RegistrarAsistenciaPruebaCommandTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
             \Database\Seeders\PaisSeeder::class,
             \Database\Seeders\DepartamentoSeeder::class,
             \Database\Seeders\MunicipioSeeder::class,
@@ -42,9 +46,9 @@ class RegistrarAsistenciaPruebaCommandTest extends TestCase
     #[Test]
     public function valida_tipo_invalido(): void
     {
-        Artisan::call('asistencia:registrar', ['tipo' => 'invalido']);
+        $exitCode = Artisan::call('asistencia:registrar', ['tipo' => 'invalido']);
 
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
 
         $output = Artisan::output();
         $this->assertStringContainsString('Tipo no válido', $output);
@@ -53,9 +57,9 @@ class RegistrarAsistenciaPruebaCommandTest extends TestCase
     #[Test]
     public function muestra_error_si_no_hay_aprendices(): void
     {
-        Artisan::call('asistencia:registrar', ['tipo' => 'entrada']);
+        $exitCode = Artisan::call('asistencia:registrar', ['tipo' => 'entrada']);
 
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
 
         $output = Artisan::output();
         $this->assertStringContainsString('No se encontró ningún aprendiz', $output);
@@ -64,11 +68,12 @@ class RegistrarAsistenciaPruebaCommandTest extends TestCase
     #[Test]
     public function muestra_error_si_no_hay_instructores_asignados(): void
     {
-        AprendizFicha::factory()->create();
+        $ficha = FichaCaracterizacion::factory()->create();
+        Aprendiz::factory()->create(['ficha_caracterizacion_id' => $ficha->id]);
 
-        Artisan::call('asistencia:registrar', ['tipo' => 'entrada']);
+        $exitCode = Artisan::call('asistencia:registrar', ['tipo' => 'entrada']);
 
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
 
         $output = Artisan::output();
         $this->assertStringContainsString('No se encontró ningún instructor asignado', $output);
@@ -77,29 +82,35 @@ class RegistrarAsistenciaPruebaCommandTest extends TestCase
     #[Test]
     public function registra_asistencia_entrada(): void
     {
-        $aprendizFicha = AprendizFicha::factory()->create();
-        InstructorFichaCaracterizacion::factory()->create();
+        Event::fake([NuevaAsistenciaRegistrada::class]);
 
-        Artisan::call('asistencia:registrar', ['tipo' => 'entrada']);
+        $ficha = FichaCaracterizacion::factory()->create();
+        $aprendiz = Aprendiz::factory()->create(['ficha_caracterizacion_id' => $ficha->id]);
+        InstructorFichaCaracterizacion::factory()->create(['ficha_id' => $ficha->id]);
+
+        $exitCode = Artisan::call('asistencia:registrar', ['tipo' => 'entrada']);
 
         $output = Artisan::output();
         $this->assertStringContainsString('Asistencia de ENTRADA registrada', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
 
         $this->assertDatabaseHas('asistencia_aprendices', [
-            'hora_ingreso' => '!=',
+            'aprendiz_ficha_id' => $aprendiz->id,
         ]);
+
+        Event::assertDispatched(NuevaAsistenciaRegistrada::class);
     }
 
     #[Test]
     public function muestra_error_salida_sin_entrada(): void
     {
-        $aprendizFicha = AprendizFicha::factory()->create();
-        InstructorFichaCaracterizacion::factory()->create();
+        $ficha = FichaCaracterizacion::factory()->create();
+        Aprendiz::factory()->create(['ficha_caracterizacion_id' => $ficha->id]);
+        InstructorFichaCaracterizacion::factory()->create(['ficha_id' => $ficha->id]);
 
-        Artisan::call('asistencia:registrar', ['tipo' => 'salida']);
+        $exitCode = Artisan::call('asistencia:registrar', ['tipo' => 'salida']);
 
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
 
         $output = Artisan::output();
         $this->assertStringContainsString('No se encontró una asistencia de entrada', $output);
@@ -108,20 +119,27 @@ class RegistrarAsistenciaPruebaCommandTest extends TestCase
     #[Test]
     public function registra_asistencia_salida(): void
     {
-        $aprendizFicha = AprendizFicha::factory()->create();
-        $instructorFicha = InstructorFichaCaracterizacion::factory()->create();
+        Event::fake([NuevaAsistenciaRegistrada::class]);
 
-        AsistenciaAprendiz::factory()->create([
-            'aprendiz_ficha_id' => $aprendizFicha->id,
+        $ficha = FichaCaracterizacion::factory()->create();
+        $aprendiz = Aprendiz::factory()->create(['ficha_caracterizacion_id' => $ficha->id]);
+        $instructorFicha = InstructorFichaCaracterizacion::factory()->create(['ficha_id' => $ficha->id]);
+
+        AsistenciaAprendiz::query()->create([
             'instructor_ficha_id' => $instructorFicha->id,
+            'aprendiz_ficha_id' => $aprendiz->id,
             'hora_ingreso' => now()->format('H:i:s'),
             'hora_salida' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        Artisan::call('asistencia:registrar', ['tipo' => 'salida']);
+        $exitCode = Artisan::call('asistencia:registrar', ['tipo' => 'salida']);
 
         $output = Artisan::output();
         $this->assertStringContainsString('Asistencia de SALIDA registrada', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
+
+        Event::assertDispatched(NuevaAsistenciaRegistrada::class);
     }
 }

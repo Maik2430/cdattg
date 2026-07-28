@@ -24,6 +24,6 @@ class CacheWarmupCommandTest extends TestCase
     {
         $command = new CacheWarmupCommand(app(CacheService::class));
 
-        $this->assertStringContainsString('cache:warmup', $command->getSignature());
+        $this->assertEquals('cache:warmup', $command->getName());
     }
 }

@@ -32,8 +32,11 @@ yarn-error.log
 /.idea
 /.vscode
 /.cursor
+/tools/pcov/
 /storage/coverage/
 *.sqlite
 database/testing.sqlite
+database/testing_livewire_batch_b*.sqlite
+database/testing_livewire_batch_c.sqlite
 /coverage
 /public/asistencia_pdfs

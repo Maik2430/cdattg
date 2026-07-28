@@ -15,6 +15,13 @@ class ProcesarSalidasPendientesCommandTest extends TestCase
     #[Test]
     public function command_existe(): void
     {
+        $this->mock(PersonaIngresoSalidaService::class, function ($mock): void {
+            $mock->shouldReceive('procesarSalidasPendientes')->once()->andReturn([
+                'total_procesadas' => 0,
+                'reporte_id' => 1,
+            ]);
+        });
+
         $this->artisan('ingreso-salida:procesar-salidas-pendientes')
             ->assertExitCode(0);
     }

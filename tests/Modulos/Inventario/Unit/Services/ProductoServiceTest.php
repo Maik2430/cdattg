@@ -185,7 +185,7 @@ class ProductoServiceTest extends TestCase
     {
         $productoMock = $this->crearProductoMock();
 
-        $imagen = UploadedFile::fake()->image('producto.jpg');
+        $imagen = UploadedFile::fake()->create('producto.jpg', 100, 'image/jpeg');
         $datos = [
             'name' => self::PRODUCTO_ACTUALIZADO,
             'imagen' => $imagen,

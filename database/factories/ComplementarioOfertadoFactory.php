@@ -5,9 +5,9 @@ namespace Database\Factories;
 use App\Models\Ambiente;
 use App\Models\Complementarios\ComplementarioCatalogo;
 use App\Models\Complementarios\ComplementarioOfertado;
-use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Complementarios\ComplementarioOfertado>
@@ -108,9 +108,12 @@ class ComplementarioOfertadoFactory extends Factory
             'nivel_formacion' => 'CURSO ESPECIAL',
             'duracion_horas' => $this->faker->numberBetween(30, 120),
             'requisitos_ingreso' => $this->faker->paragraph(2),
-            'modalidad_id' => $this->obtenerModalidadId(),
             'activo' => true,
         ]);
+
+        if (Schema::hasColumn('complementarios_catalogo', 'modalidad_id')) {
+            $catalogo->update(['modalidad_id' => $this->obtenerModalidadId()]);
+        }
 
         return $catalogo->id;
     }
@@ -185,18 +188,38 @@ class ComplementarioOfertadoFactory extends Factory
     }
 
     /**
-     * Obtiene un ID de jornada de formación
+     * Obtiene un ID de jornada (parametros_temas del tema JORNADAS)
      */
     private function obtenerJornadaId(): int
     {
-        $jornadaId = JornadaFormacion::inRandomOrder()->value('id');
+        $jornadaId = ParametroTema::query()
+            ->whereHas('tema', fn ($query) => $query->where('name', 'LIKE', '%JORNADA%'))
+            ->inRandomOrder()
+            ->value('id');
 
-        if (!$jornadaId) {
-            $jornada = JornadaFormacion::factory()->create();
-            $jornadaId = $jornada->id;
+        if ($jornadaId) {
+            return $jornadaId;
         }
 
-        return $jornadaId;
+        $tema = \App\Models\Tema::firstOrCreate(
+            ['name' => 'JORNADAS'],
+            ['status' => 1]
+        );
+
+        $parametro = \App\Models\Parametro::firstOrCreate(
+            ['name' => 'DIURNA'],
+            ['status' => 1]
+        );
+
+        $jornada = ParametroTema::firstOrCreate(
+            [
+                'tema_id' => $tema->id,
+                'parametro_id' => $parametro->id,
+            ],
+            ['status' => 1]
+        );
+
+        return $jornada->id;
     }
 
     /**

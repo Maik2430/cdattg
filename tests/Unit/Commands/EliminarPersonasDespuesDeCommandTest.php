@@ -40,27 +40,27 @@ class EliminarPersonasDespuesDeCommandTest extends TestCase
     #[Test]
     public function valida_id_invalido_negativo(): void
     {
-        Artisan::call('personas:eliminar-despues-de', ['id' => -1]);
+        $exitCode = Artisan::call('personas:eliminar-despues-de', ['id' => -1]);
 
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
     }
 
     #[Test]
     public function valida_id_invalido_cero(): void
     {
-        Artisan::call('personas:eliminar-despues-de', ['id' => 0]);
+        $exitCode = Artisan::call('personas:eliminar-despues-de', ['id' => 0]);
 
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
     }
 
     #[Test]
     public function muestra_informacion_cuando_no_hay_personas(): void
     {
-        Artisan::call('personas:eliminar-despues-de', ['id' => 100]);
+        $exitCode = Artisan::call('personas:eliminar-despues-de', ['id' => 100]);
 
         $output = Artisan::output();
         $this->assertStringContainsString('No hay registros para eliminar', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -70,7 +70,7 @@ class EliminarPersonasDespuesDeCommandTest extends TestCase
         $ultimoId = $personas->max('id');
         $idLimite = $ultimoId - 3;
 
-        Artisan::call('personas:eliminar-despues-de', [
+        $exitCode = Artisan::call('personas:eliminar-despues-de', [
             'id' => $idLimite,
             '--force' => true,
         ]);
@@ -78,7 +78,7 @@ class EliminarPersonasDespuesDeCommandTest extends TestCase
         $output = Artisan::output();
         $this->assertStringContainsString('ELIMINACIÓN DE PERSONAS', $output);
         $this->assertStringContainsString('Total de registros a eliminar', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -87,9 +87,7 @@ class EliminarPersonasDespuesDeCommandTest extends TestCase
         $personas = Persona::factory()->count(5)->create();
         $ultimoId = $personas->max('id');
         $idLimite = $ultimoId - 3;
-        $totalEsperado = $personas->where('id', '>', $idLimite)->count();
-
-        Artisan::call('personas:eliminar-despues-de', [
+        $exitCode = Artisan::call('personas:eliminar-despues-de', [
             'id' => $idLimite,
             '--force' => true,
         ]);
@@ -99,7 +97,7 @@ class EliminarPersonasDespuesDeCommandTest extends TestCase
 
         $output = Artisan::output();
         $this->assertStringContainsString('Eliminación completada', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]

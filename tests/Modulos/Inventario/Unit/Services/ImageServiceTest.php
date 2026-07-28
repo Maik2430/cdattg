@@ -73,7 +73,7 @@ class ImageServiceTest extends TestCase
     public function puede_procesar_imagen_valida(): void
     {
         Storage::fake('public');
-        $imagen = UploadedFile::fake()->image('producto.jpg');
+        $imagen = UploadedFile::fake()->create('producto.jpg', 100, 'image/jpeg');
 
         $resultado = $this->service->procesarImagen($imagen);
 
@@ -81,6 +81,9 @@ class ImageServiceTest extends TestCase
         $this->assertStringContainsString(
             config('inventario.imagenes.directorio', self::DIRECTORIO_IMAGENES),
             $resultado
+        );
+        $this->assertTrue(
+            Storage::disk('public')->exists(str_replace('storage/', '', $resultado))
         );
     }
 
@@ -92,7 +95,7 @@ class ImageServiceTest extends TestCase
         $productoMock = Mockery::mock(Producto::class)->makePartial();
         $productoMock->imagen = self::RUTA_IMAGEN_ANTERIOR;
 
-        $nuevaImagen = UploadedFile::fake()->image('nuevo_producto.jpg');
+        $nuevaImagen = UploadedFile::fake()->create('nuevo_producto.jpg', 100, 'image/jpeg');
 
         $resultado = $this->service->procesarImagenParaActualizacion($nuevaImagen, $productoMock);
 
@@ -102,6 +105,9 @@ class ImageServiceTest extends TestCase
             $resultado
         );
         $this->assertNotEquals(self::RUTA_IMAGEN_ANTERIOR, $resultado);
+        $this->assertTrue(
+            Storage::disk('public')->exists(str_replace('storage/', '', $resultado))
+        );
     }
 
     #[Test]

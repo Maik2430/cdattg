@@ -1,3 +1,4 @@
+<div>
 @if($showFinalizarModal)
 <div class="modal-backdrop" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
     <div class="modal-card" style="background: white; border-radius: 8px; padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
@@ -26,8 +27,8 @@
         @endif
 
         <div class="modal-actions d-flex justify-content-between gap-2">
-            <button 
-                class="btn btn-light flex-fill" 
+            <button
+                class="btn btn-light flex-fill"
                 wire:click="closeFinalizarModal"
                 wire:loading.attr="disabled"
             >
@@ -35,8 +36,8 @@
                 Cancelar
             </button>
 
-            <button 
-                class="btn btn-danger flex-fill" 
+            <button
+                class="btn btn-danger flex-fill"
                 wire:click="finalizarAsistencia"
                 wire:loading.attr="disabled"
                 wire:target="finalizarAsistencia"
@@ -70,13 +71,14 @@
 }
 
 @keyframes slideUp {
-    from { 
+    from {
         opacity: 0;
         transform: translateY(20px);
     }
-    to { 
+    to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 </style>
+</div>

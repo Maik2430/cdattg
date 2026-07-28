@@ -8,9 +8,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Tests\Unit\Commands\Concerns\CreatesAprendizSinPersona;
 
 class ListarAprendicesProblematicosCommandTest extends TestCase
 {
+    use CreatesAprendizSinPersona;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -40,9 +42,9 @@ class ListarAprendicesProblematicosCommandTest extends TestCase
     #[Test]
     public function ejecuta_comando_sin_errores(): void
     {
-        Artisan::call('aprendices:listar-problematicos');
+        $exitCode = Artisan::call('aprendices:listar-problematicos');
 
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -50,35 +52,40 @@ class ListarAprendicesProblematicosCommandTest extends TestCase
     {
         Aprendiz::factory()->count(3)->create();
 
-        Artisan::call('aprendices:listar-problematicos');
+        $exitCode = Artisan::call('aprendices:listar-problematicos');
 
         $output = Artisan::output();
         $this->assertStringContainsString('No se encontraron aprendices con problemas', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
     public function detecta_aprendices_sin_persona(): void
     {
-        $aprendiz = Aprendiz::factory()->create(['persona_id' => null]);
+        $aprendiz = $this->crearAprendizSinPersona();
 
-        Artisan::call('aprendices:listar-problematicos');
-
+        $exitCode = Artisan::call('aprendices:listar-problematicos');
         $output = Artisan::output();
-        $this->assertStringContainsString('Encontrados', $output);
+
+        $this->assertEquals(0, $exitCode);
         $this->assertStringContainsString('aprendices con problemas', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertStringContainsString((string) $aprendiz->id, $output);
+        $this->assertNull($aprendiz->persona);
     }
 
     #[Test]
     public function muestra_tabla_de_problematicos(): void
     {
-        $aprendiz = Aprendiz::factory()->create(['persona_id' => null]);
+        $aprendiz = $this->crearAprendizSinPersona();
 
-        Artisan::call('aprendices:listar-problematicos');
-
+        $exitCode = Artisan::call('aprendices:listar-problematicos');
         $output = Artisan::output();
+
+        $this->assertEquals(0, $exitCode);
         $this->assertStringContainsString('ID Aprendiz', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertStringContainsString('Persona ID', $output);
+        $this->assertStringContainsString('Ficha ID', $output);
+        $this->assertStringContainsString((string) $aprendiz->id, $output);
+        $this->assertStringContainsString('999999999', $output);
     }
 }

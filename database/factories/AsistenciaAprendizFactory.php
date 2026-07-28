@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\AprendizFicha;
+use App\Models\Aprendiz;
 use App\Models\AsistenciaAprendiz;
 use App\Models\Evidencias;
 use App\Models\InstructorFichaCaracterizacion;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -18,52 +19,61 @@ class AsistenciaAprendizFactory extends Factory
 
     public function definition(): array
     {
-        $instructorFichaId = 1;
-        $aprendizFichaId = 1;
-        $evidenciaId = null;
-
-        if (Schema::hasTable('instructor_fichas_caracterizacion')) {
-            try {
-                $instructorFichaId = InstructorFichaCaracterizacion::query()->inRandomOrder()->value('id');
-                if (! $instructorFichaId) {
-                    $instructorFichaId = InstructorFichaCaracterizacion::factory()->create()->id;
-                }
-            } catch (\Exception $e) {
-                $instructorFichaId = InstructorFichaCaracterizacion::factory()->create()->id;
-            }
-        }
-
-        if (Schema::hasTable('aprendiz_fichas_caracterizacion')) {
-            try {
-                $aprendizFichaId = AprendizFicha::query()->inRandomOrder()->value('id');
-                if (! $aprendizFichaId) {
-                    $aprendizFichaId = AprendizFicha::factory()->create()->id;
-                }
-            } catch (\Exception $e) {
-                $aprendizFichaId = AprendizFicha::factory()->create()->id;
-            }
-        }
-
-        if (Schema::hasTable('evidencias') && $this->faker->boolean(30)) {
-            try {
-                $evidenciaId = Evidencias::query()->inRandomOrder()->value('id');
-            } catch (\Exception $e) {
-                $evidenciaId = null;
-            }
-        }
-
         $horaIngreso = $this->faker->dateTimeBetween('08:00:00', '10:00:00')->format('H:i:s');
-        $horaSalida = null;
-        if ($this->faker->boolean(80)) {
-            $horaSalida = $this->faker->dateTimeBetween($horaIngreso, '18:00:00')->format('H:i:s');
+
+        $definition = [
+            'instructor_ficha_id' => $this->resolverIdRelacion(
+                'instructor_fichas_caracterizacion',
+                InstructorFichaCaracterizacion::class
+            ),
+            'aprendiz_ficha_id' => $this->resolverIdRelacion('aprendices', Aprendiz::class),
+            'hora_ingreso' => $horaIngreso,
+            'hora_salida' => $this->resolverHoraSalida($horaIngreso),
+        ];
+
+        if (Schema::hasColumn('asistencia_aprendices', 'evidencia_id')) {
+            $definition['evidencia_id'] = $this->resolverEvidenciaIdOpcional();
         }
 
-        return [
-            'instructor_ficha_id' => $instructorFichaId,
-            'aprendiz_ficha_id' => $aprendizFichaId,
-            'evidencia_id' => $evidenciaId,
-            'hora_ingreso' => $horaIngreso,
-            'hora_salida' => $horaSalida,
-        ];
+        return $definition;
+    }
+
+    /**
+     * @param  class-string<Model>  $modelClass
+     */
+    private function resolverIdRelacion(string $table, string $modelClass): int
+    {
+        if (! Schema::hasTable($table)) {
+            return 1;
+        }
+
+        try {
+            return $modelClass::query()->inRandomOrder()->value('id')
+                ?? $modelClass::factory()->create()->id;
+        } catch (\Exception) {
+            return $modelClass::factory()->create()->id;
+        }
+    }
+
+    private function resolverEvidenciaIdOpcional(): ?int
+    {
+        if (! Schema::hasTable('evidencias') || ! $this->faker->boolean(30)) {
+            return null;
+        }
+
+        try {
+            return Evidencias::query()->inRandomOrder()->value('id');
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    private function resolverHoraSalida(string $horaIngreso): ?string
+    {
+        if (! $this->faker->boolean(80)) {
+            return null;
+        }
+
+        return $this->faker->dateTimeBetween($horaIngreso, '18:00:00')->format('H:i:s');
     }
 }

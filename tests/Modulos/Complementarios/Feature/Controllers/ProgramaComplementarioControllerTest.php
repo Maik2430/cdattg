@@ -24,6 +24,9 @@ class ProgramaComplementarioControllerTest extends TestCase
     private const TEST_RAP_NOMBRE = 'Resultado de Aprendizaje Test';
     private const TEST_JUSTIFICACION = 'Justificación';
     private const TEST_JUSTIFICACION_PRUEBA = 'Justificación de prueba';
+    private const TEST_REQUISITOS_INGRESO = 'Requisitos de prueba';
+    private const TEST_NUEVA_JUSTIFICACION = 'Nueva justificación';
+    private const TEST_REQUISITOS_CORTO = 'Requisitos';
 
     protected User $user;
 
@@ -43,6 +46,68 @@ class ProgramaComplementarioControllerTest extends TestCase
 
         // Deshabilitar CSRF para tests
         $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
+    }
+
+    /**
+     * @return array{modalidad: \App\Models\ParametroTema, jornada: \App\Models\ParametroTema, ambiente: \App\Models\Ambiente, catalogo: \App\Models\Complementarios\ComplementarioCatalogo}
+     */
+    private function fixturesPrograma(): array
+    {
+        $modalidad = \App\Models\ParametroTema::query()
+            ->where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->first();
+
+        if (! $modalidad) {
+            $tema = \App\Models\Tema::query()->firstOrCreate(
+                ['id' => 5],
+                ['name' => 'MODALIDADES DE FORMACION', 'status' => 1]
+            );
+            $parametro = Parametro::query()->firstOrCreate(
+                ['id' => 18],
+                ['name' => 'PRESENCIAL', 'status' => 1]
+            );
+            $modalidad = \App\Models\ParametroTema::query()->firstOrCreate(
+                ['tema_id' => $tema->id, 'parametro_id' => $parametro->id],
+                ['status' => 1]
+            );
+        }
+
+        $jornada = \App\Models\ParametroTema::query()
+            ->whereHas('tema', fn ($q) => $q->where('name', 'LIKE', '%JORNADA%'))
+            ->first();
+
+        if (! $jornada) {
+            $temaJornada = \App\Models\Tema::query()->firstOrCreate(
+                ['name' => 'JORNADAS'],
+                ['status' => 1]
+            );
+            $parametroJornada = Parametro::query()->firstOrCreate(
+                ['name' => 'DIURNA'],
+                ['status' => 1]
+            );
+            $jornada = \App\Models\ParametroTema::query()->firstOrCreate(
+                ['tema_id' => $temaJornada->id, 'parametro_id' => $parametroJornada->id],
+                ['status' => 1]
+            );
+        }
+
+        $ambiente = \App\Models\Ambiente::query()->first()
+            ?? \App\Models\Ambiente::factory()->create();
+
+        $catalogo = \App\Models\Complementarios\ComplementarioCatalogo::query()->create([
+            'prf_codigo' => 'PRF'.str_pad((string) random_int(1, 9999), 4, '0', STR_PAD_LEFT),
+            'version' => 1,
+            'cod_ver' => 'PRF-TEST-1',
+            'denominacion' => 'Programa Catálogo Test',
+            'nivel_formacion' => 'CURSO ESPECIAL',
+            'duracion_horas' => 60,
+            'requisitos_ingreso' => self::TEST_REQUISITOS_INGRESO,
+            'modalidad_id' => $modalidad->id,
+            'activo' => true,
+        ]);
+
+        return compact('modalidad', 'jornada', 'ambiente', 'catalogo');
     }
 
     #[Test]
@@ -125,12 +190,11 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        // Obtener datos necesarios del seeder
-        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
-            ->whereIn('parametro_id', [18, 19, 20])
-            ->first();
-        $jornada = \App\Models\JornadaFormacion::first();
-        $ambiente = \App\Models\Ambiente::first();
+        $fixtures = $this->fixturesPrograma();
+        $modalidad = $fixtures['modalidad'];
+        $jornada = $fixtures['jornada'];
+        $ambiente = $fixtures['ambiente'];
+        $catalogo = $fixtures['catalogo'];
 
         // Obtener días de la semana del seeder (tema_id 4 es DIAS)
         $dias = \App\Models\ParametroTema::where('tema_id', 4)
@@ -139,20 +203,29 @@ class ProgramaComplementarioControllerTest extends TestCase
             ->get();
 
         if ($dias->count() < 2) {
-            // Si no hay suficientes días, usar los primeros parámetros de días disponibles
-            $parametrosDias = \App\Models\Parametro::whereIn('id', [12, 13, 14, 15, 16, 17, 18])->take(2)->get();
-            $dia1 = $parametrosDias->first();
-            $dia2 = $parametrosDias->last();
+            $parametro1 = Parametro::create(['name' => uniqid('Dia1_'), 'status' => 1]);
+            $parametro2 = Parametro::create(['name' => uniqid('Dia2_'), 'status' => 1]);
+            $dia1 = \App\Models\ParametroTema::create([
+                'tema_id' => 4,
+                'parametro_id' => $parametro1->id,
+                'status' => 1,
+            ]);
+            $dia2 = \App\Models\ParametroTema::create([
+                'tema_id' => 4,
+                'parametro_id' => $parametro2->id,
+                'status' => 1,
+            ]);
         } else {
-            $dia1 = $dias->first()->parametro;
-            $dia2 = $dias->last()->parametro;
+            $dia1 = $dias->first();
+            $dia2 = $dias->last();
         }
 
         $data = [
+            'catalogo_id' => $catalogo->id,
             'codigo' => 'COMP0001',
             'nombre' => 'Programa Test',
             'justificacion' => self::TEST_JUSTIFICACION_PRUEBA,
-            'requisitos_ingreso' => 'Requisitos de prueba',
+            'requisitos_ingreso' => self::TEST_REQUISITOS_INGRESO,
             'duracion' => 60,
             'cupos' => 30,
             'estado' => 1,
@@ -178,13 +251,12 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertRedirect(route('complementarios-ofertados.index'));
         $response->assertSessionHas('success');
 
-        // Validar que se creó el programa
         $this->assertDatabaseHas('complementarios_ofertados', [
-            'codigo' => 'COMP0001',
-            'nombre' => 'Programa Test',
+            'codigo' => $catalogo->prf_codigo,
+            'catalogo_id' => $catalogo->id,
         ]);
 
-        $programa = ComplementarioOfertado::where('codigo', 'COMP0001')->first();
+        $programa = ComplementarioOfertado::where('catalogo_id', $catalogo->id)->first();
 
         // Validar que se sincronizaron los días de formación
         $this->assertCount(2, $programa->diasFormacion);
@@ -202,12 +274,11 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        // Obtener datos necesarios del seeder
-        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
-            ->whereIn('parametro_id', [18, 19, 20])
-            ->first();
-        $jornada = \App\Models\JornadaFormacion::first();
-        $ambiente = \App\Models\Ambiente::first();
+        $fixtures = $this->fixturesPrograma();
+        $modalidad = $fixtures['modalidad'];
+        $jornada = $fixtures['jornada'];
+        $ambiente = $fixtures['ambiente'];
+        $catalogo = $fixtures['catalogo'];
 
         // Crear competencia con todos los campos requeridos
         $competencia = Competencia::create([
@@ -233,7 +304,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         ]);
 
         // Crear GuiasAprendizaje con todos los campos requeridos
-        $guia = GuiasAprendizaje::create([
+        $guia = GuiasAprendizaje::factory()->create([
             'codigo' => 'GUIA-' . uniqid(),
             'nombre' => 'Guía de Aprendizaje Test',
             'status' => true,
@@ -241,10 +312,11 @@ class ProgramaComplementarioControllerTest extends TestCase
         ]);
 
         $data = [
+            'catalogo_id' => $catalogo->id,
             'codigo' => 'COMP0002',
             'nombre' => 'Programa con Estructura',
             'justificacion' => self::TEST_JUSTIFICACION_PRUEBA,
-            'requisitos_ingreso' => 'Requisitos de prueba',
+            'requisitos_ingreso' => self::TEST_REQUISITOS_INGRESO,
             'duracion' => 60,
             'cupos' => 30,
             'estado' => 1,
@@ -261,9 +333,10 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertRedirect(route('complementarios-ofertados.index'));
         $response->assertSessionHas('success');
 
-        $programa = ComplementarioOfertado::where('codigo', 'COMP0002')->first();
+        $programa = ComplementarioOfertado::where('catalogo_id', $catalogo->id)->first();
 
         // Validar sincronización de estructura académica
+        $this->assertNotNull($programa);
         $this->assertTrue($programa->competencias->contains($competencia->id));
         $this->assertTrue($programa->raps->contains($rap->id));
         $this->assertTrue($programa->guiasAprendizaje->contains($guia->id));
@@ -285,7 +358,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $data = [
             'codigo' => $programa->codigo,
             'nombre' => 'Programa Actualizado',
-            'justificacion' => 'Nueva justificación',
+            'justificacion' => self::TEST_NUEVA_JUSTIFICACION,
             'requisitos_ingreso' => 'Nuevos requisitos',
             'duracion' => 80,
             'cupos' => 40,
@@ -301,7 +374,8 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('complementarios_ofertados', [
             'id' => $programa->id,
-            'nombre' => 'Programa Actualizado',
+            'justificacion' => self::TEST_NUEVA_JUSTIFICACION,
+            'cupos' => 40,
         ]);
     }
 
@@ -381,7 +455,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $data = [
             'codigo' => $programa->codigo,
             'nombre' => 'Programa Actualizado con Días',
-            'justificacion' => 'Nueva justificación',
+            'justificacion' => self::TEST_NUEVA_JUSTIFICACION,
             'requisitos_ingreso' => 'Nuevos requisitos',
             'duracion' => 80,
             'cupos' => 40,
@@ -453,7 +527,7 @@ class ProgramaComplementarioControllerTest extends TestCase
             'codigo' => $programa->codigo,
             'nombre' => 'Programa con Estructura Actualizada',
             'justificacion' => self::TEST_JUSTIFICACION,
-            'requisitos_ingreso' => 'Requisitos',
+            'requisitos_ingreso' => self::TEST_REQUISITOS_CORTO,
             'duracion' => 60,
             'cupos' => 30,
             'estado' => 1,
@@ -550,24 +624,28 @@ class ProgramaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
+        $fixtures = $this->fixturesPrograma();
+
         $data = [
+            'catalogo_id' => $fixtures['catalogo']->id,
             'codigo' => 'COMP0003',
             'nombre' => 'Programa Sin Días',
             'justificacion' => self::TEST_JUSTIFICACION,
-            'requisitos_ingreso' => 'Requisitos',
+            'requisitos_ingreso' => self::TEST_REQUISITOS_CORTO,
             'duracion' => 60,
             'cupos' => 30,
             'estado' => 1,
-            'modalidad_id' => 18,
-            'jornada_id' => 1,
-            'ambiente_id' => 1,
+            'modalidad_id' => $fixtures['modalidad']->id,
+            'jornada_id' => $fixtures['jornada']->id,
+            'ambiente_id' => $fixtures['ambiente']->id,
         ];
 
         $response = $this->post(route('complementarios-ofertados.store'), $data);
 
         $response->assertRedirect(route('complementarios-ofertados.index'));
         $this->assertDatabaseHas('complementarios_ofertados', [
-            'codigo' => 'COMP0003',
+            'codigo' => $fixtures['catalogo']->prf_codigo,
+            'catalogo_id' => $fixtures['catalogo']->id,
         ]);
     }
 
@@ -577,11 +655,17 @@ class ProgramaComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
         $programa = ComplementarioOfertado::factory()->create();
 
+        if (! $programa->ambiente_id) {
+            $programa->ambiente_id = $this->fixturesPrograma()['ambiente']->id;
+            $programa->save();
+        }
+
         $data = [
             'codigo' => $programa->codigo,
+            'catalogo_id' => $programa->catalogo_id,
             'nombre' => 'Programa Sin Estructura',
             'justificacion' => self::TEST_JUSTIFICACION,
-            'requisitos_ingreso' => 'Requisitos',
+            'requisitos_ingreso' => self::TEST_REQUISITOS_CORTO,
             'duracion' => 60,
             'cupos' => 30,
             'estado' => 1,
@@ -595,7 +679,7 @@ class ProgramaComplementarioControllerTest extends TestCase
         $response->assertRedirect(route('complementarios-ofertados.show', $programa->id));
         $this->assertDatabaseHas('complementarios_ofertados', [
             'id' => $programa->id,
-            'nombre' => 'Programa Sin Estructura',
+            'justificacion' => self::TEST_JUSTIFICACION,
         ]);
     }
 }

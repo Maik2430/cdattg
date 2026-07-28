@@ -28,6 +28,6 @@ class VerificarTiposDocumentoCommandTest extends TestCase
     {
         $command = new VerificarTiposDocumento;
 
-        $this->assertStringContainsString('aprendices:verificar-tipos-documento', $command->getSignature());
+        $this->assertEquals('aprendices:verificar-tipos-documento', $command->getName());
     }
 }

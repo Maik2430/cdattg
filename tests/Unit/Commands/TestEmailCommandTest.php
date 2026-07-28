@@ -26,6 +26,6 @@ class TestEmailCommandTest extends TestCase
     {
         $command = new TestEmail;
 
-        $this->assertStringContainsString('test:email', $command->getSignature());
+        $this->assertEquals('test:email', $command->getName());
     }
 }

@@ -42,7 +42,7 @@ class PersonaFactory extends Factory
         $userIdForParametros = (int) $userIdForParametros;
 
         $generoParametroId = [9, 10, 11][array_rand([9, 10, 11])];
-        $generoParametroTemaId = $this->obtenerOCrearParametroTema(3, $generoParametroId, $userIdForParametros); // Tema: GENERO (3)
+        $generoParametroTemaId = $this->obtenerOCrearParametroTema(3, $generoParametroId); // Tema: GENERO (3)
 
         // Validar que se obtuvo un ID válido y que existe en parametros_temas
         if (! $generoParametroTemaId) {
@@ -70,7 +70,7 @@ class PersonaFactory extends Factory
         // Obtener ubicación válida o usar valores por defecto
         $ubicacion = $this->obtenerUbicacionValida();
 
-        $numeroDocumento = str_pad(rand(100000000, 9999999999), 10, '0', STR_PAD_LEFT);
+        $numeroDocumento = str_pad((string) rand(100000000, 9999999999), 10, '0', STR_PAD_LEFT);
         $timestamp = time();
         $email = strtolower($primerNombre) . rand(1000, 9999) . '@example.com';
 
@@ -86,7 +86,7 @@ class PersonaFactory extends Factory
         // Obtener tipo_documento de parametros_temas
         $tiposDocumentoParametroIds = [3, 4, 5, 6]; // CÉDULA, EXTRANJERÍA, PASAPORTE, TARJETA
         $tipoDocumentoParametroId = $tiposDocumentoParametroIds[array_rand($tiposDocumentoParametroIds)];
-        $tipoDocumentoParametroTemaId = $this->obtenerOCrearParametroTema(2, $tipoDocumentoParametroId, $userIdForParametros); // Tema: TIPO DE DOCUMENTO (2)
+        $tipoDocumentoParametroTemaId = $this->obtenerOCrearParametroTema(2, $tipoDocumentoParametroId); // Tema: TIPO DE DOCUMENTO (2)
 
         // Validar que se obtuvo un ID válido y que existe en parametros_temas
         if (! $tipoDocumentoParametroTemaId) {
@@ -127,7 +127,7 @@ class PersonaFactory extends Factory
      * IMPORTANTE: Este método debe devolver el ID de la tabla parametros_temas, NO el parametro_id
      * El seeder debe crear estos registros antes de que el factory los use
      */
-    private function obtenerOCrearParametroTema(int $temaId, int $parametroId, int $userId): int
+    private function obtenerOCrearParametroTema(int $temaId, int $parametroId): int
     {
         if (! Schema::hasTable('parametros_temas')) {
             throw new DatabaseTableNotFoundException('parametros_temas');
@@ -166,10 +166,12 @@ class PersonaFactory extends Factory
             }
         }
 
-        // Si no existe, intentar crearlo usando el modelo Tema y sync (igual que el seeder)
+        // Si no existe, asegurar tema/parámetro mínimos para no depender del orden de seeders en tests.
+        $this->ensureTemaAndParametroExist($temaId, $parametroId);
+
         $tema = Tema::find($temaId);
-        if (!$tema) {
-            throw new ParametroTemaCreationException($temaId, $parametroId, "El tema con ID {$temaId} no existe. Asegúrate de ejecutar TemaSeeder primero.");
+        if (! $tema) {
+            throw new ParametroTemaCreationException($temaId, $parametroId, "No se pudo preparar el tema base con ID {$temaId}.");
         }
 
         // Usar sync para crear el ParametroTema, igual que el seeder
@@ -207,6 +209,35 @@ class PersonaFactory extends Factory
         }
 
         return $parametroTemaId;
+    }
+
+    private function ensureTemaAndParametroExist(int $temaId, int $parametroId): void
+    {
+        $now = now();
+
+        if (! Tema::query()->whereKey($temaId)->exists()) {
+            DB::table('temas')->insert([
+                'id' => $temaId,
+                'name' => "TEMA {$temaId}",
+                'status' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+
+        if (! Parametro::query()->whereKey($parametroId)->exists()) {
+            DB::table('parametros')->insert([
+                'id' => $parametroId,
+                'name' => "PARAMETRO {$parametroId}",
+                'status' => 1,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
     }
 
     /**

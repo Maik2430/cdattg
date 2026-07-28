@@ -38,11 +38,11 @@ class TestNotificacionesCommandTest extends TestCase
     #[Test]
     public function muestra_error_si_no_hay_superadmin(): void
     {
-        Artisan::call('test:notificaciones');
+        $exitCode = Artisan::call('test:notificaciones');
 
         $output = Artisan::output();
         $this->assertStringContainsString('No se encontró ningún usuario con rol SUPER ADMINISTRADOR', $output);
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
     }
 
     #[Test]
@@ -52,12 +52,12 @@ class TestNotificacionesCommandTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole($role);
 
-        $producto = Producto::factory()->create();
+        Producto::factory()->create();
 
-        Artisan::call('test:notificaciones');
+        $exitCode = Artisan::call('test:notificaciones');
 
         $output = Artisan::output();
         $this->assertStringContainsString('Usuario encontrado', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 }

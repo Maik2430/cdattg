@@ -46,8 +46,45 @@ trait AspiranteTestHelpers
     protected function obtenerCaracterizacion(): ?Parametro
     {
         return Parametro::whereHas('temas', function ($q) {
-            $q->where('temas.id', 16); // CARACTERIZACION COMPLEMENTARIA
+            $q->where('temas.id', 16); // CARACTERIZACION COMPLEMENTARIA / PERSONA CARACTERIZACION
         })->first();
+    }
+
+    /**
+     * Asegura Tema 16 + Parametro + ParametroTema de caracterización.
+     */
+    protected function ensureCaracterizacion(): Parametro
+    {
+        $caracterizacion = $this->obtenerCaracterizacion();
+        if ($caracterizacion) {
+            return $caracterizacion;
+        }
+
+        $tema = Tema::query()->find(16);
+        if (! $tema) {
+            $tema = new Tema();
+            $tema->forceFill([
+                'id' => 16,
+                'name' => 'PERSONA CARACTERIZACION',
+                'status' => 1,
+            ]);
+            $tema->save();
+        }
+
+        $parametro = Parametro::firstOrCreate(
+            ['name' => 'NINGUNA'],
+            ['status' => 1]
+        );
+
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'tema_id' => 16,
+                'parametro_id' => $parametro->id,
+            ],
+            ['status' => 1]
+        );
+
+        return $parametro->fresh() ?? $parametro;
     }
 
     /**
@@ -71,39 +108,7 @@ trait AspiranteTestHelpers
      */
     protected function crearProgramaComplementario(): ComplementarioOfertado
     {
-        $modalidad = \App\Models\ParametroTema::where('tema_id', 5)
-            ->whereIn('parametro_id', [18, 19, 20])
-            ->first();
-
-        $jornada = \App\Models\JornadaFormacion::first();
-        $ambiente = \App\Models\Ambiente::first();
-
-        if (!$modalidad || !$jornada || !$ambiente) {
-            $missingData = [];
-            if (!$modalidad) {
-                $missingData[] = 'modalidad';
-            }
-            if (!$jornada) {
-                $missingData[] = 'jornada';
-            }
-            if (!$ambiente) {
-                $missingData[] = 'ambiente';
-            }
-            throw new ReferenceDataNotAvailableException('', implode(', ', $missingData));
-        }
-
-        return ComplementarioOfertado::create([
-            'codigo' => 'TEST-PROG-' . uniqid(),
-            'nombre' => 'Programa de Prueba',
-            'justificacion' => 'Justificación de prueba',
-            'requisitos_ingreso' => 'Requisitos de prueba',
-            'estado' => 1,
-            'duracion' => 30,
-            'cupos' => 50,
-            'modalidad_id' => $modalidad->id,
-            'jornada_id' => $jornada->id,
-            'ambiente_id' => $ambiente->id,
-        ]);
+        return ComplementarioOfertado::factory()->create();
     }
 
     /**
@@ -113,13 +118,14 @@ trait AspiranteTestHelpers
     {
         $temaTipoDoc = Tema::firstOrCreate(['id' => 2], ['name' => 'TIPO DE DOCUMENTO']);
         $temaGenero = Tema::firstOrCreate(['id' => 3], ['name' => 'GENERO']);
-        Tema::firstOrCreate(['id' => 16], ['name' => 'CARACTERIZACION COMPLEMENTARIA']);
+        $temaCaracterizacion = Tema::firstOrCreate(['id' => 16], ['name' => 'PERSONA CARACTERIZACION']);
         $temaVia = Tema::firstOrCreate(['id' => 17], ['name' => 'VIA']);
         $temaLetra = Tema::firstOrCreate(['id' => 18], ['name' => 'LETRA']);
 
         $parametro1 = Parametro::firstOrCreate(['id' => 1], ['name' => 'CEDULA']);
         Parametro::firstOrCreate(['id' => 2], ['name' => 'TARJETA IDENTIDAD']);
         $parametro3 = Parametro::firstOrCreate(['id' => 3], ['name' => 'MASCULINO']);
+        $parametroCaracterizacion = Parametro::firstOrCreate(['id' => 235], ['name' => 'NINGUNA']);
         $parametroVia = Parametro::firstOrCreate(['id' => 100], ['name' => 'CALLE']);
         $parametroLetra = Parametro::firstOrCreate(['id' => 101], ['name' => 'A']);
         $parametroCardinal = Parametro::firstOrCreate(['id' => 102], ['name' => 'NORTE']);
@@ -129,6 +135,9 @@ trait AspiranteTestHelpers
         }
         if (!$temaGenero->parametros()->where('parametros.id', $parametro3->id)->exists()) {
             $temaGenero->parametros()->attach($parametro3->id, ['status' => 1]);
+        }
+        if (!$temaCaracterizacion->parametros()->where('parametros.id', $parametroCaracterizacion->id)->exists()) {
+            $temaCaracterizacion->parametros()->attach($parametroCaracterizacion->id, ['status' => 1]);
         }
         if (!$temaVia->parametros()->where('parametros.id', $parametroVia->id)->exists()) {
             $temaVia->parametros()->attach($parametroVia->id, ['status' => 1]);
@@ -142,6 +151,7 @@ trait AspiranteTestHelpers
 
         $temaTipoDoc->load('parametros');
         $temaGenero->load('parametros');
+        $temaCaracterizacion->load('parametros');
         $temaVia->load('parametros');
         $temaLetra->load('parametros');
     }
@@ -154,7 +164,7 @@ trait AspiranteTestHelpers
         $tipoDocumento = $this->obtenerTipoDocumento();
         $genero = $this->obtenerGenero();
         $ubicacion = $this->obtenerDatosUbicacion();
-        $caracterizacion = $this->obtenerCaracterizacion();
+        $caracterizacion = $this->ensureCaracterizacion();
 
         if (!$tipoDocumento || !$genero || !$ubicacion['pais'] || !$ubicacion['departamento'] || !$ubicacion['municipio']) {
             $missingData = [];
@@ -192,8 +202,9 @@ trait AspiranteTestHelpers
             'departamento_id' => $ubicacion['departamento']->id,
             'municipio_id' => $ubicacion['municipio']->id,
             'direccion' => 'Calle 123 #45-67',
-            'caracterizaciones' => $caracterizacion ? [$caracterizacion->id] : [],
+            'caracterizaciones' => [$caracterizacion->id],
             'observaciones' => 'Aspirante creado desde pruebas',
+            'documento_identidad' => \Illuminate\Http\UploadedFile::fake()->create('documento.pdf', 100, 'application/pdf'),
         ];
     }
 }

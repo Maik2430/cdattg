@@ -47,28 +47,29 @@ class ComplementarioCatalogo extends Model
 
     /**
      * Relación con la modalidad de formación (ParametroTema)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\ParametroTema, $this>
      */
-    public function modalidad()
+    public function modalidad(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'modalidad_id');
     }
 
     /**
-     * Accessor para mantener compatibilidad hacia atrás con código que usa modalidad (string)
-     * Devuelve el nombre del parámetro de modalidad
+     * Nombre de la modalidad (string) sin sombrear la relación modalidad().
      */
-    public function getModalidadAttribute(): ?string
+    public function getModalidadNombreAttribute(): ?string
     {
-        if ($this->modalidad_id && $this->relationLoaded('modalidad')) {
-            return $this->modalidad?->parametro?->name;
+        if (! $this->modalidad_id) {
+            return null;
         }
 
-        if ($this->modalidad_id) {
-            $this->loadMissing(['modalidad.parametro']);
-
-            return $this->modalidad?->parametro?->name;
+        if ($this->relationLoaded('modalidad')) {
+            $relacion = $this->getRelation('modalidad');
+        } else {
+            $relacion = $this->modalidad()->with('parametro')->first();
         }
 
-        return null;
+        return $relacion?->parametro?->name;
     }
 }

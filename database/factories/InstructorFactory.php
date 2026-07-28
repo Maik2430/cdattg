@@ -25,7 +25,10 @@ class InstructorFactory extends Factory
 
     public function definition(): array
     {
-        $regionalId = Regional::query()->inRandomOrder()->value('id') ?? 1;
+        $regionalId = Regional::query()->inRandomOrder()->value('id');
+        if (! $regionalId) {
+            $regionalId = Regional::factory()->create()->id;
+        }
 
         // Obtener IDs de RedConocimiento para especialidades
         $redesConocimiento = \App\Models\RedConocimiento::query()->inRandomOrder()->get();
@@ -55,17 +58,17 @@ class InstructorFactory extends Factory
             $q->where('name', 'like', '%VINCULACION%');
         })->inRandomOrder()->value('id');
 
-        // nivel_academico_id apunta a parametros (según la foreign key real en la BD)
-        $nivelAcademicoId = \App\Models\Parametro::whereHas('temas', function($q) {
+        // nivel_academico_id apunta a parametros_temas (FK en instructors)
+        $nivelAcademicoId = \App\Models\ParametroTema::whereHas('tema', function ($q) {
             $q->where('name', 'like', '%NIVEL%ACADEMICO%');
         })->inRandomOrder()->value('id');
 
         // Si no encuentra ninguno, usar null (el campo es nullable) o un valor aleatorio
-        if (!$tipoVinculacionId) {
+        if (! $tipoVinculacionId) {
             $tipoVinculacionId = \App\Models\ParametroTema::inRandomOrder()->value('id');
         }
-        if (!$nivelAcademicoId) {
-            $nivelAcademicoId = \App\Models\Parametro::inRandomOrder()->value('id');
+        if (! $nivelAcademicoId) {
+            $nivelAcademicoId = \App\Models\ParametroTema::inRandomOrder()->value('id');
         }
 
         $centroFormacionId = \App\Models\CentroFormacion::query()->inRandomOrder()->value('id');
@@ -75,12 +78,15 @@ class InstructorFactory extends Factory
             ['idioma' => 'Francés', 'nivel' => 'básico'],
         ];
 
+        $userId = User::query()->inRandomOrder()->value('id')
+            ?? User::factory()->create()->id;
+
         return [
             'persona_id' => Persona::factory(),
             'regional_id' => $regionalId,
             'status' => (rand(1, 100) <= 85) ? 1 : 0,
-            'user_create_id' => $userId ?? 1,
-            'user_edit_id' => $userId ?? 1,
+            'user_create_id' => $userId,
+            'user_edit_id' => $userId,
             'especialidades' => [
                 'principal' => $principalId,
                 'secundarias' => $secundariasIds,

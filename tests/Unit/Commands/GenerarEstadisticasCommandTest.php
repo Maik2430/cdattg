@@ -15,6 +15,15 @@ class GenerarEstadisticasCommandTest extends TestCase
     #[Test]
     public function command_existe(): void
     {
+        $this->mock(EstadisticasService::class, function ($mock): void {
+            $mock->shouldReceive('obtenerDashboardGeneral')->once()->andReturn([
+                'aprendices' => ['total' => 0, 'activos' => 0],
+                'fichas' => ['total' => 0, 'vigentes' => 0],
+                'instructores' => 0,
+                'asistencias_hoy' => 0,
+            ]);
+        });
+
         $this->artisan('estadisticas:generar')
             ->assertExitCode(0);
     }
@@ -24,6 +33,6 @@ class GenerarEstadisticasCommandTest extends TestCase
     {
         $command = new GenerarEstadisticasCommand(app(EstadisticasService::class));
 
-        $this->assertStringContainsString('estadisticas:generar', $command->getSignature());
+        $this->assertEquals('estadisticas:generar', $command->getName());
     }
 }

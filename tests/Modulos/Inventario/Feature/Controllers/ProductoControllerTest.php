@@ -135,109 +135,123 @@ class ProductoControllerTest extends TestCase
         $response->assertViewHas('marcas');
     }
 
+    private function asegurarParametroTemaEnTema(string $temaName, string $parametroDefault): ParametroTema
+    {
+        $existente = ParametroTema::whereHas('tema', function ($q) use ($temaName) {
+            $q->where('name', $temaName);
+        })->first();
+
+        if ($existente) {
+            return $existente;
+        }
+
+        $tema = \App\Models\Tema::firstOrCreate(
+            ['name' => $temaName],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        $parametro = \App\Models\Parametro::firstOrCreate(
+            ['name' => $parametroDefault],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        return ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+            ],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+    }
+
+    private function asegurarParametroEnTema(string $temaName, string $parametroDefault): \App\Models\Parametro
+    {
+        $parametro = \App\Models\Parametro::whereHas('temas', function ($q) use ($temaName) {
+            $q->where('name', $temaName);
+        })->first();
+
+        if ($parametro) {
+            return $parametro;
+        }
+
+        $tema = \App\Models\Tema::firstOrCreate(
+            ['name' => $temaName],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        $parametro = \App\Models\Parametro::factory()->create([
+            'name' => $parametroDefault,
+            'status' => true,
+            'user_create_id' => null,
+            'user_edit_id' => null,
+        ]);
+
+        ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+            ],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        return $parametro;
+    }
+
     #[Test]
     public function puede_crear_producto(): void
     {
         $this->user->givePermissionTo(self::PERMISSION_CREAR_PRODUCTO);
         $this->actingAs($this->user);
 
-        // Obtener parámetros necesarios
-        $tipoProducto = ParametroTema::whereHas('tema', function ($q) {
-            $q->where('name', 'TIPOS DE PRODUCTO');
-        })->first();
+        $tipoProducto = $this->asegurarParametroTemaEnTema(
+            config('inventario.temas.tipos_producto'),
+            'CONSUMIBLE'
+        );
+        $unidadMedida = $this->asegurarParametroTemaEnTema(
+            config('inventario.temas.unidades_medida'),
+            'UNIDADES'
+        );
+        $estado = $this->asegurarParametroTemaEnTema(
+            config('inventario.temas.estados_producto'),
+            'DISPONIBLE'
+        );
 
-        $unidadMedida = ParametroTema::whereHas('tema', function ($q) {
-            $q->where('name', 'UNIDADES DE MEDIDA');
-        })->first();
+        // Seeder usa CATEGORÍAS (con tilde); config usa CATEGORIAS
+        $categoria = $this->asegurarParametroEnTema('CATEGORÍAS', 'CATEGORIA TEST');
+        $marca = $this->asegurarParametroEnTema(config('inventario.temas.marcas'), 'MARCA TEST');
 
-        $estado = ParametroTema::whereHas('tema', function ($q) {
-            $q->where('name', 'ESTADOS DE PRODUCTO');
-        })->first();
-
-        // Obtener o crear categoría
-        $categoria = \App\Models\Parametro::whereHas('temas', function ($q) {
-            $q->where('name', 'CATEGORIAS');
-        })->first();
-
-        if (!$categoria) {
-            // TemaSeeder ya crea CATEGORÍAS, solo buscar el tema existente
-            $temaCategorias = \App\Models\Tema::where('name', 'CATEGORÍAS')->first();
-            if (!$temaCategorias) {
-                $temaCategorias = \App\Models\Tema::create([
-                    'name' => 'CATEGORÍAS',
-                    'status' => true,
-                    'user_create_id' => null,
-                    'user_edit_id' => null,
-                ]);
-            }
-            $categoria = \App\Models\Parametro::factory()->create([
-                'name' => 'CATEGORIA TEST',
-                'status' => true,
-                'user_create_id' => null,
-                'user_edit_id' => null,
-            ]);
-            \App\Models\ParametroTema::create([
-                'parametro_id' => $categoria->id,
-                'tema_id' => $temaCategorias->id,
-                'status' => true,
-                'user_create_id' => null,
-                'user_edit_id' => null,
-            ]);
-        }
-
-        // Obtener o crear marca
-        $marca = \App\Models\Parametro::whereHas('temas', function ($q) {
-            $q->where('name', 'MARCAS');
-        })->first();
-
-        if (!$marca) {
-            // TemaSeeder ya crea MARCAS, solo buscar el tema existente
-            $temaMarcas = \App\Models\Tema::where('name', 'MARCAS')->first();
-            if (!$temaMarcas) {
-                $temaMarcas = \App\Models\Tema::create([
-                    'name' => 'MARCAS',
-                    'status' => true,
-                    'user_create_id' => null,
-                    'user_edit_id' => null,
-                ]);
-            }
-            $marca = \App\Models\Parametro::factory()->create([
-                'name' => 'MARCA TEST',
-                'status' => true,
-                'user_create_id' => null,
-                'user_edit_id' => null,
-            ]);
-            \App\Models\ParametroTema::create([
-                'parametro_id' => $marca->id,
-                'tema_id' => $temaMarcas->id,
-                'status' => true,
-                'user_create_id' => null,
-                'user_edit_id' => null,
-            ]);
-        }
-
-        // Crear contrato convenio
         $contratoConvenio = \App\Models\Inventario\ContratoConvenio::factory()->create();
 
-        // Obtener o crear ambiente (usar existente si hay)
         $ambiente = \App\Models\Ambiente::inRandomOrder()->first();
-        if (!$ambiente) {
-            // Crear ambiente con dependencias (Sede -> Bloque -> Piso -> Ambiente)
-            $sede = \App\Models\Sede::inRandomOrder()->first();
-            if (!$sede) {
-                $sede = \App\Models\Sede::factory()->create();
-            }
+        if (! $ambiente) {
+            $sede = \App\Models\Sede::inRandomOrder()->first()
+                ?? \App\Models\Sede::factory()->create();
             $bloque = \App\Models\Bloque::factory()->create(['sede_id' => $sede->id]);
             $piso = \App\Models\Piso::factory()->create(['bloque_id' => $bloque->id]);
             $ambiente = \App\Models\Ambiente::factory()->create(['piso_id' => $piso->id]);
         }
 
-        // Crear proveedor
         $proveedor = \App\Models\Inventario\Proveedor::factory()->create();
-
-        if (! $tipoProducto || ! $unidadMedida || ! $estado) {
-            $this->markTestSkipped('Faltan parámetros necesarios');
-        }
 
         $response = $this->post(route(self::ROUTE_STORE), [
             'name' => 'Producto de Prueba '.$this->faker->word(),

@@ -91,18 +91,35 @@ class ProgramaFormacionFactory extends Factory
 
     private function obtenerNivelFormacionId(): int
     {
-        $nivel = Parametro::query()
-            ->whereIn('name', ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO'])
+        $nivelTema = \App\Models\ParametroTema::query()
+            ->whereHas('parametro', function ($q) {
+                $q->whereIn('name', ['TÉCNICO', 'TECNÓLOGO', 'AUXILIAR', 'OPERARIO']);
+            })
             ->inRandomOrder()
             ->first();
 
-        if ($nivel) {
-            return $nivel->id;
+        if ($nivelTema) {
+            return $nivelTema->id;
         }
 
-        return Parametro::query()->create([
-            'name' => 'TÉCNICO',
-            'status' => 1,
-        ])->id;
+        $parametro = Parametro::query()->firstOrCreate(
+            ['name' => 'TÉCNICO'],
+            ['status' => 1]
+        );
+
+        $tema = \App\Models\Tema::query()->firstOrCreate(
+            ['name' => 'NIVEL DE FORMACION'],
+            ['status' => true]
+        );
+
+        return \App\Models\ParametroTema::query()->firstOrCreate(
+            [
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+            ],
+            [
+                'status' => true,
+            ]
+        )->id;
     }
 }

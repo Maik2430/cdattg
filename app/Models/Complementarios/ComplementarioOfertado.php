@@ -38,11 +38,4 @@ class ComplementarioOfertado extends Model
         'ambiente_id',
         'ambiente_comentario',
     ];
-
-    /**
-     * Valores por defecto para los atributos
-     */
-    protected $attributes = [
-        'estado_id' => 3, // ID de parametros_temas para "Sin Oferta" (parametro_id = 277)
-    ];
 }

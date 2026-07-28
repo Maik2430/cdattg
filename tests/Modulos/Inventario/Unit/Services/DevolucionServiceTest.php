@@ -7,6 +7,7 @@ namespace Tests\Inventario\Unit\Services;
 use Tests\TestCase;
 use App\Inventario\Services\Devolucion\DevolucionService;
 use App\Inventario\Interfaces\Services\TransactionServiceInterface;
+use App\Inventario\Interfaces\Services\NotificationServiceInterface;
 use App\Models\Inventario\Devolucion;
 use App\Exceptions\DevolucionException;
 use Mockery;
@@ -23,14 +24,19 @@ class DevolucionServiceTest extends TestCase
 
     protected DevolucionService $service;
     protected $mockTransactionService;
+    protected $mockNotificationService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->mockTransactionService = Mockery::mock(TransactionServiceInterface::class);
+        $this->mockNotificationService = Mockery::mock(NotificationServiceInterface::class);
 
-        $this->service = new DevolucionService($this->mockTransactionService);
+        $this->service = new DevolucionService(
+            $this->mockTransactionService,
+            $this->mockNotificationService
+        );
     }
 
     protected function tearDown(): void
@@ -65,12 +71,12 @@ class DevolucionServiceTest extends TestCase
 
         // Crear un servicio de prueba que extienda el original pero simule que
         // Devolucion::registrarDevolucion() falla lanzando una excepción
-        $testService = new class($this->mockTransactionService, $exception) extends DevolucionService {
+        $testService = new class($this->mockTransactionService, $this->mockNotificationService, $exception) extends DevolucionService {
             private $exception;
 
-            public function __construct($transactionService, $exception)
+            public function __construct($transactionService, $notificationService, $exception)
             {
-                parent::__construct($transactionService);
+                parent::__construct($transactionService, $notificationService);
                 $this->exception = $exception;
             }
 
@@ -101,7 +107,7 @@ class DevolucionServiceTest extends TestCase
 
     private function crearTestService(): object
     {
-        return new class($this->mockTransactionService) extends DevolucionService {
+        return new class($this->mockTransactionService, $this->mockNotificationService) extends DevolucionService {
             public function construirMensajeDevolucionPublico(Devolucion $devolucion): string
             {
                 return $this->construirMensajeDevolucion($devolucion);

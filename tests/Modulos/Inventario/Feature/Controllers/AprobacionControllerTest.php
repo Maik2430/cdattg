@@ -35,8 +35,8 @@ class AprobacionControllerTest extends TestCase
     // Constantes para datos
     private const ROUTE_LOGIN = 'verificarLogin';
     private const ESTADO_EN_ESPERA = 'EN ESPERA';
-    private const ESTADO_DE_ORDEN = 'ESTADOS DE ORDEN';
-    private const FALTA_ESTADO = 'Falta estado EN ESPERA';
+    private const ESTADO_APROBADA = 'APROBADA';
+    private const ESTADO_RECHAZADA = 'RECHAZADA';
 
     protected function setUp(): void
     {
@@ -55,40 +55,9 @@ class AprobacionControllerTest extends TestCase
             \Database\Seeders\TemaSeeder::class,
         ]);
 
-        // Crear tema ESTADOS DE ORDEN si no existe
-        $temaEstados = \App\Models\Tema::firstOrCreate(
-            ['name' => self::ESTADO_DE_ORDEN],
-            [
-                'status' => true,
-                'user_create_id' => null,
-                'user_update_id' => null,
-            ]
-        );
-
-        // Crear estados necesarios si no existen
-        $estados = ['EN ESPERA', 'APROBADA', 'RECHAZADA'];
-        foreach ($estados as $nombreEstado) {
-            $parametro = \App\Models\Parametro::firstOrCreate(
-                ['name' => $nombreEstado],
-                [
-                    'status' => true,
-                    'user_create_id' => null,
-                    'user_update_id' => null,
-                ]
-            );
-
-            \App\Models\ParametroTema::firstOrCreate(
-                [
-                    'parametro_id' => $parametro->id,
-                    'tema_id' => $temaEstados->id,
-                ],
-                [
-                    'status' => true,
-                    'user_create_id' => null,
-                    'user_update_id' => null,
-                ]
-            );
-        }
+        $this->ensureEstadoExists(self::ESTADO_EN_ESPERA);
+        $this->ensureEstadoExists(self::ESTADO_APROBADA);
+        $this->ensureEstadoExists(self::ESTADO_RECHAZADA);
 
         // Crear permisos necesarios
         Permission::firstOrCreate(['name' => self::PERMISSION_APROBAR_ORDEN]);
@@ -98,36 +67,54 @@ class AprobacionControllerTest extends TestCase
         $this->user->givePermissionTo(self::PERMISSION_APROBAR_ORDEN);
     }
 
-    private function obtenerEstadoEnEspera(): ?ParametroTema
+    private function temaEstadosOrden(): string
     {
-        return ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', self::ESTADO_EN_ESPERA);
-        })->whereHas('tema', function ($q) {
-            $q->where('name', self::ESTADO_DE_ORDEN);
+        return config('inventario.temas.estados_orden');
+    }
+
+    private function ensureEstadoExists(string $nombreEstado): ParametroTema
+    {
+        $temaName = $this->temaEstadosOrden();
+
+        $estado = ParametroTema::whereHas('parametro', function ($q) use ($nombreEstado) {
+            $q->where('name', $nombreEstado);
+        })->whereHas('tema', function ($q) use ($temaName) {
+            $q->where('name', $temaName);
         })->first();
-    }
 
-    private function obtenerEstadoAprobada(): ?ParametroTema
-    {
-        return ParametroTema::whereHas('parametro', function ($q) {
-            $q->where('name', 'APROBADA');
-        })->whereHas('tema', function ($q) {
-            $q->where('name', self::ESTADO_DE_ORDEN);
-        })->first();
-    }
-
-    private function omitirSiFaltaEstado(?ParametroTema $estado): void
-    {
-        if (! $estado) {
-            $this->markTestSkipped(self::FALTA_ESTADO);
+        if ($estado) {
+            return $estado;
         }
-    }
 
-    private function omitirSiFaltanEstados(?ParametroTema $estado1, ?ParametroTema $estado2): void
-    {
-        if (! $estado1 || ! $estado2) {
-            $this->markTestSkipped(self::FALTA_ESTADO);
-        }
+        $temaEstados = \App\Models\Tema::firstOrCreate(
+            ['name' => $temaName],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        $parametro = \App\Models\Parametro::firstOrCreate(
+            ['name' => $nombreEstado],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        return ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametro->id,
+                'tema_id' => $temaEstados->id,
+            ],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
     }
 
     private function crearUsuarioSinPermiso(): User
@@ -175,9 +162,8 @@ class AprobacionControllerTest extends TestCase
         $producto = Producto::factory()->create(['cantidad' => 10]);
         $orden = Orden::factory()->create();
 
-        $estadoEnEspera = $this->obtenerEstadoEnEspera();
-        $estadoAprobada = $this->obtenerEstadoAprobada();
-        $this->omitirSiFaltanEstados($estadoEnEspera, $estadoAprobada);
+        $estadoEnEspera = $this->ensureEstadoExists(self::ESTADO_EN_ESPERA);
+        $this->ensureEstadoExists(self::ESTADO_APROBADA);
 
         $detalleOrden = $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 
@@ -196,8 +182,7 @@ class AprobacionControllerTest extends TestCase
         $producto = Producto::factory()->create(['cantidad' => 10]);
         $orden = Orden::factory()->create();
 
-        $estadoEnEspera = $this->obtenerEstadoEnEspera();
-        $this->omitirSiFaltaEstado($estadoEnEspera);
+        $estadoEnEspera = $this->ensureEstadoExists(self::ESTADO_EN_ESPERA);
 
         $detalleOrden = $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 
@@ -237,8 +222,7 @@ class AprobacionControllerTest extends TestCase
         $producto2 = Producto::factory()->create(['cantidad' => 5]);
         $orden = Orden::factory()->create();
 
-        $estadoEnEspera = $this->obtenerEstadoEnEspera();
-        $this->omitirSiFaltaEstado($estadoEnEspera);
+        $estadoEnEspera = $this->ensureEstadoExists(self::ESTADO_EN_ESPERA);
 
         $this->crearDetalleOrdenConEstado($orden, $producto1, $estadoEnEspera);
         $this->crearDetalleOrdenConEstado($orden, $producto2, $estadoEnEspera, 1);
@@ -258,8 +242,7 @@ class AprobacionControllerTest extends TestCase
         $producto = Producto::factory()->create(['cantidad' => 10]);
         $orden = Orden::factory()->create();
 
-        $estadoEnEspera = $this->obtenerEstadoEnEspera();
-        $this->omitirSiFaltaEstado($estadoEnEspera);
+        $estadoEnEspera = $this->ensureEstadoExists(self::ESTADO_EN_ESPERA);
 
         $this->crearDetalleOrdenConEstado($orden, $producto, $estadoEnEspera);
 

@@ -2,22 +2,15 @@
 
 namespace Database\Factories;
 
+use App\Models\GuiasAprendizaje;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\guia_aprendizaje>
+ * @deprecated Use GuiasAprendizajeFactory instead.
+ *
+ * @extends Factory<GuiasAprendizaje>
  */
-class GuiaAprendizajeFactory extends Factory
+class GuiaAprendizajeFactory extends GuiasAprendizajeFactory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            //
-        ];
-    }
+    protected $model = GuiasAprendizaje::class;
 }

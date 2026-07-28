@@ -89,9 +89,18 @@ class GuiasAprendizaje extends Model
 
     public function actividades(): BelongsToMany
     {
-        return $this->belongsToMany(Evidencias::class, 'evidencia_guia_aprendizaje', 'guia_aprendizaje_id', 'evidencia_id')
+        $relacion = $this->belongsToMany(Evidencias::class, 'evidencia_guia_aprendizaje', 'guia_aprendizaje_id', 'evidencia_id')
             ->withPivot('user_create_id', 'user_edit_id')
-            ->withTimestamps()
+            ->withTimestamps();
+
+        // FIELD() es MySQL; en SQLite usamos CASE compatible.
+        if (\Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite') {
+            return $relacion
+                ->orderByRaw("CASE id_estado WHEN '25' THEN 0 WHEN '27' THEN 1 ELSE 2 END")
+                ->orderBy('fecha_evidencia', 'asc');
+        }
+
+        return $relacion
             ->orderByRaw("FIELD(id_estado, '25', '27')")
             ->orderBy('fecha_evidencia', 'asc');
     }

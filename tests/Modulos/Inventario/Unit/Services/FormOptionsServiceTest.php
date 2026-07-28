@@ -6,6 +6,7 @@ namespace Tests\Inventario\Unit\Services;
 
 use Tests\TestCase;
 use App\Inventario\Services\FormOptions\FormOptionsService;
+use App\Inventario\Interfaces\Services\FormOptionsServiceInterface;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -17,7 +18,7 @@ class FormOptionsServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new FormOptionsService();
+        $this->service = app(FormOptionsServiceInterface::class);
     }
 
     #[Test]

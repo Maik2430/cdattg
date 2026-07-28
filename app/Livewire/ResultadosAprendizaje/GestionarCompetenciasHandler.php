@@ -20,23 +20,28 @@ class GestionarCompetenciasHandler extends Component
         'confirmAction' => 'handleConfirmedAction',
     ];
 
-    public function mount()
+    public function mount($resultadoId = null)
     {
-        // Obtener el ID del resultado desde la URL actual
-        $this->resultadoId = request()->segment(2); // /resultados-aprendizaje/{id}/gestionar-competencias
+        // Obtener el ID del resultado desde parámetro o la URL actual
+        // /resultados-aprendizaje/{id}/gestionar-competencias
+        $this->resultadoId = $resultadoId ?? request()->segment(2);
         $this->refreshData();
     }
 
     public function handleConfirmedAction($action, $params)
     {
         try {
-            switch ($action) {
-                case 'asignarCompetencia':
-                    $this->asignarCompetencia($params);
-                    break;
-                case 'desasociarCompetencia':
-                    $this->desasociarCompetencia($params);
-                    break;
+            if ($action === 'asignarCompetencia') {
+                $this->asignarCompetencia($params);
+            } elseif ($action === 'desasociarCompetencia') {
+                $this->desasociarCompetencia($params);
+            } else {
+                $this->dispatch('notify', [
+                    'type' => 'error',
+                    'message' => 'Acción no reconocida',
+                ]);
+
+                return;
             }
 
             // 🔥 CLAVE: Refrescar datos después de modificar BD

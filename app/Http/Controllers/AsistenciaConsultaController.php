@@ -53,7 +53,7 @@ class AsistenciaConsultaController extends Controller
         $registrosPorAprendizId = $asistencia->asistenciaAprendices
             ->keyBy('aprendiz_ficha_id');
 
-        $aprendicesFicha = $asistencia->instructorFicha?->aprendicesTodos ?? collect();
+        $aprendicesFicha = $asistencia->instructorFicha?->ficha?->aprendicesTodos ?? collect();
 
         return $aprendicesFicha->map(function ($aprendiz) use ($registrosPorAprendizId): array {
             $registro = $registrosPorAprendizId->get($aprendiz->id);
@@ -72,12 +72,12 @@ class AsistenciaConsultaController extends Controller
 
         $asistencia->load([
             'evidencia',
-            'instructorFicha.programaFormacion',
-            'instructorFicha.sede',
-            'instructorFicha.ambiente',
+            'instructorFicha.ficha.programaFormacion',
+            'instructorFicha.ficha.sede',
+            'instructorFicha.ficha.ambiente',
             'instructorFicha.instructor.persona',
             'asistenciaAprendices.aprendiz.persona',
-            'instructorFicha.aprendicesTodos.persona',
+            'instructorFicha.ficha.aprendicesTodos.persona',
         ]);
 
         $asistencia->loadCount('asistenciaAprendices');
@@ -96,19 +96,19 @@ class AsistenciaConsultaController extends Controller
 
         $asistencia->load([
             'evidencia',
-            'instructorFicha.programaFormacion',
-            'instructorFicha.sede',
-            'instructorFicha.ambiente',
+            'instructorFicha.ficha.programaFormacion',
+            'instructorFicha.ficha.sede',
+            'instructorFicha.ficha.ambiente',
             'instructorFicha.instructor.persona',
             'asistenciaAprendices.aprendiz.persona',
-            'instructorFicha.aprendicesTodos.persona',
+            'instructorFicha.ficha.aprendicesTodos.persona',
         ]);
 
         $asistencia->loadCount('asistenciaAprendices');
 
         $aprendicesTabla = $this->buildAprendicesTabla($asistencia);
 
-        $fichaNumero = $asistencia->instructorFicha?->ficha ?? 'N_A';
+        $fichaNumero = $asistencia->instructorFicha?->ficha->id ?? 'N_A';
         $fecha = $asistencia->fecha?->format('Y-m-d') ?? now()->format('Y-m-d');
         $filename = 'asistencia_'.$fichaNumero.'_'.$fecha.'.pdf';
 

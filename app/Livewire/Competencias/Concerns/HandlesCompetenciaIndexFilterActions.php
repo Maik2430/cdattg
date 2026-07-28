@@ -53,23 +53,6 @@ trait HandlesCompetenciaIndexFilterActions
         \Log::info('Filters cleared');
     }
 
-    public function gotoPage($page)
-    {
-        \Log::info('gotoPage called with page: '.$page);
-        \Log::info('Before gotoPage - Current page: '.$this->page);
-
-        $this->page = $page;
-
-        \Log::info('After gotoPage - New page: '.$this->page);
-        \Log::info('Going to page: '.$page);
-    }
-
-    public function setPage($page)
-    {
-        \Log::info('setPage called with: '.$page);
-        $this->page = $page;
-    }
-
     public function refreshPagination()
     {
         \Log::info('Refreshing pagination');

@@ -45,9 +45,10 @@
 
 @section('content')
     @php
-        $ficha = $asistencia->instructorFicha;
+        $instructorFicha = $asistencia->instructorFicha;
+        $ficha = $instructorFicha?->ficha;
         $programa = $ficha?->programaFormacion;
-        $instructor = $ficha?->instructor;
+        $instructor = $instructorFicha?->instructor;
         $instructorPersona = $instructor?->persona;
         $evidencia = $asistencia->evidencia;
     @endphp

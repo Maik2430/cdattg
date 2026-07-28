@@ -37,9 +37,9 @@ class VerNotificacionesCommandTest extends TestCase
     #[Test]
     public function ejecuta_comando_sin_errores(): void
     {
-        Artisan::call('ver:notificaciones');
+        $exitCode = Artisan::call('ver:notificaciones');
 
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -62,10 +62,10 @@ class VerNotificacionesCommandTest extends TestCase
             'notificable_id' => $user->id,
         ]);
 
-        Artisan::call('ver:notificaciones');
+        $exitCode = Artisan::call('ver:notificaciones');
 
         $output = Artisan::output();
         $this->assertStringContainsString('ID:', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 }

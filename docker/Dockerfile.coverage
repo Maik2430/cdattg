@@ -1,0 +1,24 @@
+# Imagen de cobertura con PCOV preinstalado (evita pecl en cada corrida).
+FROM php:8.4-cli
+
+RUN set -eux; \
+    apt-get update; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        git unzip zip \
+        libzip-dev libsqlite3-dev libicu-dev libonig-dev \
+        $PHPIZE_DEPS; \
+    docker-php-ext-install -j"$(nproc)" pdo_sqlite zip intl mbstring bcmath; \
+    pecl install pcov; \
+    docker-php-ext-enable pcov; \
+    apt-get purge -y --auto-remove $PHPIZE_DEPS; \
+    rm -rf /var/lib/apt/lists/*; \
+    groupadd --system --gid 1000 app; \
+    useradd --system --uid 1000 --gid app --home-dir /home/app --create-home app; \
+    mkdir -p /app /tmp; \
+    chown -R app:app /home/app /tmp
+
+WORKDIR /app
+
+USER app
+
+CMD ["bash", "/app/tools/run-coverage.sh"]

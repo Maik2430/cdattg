@@ -14,7 +14,8 @@ class BarcodeServiceTest extends TestCase
 {
     private const LONGITUD_CODIGO_BARRAS = 10; // Alineado con config('inventario.codigo_barras.longitud_auto', 10)
     private const CODIGO_BARRAS_VALIDO = '1234567890';
-    private const CODIGO_BARRAS_INVALIDO = '123';
+    private const CODIGO_BARRAS_CORTO = '123';
+    private const CODIGO_BARRAS_INVALIDO = '12345678901234'; // > 13 dígitos: no normalizable / fuerza generación
     private const CODIGO_BARRAS_MAX_INICIAL = '0000000001';
     private const CODIGO_BARRAS_SIGUIENTE = '0000000002';
     private const CODIGO_BARRAS_SIGUIENTE_2 = '0000000003';
@@ -51,6 +52,14 @@ class BarcodeServiceTest extends TestCase
         $resultado = $this->service->resolverCodigoBarras(self::CODIGO_BARRAS_VALIDO);
 
         $this->assertEquals(self::CODIGO_BARRAS_VALIDO, $resultado);
+    }
+
+    #[Test]
+    public function puede_resolver_codigo_barras_corto(): void
+    {
+        $resultado = $this->service->resolverCodigoBarras(self::CODIGO_BARRAS_CORTO);
+
+        $this->assertEquals(self::CODIGO_BARRAS_CORTO, $resultado);
     }
 
     #[Test]

@@ -18,7 +18,7 @@ class HomeController extends Controller
         // Nota: estado_id ahora es FK a parametros_temas, necesitamos obtener el ID correspondiente
         $estadoActivoId = $this->getEstadoIdByLegacyValue(1);
 
-        $programas = ComplementarioOfertado::with(['modalidad.parametro', 'jornada', 'diasFormacion']);
+        $programas = ComplementarioOfertado::with(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion']);
 
         if ($estadoActivoId) {
             $programas = $programas->where('estado_id', $estadoActivoId);
@@ -48,7 +48,7 @@ class HomeController extends Controller
 
             Log::info("Debug HomeController - Persona ID: {$personaId}, Aspirantes encontrados: {$aspirantesCount}");
 
-            $programasInscritos = ComplementarioOfertado::with(['modalidad.parametro', 'jornada', 'diasFormacion'])
+            $programasInscritos = ComplementarioOfertado::with(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion'])
                 ->whereHas('aspirantes', function ($query) use ($personaId) {
                     $query->where('persona_id', $personaId)
                         ->where('estado', 1); // Estado 1 = En proceso

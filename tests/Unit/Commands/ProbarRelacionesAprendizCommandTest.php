@@ -49,9 +49,9 @@ class ProbarRelacionesAprendizCommandTest extends TestCase
     #[Test]
     public function muestra_error_si_aprendiz_no_existe(): void
     {
-        Artisan::call('aprendices:probar-relaciones', ['id' => 999]);
+        $exitCode = Artisan::call('aprendices:probar-relaciones', ['id' => 999]);
 
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
     }
 
     #[Test]
@@ -59,11 +59,11 @@ class ProbarRelacionesAprendizCommandTest extends TestCase
     {
         $aprendiz = Aprendiz::factory()->create();
 
-        Artisan::call('aprendices:probar-relaciones', ['id' => $aprendiz->id]);
+        $exitCode = Artisan::call('aprendices:probar-relaciones', ['id' => $aprendiz->id]);
 
         $output = Artisan::output();
         $this->assertStringContainsString('Aprendiz encontrado', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -71,11 +71,11 @@ class ProbarRelacionesAprendizCommandTest extends TestCase
     {
         $aprendiz = Aprendiz::factory()->create();
 
-        Artisan::call('aprendices:probar-relaciones', ['id' => $aprendiz->id]);
+        $exitCode = Artisan::call('aprendices:probar-relaciones', ['id' => $aprendiz->id]);
 
         $output = Artisan::output();
         $this->assertStringContainsString('Tipo de Documento', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -83,10 +83,10 @@ class ProbarRelacionesAprendizCommandTest extends TestCase
     {
         $aprendiz = Aprendiz::factory()->create();
 
-        Artisan::call('aprendices:probar-relaciones', ['id' => $aprendiz->id]);
+        $exitCode = Artisan::call('aprendices:probar-relaciones', ['id' => $aprendiz->id]);
 
         $output = Artisan::output();
         $this->assertStringContainsString('Jornada', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 }

@@ -11,7 +11,7 @@ trait HandlesAspiranteManagementReadActions
 {
     public function obtenerProgramasParaGestion(): Collection
     {
-        return $this->programaRepository->getAllWithAspirantesCount(['modalidad.parametro', 'jornada', 'diasFormacion']);
+        return $this->programaRepository->getAllWithAspirantesCount(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion']);
     }
 
     public function obtenerAspirantesPorPrograma(string $cursoNombre): array
@@ -27,7 +27,7 @@ trait HandlesAspiranteManagementReadActions
 
     public function obtenerAspirantesPorProgramaId(int $programaId): array
     {
-        $programa = $this->programaRepository->findWithRelations($programaId, ['modalidad', 'jornada', 'diasFormacion']);
+        $programa = $this->programaRepository->findWithRelations($programaId, ['catalogo.modalidad', 'jornada', 'diasFormacion']);
 
         if (! $programa) {
             abort(404, self::PROGRAMA_NO_ENCONTRADO_SIN_PUNTO);

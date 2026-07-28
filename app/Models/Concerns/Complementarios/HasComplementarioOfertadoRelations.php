@@ -7,23 +7,32 @@ use App\Models\Competencia;
 use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Complementarios\ComplementarioCatalogo;
 use App\Models\GuiasAprendizaje;
-use App\Models\JornadaFormacion;
 use App\Models\ParametroTema;
 use App\Models\ResultadosAprendizaje;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait HasComplementarioOfertadoRelations
 {
-    public function jornada()
+    /**
+     * @return BelongsTo<ParametroTema, $this>
+     */
+    public function jornada(): BelongsTo
     {
-        return $this->belongsTo(JornadaFormacion::class, 'jornada_id');
+        return $this->belongsTo(ParametroTema::class, 'jornada_id');
     }
 
-    public function catalogo()
+    /**
+     * @return BelongsTo<ComplementarioCatalogo, $this>
+     */
+    public function catalogo(): BelongsTo
     {
         return $this->belongsTo(ComplementarioCatalogo::class, 'catalogo_id');
     }
 
-    public function ambiente()
+    /**
+     * @return BelongsTo<Ambiente, $this>
+     */
+    public function ambiente(): BelongsTo
     {
         return $this->belongsTo(Ambiente::class, 'ambiente_id');
     }

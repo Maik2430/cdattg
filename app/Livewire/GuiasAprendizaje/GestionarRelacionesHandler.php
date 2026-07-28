@@ -32,7 +32,7 @@ class GestionarRelacionesHandler extends Component
     public function cargarResultados()
     {
         // Cargar resultados disponibles (no asignados a esta guía)
-        $queryDisponibles = ResultadosAprendizaje::whereDoesntHave('guiaAprendizajes', function ($query) {
+        $queryDisponibles = ResultadosAprendizaje::whereDoesntHave('guiasAprendizaje', function ($query) {
             $query->where('guia_aprendizajes.id', $this->guia->id);
         });
 
@@ -163,13 +163,15 @@ class GestionarRelacionesHandler extends Component
         $action = $data['action'] ?? '';
         $params = $data['params'] ?? [];
 
-        switch ($action) {
-            case 'asignarResultado':
-                $this->asignarResultado($params);
-                break;
-            case 'desasociarResultado':
-                $this->desasociarResultado($params);
-                break;
+        if ($action === 'asignarResultado') {
+            $this->asignarResultado($params);
+        } elseif ($action === 'desasociarResultado') {
+            $this->desasociarResultado($params);
+        } else {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Acción no reconocida',
+            ]);
         }
     }
 

@@ -27,6 +27,6 @@ class CleanDuplicateRolesCommandTest extends TestCase
     {
         $command = new CleanDuplicateRoles;
 
-        $this->assertStringContainsString('roles:cleanup', $command->getSignature());
+        $this->assertEquals('roles:cleanup', $command->getName());
     }
 }

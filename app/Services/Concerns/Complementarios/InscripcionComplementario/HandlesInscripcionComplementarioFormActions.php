@@ -23,7 +23,7 @@ trait HandlesInscripcionComplementarioFormActions
 
     public function prepararFormularioInscripcion(int $programaId): array
     {
-        $programa = $this->programaRepository->findWithRelations($programaId, ['modalidad.parametro', 'jornada']);
+        $programa = $this->programaRepository->findWithRelations($programaId, ['catalogo.modalidad.parametro', 'jornada']);
 
         if (! $programa) {
             abort(404, 'Programa no encontrado');

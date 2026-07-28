@@ -52,12 +52,6 @@ trait HandlesResultadoAprendizajeIndexFilterActions
         \Log::info('Filters cleared');
     }
 
-    public function gotoPage($page)
-    {
-        \Log::info('gotoPage called with page: '.$page);
-        $this->page = $page;
-    }
-
     public function formatearHoras($horas)
     {
         if ($horas == 0) {

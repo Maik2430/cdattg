@@ -13,7 +13,7 @@ class CheckUserPermissionsCommandTest extends TestCase
     #[Test]
     public function command_existe(): void
     {
-        $this->artisan('check:user-permissions')
+        $this->artisan('user:check-permissions')
             ->assertExitCode(0);
     }
 }

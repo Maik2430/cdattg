@@ -41,7 +41,12 @@ return new class extends Migration
             $table->string('linea_tecnologica', 200)->nullable(); // Linea Tecnológica
             $table->string('red_tecnologica', 200)->nullable(); // Red Tecnológica
             $table->string('red_conocimiento', 200)->nullable(); // Red de Conocimiento
-            $table->string('modalidad', 100)->nullable(); // Modalidad (Presencial, Virtual, etc.)
+            // Modalidad parametrizada (ParametroTema). La migración 2025_12_19_175418
+            // corre antes de crear esta tabla en installs frescos; el esquema final va aquí.
+            $table->foreignId('modalidad_id')
+                ->nullable()
+                ->constrained('parametros_temas')
+                ->onDelete('set null');
             $table->string('apuesta_prioritaria', 200)->nullable(); // APUESTAS PRIORITARIAS
             $table->string('tipo_permiso', 200)->nullable(); // TIPO PERMISO
 
@@ -62,7 +67,7 @@ return new class extends Migration
 
             // Índices para consultas frecuentes
             $table->index('nivel_formacion');
-            $table->index('modalidad');
+            $table->index('modalidad_id');
             $table->index('linea_tecnologica');
             $table->index('red_tecnologica');
             $table->index('red_conocimiento');

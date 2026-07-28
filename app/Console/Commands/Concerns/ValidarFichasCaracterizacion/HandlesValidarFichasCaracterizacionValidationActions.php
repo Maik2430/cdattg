@@ -28,7 +28,7 @@ trait HandlesValidarFichasCaracterizacionValidationActions
         $this->mostrarResultadoValidacion($resultado);
 
         if ($corregirErrores && ! $resultado['valido']) {
-            $this->intentarCorregirErrores($ficha, $resultado['errores']);
+            $this->intentarCorregirErrores($resultado['errores']);
         }
     }
 
@@ -62,7 +62,7 @@ trait HandlesValidarFichasCaracterizacionValidationActions
             }
 
             if ($corregirErrores && ! $resultado['valido']) {
-                $this->intentarCorregirErrores($ficha, $resultado['errores']);
+                $this->intentarCorregirErrores($resultado['errores']);
             }
 
             $bar->advance();
@@ -70,6 +70,12 @@ trait HandlesValidarFichasCaracterizacionValidationActions
 
         $bar->finish();
         $this->newLine();
+
+        if ($totalFichas === 0) {
+            $this->warn('No hay fichas activas para validar.');
+
+            return;
+        }
 
         $this->info('📊 Resumen de la validación:');
         $this->table(
@@ -82,7 +88,7 @@ trait HandlesValidarFichasCaracterizacionValidationActions
         );
     }
 
-    protected function intentarCorregirErrores($ficha, $errores): void
+    protected function intentarCorregirErrores($errores): void
     {
         $this->warn('🔧 Intentando corregir errores automáticamente...');
 
@@ -91,10 +97,5 @@ trait HandlesValidarFichasCaracterizacionValidationActions
         }
 
         $this->info('💡 Las correcciones automáticas están en desarrollo.');
-    }
-
-    protected function generarReporte($fichas, $resultados): void
-    {
-        $this->info('📄 Generando reporte de validación...');
     }
 }

@@ -15,7 +15,7 @@ class MigrateModuleCommandTest extends TestCase
     public function puede_listar_modulos(): void
     {
         $this->artisan('migrate:module --list')
-            ->expectsOutput('Módulos de migración disponibles:')
+            ->expectsOutput('📋 Módulos de migración disponibles:')
             ->assertExitCode(0);
     }
 
@@ -24,6 +24,6 @@ class MigrateModuleCommandTest extends TestCase
     {
         $command = new MigrateModule;
 
-        $this->assertStringContainsString('migrate:module', $command->getSignature());
+        $this->assertEquals('migrate:module', $command->getName());
     }
 }

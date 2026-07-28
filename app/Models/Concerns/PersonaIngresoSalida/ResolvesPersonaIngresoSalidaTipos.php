@@ -11,6 +11,29 @@ trait ResolvesPersonaIngresoSalidaTipos
      */
     public static function obtenerTiposPersonaDisponibles(): array
     {
+        $fallback = [
+            'instructor',
+            'aprendiz',
+            'visitante',
+            'administrativo',
+            'aspirante',
+            'super_administrador',
+        ];
+
+        if (DB::getDriverName() === 'sqlite') {
+            return $fallback;
+        }
+
+        $tipos = self::resolverTiposPersonaDesdeEnumMysql();
+
+        return $tipos !== [] ? $tipos : $fallback;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function resolverTiposPersonaDesdeEnumMysql(): array
+    {
         $column = DB::select("SHOW COLUMNS FROM persona_ingreso_salida WHERE Field = 'tipo_persona'");
 
         if (empty($column)) {
@@ -18,15 +41,12 @@ trait ResolvesPersonaIngresoSalidaTipos
         }
 
         $type = $column[0]->Type;
-
         preg_match("/^enum\((.*)\)$/", $type, $matches);
 
         if (empty($matches[1])) {
             return [];
         }
 
-        $values = str_getcsv($matches[1], ',', "'");
-
-        return array_map('trim', $values);
+        return array_map('trim', str_getcsv($matches[1], ',', "'"));
     }
 }

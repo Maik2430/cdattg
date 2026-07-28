@@ -16,6 +16,18 @@ class ProgramaFormacionControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    private const PERMISO_VER_PROGRAMAS = 'VER PROGRAMAS DE FORMACION';
+
+    private const PERMISO_VER_PROGRAMA = 'VER PROGRAMA DE FORMACION';
+
+    private const PERMISO_CREAR_PROGRAMA = 'CREAR PROGRAMA DE FORMACION';
+
+    private const PERMISO_EDITAR_PROGRAMA = 'EDITAR PROGRAMA DE FORMACION';
+
+    private const PERMISO_ELIMINAR_PROGRAMA = 'ELIMINAR PROGRAMA DE FORMACION';
+
+    private const PERMISO_CAMBIAR_ESTADO_PROGRAMA = 'CAMBIAR ESTADO PROGRAMA DE FORMACION';
+
     protected User $user;
 
     protected function setUp(): void
@@ -26,20 +38,20 @@ class ProgramaFormacionControllerTest extends TestCase
         $this->seed([
             \Database\Seeders\RolePermissionSeeder::class,
             \Database\Seeders\ParametroSeeder::class,
-            \Database\Seeders\RedConocimientoSeeder::class,
+            \Database\Seeders\TemaSeeder::class,
         ]);
 
-        // Crear permisos necesarios
-        Permission::firstOrCreate(['name' => 'programa.index']);
-        Permission::firstOrCreate(['name' => 'programa.create']);
-        Permission::firstOrCreate(['name' => 'programa.edit']);
-        Permission::firstOrCreate(['name' => 'programa.delete']);
-        Permission::firstOrCreate(['name' => 'programa.search']);
-        Permission::firstOrCreate(['name' => 'programa.show']);
+        // Crear permisos necesarios (nombres reales del middleware del controlador)
+        Permission::firstOrCreate(['name' => self::PERMISO_VER_PROGRAMAS]);
+        Permission::firstOrCreate(['name' => self::PERMISO_VER_PROGRAMA]);
+        Permission::firstOrCreate(['name' => self::PERMISO_CREAR_PROGRAMA]);
+        Permission::firstOrCreate(['name' => self::PERMISO_EDITAR_PROGRAMA]);
+        Permission::firstOrCreate(['name' => self::PERMISO_ELIMINAR_PROGRAMA]);
+        Permission::firstOrCreate(['name' => self::PERMISO_CAMBIAR_ESTADO_PROGRAMA]);
 
         // Crear usuario con permisos usando factory
         $this->user = User::factory()->create();
-        $this->user->givePermissionTo('programa.index');
+        $this->user->givePermissionTo(self::PERMISO_VER_PROGRAMAS);
     }
 
     #[Test]
@@ -59,10 +71,10 @@ class ProgramaFormacionControllerTest extends TestCase
     #[Test]
     public function puede_buscar_programas(): void
     {
-        $this->user->givePermissionTo('programa.search');
+        $this->user->givePermissionTo(self::PERMISO_VER_PROGRAMAS);
         $this->actingAs($this->user);
 
-        $programa = ProgramaFormacion::factory()->create(['nombre' => 'Programa Test']);
+        ProgramaFormacion::factory()->create(['nombre' => 'Programa Test']);
 
         $response = $this->get(route('programa.search', ['search' => 'Test']));
 
@@ -72,7 +84,7 @@ class ProgramaFormacionControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_creacion(): void
     {
-        $this->user->givePermissionTo('programa.create');
+        $this->user->givePermissionTo(self::PERMISO_CREAR_PROGRAMA);
         $this->actingAs($this->user);
 
         $response = $this->get(route('programa.create'));
@@ -84,17 +96,11 @@ class ProgramaFormacionControllerTest extends TestCase
     #[Test]
     public function puede_crear_programa(): void
     {
-        $this->user->givePermissionTo('programa.create');
+        $this->user->givePermissionTo(self::PERMISO_CREAR_PROGRAMA);
         $this->actingAs($this->user);
 
         $redConocimiento = RedConocimiento::first() ?? RedConocimiento::factory()->create();
-        $nivelFormacion = Parametro::whereHas('temas', function ($query) {
-            $query->where('temas.id', 6);
-        })->first();
-
-        if (! $nivelFormacion) {
-            $this->markTestSkipped('No hay niveles de formación disponibles (requiere seeders)');
-        }
+        $nivelFormacion = $this->ensureNivelFormacion();
 
         $response = $this->post(route('programa.store'), [
             'codigo' => 'PROG-'.$this->faker->unique()->numerify('####'),
@@ -110,6 +116,46 @@ class ProgramaFormacionControllerTest extends TestCase
         $response->assertSessionHas('success');
     }
 
+    /**
+     * Asegura un Parametro ligado al tema NIVELES DE FORMACION (id 6).
+     */
+    private function ensureNivelFormacion(): Parametro
+    {
+        $nivelFormacion = Parametro::whereHas('temas', function ($query) {
+            $query->where('temas.id', 6);
+        })->first();
+
+        if ($nivelFormacion) {
+            return $nivelFormacion;
+        }
+
+        $tema = \App\Models\Tema::query()->find(6);
+        if (! $tema) {
+            $tema = new \App\Models\Tema();
+            $tema->forceFill([
+                'id' => 6,
+                'name' => 'NIVELES DE FORMACION',
+                'status' => 1,
+            ]);
+            $tema->save();
+        }
+
+        $parametro = Parametro::firstOrCreate(
+            ['name' => 'TECNOLOGO'],
+            ['status' => 1]
+        );
+
+        \App\Models\ParametroTema::firstOrCreate(
+            [
+                'tema_id' => 6,
+                'parametro_id' => $parametro->id,
+            ],
+            ['status' => 1]
+        );
+
+        return $parametro->fresh() ?? $parametro;
+    }
+
     #[Test]
     public function no_puede_crear_programa_sin_permiso(): void
     {
@@ -123,7 +169,7 @@ class ProgramaFormacionControllerTest extends TestCase
     #[Test]
     public function puede_ver_detalles_de_programa(): void
     {
-        $this->user->givePermissionTo('programa.show');
+        $this->user->givePermissionTo(self::PERMISO_VER_PROGRAMA);
         $this->actingAs($this->user);
 
         $programa = ProgramaFormacion::factory()->create();
@@ -137,7 +183,7 @@ class ProgramaFormacionControllerTest extends TestCase
     #[Test]
     public function puede_ver_formulario_de_edicion(): void
     {
-        $this->user->givePermissionTo('programa.edit');
+        $this->user->givePermissionTo(self::PERMISO_EDITAR_PROGRAMA);
         $this->actingAs($this->user);
 
         $programa = ProgramaFormacion::factory()->create();
@@ -151,7 +197,7 @@ class ProgramaFormacionControllerTest extends TestCase
     #[Test]
     public function puede_actualizar_programa(): void
     {
-        $this->user->givePermissionTo('programa.edit');
+        $this->user->givePermissionTo(self::PERMISO_EDITAR_PROGRAMA);
         $this->actingAs($this->user);
 
         $programa = ProgramaFormacion::factory()->create();
@@ -176,7 +222,7 @@ class ProgramaFormacionControllerTest extends TestCase
     #[Test]
     public function puede_eliminar_programa(): void
     {
-        $this->user->givePermissionTo('programa.delete');
+        $this->user->givePermissionTo(self::PERMISO_ELIMINAR_PROGRAMA);
         $this->actingAs($this->user);
 
         $programa = ProgramaFormacion::factory()->create();

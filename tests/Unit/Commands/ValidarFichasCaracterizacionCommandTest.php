@@ -23,6 +23,6 @@ class ValidarFichasCaracterizacionCommandTest extends TestCase
     {
         $command = new ValidarFichasCaracterizacion;
 
-        $this->assertStringContainsString('fichas:validar', $command->getSignature());
+        $this->assertEquals('fichas:validar', $command->getName());
     }
 }

@@ -27,6 +27,6 @@ class VerificarIntegridadAprendicesCommandTest extends TestCase
     {
         $command = new VerificarIntegridadAprendices;
 
-        $this->assertStringContainsString('aprendices:verificar-integridad', $command->getSignature());
+        $this->assertEquals('aprendices:verificar-integridad', $command->getName());
     }
 }

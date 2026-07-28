@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-md-6 mb-2">
                                 <h6 class="mb-1">Modalidad</h6>
-                                <p class="mb-0"><strong>{{ is_object($programa) ? ($programa->modalidad ?? '—') :
+                                <p class="mb-0"><strong>{{ is_object($programa) ? ($programa->modalidad_nombre ?? optional(optional($programa->modalidad)->parametro)->name ?? '—') :
                                     '—' }}</strong></p>
                             </div>
                             <div class="col-md-6 mb-2">

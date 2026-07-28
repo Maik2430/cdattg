@@ -4,23 +4,20 @@ namespace App\Models\Concerns\Complementarios;
 
 trait BuildsComplementarioOfertadoCatalogAttributes
 {
+    public ?string $pendingCatalogoDenominacion = null;
+
     /**
-     * Accessor para obtener la modalidad desde el catálogo
-     * Mantiene compatibilidad hacia atrás con código que usa $complementario->modalidad
+     * Accessor para obtener la modalidad (ParametroTema) desde el catálogo.
      */
     public function getModalidadAttribute()
     {
-        if ($this->catalogo_id && $this->relationLoaded('catalogo')) {
-            return $this->catalogo?->modalidad;
+        if (! $this->catalogo_id) {
+            return null;
         }
 
-        if ($this->catalogo_id) {
-            $this->loadMissing(['catalogo.modalidad.parametro']);
+        $this->loadMissing(['catalogo.modalidad.parametro']);
 
-            return $this->catalogo?->modalidad;
-        }
-
-        return null;
+        return $this->catalogo?->modalidad;
     }
 
     /**
@@ -59,6 +56,44 @@ trait BuildsComplementarioOfertadoCatalogAttributes
         }
 
         return null;
+    }
+
+    /**
+     * Redirige asignaciones legacy de nombre hacia el catálogo (denominacion).
+     * Evita INSERT/UPDATE sobre una columna que ya no existe en complementarios_ofertados.
+     */
+    public function setNombreAttribute(?string $value): void
+    {
+        if ($value === null) {
+            return;
+        }
+
+        if ($this->exists && $this->catalogo_id) {
+            $this->loadMissing('catalogo');
+            $this->catalogo?->update(['denominacion' => $value]);
+
+            return;
+        }
+
+        $this->pendingCatalogoDenominacion = $value;
+    }
+
+    /**
+     * Aplica denominación pendiente tras crear el ofertado (p. ej. factory con ['nombre' => ...]).
+     */
+    protected static function bootBuildsComplementarioOfertadoCatalogAttributes(): void
+    {
+        static::created(function ($ofertado): void {
+            if ($ofertado->pendingCatalogoDenominacion === null || ! $ofertado->catalogo_id) {
+                return;
+            }
+
+            $ofertado->loadMissing('catalogo');
+            $ofertado->catalogo?->update([
+                'denominacion' => $ofertado->pendingCatalogoDenominacion,
+            ]);
+            $ofertado->pendingCatalogoDenominacion = null;
+        });
     }
 
     /**

@@ -23,6 +23,6 @@ class BackfillSenaBarcodesCommandTest extends TestCase
     {
         $command = new BackfillSenaBarcodes;
 
-        $this->assertStringContainsString('productos:backfill-sena-barcodes', $command->getSignature());
+        $this->assertEquals('productos:backfill-sena-barcodes', $command->getName());
     }
 }

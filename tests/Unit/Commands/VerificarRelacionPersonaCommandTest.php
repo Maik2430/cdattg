@@ -18,8 +18,13 @@ class VerificarRelacionPersonaCommandTest extends TestCase
             \Database\Seeders\RolePermissionSeeder::class,
         ]);
 
-        $this->artisan('aprendices:verificar-relacion-persona')
-            ->assertExitCode(0);
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('aprendices:verificar-relacion-persona');
+
+        $this->assertEquals(1, $exitCode);
+        $this->assertStringContainsString(
+            'No hay aprendices en la base de datos',
+            \Illuminate\Support\Facades\Artisan::output()
+        );
     }
 
     #[Test]
@@ -27,6 +32,6 @@ class VerificarRelacionPersonaCommandTest extends TestCase
     {
         $command = new VerificarRelacionPersona;
 
-        $this->assertStringContainsString('aprendices:verificar-relacion-persona', $command->getSignature());
+        $this->assertEquals('aprendices:verificar-relacion-persona', $command->getName());
     }
 }

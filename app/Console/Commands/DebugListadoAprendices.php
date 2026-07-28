@@ -17,7 +17,7 @@ class DebugListadoAprendices extends Command
         $this->newLine();
 
         // Simular exactamente lo que hace el controlador index
-        $query = Aprendiz::with(['persona', 'fichaCaracterizacion', 'aprendizFichas.ficha']);
+        $query = Aprendiz::with(['persona', 'fichaCaracterizacion', 'asistencias']);
         $aprendices = $query->paginate(10);
 
         $this->info("Total de aprendices: {$aprendices->total()}");

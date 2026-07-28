@@ -4,7 +4,7 @@ namespace App\Models\Concerns\Asistencia;
 
 use App\Models\AsistenciaAprendiz;
 use App\Models\Evidencias;
-use App\Models\FichaCaracterizacion;
+use App\Models\InstructorFichaCaracterizacion;
 use App\Models\User;
 
 trait HasAsistenciaRelations
@@ -24,7 +24,7 @@ trait HasAsistenciaRelations
      */
     public function instructorFicha()
     {
-        return $this->belongsTo(FichaCaracterizacion::class, 'instructor_ficha_id');
+        return $this->belongsTo(InstructorFichaCaracterizacion::class, 'instructor_ficha_id');
     }
 
     /**

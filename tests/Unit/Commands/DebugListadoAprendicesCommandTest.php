@@ -8,9 +8,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Tests\Unit\Commands\Concerns\CreatesAprendizSinPersona;
 
 class DebugListadoAprendicesCommandTest extends TestCase
 {
+    use CreatesAprendizSinPersona;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -40,20 +42,20 @@ class DebugListadoAprendicesCommandTest extends TestCase
     #[Test]
     public function ejecuta_comando_sin_errores(): void
     {
-        Artisan::call('aprendices:debug-listado');
+        $exitCode = Artisan::call('aprendices:debug-listado');
 
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
     public function muestra_informacion_cuando_no_hay_aprendices(): void
     {
-        Artisan::call('aprendices:debug-listado');
+        $exitCode = Artisan::call('aprendices:debug-listado');
 
         $output = Artisan::output();
         $this->assertStringContainsString('Simulando el listado del controlador', $output);
         $this->assertStringContainsString('Total de aprendices: 0', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -61,23 +63,26 @@ class DebugListadoAprendicesCommandTest extends TestCase
     {
         Aprendiz::factory()->count(3)->create();
 
-        Artisan::call('aprendices:debug-listado');
+        $exitCode = Artisan::call('aprendices:debug-listado');
 
         $output = Artisan::output();
         $this->assertStringContainsString('Total de aprendices:', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
     public function detecta_aprendices_sin_persona(): void
     {
-        $aprendiz = Aprendiz::factory()->create(['persona_id' => null]);
+        $aprendiz = $this->crearAprendizSinPersona();
 
-        Artisan::call('aprendices:debug-listado');
-
+        $exitCode = Artisan::call('aprendices:debug-listado');
         $output = Artisan::output();
-        $this->assertStringContainsString('sin persona cargada', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+
+        $this->assertEquals(0, $exitCode);
+        $this->assertStringContainsString('aprendices sin persona cargada', $output);
+        $this->assertStringContainsString((string) $aprendiz->id, $output);
+        $this->assertStringContainsString('NO', $output);
+        $this->assertNull($aprendiz->persona);
     }
 
     #[Test]
@@ -85,10 +90,10 @@ class DebugListadoAprendicesCommandTest extends TestCase
     {
         Aprendiz::factory()->count(3)->create();
 
-        Artisan::call('aprendices:debug-listado');
+        $exitCode = Artisan::call('aprendices:debug-listado');
 
         $output = Artisan::output();
         $this->assertStringContainsString('Todos los aprendices tienen persona cargada correctamente', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 }

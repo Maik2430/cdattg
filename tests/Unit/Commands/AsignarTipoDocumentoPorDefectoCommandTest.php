@@ -28,6 +28,6 @@ class AsignarTipoDocumentoPorDefectoCommandTest extends TestCase
     {
         $command = new AsignarTipoDocumentoPorDefecto;
 
-        $this->assertStringContainsString('aprendices:asignar-tipo-documento', $command->getSignature());
+        $this->assertEquals('aprendices:asignar-tipo-documento', $command->getName());
     }
 }

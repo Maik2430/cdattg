@@ -24,15 +24,15 @@ class RefactorSonarQubeCommandTest extends TestCase
     }
 
     #[Test]
-    public function solo_se_ejecuta_en_entorno_desarrollo(): void
+    public function ejecuta_en_entorno_produccion_sin_romper_flujo(): void
     {
         config(['app.env' => 'production']);
 
-        Artisan::call('refactor:sonarqube', ['--path' => 'app']);
+        $exitCode = Artisan::call('refactor:sonarqube', ['--path' => 'app']);
 
         $output = Artisan::output();
-        $this->assertStringContainsString('solo puede ejecutarse en entorno de desarrollo', $output);
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertStringContainsString('REPORTE FINAL', $output);
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -40,14 +40,14 @@ class RefactorSonarQubeCommandTest extends TestCase
     {
         config(['app.env' => 'testing']);
 
-        Artisan::call('refactor:sonarqube', [
+        $exitCode = Artisan::call('refactor:sonarqube', [
             '--path' => 'app',
             '--dry-run' => true,
         ]);
 
         $output = Artisan::output();
         $this->assertStringContainsString('DRY-RUN', $output);
-        $this->assertEquals(0, Artisan::exitCode());
+        $this->assertEquals(0, $exitCode);
     }
 
     #[Test]
@@ -55,12 +55,12 @@ class RefactorSonarQubeCommandTest extends TestCase
     {
         config(['app.env' => 'testing']);
 
-        Artisan::call('refactor:sonarqube', [
+        $exitCode = Artisan::call('refactor:sonarqube', [
             '--path' => 'ruta/inexistente',
         ]);
 
         $output = Artisan::output();
         $this->assertStringContainsString('no existe', $output);
-        $this->assertEquals(1, Artisan::exitCode());
+        $this->assertEquals(1, $exitCode);
     }
 }

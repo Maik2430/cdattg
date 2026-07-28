@@ -62,12 +62,17 @@ trait SeedsComplementariosDatabase
             $temaGeneroExists = Schema::hasTable('temas') &&
                 \App\Models\Tema::where('id', 3)->exists();
 
-            $parametroTemaExists = Schema::hasTable('parametros_temas') &&
+            $parametroGeneroExists = Schema::hasTable('parametros_temas') &&
                 \App\Models\ParametroTema::where('tema_id', 3)
                     ->whereIn('parametro_id', [9, 10, 11])
                     ->exists();
 
-            return $temaGeneroExists && $parametroTemaExists;
+            $parametroTipoDocumentoExists = Schema::hasTable('parametros_temas') &&
+                \App\Models\ParametroTema::where('tema_id', 2)
+                    ->whereIn('parametro_id', [3, 4, 5, 6])
+                    ->exists();
+
+            return $temaGeneroExists && $parametroGeneroExists && $parametroTipoDocumentoExists;
         } catch (\Exception $e) {
             return false;
         }
@@ -121,7 +126,6 @@ trait SeedsComplementariosDatabase
             \Database\Seeders\BloqueSeeder::class,
             \Database\Seeders\PisoSeeder::class,
             \Database\Seeders\AmbienteSeeder::class,
-            \Database\Seeders\JornadaFormacionSeeder::class,
         ]);
 
         \Illuminate\Support\Facades\DB::commit();

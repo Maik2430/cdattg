@@ -30,9 +30,10 @@ trait HandlesPersonaIngresoSalidaEstadisticasPorHoraActions
         }
 
         // Obtener entradas agrupadas por hora
+        $horaEntradaExpr = $this->horaSqlExpression('timestamp_entrada');
         $entradas = $queryEntradas
-            ->select(DB::raw('HOUR(timestamp_entrada) as hora'), DB::raw(self::COUNT_TOTAL))
-            ->groupBy(DB::raw('HOUR(timestamp_entrada)'))
+            ->select(DB::raw("{$horaEntradaExpr} as hora"), DB::raw(self::COUNT_TOTAL))
+            ->groupBy(DB::raw($horaEntradaExpr))
             ->get();
 
         foreach ($entradas as $entrada) {
@@ -50,9 +51,10 @@ trait HandlesPersonaIngresoSalidaEstadisticasPorHoraActions
         }
 
         // Obtener salidas agrupadas por hora
+        $horaSalidaExpr = $this->horaSqlExpression('timestamp_salida');
         $salidas = $querySalidas
-            ->select(DB::raw('HOUR(timestamp_salida) as hora'), DB::raw(self::COUNT_TOTAL))
-            ->groupBy(DB::raw('HOUR(timestamp_salida)'))
+            ->select(DB::raw("{$horaSalidaExpr} as hora"), DB::raw(self::COUNT_TOTAL))
+            ->groupBy(DB::raw($horaSalidaExpr))
             ->get();
 
         foreach ($salidas as $salida) {
@@ -75,5 +77,14 @@ trait HandlesPersonaIngresoSalidaEstadisticasPorHoraActions
             'entradas' => $entradasPorHora,
             'salidas' => $salidasPorHora,
         ];
+    }
+
+    private function horaSqlExpression(string $column): string
+    {
+        if (DB::getDriverName() === 'sqlite') {
+            return "CAST(strftime('%H', {$column}) AS INTEGER)";
+        }
+
+        return "HOUR({$column})";
     }
 }

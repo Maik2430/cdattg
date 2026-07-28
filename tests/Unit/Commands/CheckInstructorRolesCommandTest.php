@@ -27,6 +27,6 @@ class CheckInstructorRolesCommandTest extends TestCase
     {
         $command = new CheckInstructorRoles;
 
-        $this->assertStringContainsString('instructors:check-roles', $command->getSignature());
+        $this->assertEquals('instructors:check-roles', $command->getName());
     }
 }

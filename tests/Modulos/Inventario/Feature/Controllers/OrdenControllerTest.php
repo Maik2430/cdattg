@@ -95,65 +95,70 @@ class OrdenControllerTest extends TestCase
         $response->assertViewHas('ordenes');
     }
 
+    private function asegurarTema(string $name): \App\Models\Tema
+    {
+        return \App\Models\Tema::firstOrCreate(
+            ['name' => $name],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+    }
+
+    private function asegurarParametroTema(string $temaName, string $parametroName): ParametroTema
+    {
+        $existente = ParametroTema::whereHas('tema', function ($q) use ($temaName) {
+            $q->where('name', $temaName);
+        })->whereHas('parametro', function ($q) use ($parametroName) {
+            $q->where('name', $parametroName);
+        })->first();
+
+        if ($existente) {
+            return $existente;
+        }
+
+        $tema = $this->asegurarTema($temaName);
+
+        $parametro = \App\Models\Parametro::firstOrCreate(
+            ['name' => $parametroName],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+
+        return ParametroTema::firstOrCreate(
+            [
+                'parametro_id' => $parametro->id,
+                'tema_id' => $tema->id,
+            ],
+            [
+                'status' => true,
+                'user_create_id' => null,
+                'user_edit_id' => null,
+            ]
+        );
+    }
+
     #[Test]
     public function puede_crear_orden(): void
     {
         $this->user->givePermissionTo(self::PERMISSION_CREAR_ORDEN);
         $this->actingAs($this->user);
 
-        // Obtener temas existentes (TemaSeeder ya los crea)
-        $temaTipoOrden = \App\Models\Tema::where('name', 'TIPOS DE ORDEN')->first();
-        $temaEstados = \App\Models\Tema::where('name', 'ESTADOS DE ORDEN')->first();
+        $temaTiposOrden = config('inventario.temas.tipos_orden');
+        $temaEstadosOrden = config('inventario.temas.estados_orden');
 
-        if (!$temaTipoOrden || !$temaEstados) {
-            $this->markTestSkipped('Faltan temas necesarios para la prueba');
-        }
+        $this->asegurarTema($temaTiposOrden);
+        $this->asegurarTema($temaEstadosOrden);
 
-        // Obtener parámetros existentes del seeder
-        $tipoPrestamoParametro = \App\Models\ParametroTema::whereHas('tema', function ($q) {
-            $q->where('name', 'TIPOS DE ORDEN');
-        })->whereHas('parametro', function ($q) {
-            $q->where('name', 'PRESTAMO');
-        })->first()?->parametro;
-
-        $estadoEnEsperaParametro = \App\Models\ParametroTema::whereHas('tema', function ($q) {
-            $q->where('name', 'ESTADOS DE ORDEN');
-        })->whereHas('parametro', function ($q) {
-            $q->where('name', 'EN ESPERA');
-        })->first()?->parametro;
-
-        // Si no existen, crearlos con null para evitar problemas de claves foráneas
-        if (!$tipoPrestamoParametro) {
-            $tipoPrestamoParametro = \App\Models\Parametro::create([
-                'name' => 'PRESTAMO',
-                'status' => true,
-                'user_create_id' => null,
-                'user_update_id' => null,
-            ]);
-            \App\Models\ParametroTema::create([
-                'parametro_id' => $tipoPrestamoParametro->id,
-                'tema_id' => $temaTipoOrden->id,
-                'status' => true,
-                'user_create_id' => null,
-                'user_update_id' => null,
-            ]);
-        }
-
-        if (!$estadoEnEsperaParametro) {
-            $estadoEnEsperaParametro = \App\Models\Parametro::create([
-                'name' => 'EN ESPERA',
-                'status' => true,
-                'user_create_id' => null,
-                'user_update_id' => null,
-            ]);
-            \App\Models\ParametroTema::create([
-                'parametro_id' => $estadoEnEsperaParametro->id,
-                'tema_id' => $temaEstados->id,
-                'status' => true,
-                'user_create_id' => null,
-                'user_update_id' => null,
-            ]);
-        }
+        // Seeder usa PRÉSTAMO (con tilde); el controller acepta "prestamo"
+        $this->asegurarParametroTema($temaTiposOrden, 'PRÉSTAMO');
+        $this->asegurarParametroTema($temaTiposOrden, 'PRESTAMO');
+        $this->asegurarParametroTema($temaEstadosOrden, 'EN ESPERA');
 
         $producto = Producto::factory()->create(['cantidad' => 10]);
 

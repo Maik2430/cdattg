@@ -51,10 +51,4 @@ trait HandlesGuiaAprendizajeIndexFilterActions
         $this->resetPage();
         \Log::info('Filters cleared');
     }
-
-    public function gotoPage($page)
-    {
-        \Log::info('gotoPage called with page: '.$page);
-        $this->page = $page;
-    }
 }

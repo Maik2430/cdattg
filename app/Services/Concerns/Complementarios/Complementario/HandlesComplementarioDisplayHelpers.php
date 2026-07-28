@@ -67,7 +67,7 @@ trait HandlesComplementarioDisplayHelpers
     {
         $programa->icono = $this->getIconoForPrograma($programa->nombre);
         $programa->modalidad_nombre = $programa->catalogo?->modalidad?->parametro?->name ?? null;
-        $programa->jornada_nombre = $programa->jornada->jornada ?? null;
+        $programa->jornada_nombre = $programa->jornada?->parametro?->name ?? null;
 
         return $programa;
     }

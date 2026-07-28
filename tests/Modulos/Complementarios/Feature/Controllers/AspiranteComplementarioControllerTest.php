@@ -75,25 +75,58 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $programa = $this->crearProgramaComplementario();
-        $programa->nombre = 'Auxiliar de Cocina';
-        $programa->save();
+        $denominacion = 'Auxiliar de Cocina';
+        $slug = 'Auxiliar-de-Cocina';
 
         $repo = new \App\Repositories\Complementarios\ComplementarioOfertadoRepository();
-        $programaEncontrado = $repo->findByNombre('Auxiliar-de-Cocina');
+        $programa = $repo->findByNombre($slug);
 
-        if (!$programaEncontrado) {
-            $this->markTestSkipped('No se pudo encontrar el programa por nombre. Verificar repositorio.');
+        if (! $programa) {
+            $programa = $this->crearProgramaComplementarioConDenominacion($denominacion);
         }
 
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa)->create();
 
-        $response = $this->get(route('programas-complementarios.ver-aspirantes', 'Auxiliar-de-Cocina'));
+        $response = $this->get(route('programas-complementarios.ver-aspirantes', $slug));
 
         $response->assertStatus(200);
         $response->assertViewIs('complementarios.aspirantes.programa');
         $response->assertViewHas('programa');
         $response->assertViewHas('aspirantes');
+    }
+
+    /**
+     * Crea un programa ofertado con catálogo cuya denominación permita findByNombre.
+     */
+    private function crearProgramaComplementarioConDenominacion(string $denominacion): ComplementarioOfertado
+    {
+        $prfCodigo = 'PRF' . substr(uniqid(), -4);
+        $modalidadId = \App\Models\ParametroTema::where('tema_id', 5)
+            ->whereIn('parametro_id', [18, 19, 20])
+            ->value('id');
+
+        $catalogoAttributes = [
+            'prf_codigo' => $prfCodigo,
+            'version' => 1,
+            'cod_ver' => $prfCodigo . '-1',
+            'nivel_formacion' => 'CURSO ESPECIAL',
+            'duracion_horas' => 40,
+            'requisitos_ingreso' => 'Ninguno',
+            'activo' => true,
+        ];
+
+        if ($modalidadId && \Illuminate\Support\Facades\Schema::hasColumn('complementarios_catalogo', 'modalidad_id')) {
+            $catalogoAttributes['modalidad_id'] = $modalidadId;
+        }
+
+        $catalogo = \App\Models\Complementarios\ComplementarioCatalogo::firstOrCreate(
+            ['denominacion' => $denominacion],
+            $catalogoAttributes
+        );
+
+        return ComplementarioOfertado::factory()->conOferta()->create([
+            'catalogo_id' => $catalogo->id,
+        ]);
     }
 
     #[Test]
@@ -364,18 +397,22 @@ class AspiranteComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $programa = $this->crearProgramaComplementario();
-        $persona = Persona::factory()->create(['numero_documento' => self::TEST_NUMERO_DOCUMENTO]);
+        $persona = Persona::factory()->create(['numero_documento' => self::NUMERO_DOCUMENTO_NUEVO]);
 
-        $response = $this->post(route('programas-complementarios.aspirantes.store', $programa->id), [
-            'numero_documento' => self::TEST_NUMERO_DOCUMENTO,
+        $response = $this->postJson(route('programas-complementarios.aspirantes.store', $programa->id), [
+            'numero_documento' => self::NUMERO_DOCUMENTO_NUEVO,
         ]);
 
-        $response->assertStatus(200);
-        $response->assertJson(['success' => true]);
+        $response->assertOk();
+        $response->assertJsonPath('success', true);
         $this->assertDatabaseHas('aspirantes_complementarios', [
             'persona_id' => $persona->id,
             'complementario_id' => $programa->id,
         ]);
+        $this->assertSame(1, AspiranteComplementario::query()
+            ->where('complementario_id', $programa->id)
+            ->where('persona_id', $persona->id)
+            ->count());
     }
 
     #[Test]
@@ -495,6 +532,10 @@ class AspiranteComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
+        \Illuminate\Support\Facades\Storage::fake('google');
+        \Illuminate\Support\Facades\Storage::fake('local');
+        \Illuminate\Support\Facades\Storage::fake('public');
+
         $programa = $this->crearProgramaComplementario();
         $datos = $this->crearDatosPersonaCompleta(self::NUMERO_DOCUMENTO_NUEVO);
 
@@ -527,19 +568,20 @@ class AspiranteComplementarioControllerTest extends TestCase
             'estado' => 1, // En proceso
         ]);
 
-        // Verificar caracterizaciones si se proporcionaron
-        $caracterizacion = $this->obtenerCaracterizacion();
-        if ($caracterizacion && !empty($datos['caracterizaciones'])) {
-            // Verificar que la caracterización se guardó (puede estar en persona_caracterizacion o en parametro_id)
-            $persona->refresh();
-            $tieneCaracterizacion = $persona->caracterizacionesComplementarias()
-                ->where('parametros.id', $caracterizacion->id)
-                ->exists();
+        // Verificar caracterizaciones: fixture asegura ParametroTema de tema 16
+        $caracterizacion = $this->ensureCaracterizacion();
+        $this->assertNotEmpty($datos['caracterizaciones']);
+        $this->assertContains($caracterizacion->id, $datos['caracterizaciones']);
 
-            if (!$tieneCaracterizacion && $persona->parametro_id != $caracterizacion->id) {
-                $this->markTestSkipped('No se pudo verificar la caracterización. Puede ser un problema de datos de prueba.');
-            }
-        }
+        $persona->refresh();
+        $tieneCaracterizacion = $persona->caracterizacionesComplementarias()
+            ->where('parametros.id', $caracterizacion->id)
+            ->exists();
+
+        $this->assertTrue(
+            $tieneCaracterizacion || (int) $persona->parametro_id === (int) $caracterizacion->id,
+            'La caracterización del aspirante no quedó asociada a la persona.'
+        );
     }
 
     #[Test]

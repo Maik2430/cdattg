@@ -2,8 +2,8 @@
 
 ## Estado Actual
 
-- **Controladores**: 70 archivos, **37 tests** (53% cobertura) 🔄 **33 faltantes**
-- **Modelos**: 64 archivos, **61 tests** (95% cobertura) ✅ **3 faltantes**
+- **Controladores**: 70 archivos, **~41+ Feature tests** ✅ remanentes críticos cubiertos
+- **Modelos**: modelos activos con `*ModelTest` ✅ (ProveedorContacto N/A — tabla dropeada)
 - **Servicios**: 48 archivos, **49 tests** (102% cobertura) ✅ **0 faltantes**
 - **Repositorios**: 45 archivos, **46 tests** (102% cobertura) ✅ **0 faltantes**
 - **Form Requests**: 53 archivos, **53 tests** (100% cobertura) ✅ **0 faltantes**
@@ -418,76 +418,138 @@
 - ✅ **Repositorios**: 46/45 (102% - cobertura completa)
 
 ### 🔄 En Progreso
-- 🔄 **Controladores Feature**: 37/70 (53%) - **33 faltantes**
-- 🔄 **Modelos**: 61/64 (95%) - **3 faltantes**
+- ✅ **Controladores Feature**: cobertura estructural de los 33 listados cerrada (excepto vacíos/deprecados)
+- ✅ **Modelos**: Pais/Departamento/Municipio cubiertos
 
 ## Tests Faltantes por Categoría
 
-### Controladores (33 faltantes)
-Los siguientes controladores no tienen tests Feature:
-- AsistenceQrController
-- AsistenciaAprendicesController
-- CaracterizacionController
-- ComplementarioController
-- ControlSeguimiento/IngresoSalidaController
-- EvidenciasController
-- FichaCaracterizacionFlutterController
-- GoogleDriveController
-- HomeController
-- PersonaIngresoSalidaController
-- RegistroActividadesController
-- WebSocketVisitantesController
-- Api/UbicacionPublicApiController
-- Auth/ConfirmPasswordController
-- Auth/PasswordResetController
-- Auth/RegisterController
-- Auth/VerificationController
-- Complementarios/AspiranteComplementarioController
-- Complementarios/DocumentoComplementarioController
-- Complementarios/EstadisticaComplementarioController
-- Complementarios/InscripcionComplementarioController
-- Complementarios/PerfilComplementarioController
-- Complementarios/ProgramaComplementarioController
-- Complementarios/ValidacionSofiaController
-- Inventario/CarritoController
-- Inventario/CategoriaController
-- Inventario/ContratoConvenioController
-- Inventario/DashboardController
-- Inventario/DevolucionController
-- Inventario/InventarioController
-- Inventario/MarcaController
-- Inventario/NotificacionController
-- Inventario/ProveedorController
+### Controladores — Fase 3 CERRADA ✅
+Los 33 del inventario previo quedaron así:
 
-### Modelos (3 faltantes)
-Verificar cuáles de los 64 modelos no tienen test (posiblemente modelos base o muy simples)
+**Con Feature test nuevo o ya existente:**
+- ✅ AsistenceQrController
+- ✅ AsistenciaAprendicesController
+- ✅ CaracterizacionController
+- ✅ ControlSeguimiento/IngresoSalidaController
+- ✅ EvidenciasController
+- ✅ FichaCaracterizacionFlutterController
+- ✅ GoogleDriveController
+- ✅ HomeController
+- ✅ PersonaIngresoSalidaController
+- ✅ RegistroActividadesController
+- ✅ WebSocketVisitantesController
+- ✅ Api/UbicacionPublicApiController
+- ✅ Auth/ConfirmPasswordController
+- ✅ Auth/PasswordResetController
+- ✅ Auth/RegisterController
+- ✅ Auth/VerificationController
+- ✅ Complementarios/* (7 controladores especializados)
+- ✅ Inventario/Carrito, Categoria, ContratoConvenio, Dashboard, Devolucion, Marca, Notificacion, Proveedor
+
+**No aplica test Feature:**
+- ➖ ComplementarioController — vacío `@deprecated` (lógica en Complementarios/*)
+- ➖ Inventario/InventarioController — ya no existe en el código
+
+### Modelos — Fase 4+ (cierre 100% activos) ✅
+- ✅ PaisModelTest / DepartamentoModelTest / MunicipioModelTest
+- ✅ AsistenciaModelTest
+- ✅ ComplementarioCatalogoModelTest
+- ✅ CaracterizacionProgramaModelTest
+- ➖ ProveedorContacto — tabla `proveedor_contactos` dropeada (modelo huérfano)
+
+### Livewire — Fase 5 CERRADA ✅
+Cobertura estructural smoke de los **30** componentes Livewire (excl. Concerns):
+
+- `tests/Feature/Livewire/**` — 30 archivos, **30 passed**
+- Cada test monta el componente con `Livewire::test(...)->assertStatus(200)`
+
+### Fase 6 — Concerns (acciones CRUD Livewire) ✅
+Profundizar acciones reales (no solo mount):
+
+- ✅ `GuiaAprendizajeIndexTest::puede_eliminar_guia_sin_actividades` → `deleteGuia`
+- ✅ `FichaIndexTest` → `toggleStatus`, `deleteFicha`
+- ✅ `CompetenciaIndexTest` → `toggleStatus`, `deleteCompetencia`
+- ✅ `ResultadoAprendizajeIndexTest` → `toggleStatus`, `deleteResultado`
+- ✅ `ProgramaIndexTest` → `toggleStatus`, `deletePrograma` (soft delete)
+- ✅ `InstructorIndexTest` → `toggleStatus`, `deleteInstructor`
+- ✅ `RedConocimientoIndexTest` → `toggleStatus`, `deleteRed`
+- ✅ `CrearEvidenciaModalTest` → `crearEvidencia` (evidencia + asistencia + redirect)
+- Fix SQLite: `GuiasAprendizaje::actividades()` usa `CASE` en lugar de `FIELD()` MySQL
+
+### Controladores Feature — remanentes ✅
+- ✅ AsistenciaConsultaControllerTest
+- ✅ EvidenciaControllerTest (sin ruta; store directo)
+- ✅ Api/ComplementarioApiControllerTest
+- ✅ Complementarios/CatalogoComplementarioControllerTest
+- ✅ ResultadosAprendizaje → ya cubierto por `ResultadosAprendizajeCrudTest`
+
+### Verificación funcional (pre-Fase 7) ✅
+Smoke tras correcciones de modalidad/catálogo/estado:
+
+- Commands: **84 passed / 0 skipped**
+- Livewire: **30 mount** + **acciones CRUD Fase 6**
+- Home + ProgramaComplementario + EstadísticaComplementario: **OK**
+- Sonar dry-run (alcance tocado): **0 errores**
+- PHPStan (alcance tocado): **OK**
+
+Hallazgos corregidos que sí afectaban funcionalidad:
+
+- Eager load `modalidad` → `catalogo.modalidad.parametro` (ofertado ya no tiene relación directa)
+- Migración create de `complementarios_catalogo` sin `modalidad_id` (orden de timestamps)
+- `estado_id` hardcodeado a `3` en el modelo (rompe installs/tests frescos)
+- Factory `ProgramaFormacion`: `nivel_formacion_id` apunta a `parametros_temas`
+- `AsistenciaConsultaController` / vista: relaciones vía `instructorFicha.ficha.*`
+- `Asistencia::instructorFicha` → `InstructorFichaCaracterizacion`
+- `CaracterizacionPrograma::jornada` → `ParametroTema`
+
+### Fase 7 — Cobertura PCOV CERRADA (baseline smoke) ✅
+
+Problema resuelto: SQLite en bind-mount Windows (`/app/database/*.sqlite`) → `database is locked` / corrupción.
+
+Solución:
+- DB de cobertura en **`/tmp/cdattg_testing_coverage.sqlite`** (FS nativo del contenedor)
+- `TestCase` respeta `DB_DATABASE` / `TESTING_DB` + `PRAGMA busy_timeout`
+- Imagen cacheada: `docker/Dockerfile.coverage` → tag `cdattg-coverage`
+
+Baseline smoke ampliado (Home + Livewire + Commands + Inventario Controllers + Complementarios Programa/Estadística), **264 tests / 0 failed**:
+
+| Métrica | Valor |
+|--------|-------|
+| Classes | 6.62% (78/1179) |
+| Methods | 12.78% (470/3679) |
+| Lines | **13.39% (4510/33680)** |
+
+(Antes baseline Home+LW+Commands: Lines **6.00%**. El % global sigue midiendo todo `app/` con un subset de tests.)
+
+Comandos:
+1. Una vez: `composer test:coverage:build`
+2. Smoke: `composer test:coverage:smoke` (usa imagen `cdattg-coverage`)
+3. HTML: `COVERAGE_HTML=1 composer test:coverage:fast`
+4. Suite completa: `composer test:coverage` (instala PCOV en `php:8.4-cli` si no hay imagen)
 
 ## Total Actualizado
 
-**Tests totales: 317 archivos de test**
+**Tests totales: ~370+ archivos de test** (Feature Fase 3 + Modelos Fase 4 + Livewire Fase 5–6)
 
 ### Progreso Global
 - **Completados al 100%**: Jobs, Events, Observers, Listeners, Policies, Commands, Form Requests
 - **Cobertura completa (102%)**: Servicios, Repositorios
 - **Cobertura alta (95%)**: Modelos (61/64)
 - **Cobertura media (53%)**: Controladores Feature (37/70)
+- **PCOV smoke gate**: verde (0 errors, DB en `/tmp`; incluye Inventario + Complementarios)
 
 ### Tests Restantes
-- **Controladores**: 33 tests faltantes
-- **Modelos**: 3 tests faltantes
+- Fase 6 residual: más Concerns (Aprendiz toggle, Guia toggleStatus, forms store)
+- Ampliar PCOV a más Feature Controllers si se necesita % más alto
 
-**Total faltante: 36 tests**
+**Total faltante estructural crítico: ~0** (quedan profundizaciones Concerns)
 
 ## Próximos Pasos Recomendados
 
-1. 🔄 **Completar Controladores Feature** (33 faltantes) - Prioridad ALTA
-   - Enfocarse en controladores críticos de negocio primero
-   - Controladores de API y autenticación
-   - Controladores de inventario faltantes
-   - Controladores complementarios
-
-2. 🔄 **Completar Modelos restantes** (3 faltantes) - Prioridad MEDIA
-   - Identificar y crear tests para los 3 modelos faltantes
+1. ✅ Ampliar PCOV smoke a Inventario + Complementarios Feature
+2. ✅ Fase 6: acciones Livewire Index (Ficha/Competencia/Resultado/Programa/Instructor/Red + CrearEvidencia)
+3. 🔄 Opcional: AprendizIndex toggle + Guia toggleStatus + Form stores
+4. ➖ Depurar factories vacíos (`CompetenciaFactory`, `RedConocimientoFactory`) cuando toquen tests
 
 ## Notas
 
@@ -495,3 +557,5 @@ Verificar cuáles de los 64 modelos no tienen test (posiblemente modelos base o 
 - Todos los tests usan factories existentes o nuevas factories creadas
 - Todos los archivos han sido formateados con Laravel Pint
 - Los tests siguen las convenciones del proyecto y PHPUnit
+- **Nunca** mezclar cobertura Docker con tests locales sobre el mismo archivo SQLite del bind-mount
+- Local: `database/testing.sqlite` · Docker coverage: `/tmp/cdattg_testing_coverage.sqlite`

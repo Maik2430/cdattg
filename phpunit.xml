@@ -28,19 +28,11 @@
 
     <source>
         <include>
-            <directory>app/Inventario</directory>
-            <directory>app/Models/Inventario</directory>
-            <directory>app/Http/Controllers/Inventario</directory>
-            <directory>app/Http/Requests/Inventario</directory>
-            <directory>app/Livewire/Inventario</directory>
-            <directory>app/Http/Controllers/Complementarios</directory>
-            <directory>app/Models/Complementarios</directory>
-            <directory>app/Http/Requests/Complementarios</directory>
-            <directory>app/Services/Complementarios</directory>
-            <directory>app/Repositories/Complementarios</directory>
-            <directory>app/Jobs/Complementarios</directory>
-            <directory>app/Exceptions/Complementarios</directory>
+            <directory suffix=".php">app</directory>
         </include>
+        <exclude>
+            <directory>app/Providers</directory>
+        </exclude>
     </source>
 
     <php>
@@ -48,6 +40,7 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="DB_CONNECTION" value="sqlite"/>
+        <!-- Sin force: permite override con DB_DATABASE/TESTING_DB (cobertura Docker en /tmp) -->
         <env name="DB_DATABASE" value="database/testing.sqlite"/>
         <env name="DB_FOREIGN_KEYS" value="true"/>
         <env name="MAIL_MAILER" value="array"/>

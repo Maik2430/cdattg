@@ -30,6 +30,6 @@ class VerifyUserEmailCommandTest extends TestCase
     {
         $command = new VerifyUserEmail;
 
-        $this->assertStringContainsString('user:verify-email', $command->getSignature());
+        $this->assertEquals('user:verify-email', $command->getName());
     }
 }

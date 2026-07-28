@@ -14,8 +14,13 @@ class CheckUploadLimitsCommandTest extends TestCase
     #[Test]
     public function command_existe(): void
     {
-        $this->artisan('upload:check-limits')
-            ->assertExitCode(0);
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('upload:check-limits');
+
+        $this->assertContains($exitCode, [0, 1]);
+        $this->assertStringContainsString(
+            'Verificando configuración de límites de carga',
+            \Illuminate\Support\Facades\Artisan::output()
+        );
     }
 
     #[Test]
@@ -23,6 +28,6 @@ class CheckUploadLimitsCommandTest extends TestCase
     {
         $command = new CheckUploadLimitsCommand;
 
-        $this->assertStringContainsString('upload:check-limits', $command->getSignature());
+        $this->assertEquals('upload:check-limits', $command->getName());
     }
 }

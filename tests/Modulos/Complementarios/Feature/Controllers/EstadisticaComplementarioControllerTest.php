@@ -9,6 +9,7 @@ use App\Models\Complementarios\AspiranteComplementario;
 use App\Models\Persona;
 use App\Models\Departamento;
 use App\Models\Municipio;
+use App\Models\Pais;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Complementarios\Concerns\SeedsComplementariosDatabase;
@@ -51,7 +52,7 @@ class EstadisticaComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
 
         // Crear datos de prueba
-        $programa = ComplementarioOfertado::factory()->create(['estado' => 1]);
+        $programa = ComplementarioOfertado::factory()->conOferta()->create();
         AspiranteComplementario::factory()->count(5)->paraPrograma($programa)->create();
         AspiranteComplementario::factory()->admitido()->count(2)->paraPrograma($programa)->create();
         AspiranteComplementario::factory()->enProceso()->count(1)->paraPrograma($programa)->create();
@@ -92,28 +93,62 @@ class EstadisticaComplementarioControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * Asegura un departamento (crea país/departamento si hace falta).
+     */
+    private function ensureDepartamento(): Departamento
+    {
+        $departamento = Departamento::first();
+        if ($departamento) {
+            return $departamento;
+        }
+
+        $pais = Pais::first() ?? Pais::create(['pais' => 'COLOMBIA', 'status' => 1]);
+
+        return Departamento::factory()->create([
+            'pais_id' => $pais->id,
+            'departamento' => 'CUNDINAMARCA',
+            'status' => 1,
+        ]);
+    }
+
+    /**
+     * Asegura un municipio (crea país/departamento/municipio si hace falta).
+     */
+    private function ensureMunicipio(): Municipio
+    {
+        $municipio = Municipio::first();
+        if ($municipio) {
+            return $municipio;
+        }
+
+        $departamento = $this->ensureDepartamento();
+
+        return Municipio::factory()->create([
+            'departamento_id' => $departamento->id,
+            'municipio' => 'BOGOTA',
+            'status' => 1,
+        ]);
+    }
+
     #[Test]
     public function puede_obtener_estadisticas_api_con_filtro_departamento()
     {
         $this->actingAs($this->user);
 
-        $departamento = Departamento::first();
+        $departamento = $this->ensureDepartamento();
 
-        if ($departamento) {
-            $response = $this->get(route('complementarios.estadisticas.api', [
-                'departamento_id' => $departamento->id,
-            ]));
+        $response = $this->get(route('complementarios.estadisticas.api', [
+            'departamento_id' => $departamento->id,
+        ]));
 
-            $response->assertStatus(200);
-            $response->assertJsonStructure([
-                'total_filtrado',
-                'aceptados_filtrado',
-                'pendientes_filtrado',
-                'datos',
-            ]);
-        } else {
-            $this->markTestSkipped('No hay departamentos en la base de datos');
-        }
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'total_filtrado',
+            'aceptados_filtrado',
+            'pendientes_filtrado',
+            'datos',
+        ]);
     }
 
     #[Test]
@@ -121,23 +156,19 @@ class EstadisticaComplementarioControllerTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $municipio = Municipio::first();
+        $municipio = $this->ensureMunicipio();
 
-        if ($municipio) {
-            $response = $this->get(route('complementarios.estadisticas.api', [
-                'municipio_id' => $municipio->id,
-            ]));
+        $response = $this->get(route('complementarios.estadisticas.api', [
+            'municipio_id' => $municipio->id,
+        ]));
 
-            $response->assertStatus(200);
-            $response->assertJsonStructure([
-                'total_filtrado',
-                'aceptados_filtrado',
-                'pendientes_filtrado',
-                'datos',
-            ]);
-        } else {
-            $this->markTestSkipped('No hay municipios en la base de datos');
-        }
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'total_filtrado',
+            'aceptados_filtrado',
+            'pendientes_filtrado',
+            'datos',
+        ]);
     }
 
     #[Test]
@@ -167,29 +198,25 @@ class EstadisticaComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $programa = ComplementarioOfertado::factory()->create();
-        $departamento = Departamento::first();
+        $departamento = $this->ensureDepartamento();
 
-        if ($departamento) {
-            $fechaInicio = now()->subDays(30)->format('Y-m-d');
-            $fechaFin = now()->format('Y-m-d');
+        $fechaInicio = now()->subDays(30)->format('Y-m-d');
+        $fechaFin = now()->format('Y-m-d');
 
-            $response = $this->get(route('complementarios.estadisticas.api', [
-                'fecha_inicio' => $fechaInicio,
-                'fecha_fin' => $fechaFin,
-                'departamento_id' => $departamento->id,
-                'programa_id' => $programa->id,
-            ]));
+        $response = $this->get(route('complementarios.estadisticas.api', [
+            'fecha_inicio' => $fechaInicio,
+            'fecha_fin' => $fechaFin,
+            'departamento_id' => $departamento->id,
+            'programa_id' => $programa->id,
+        ]));
 
-            $response->assertStatus(200);
-            $response->assertJsonStructure([
-                'total_filtrado',
-                'aceptados_filtrado',
-                'pendientes_filtrado',
-                'datos',
-            ]);
-        } else {
-            $this->markTestSkipped('No hay departamentos en la base de datos');
-        }
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'total_filtrado',
+            'aceptados_filtrado',
+            'pendientes_filtrado',
+            'datos',
+        ]);
     }
 
     #[Test]
@@ -198,8 +225,8 @@ class EstadisticaComplementarioControllerTest extends TestCase
         $this->actingAs($this->user);
 
         // Crear programas con aspirantes para tener datos de demanda
-        $programa1 = ComplementarioOfertado::factory()->create(['estado' => 1]);
-        $programa2 = ComplementarioOfertado::factory()->create(['estado' => 1]);
+        $programa1 = ComplementarioOfertado::factory()->conOferta()->create();
+        $programa2 = ComplementarioOfertado::factory()->conOferta()->create();
 
         AspiranteComplementario::factory()->count(5)->paraPrograma($programa1)->create();
         AspiranteComplementario::factory()->count(3)->paraPrograma($programa2)->create();

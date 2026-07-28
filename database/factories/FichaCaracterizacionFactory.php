@@ -2,9 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Exceptions\ParametroTemaCreationException;
 use App\Models\Ambiente;
 use App\Models\FichaCaracterizacion;
 use App\Models\Instructor;
+use App\Models\Parametro;
 use App\Models\ParametroTema;
 use App\Models\ProgramaFormacion;
 use App\Models\RedConocimiento;
@@ -29,23 +31,6 @@ class FichaCaracterizacionFactory extends Factory
 
     public function definition(): array
     {
-        $programaId = ProgramaFormacion::query()->inRandomOrder()->value('id') ?? 1;
-        $modalidades = [18, 19, 20];
-        $sedeId = Sede::query()->inRandomOrder()->value('id') ?? 1;
-        $ambienteId = Ambiente::query()->inRandomOrder()->value('id') ?? 1;
-
-        // Obtener jornada desde parametros_temas del tema JORNADAS
-        $jornadaId = ParametroTema::whereHas('tema', function($q) {
-            $q->where('name', 'LIKE', '%JORNADAS%');
-        })->inRandomOrder()->value('id');
-
-        $mesesAtras = rand(0, 6);
-        $mesesAdelante = rand(0, 2);
-        $fechaInicio = date('Y-m-d', strtotime("-{$mesesAtras} months +{$mesesAdelante} months"));
-
-        $duracionMeses = rand(12, 24);
-        $fechaFin = date('Y-m-d', strtotime($fechaInicio . " +{$duracionMeses} months"));
-
         return [
             'programa_formacion_id' => $this->obtenerProgramaId(),
             'ficha' => $this->generarNumeroFicha(),
@@ -89,7 +74,7 @@ class FichaCaracterizacionFactory extends Factory
         // Crear el programa directamente con los IDs verificados
         if (! $nivelFormacionParametroTema) {
             // Si no se pudo crear el parametro_tema, lanzar error
-            throw new \RuntimeException('No se pudo crear o encontrar un parametro_tema para nivel de formación');
+            throw new ParametroTemaCreationException(4, 0, 'No se pudo crear o encontrar un parametro_tema para nivel de formación');
         }
 
         $programa = ProgramaFormacion::query()->create([
@@ -135,7 +120,7 @@ class FichaCaracterizacionFactory extends Factory
     private function generarNumeroFicha(): string
     {
         $prefijoFicha = $this->faker->numberBetween(10, 99);
-        $numeroFicha = str_pad($this->faker->numberBetween(10000, 99999), 5, '0', STR_PAD_LEFT);
+        $numeroFicha = str_pad((string) $this->faker->numberBetween(10000, 99999), 5, '0', STR_PAD_LEFT);
         return $prefijoFicha . $numeroFicha;
     }
 
@@ -198,11 +183,11 @@ class FichaCaracterizacionFactory extends Factory
      */
     private function obtenerJornadaId(): ?int
     {
-        return $this->obtenerOcrearId(
-            'jornadas_formacion',
-            fn() => JornadaFormacion::query()->inRandomOrder()->value('id'),
-            fn() => JornadaFormacion::factory()->create()->id
-        );
+        // Desde la migración de jornadas, jornada_id referencia parametros_temas.
+        return ParametroTema::query()
+            ->whereHas('tema', fn ($query) => $query->where('name', 'LIKE', '%JORNADA%'))
+            ->inRandomOrder()
+            ->value('id');
     }
 
     /**

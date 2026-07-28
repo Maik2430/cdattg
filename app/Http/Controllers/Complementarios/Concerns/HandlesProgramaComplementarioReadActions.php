@@ -11,7 +11,7 @@ trait HandlesProgramaComplementarioReadActions
     public function index(): View
     {
         $programas = $this->complementarioService
-            ->obtenerProgramas(['modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente']);
+            ->obtenerProgramas(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente']);
 
         $programas = $this->complementarioService->enriquecerProgramas($programas);
 
@@ -29,7 +29,7 @@ trait HandlesProgramaComplementarioReadActions
     public function programasPublicos(): View
     {
         $programas = $this->complementarioService
-            ->obtenerProgramas(['modalidad.parametro', 'jornada', 'diasFormacion'], estado: 1);
+            ->obtenerProgramas(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion'], estado: 1);
 
         $programas = $this->complementarioService->enriquecerProgramas($programas);
 
@@ -43,7 +43,7 @@ trait HandlesProgramaComplementarioReadActions
     public function verProgramas(): View
     {
         $programas = $this->complementarioService
-            ->obtenerProgramas(['modalidad.parametro', 'jornada', 'diasFormacion']);
+            ->obtenerProgramas(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion']);
 
         $programas = $this->complementarioService->enriquecerProgramas($programas);
 
@@ -52,7 +52,7 @@ trait HandlesProgramaComplementarioReadActions
 
     public function verPrograma(ComplementarioOfertado $programa): View
     {
-        $programa->load(['modalidad.parametro', 'jornada', 'diasFormacion']);
+        $programa->load(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion']);
         $programa = $this->complementarioService->enriquecerPrograma($programa);
 
         $programaData = [
@@ -75,7 +75,7 @@ trait HandlesProgramaComplementarioReadActions
 
     public function show(ComplementarioOfertado $programa): View
     {
-        $programa->load(['modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente.piso', 'competencias', 'raps', 'estado.parametro']);
+        $programa->load(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente.piso', 'competencias', 'raps', 'estado.parametro']);
         $programa = $this->complementarioService->enriquecerPrograma($programa);
 
         return view('complementarios.programas.admin.show', array_merge(
@@ -86,7 +86,7 @@ trait HandlesProgramaComplementarioReadActions
 
     public function edit(ComplementarioOfertado $programa): View
     {
-        $programa->load(['modalidad', 'jornada', 'diasFormacion', 'ambiente', 'competencias', 'raps', 'guiasAprendizaje']);
+        $programa->load(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente', 'competencias', 'raps', 'guiasAprendizaje']);
 
         $dias = $this->mapearDiasFormacion($programa);
         $datosFormulario = $this->complementarioService->obtenerDatosFormulario();
@@ -105,7 +105,7 @@ trait HandlesProgramaComplementarioReadActions
 
     public function editApi(ComplementarioOfertado $programa): JsonResponse
     {
-        $programa->load(['modalidad', 'jornada', 'diasFormacion', 'ambiente']);
+        $programa->load(['catalogo.modalidad.parametro', 'jornada', 'diasFormacion', 'ambiente']);
         $dias = $this->mapearDiasFormacion($programa);
 
         return response()->json([
